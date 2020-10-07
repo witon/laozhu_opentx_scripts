@@ -1,7 +1,5 @@
 local inputs = {
-                 { "ResetSwitch", SOURCE},
-		 { "ZoomSwitch", SOURCE},
-         { "WTSwitch", SOURCE},
+                { "WTSwitch", SOURCE},
 	 }
 gLaunchALT = 0
 gFlightState = 0 --0:preset 1:zoom 2:launched 3:landed
@@ -58,20 +56,24 @@ local function init()
     addFlightResult()
 end
 
-local function run(resetSwitch, zoomSwitch, workTimeSwitch)
-	local curTime = getTime()
-	curAlt = getValue(altID)
+
+local function run(workTimeSwitch)
+        local curTime = getTime()
+        local flightMode, flightModeName = getFlightMode()
+
+        curAlt = getValue(altID)
+
 
 	if gFlightState==0 then
-            if resetSwitch <= 0 and zoomSwitch > 0 then
+            if flightModeName == "zoom" then
                     newFlight()
                     gFlightState = 1
                     launchTime = curTime
             end
 	elseif gFlightState==1 then
-            if zoomSwitch <= 0 then
+            if flightModeName ~= "zoom" and flightModeName ~= "preset" then
                     gFlightState = 2
-            elseif resetSwitch > 0 then
+            elseif flightModeName == "preset" then
                     gFlightState = 0
             end
             gFlightTime = curTime - launchTime
@@ -81,12 +83,12 @@ local function run(resetSwitch, zoomSwitch, workTimeSwitch)
                     getMaxALT()
             end
             gFlightTime = curTime - launchTime
-            if resetSwitch > 0 then
+            if flightModeName == "preset" then
                     addFlightResult()
                     gFlightState = 3
             end
-    elseif gFlightState==3 then
-            if zoomSwitch > 0 then
+        elseif gFlightState==3 then
+            if flightModeName == "zoom" then
                     gFlightState = 0
             end
 
