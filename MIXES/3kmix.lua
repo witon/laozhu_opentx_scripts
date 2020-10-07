@@ -36,7 +36,7 @@ local function addFlightResult()
 	gLaunchDateTimeArray[flightResultIndex] = launchDatetime
 end
 
-local function newFlight(nowTime)
+local function newFlight()
         gFlightState = 0
 		gFlightTime = 0
 		gLaunchALT = 0
@@ -59,14 +59,14 @@ local function init()
 end
 
 local function run(resetSwitch, zoomSwitch, workTimeSwitch)
-	local nowTime = getTime()
+	local curTime = getTime()
 	curAlt = getValue(altID)
 
 	if gFlightState==0 then
             if resetSwitch <= 0 and zoomSwitch > 0 then
-                    newFlight(nowTime)
+                    newFlight()
                     gFlightState = 1
-                    launchTime = nowTime
+                    launchTime = curTime
             end
 	elseif gFlightState==1 then
             if zoomSwitch <= 0 then
@@ -74,13 +74,13 @@ local function run(resetSwitch, zoomSwitch, workTimeSwitch)
             elseif resetSwitch > 0 then
                     gFlightState = 0
             end
-            gFlightTime = nowTime - launchTime
+            gFlightTime = curTime - launchTime
 
 	elseif gFlightState==2 then
             if gFlightTime < 800 then
                     getMaxALT()
             end
-            gFlightTime = nowTime - launchTime
+            gFlightTime = curTime - launchTime
             if resetSwitch > 0 then
                     addFlightResult()
                     gFlightState = 3
@@ -92,7 +92,7 @@ local function run(resetSwitch, zoomSwitch, workTimeSwitch)
 
 	end
     if workTimeSwitch > 0 then
-            gRoundStartTime = nowTime
+            gRoundStartTime = curTime
     end
 
 
