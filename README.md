@@ -1,6 +1,7 @@
 Compatibility:
 ======
 These scripts passed the tests on the FRSKY XLite Pro with OpenTX 2.3.
+
 Install:
 ======
 Copy the three directories "LAOZHU", "MIXES", "TELEMETRY" to the scripts directory on the SD card.
