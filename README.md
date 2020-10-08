@@ -8,7 +8,7 @@ For f3k:
 ======
 Setup:
 ------
-In the "CUSTOM SCRIPTS" menu, setup a LUA script. Select "3kmix" in the "script" item, input a name in the "Name" item such as "f3km". In the "Inputs" item, "WTSwitch" is the switch to reset or turn on the work time timer, "VarSelect" is the slider to select the variable to read, "ReadSwitch" is the switch to read the variable you have selected when you turn on then turn off it once.
+In the "CUSTOM SCRIPTS" menu, setup a LUA script. Select "3kmix" in the "script" item, input a name in the "Name" item such as "f3km". In the "Inputs" item, "WTSwitch" is the switch to reset or turn on the work time timer, "VarSelect" is the slider to select the variable to be read, "ReadSwitch" is the switch to read the variable which you have selected when you turn on then turn off it once.
 In the "DISPLAY" menu, setup a screen with the type of "Script", and select the "3ktel" script.
 
 Usage:
