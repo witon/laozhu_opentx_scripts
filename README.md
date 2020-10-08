@@ -14,5 +14,5 @@ In the "DISPLAY" menu, setup a screen with the type of "Script", and select the 
 Usage:
 ------
 Turn to the telemetry view, you can switch pages by the left and right keys. The first page shows a lot of information for f3k flight such as "work time", "RSSI", "flight time", "current altitude", "launch altitude" etc. The second page is the flight list with large font and the third is the flight list with small font.
-Reset or turn the work time timer by the switch you had set before.
+Reset or turn on the work time timer by the switch you had set before.
 There are four variables can be read by the transmitter: "flight time", "current altitude", "RSSI" and "launch altitude".  Slide the "VarSelect" slider to select the variable, Turn on then turn off the "ReadSwitch" to read it.
