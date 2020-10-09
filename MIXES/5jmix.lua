@@ -6,7 +6,7 @@ local inputs = {
 	 }
 
 gLaunchALT = 0
-gFlightState = 0 --0:begin 1:power 2:power off 3:10's after power off 4:landing
+gFlightState = 0 --0:begin 1:power 2:power off 3:10's after power off 4:landed
 local launchTime = 0
 gFlightTime = 0
 gWaitTime = 0
@@ -16,7 +16,8 @@ gPowerOffTime = 0
 gFlightTimeArray = {}
 gLaunchALTArray = {}
 gLaunchDateTimeArray = {}
-gAltLineArray = {}
+gPowerOnAgainArray = {}
+gPowerOnAgain = false
 
 gOneFlightAltArray = {}
 
@@ -49,6 +50,7 @@ local function addFlightResult()
 	gFlightTimeArray[flightResultIndex] = gFlightTime
 	gLaunchALTArray[flightResultIndex] = gLaunchALT
 	gLaunchDateTimeArray[flightResultIndex] = launchDatetime
+	gPowerOnAgainArray[flightResultIndex] = gPowerOnAgain
 end
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
@@ -63,21 +65,40 @@ local function init()
 	altID = getTelemetryId("Alt")
 end
 
+local function resetFlight(curTime)
+	gFlightState = 0
+	gFlightTime = 0
+	gLaunchALT = 0
+	lastCountNum = 31
+	lastPlayFlightTimeCount = 0
+	gWaitTime = 0
+	launchTime = 0
+	gPowerOnTimeRemain = 3000
+	gRoundStartTime =curTime 
+	gPowerOnAgain = false
+
+end
+
+local function isPowerOn(throttleChannel, thresholdValue) 
+	return throttleChannel >= 10*thresholdValue 
+end
+
+
 local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue)
-	local nowTime = getTime()
+	local curTime = getTime()
 	curAlt = getValue(altID)
 	if gFlightState==0 then
-		if throttleChannel >= 10*thresholdValue then
+		if isPowerOn(throttleChannel, thresholdValue) then
 			gFlightState = 1
-			launchTime = nowTime
+			launchTime = curTime
 			launchDatetime = getDateTime()
 		end
 	elseif gFlightState==1 then
-		if throttleChannel < 10*thresholdValue then
+		if not isPowerOn(throttleChannel, thresholdValue) then
 			changeSate1To2()
 		else
-			gFlightTime = nowTime - launchTime
-			gPowerOnTimeRemain = 3000 - (nowTime - launchTime)
+			gFlightTime = curTime - launchTime
+			gPowerOnTimeRemain = 3000 - (curTime - launchTime)
 			if gPowerOnTimeRemain<0 then
 				gPowerOnTimeRemain = 0
 				changeSate1To2()
@@ -92,16 +113,19 @@ local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue)
 		end
 
 	elseif gFlightState==2 then
-		gFlightTime = nowTime - launchTime
-		if nowTime - powerOffTime > 1000 then
+		gFlightTime = curTime - launchTime
+		if isPowerOn(throttleChannel, thresholdValue) then
+			gPowerOnAgain = true
+		end
+		if curTime - powerOffTime > 1000 then
 			gFlightState = 3
 		elseif flightSwitch<0 then
 			addFlightResult()
 			gFlightState = 4
 		else
 			getMaxALT()
-			gFlightTime = nowTime - launchTime 
-			gWaitTime = 1100 - (nowTime - powerOffTime) 
+			gFlightTime = curTime - launchTime 
+			gWaitTime = 1100 - (curTime - powerOffTime) 
 			local c = math.ceil(gWaitTime/100) - 1
 			if c<lastCountNum and c>0 then
 				playNumber(c, 0)
@@ -111,8 +135,11 @@ local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue)
 		end
 
 	elseif gFlightState==3 then
+		if isPowerOn(throttleChannel, thresholdValue) then
+			gPowerOnAgain = true
+		end
 		if flightSwitch>0 then
-			gFlightTime = nowTime - launchTime
+			gFlightTime = curTime - launchTime
 			local c = math.ceil(gFlightTime / 100)
 			if c>lastPlayFlightTimeCount and c%30 == 0 then
 				lastPlayFlightTimeCount = c
@@ -131,19 +158,13 @@ local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue)
 			gFlightState = 4
 		end
 	elseif gFlightState==4 then
-
+		if isPowerOn(throttleChannel, thresholdValue) then
+			gPowerOnAgain = true
+		end
 	end
 
 	if resetSwitch>0 then
-		gFlightState = 0
-		gFlightTime = 0
-		gLaunchALT = 0
-		lastCountNum = 31
-		lastPlayFlightTimeCount = 0
-		gWaitTime = 0
-		launchTime = 0
-		gPowerOnTimeRemain = 3000
-		gRoundStartTime = nowTime
+		resetFlight(curTime)
 	end
 end
 

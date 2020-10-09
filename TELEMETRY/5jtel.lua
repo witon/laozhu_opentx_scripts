@@ -29,6 +29,9 @@ local function DrawFlightList(event)
 			end
 			lcd.drawText(2, y, LZ_formatDateTime(gLaunchDateTimeArray[i]), SMLSIZE + LEFT + drawOption)
 			lcd.drawNumber(85, y, gLaunchALTArray[i], SMLSIZE + RIGHT + drawOption)
+			if gPowerOnAgainArray[i] then
+				lcd.drawText(86, y, "*", SMLSIZE + LEFT + drawOption)
+			end
 			lcd.drawText(126, y, LZ_formatTime(gFlightTimeArray[i]), SMLSIZE + RIGHT + drawOption)
 			y = y + 10 
 		end
@@ -90,7 +93,12 @@ local function run(event)
 		lcd.drawText(1, 53, "ALT", SMLSIZE)
 		lcd.drawChannel(56, 47, "Alt", RIGHT + DBLSIZE)
 
-		lcd.drawText(67, 53, "LALT", SMLSIZE)
+		if gPowerOnAgain then
+			lcd.drawText(67, 53, "LALT*", SMLSIZE)
+		else
+			lcd.drawText(67, 53, "LALT", SMLSIZE)
+		end
+
 		lcd.drawNumber(128, 47, gLaunchALT, RIGHT + DBLSIZE)
 	elseif displayIndex==1 then
 		DrawFlightList(event)
