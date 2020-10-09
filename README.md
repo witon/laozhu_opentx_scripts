@@ -1,3 +1,10 @@
+Introduction:
+======
+Laozhu opentx scripts are some scripts for RC thermal glider training.
+3ktel.lua is the telemetry script and 3kmix.lua is the mixes script. They work togethor for f3k.
+5jtel.lua is the telemetry script and 5jmix.lua is the mixes script. They work togethor for f5j.
+utils.lua provides common functions for those scipts.
+
 Compatibility:
 ======
 These scripts passed the tests on the FRSKY XLite Pro with OpenTX 2.3.
