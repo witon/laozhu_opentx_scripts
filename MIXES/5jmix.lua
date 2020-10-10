@@ -2,7 +2,10 @@ local inputs = {
                  { "ResetSwitch", SOURCE},
 		 { "FlightSwitch", SOURCE},
 		 { "ThChannel", SOURCE},
-		 { "Threshold", VALUE, -100, 100}
+		 { "Threshold", VALUE, -100, 100},
+         {"VarSelect", SOURCE},
+         {"ReadSwitch", SOURCE}
+	
 	 }
 
 gLaunchALT = 0
@@ -19,6 +22,9 @@ gLaunchDateTimeArray = {}
 gPowerOnAgainArray = {}
 gPowerOnAgain = false
 
+gCurAlt = 0
+
+
 gOneFlightAltArray = {}
 
 local launchDatetime
@@ -28,11 +34,10 @@ local flightResultIndex = 0
 local lastPlayFlightTimeCount = 0
 local minUnit = 0
 local altID = 0
-local curAlt = 0
 
 local function getMaxALT()
-	if (curAlt > gLaunchALT) then
-		gLaunchALT = curAlt
+	if (gCurAlt > gLaunchALT) then
+		gLaunchALT = gCurAlt
 	end
 end
 
@@ -54,6 +59,7 @@ local function addFlightResult()
 end
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
+	dofile("/SCRIPTS/LAOZHU/readVar.lua")
 	local version = getVersion()
 	if version < "2.1" then
 		minUnit = 16  -- unit for minutes in OpenTX 2.0
@@ -84,9 +90,9 @@ local function isPowerOn(throttleChannel, thresholdValue)
 end
 
 
-local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue)
+local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue, varSelect, readSwitch)
 	local curTime = getTime()
-	curAlt = getValue(altID)
+	gCurAlt = getValue(altID)
 	if gFlightState==0 then
 		if isPowerOn(throttleChannel, thresholdValue) then
 			gFlightState = 1
@@ -162,6 +168,9 @@ local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue)
 			gPowerOnAgain = true
 		end
 	end
+
+	doReadVar(varSelect, readSwitch)
+
 
 	if resetSwitch>0 then
 		resetFlight(curTime)
