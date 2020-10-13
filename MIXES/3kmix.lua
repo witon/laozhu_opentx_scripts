@@ -12,12 +12,14 @@ gLaunchALTArray = {}
 gLaunchDateTimeArray = {}
 
 gCurAlt = 0
+gScriptDir = "/SCRIPTS/"
 
 local launchTime = 0
 local launchDatetime = getDateTime()
 local flightResultIndex = 0 
 local minUnit = 0
 local altID = 0
+gF3kState = nil
 
 local function getMaxALT()
 	if (gCurAlt > gLaunchALT) then
@@ -45,8 +47,9 @@ local function newFlight()
 end
 
 local function init()
-        dofile("/SCRIPTS/LAOZHU/utils.lua")
-        dofile("/SCRIPTS/LAOZHU/readVar.lua")
+        dofile(gScriptDir .. "LAOZHU/utils.lua")
+        dofile(gScriptDir .. "LAOZHU/readVar.lua")
+        gF3kState = dofile(gScriptDir .. "/LAOZHU/F3kState.lua")
 	local version = getVersion()
 	if version < "2.1" then
 		minUnit = 16  -- unit for minutes in OpenTX 2.0
@@ -60,6 +63,8 @@ local function init()
 end
 
 local function doFlightState(curTime, flightModeName)
+        gF3kState.doFlightState(curTime, flightModeName)
+
         if gFlightState==0 then --preset
                 if flightModeName == "zoom" then
                         newFlight()

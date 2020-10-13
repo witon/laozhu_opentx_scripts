@@ -1,5 +1,4 @@
 gLaunchALT = 0
-gFlightTime = 0
 gRoundStartTime = getTime()
 local displayIndex = 0
 
@@ -92,9 +91,6 @@ local function run(event)
 		local flightMode, flightModeName = getFlightMode()
 		lcd.drawText(40, 1, flightModeName, LEFT + SMLSIZE)
 
-		--lcd.drawChannel(128, 1,  "RSSI", RIGHT + SMLSIZE)
-        --lcd.drawNumber(128, 1,  rssiValue, RIGHT + SMLSIZE)
-
 		lcd.drawChannel(90, 1, "RxBt", RIGHT + SMLSIZE)
 
 		lcd.drawText(1, 18, "WT", SMLSIZE)
@@ -102,16 +98,7 @@ local function run(event)
 		lcd.drawText(22, 11, LZ_formatTime(workTimeRemain), LEFT + DBLSIZE)
 
 		lcd.drawText(67, 18, "ST", SMLSIZE)
-		if gFlightState == 0 then
-			lcd.drawText(87, 11, "PreSet", LEFT + DBLSIZE)
-		elseif gFlightState == 1 then
-			lcd.drawText(87, 11, "Zoom", LEFT + DBLSIZE)
-		elseif gFlightState == 2 then
-			lcd.drawText(87, 11, "Fligh", LEFT + DBLSIZE)
-		elseif gFlightState == 3 then
-			lcd.drawText(87, 11, "Landed", LEFT + DBLSIZE)
-
-		end
+		lcd.drawText(87, 11, gF3kState.getCurFlightStateName(), LEFT + DBLSIZE)
 
 
 		lcd.drawText(1, 36, "RSSI", SMLSIZE)
@@ -119,9 +106,9 @@ local function run(event)
 
 
 
-		if gFlightState==2 or gFlightState==1 then
+		if gF3kState.getFlightState()==2 or gF3kState.getFlightState()==1 then
 			lcd.drawText(67, 36, "FT", SMLSIZE)
-			lcd.drawText(87, 29, LZ_formatTime(gFlightTime), LEFT + DBLSIZE)
+			lcd.drawText(87, 29, LZ_formatTime(gF3kState.getFlightTime()), LEFT + DBLSIZE)
 		end
 
 		lcd.drawText(1, 53, "ALT", SMLSIZE)
