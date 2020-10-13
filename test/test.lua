@@ -10,5 +10,6 @@ dofile(HOME_DIR .. "test/TestF3kState.lua")
 EXPORT_ASSERT_TO_GLOBALS = true
 luaunit = require("luaunit")
 Mock = require "test.mock.Mock"
+test
 
 os.exit(luaunit.LuaUnit.run())
