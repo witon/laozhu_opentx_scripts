@@ -159,7 +159,7 @@ function testLaunchAlt() --launch alt
     curTime = 11000
     F3kState.setAlt(25)
     F3kState.doFlightState(curTime, "curise")
-    luaunit.assertEquals(20, F3kState.getLaunchAlt())
+    luaunit.assertEquals(21, F3kState.getLaunchAlt())
 end
 
 HOME_DIR = os.getenv("HOME_DIR")
