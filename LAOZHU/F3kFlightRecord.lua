@@ -2,6 +2,7 @@
 local flightArray = {}
 local flightIndex = 0
 
+
 local function addFlight(flightTime, launchAlt, flightStartTime)
 	flightIndex = flightIndex + 1
 	if flightIndex > 25 then
@@ -14,9 +15,9 @@ local function addFlight(flightTime, launchAlt, flightStartTime)
     flightArray[flightIndex] = flightRecord
 end 
 
-local function getFlightRecords()
+local function getFlightArray()
     return flightArray
 end
 
 
-return {addFlight = addFlight, getFlightRecords = getFlightRecords}
+return {addFlight = addFlight, getFlightArray = getFlightArray}

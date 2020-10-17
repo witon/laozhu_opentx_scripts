@@ -1,5 +1,5 @@
-gLaunchALT = 0
 gRoundStartTime = getTime()
+
 local displayIndex = 0
 
 local selectedIndex = 1
@@ -7,7 +7,7 @@ local selectedIndex = 1
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
 end
-local function DrawLargeFlightList(event)
+local function DrawLargeFontFlightList(event)
 	local x = 127 
 	local y = 10 
 
@@ -16,16 +16,17 @@ local function DrawLargeFlightList(event)
 	lcd.drawText(126, 1, "FTime", SMLSIZE + RIGHT)
 	local i = 0
 	local v = 0
-	for i, v in ipairs(gLaunchDateTimeArray) do
+	local flightArray = gF3kState.getFlightRecord().getFlightArray()
+	for i, flight in ipairs(flightArray) do
 		if i>selectedIndex-4 and i<selectedIndex+4 then
 			local drawOption = 0
 			if i==selectedIndex then
 				lcd.drawFilledRectangle(0, y-1, 129, 14, 0)
 				drawOption = INVERS
 			end
-			lcd.drawText(2, y, LZ_formatDateTime(gLaunchDateTimeArray[i]), MIDSIZE + LEFT + drawOption)
-			lcd.drawNumber(85, y, gLaunchALTArray[i], MIDSIZE + RIGHT + drawOption)
-			lcd.drawText(126, y, LZ_formatTime(gFlightTimeArray[i]), MIDSIZE + RIGHT + drawOption)
+			lcd.drawText(2, y, LZ_formatDateTime(flight.flightStartTime), MIDSIZE + LEFT + drawOption)
+			lcd.drawNumber(85, y, flight.launchAlt, MIDSIZE + RIGHT + drawOption)
+			lcd.drawText(126, y, LZ_formatTime(flight.flightTime), MIDSIZE + RIGHT + drawOption)
 			y = y + 14 
 		end
 	end
@@ -33,11 +34,11 @@ local function DrawLargeFlightList(event)
 	if(event==36 or event==68) then
 		selectedIndex = selectedIndex - 1
 		if selectedIndex < 1 then
-			selectedIndex = #gLaunchDateTimeArray
+			selectedIndex = #flightArray
 		end
 	elseif(event==35 or event==67) then
 		selectedIndex = selectedIndex + 1
-		if selectedIndex > #gLaunchDateTimeArray then
+		if selectedIndex > #flightArray then
 			selectedIndex = 1
 		end
 	end
@@ -45,7 +46,7 @@ local function DrawLargeFlightList(event)
 end
 
 
-local function DrawFlightList(event)
+local function DrawSmallFontFlightList(event)
 	local x = 127 
 	local y = 10 
 
@@ -54,16 +55,18 @@ local function DrawFlightList(event)
 	lcd.drawText(126, 1, "FTime", SMLSIZE + RIGHT)
 	local i = 0
 	local v = 0
-	for i, v in ipairs(gLaunchDateTimeArray) do
+
+	local flightArray = gF3kState.getFlightRecord().getFlightArray()
+	for i, flight in ipairs(flightArray) do
 		if i > selectedIndex - 5 and i<selectedIndex + 6 then
 			local drawOption = 0
 			if i==selectedIndex then
 				lcd.drawFilledRectangle(0, y-1, 129, 9, 0)
 				drawOption = INVERS
 			end
-			lcd.drawText(2, y, LZ_formatDateTime(gLaunchDateTimeArray[i]), SMLSIZE + LEFT + drawOption)
-			lcd.drawNumber(85, y, gLaunchALTArray[i], SMLSIZE + RIGHT + drawOption)
-			lcd.drawText(126, y, LZ_formatTime(gFlightTimeArray[i]), SMLSIZE + RIGHT + drawOption)
+			lcd.drawText(2, y, LZ_formatDateTime(flight.flightStartTime), SMLSIZE + LEFT + drawOption)
+			lcd.drawNumber(85, y, flight.launchAlt, SMLSIZE + RIGHT + drawOption)
+			lcd.drawText(126, y, LZ_formatTime(flight.flightTime), SMLSIZE + RIGHT + drawOption)
 			y = y + 10 
 		end
 	end
@@ -71,11 +74,11 @@ local function DrawFlightList(event)
 	if(event==36 or event==68) then
 		selectedIndex = selectedIndex - 1
 		if selectedIndex < 1 then
-			selectedIndex = #gLaunchDateTimeArray
+			selectedIndex = #flightArray
 		end
 	elseif(event==35 or event==67) then
 		selectedIndex = selectedIndex + 1
-		if selectedIndex > #gLaunchDateTimeArray then
+		if selectedIndex > #flightArray then
 			selectedIndex = 1
 		end
 	end
@@ -84,6 +87,10 @@ end
 
 local function run(event)
 	lcd.clear()
+	if not gF3kState then
+		lcd.drawText(2, 32, "wait for 3kmix.lua", MIDSIZE)
+		return
+	end
 
 	if displayIndex == 0 then
 		lcd.drawText(1, 1, model.getInfo().name, SMLSIZE)
@@ -117,9 +124,9 @@ local function run(event)
 		lcd.drawText(67, 53, "LALT", SMLSIZE)
 		lcd.drawNumber(128, 47, gLaunchALT, RIGHT + DBLSIZE)
 	elseif displayIndex==1 then
-        DrawLargeFlightList(event)
+        DrawLargeFontFlightList(event)
     elseif displayIndex==2 then
-		DrawFlightList(event)
+		DrawSmallFontFlightList(event)
 	end
 	if event==38 then 
 		displayIndex = displayIndex - 1
