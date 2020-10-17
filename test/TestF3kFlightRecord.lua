@@ -3,11 +3,11 @@ function testAddFlightRecordsAndGet()
     local flightTime = 1000
     local launchAlt = 50
     local flightStartTime = 10000
-    local flightRecords = F3kFlightRecord.getFlightRecords()
+    local flightRecords = F3kFlightRecord.getFlightArray()
     luaunit.assertEquals(0, #flightRecords)
 
     F3kFlightRecord.addFlight(flightTime, launchAlt, flightStartTime)
-    flightRecords = F3kFlightRecord.getFlightRecords()
+    flightRecords = F3kFlightRecord.getFlightArray()
     luaunit.assertEquals(1, #flightRecords)
     record1 = flightRecords[1]
     luaunit.assertEquals(1000, record1.flightTime)
@@ -18,7 +18,7 @@ function testAddFlightRecordsAndGet()
     launchAlt = 60
     flightStartTime = 20000
     F3kFlightRecord.addFlight(flightTime, launchAlt, flightStartTime)
-    flightRecords = F3kFlightRecord.getFlightRecords()
+    flightRecords = F3kFlightRecord.getFlightArray()
     luaunit.assertEquals(2, #flightRecords)
     record1 = flightRecords[2]
     luaunit.assertEquals(1500, record1.flightTime)
@@ -39,7 +39,7 @@ function testAddMoreThen25Flights()
         flightStartTime = flightStartTime + 10000
     end
 
-    flightRecords = F3kFlightRecord.getFlightRecords()
+    flightRecords = F3kFlightRecord.getFlightArray()
     luaunit.assertEquals(25, #flightRecords)
     record1 = flightRecords[2]
     luaunit.assertEquals(27000, record1.flightTime)

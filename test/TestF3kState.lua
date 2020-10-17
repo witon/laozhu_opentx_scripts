@@ -1,3 +1,4 @@
+gScriptDir = HOME_DIR
 function testNormalProcess()
     local curDateTime = 100000
     _G.getDateTime = Mock()
@@ -37,7 +38,12 @@ function testNormalProcess()
     curTime = 60000
     F3kState.doFlightState(curTime, "preset")
     luaunit.assertEquals(3, F3kState.getFlightState())
-    luaunit.assertEquals(40000, F3kState.getFlightTime())
+    luaunit.assertEquals(F3kState.getFlightTime(), 40000)
+    
+    local flightArray = F3kState.getFlightRecord().getFlightArray()
+    local flight = flightArray[1]
+    luaunit.assertEquals(flight.flightTime, 40000)
+    
 
     curTime = 70000
     F3kState.doFlightState(curTime, "zoom")

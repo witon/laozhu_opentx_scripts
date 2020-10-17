@@ -6,6 +6,11 @@ local curAlt = 0
 local flightTime = 0
 local launchDatetime = 0
 local flightStateStartTime = 0
+local f3kFlightRecord = dofile(gScriptDir .. "LAOZHU/F3kFlightRecord.lua")
+
+local function getFlightRecord()
+    return f3kFlightRecord
+end
 
 local function setAlt(alt)
     curAlt = alt
@@ -63,10 +68,11 @@ local function doStateZoom(curTime, flightModeName)
 end
 
 local function doStateLaunched(curTime, flightModeName)
+    flightTime = curTime - launchTime
     if flightModeName == "preset" then
         flightState = 3
+        f3kFlightRecord.addFlight(flightTime, launchAlt, launchDatetime)
     end
-    flightTime = curTime - launchTime
     if curTime - flightStateStartTime < 150 then --still update launch alt in 1.5's after zoom
         getMaxLaunchAlt()
     end
@@ -116,5 +122,6 @@ return {newFlight = newFlight,
     getFlightTime = getFlightTime,
     getCurFlightStateName = getCurFlightStateName,
     setAlt = setAlt,
-    getLaunchAlt = getLaunchAlt
+    getLaunchAlt = getLaunchAlt,
+    getFlightRecord = getFlightRecord,
 }
