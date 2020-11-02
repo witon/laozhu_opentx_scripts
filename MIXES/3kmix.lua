@@ -10,12 +10,16 @@ gScriptDir = "/SCRIPTS/"
 
 local minUnit = 0
 local altID = 0
+local readVar = nil
 
-gF3kState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
+gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
+readVar = dofile(gScriptDir .. "LAOZHU/readVar.lua")
 
 local function init()
         dofile(gScriptDir .. "LAOZHU/utils.lua")
-        dofile(gScriptDir .. "LAOZHU/readVar.lua")
+        local f3kReadVarMap = dofile(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
+        readVar.setVarMap(f3kReadVarMap)
+
 	local version = getVersion()
 	if version < "2.1" then
 		minUnit = 16  -- unit for minutes in OpenTX 2.0
@@ -32,8 +36,9 @@ local function run(workTimeSwitch, varSelect, readSwitch)
         local flightMode, flightModeName = getFlightMode()
         gCurAlt = getValue(altID)
 
-        gF3kState.doFlightState(curTime, flightModeName)
-        doReadVar(varSelect, readSwitch)
+        gFlightState.setAlt(gCurAlt)
+        gFlightState.doFlightState(curTime, flightModeName)
+        readVar.doReadVar(varSelect, readSwitch)
 
 
         if workTimeSwitch > 0 then
