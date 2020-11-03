@@ -35,6 +35,11 @@ local lastPlayFlightTimeCount = 0
 local minUnit = 0
 local altID = 0
 
+local readVar = dofile("/SCRIPTS/LAOZHU/readVar.lua")
+local f5jReadVarMap = dofile("/SCRIPTS/LAOZHU/f5jReadVarMap.lua")
+readVar.setVarMap(f5jReadVarMap)
+
+
 local function getMaxALT()
 	if (gCurAlt > gLaunchALT) then
 		gLaunchALT = gCurAlt
@@ -59,7 +64,6 @@ local function addFlightResult()
 end
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
-	dofile("/SCRIPTS/LAOZHU/readVar.lua")
 	local version = getVersion()
 	if version < "2.1" then
 		minUnit = 16  -- unit for minutes in OpenTX 2.0
@@ -169,7 +173,7 @@ local function run(resetSwitch, flightSwitch, throttleChannel, thresholdValue, v
 		end
 	end
 
-	doReadVar(varSelect, readSwitch)
+	readVar.doReadVar(varSelect, readSwitch)
 
 
 	if resetSwitch>0 then
