@@ -23,7 +23,7 @@ local function DrawLargeFontFlightList(event)
 	lcd.drawText(126, 1, "FTime", SMLSIZE + RIGHT)
 	local i = 0
 	local v = 0
-	local flightArray = gF3kState.getFlightRecord().getFlightArray()
+	local flightArray = gFlightState.getFlightRecord().getFlightArray()
 	for i, flight in ipairs(flightArray) do
 		if i>selectedIndex-4 and i<selectedIndex+4 then
 			local drawOption = 0
@@ -63,7 +63,7 @@ local function DrawSmallFontFlightList(event)
 	local i = 0
 	local v = 0
 
-	local flightArray = gF3kState.getFlightRecord().getFlightArray()
+	local flightArray = gFlightState.getFlightRecord().getFlightArray()
 	for i, flight in ipairs(flightArray) do
 		if i > selectedIndex - 5 and i<selectedIndex + 6 then
 			local drawOption = 0
@@ -95,7 +95,7 @@ end
 local function run(event)
 	lcd.clear()
 	local time = getRtcTime()
-	if not gF3kState then
+	if not gFlightState then
 		lcd.drawText(2, 32, "wait for 3kmix.lua", MIDSIZE)
 		return
 	end
@@ -113,7 +113,7 @@ local function run(event)
 		lcd.drawText(22, 11, LZ_formatTime(workTimeRemain), LEFT + DBLSIZE)
 
 		lcd.drawText(67, 18, "ST", SMLSIZE)
-		lcd.drawText(87, 11, gF3kState.getCurFlightStateName(), LEFT + DBLSIZE)
+		lcd.drawText(87, 11, gFlightState.getCurFlightStateName(), LEFT + DBLSIZE)
 
 
 		lcd.drawText(1, 36, "RSSI", SMLSIZE)
@@ -121,16 +121,16 @@ local function run(event)
 
 
 
-		if gF3kState.getFlightState()==2 or gF3kState.getFlightState()==1 then
+		if gFlightState.getFlightState()==2 or gFlightState.getFlightState()==1 then
 			lcd.drawText(67, 36, "FT", SMLSIZE)
-			lcd.drawText(87, 29, LZ_formatTime(gF3kState.getFlightTime()), LEFT + DBLSIZE)
+			lcd.drawText(87, 29, LZ_formatTime(gFlightState.getFlightTime()), LEFT + DBLSIZE)
 		end
 
 		lcd.drawText(1, 53, "ALT", SMLSIZE)
 		lcd.drawChannel(62, 47, "Alt", RIGHT + DBLSIZE)
 
 		lcd.drawText(67, 53, "LALT", SMLSIZE)
-		lcd.drawNumber(128, 47, gLaunchALT, RIGHT + DBLSIZE)
+		lcd.drawNumber(128, 47, gFlightState.getLaunchAlt(), RIGHT + DBLSIZE)
 	elseif displayIndex==1 then
         DrawLargeFontFlightList(event)
     elseif displayIndex==2 then
