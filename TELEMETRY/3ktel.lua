@@ -4,9 +4,16 @@ local displayIndex = 0
 
 local selectedIndex = 1
 
+local setupPage = nil
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
+	setupPage = dofile("/SCRIPTS/TELEMETRY/3k/SetupPage.lua")
 end
+
+local function drawSetupPage(event, time)
+	setupPage.run(event, time)
+end
+
 local function DrawLargeFontFlightList(event)
 	local x = 127 
 	local y = 10 
@@ -87,6 +94,7 @@ end
 
 local function run(event)
 	lcd.clear()
+	local time = getRtcTime()
 	if not gF3kState then
 		lcd.drawText(2, 32, "wait for 3kmix.lua", MIDSIZE)
 		return
@@ -127,6 +135,8 @@ local function run(event)
         DrawLargeFontFlightList(event)
     elseif displayIndex==2 then
 		DrawSmallFontFlightList(event)
+    elseif displayIndex==3 then
+		drawSetupPage(event, time)
 	end
 	if event==38 then 
 		displayIndex = displayIndex - 1
@@ -135,7 +145,7 @@ local function run(event)
 		end
 	elseif event == 37 then
 		displayIndex = displayIndex + 1
-		if displayIndex > 2 then
+		if displayIndex > 3 then
 			displayIndex = 0
 		end
 
