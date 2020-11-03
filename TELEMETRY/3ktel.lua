@@ -94,7 +94,7 @@ end
 
 local function run(event)
 	lcd.clear()
-
+	local time = getRtcTime()
 	if not gFlightState then
 		lcd.drawText(2, 32, "wait for 3kmix.lua", MIDSIZE)
 		return
