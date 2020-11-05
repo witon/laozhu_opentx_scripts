@@ -1,39 +1,51 @@
-
-local varSliderSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
+dofile("/SCRIPTS/TELEMETRY/Fields.lua")
 initFieldsInfo()
+local varSliderSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
 varSliderSelector.setFieldType(FIELDS_INPUT)
 local readSwitchSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
 readSwitchSelector.setFieldType(FIELDS_SWITCH)
+local workTimeSwitchSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
+workTimeSwitchSelector.setFieldType(FIELDS_SWITCH)
+
 
 local selectorArray = {
     varSliderSelector,
-    readSwitchSelector
+    readSwitchSelector,
+    workTimeSwitchSelector
 }
 local curSelectorIndex = 1
 local editingSelector = nil
 
+local function setCfgValue()
+    f3kCfg.setVarReadSwitch(readSwitchSelector.getSelectedItemId())
+    f3kCfg.setVarSelectorSlider(varSliderSelector.getSelectedItemId())
+    f3kCfg.setWorkTimeSwitch(workTimeSwitchSelector.getSelectedItemId())
+end
+
+local function getCfgValue()
+    readSwitchSelector.setSelectedItemById(f3kCfg.getVarReadSwitch())
+    varSliderSelector.setSelectedItemById(f3kCfg.getVarSelectorSlider())
+    workTimeSwitchSelector.setSelectedItemById(f3kCfg.getWorkTimeSwitch())
+end
+local function init()
+    getCfgValue()
+end
 
 local function doKey(event)
     if editingSelector then
         if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
             editingSelector.setFocusState(1)
             editingSelector = nil
+            f3kCfg.writeToFile()
             return
         end
         editingSelector.doKey(event)
+        setCfgValue()
         return
     end
 
 
  
-    if(event == EVT_ENTER_BREAK) then
-        editingSelector = selectorArray[curSelectorIndex]
-        editingSelector.setFocusState(2)
-        return
-    end
-
-
-  
     if(event == EVT_ENTER_BREAK) then
         editingSelector = selectorArray[curSelectorIndex]
         editingSelector.setFocusState(2)
@@ -67,6 +79,9 @@ local function run(event, time)
     varSliderSelector.drawSelector(64, 10, invers)
     lcd.drawText(2, 22, "Read Switch", SMLSIZE + LEFT)
     readSwitchSelector.drawSelector(64, 22, invers)
+    lcd.drawText(2, 34, "WTime Switch", SMLSIZE + LEFT)
+    workTimeSwitchSelector.drawSelector(64, 34, invers)
+
 end
 
-return {run = run}
+return {run = run, init=init}

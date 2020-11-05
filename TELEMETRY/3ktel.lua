@@ -1,13 +1,29 @@
-gRoundStartTime = getTime()
+gScriptDir = "/SCRIPTS/"
 
+gFlightState = nil
+f3kCfg = nil
+
+local roundStartTime = getTime()
 local displayIndex = 0
-
 local selectedIndex = 1
-
 local setupPage = nil
+local altID = 0
+local readVar = nil
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
+	gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
+
+	f3kCfg = dofile("/SCRIPTS/LAOZHU/F3kCfg.lua")
+	f3kCfg.readFromFile()
+
 	setupPage = dofile("/SCRIPTS/TELEMETRY/3k/SetupPage.lua")
+	setupPage.init()
+
+	altID = getTelemetryId("Alt")
+
+	readVar = dofile(gScriptDir .. "LAOZHU/readVar.lua")
+	local f3kReadVarMap = dofile(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
+	readVar.setVarMap(f3kReadVarMap)
 end
 
 local function drawSetupPage(event, time)
@@ -93,6 +109,20 @@ local function DrawSmallFontFlightList(event)
 end
 
 local function run(event)
+	local curTime = getTime()
+	local flightMode, flightModeName = getFlightMode()
+	gCurAlt = getValue(altID)
+
+	gFlightState.setAlt(gCurAlt)
+	gFlightState.doFlightState(curTime, flightModeName)
+	readVar.doReadVar(getValue(f3kCfg.getVarSelectorSlider()), getValue(f3kCfg.getVarReadSwitch()))
+
+
+	if getValue(f3kCfg.getWorkTimeSwitch()) > 0 then
+			roundStartTime = curTime
+	end
+
+
 	lcd.clear()
 	local time = getRtcTime()
 	if not gFlightState then
@@ -109,7 +139,7 @@ local function run(event)
 		lcd.drawChannel(90, 1, "RxBt", RIGHT + SMLSIZE)
 
 		lcd.drawText(1, 18, "WT", SMLSIZE)
-		local workTimeRemain = 60000 - (getTime() - gRoundStartTime)
+		local workTimeRemain = 60000 - (getTime() - roundStartTime)
 		lcd.drawText(22, 11, LZ_formatTime(workTimeRemain), LEFT + DBLSIZE)
 
 		lcd.drawText(67, 18, "ST", SMLSIZE)

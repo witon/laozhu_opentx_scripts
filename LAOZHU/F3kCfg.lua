@@ -1,41 +1,74 @@
 local varSelectorSliderId = 0
-local varSelectorSliderName = nil
 local varReadSwitchId = 0
-local varReadSwitchName = nil
 local workTimeSwitchId = 0
-local workTimeSwitchName = 0
 
 local function getVarSelectorSlider()
-    return varSelectorSliderId, varSelectorSliderName
+    return varSelectorSliderId
 end
-local function setVarSelectorSlider(id, name)
+local function setVarSelectorSlider(id)
     varSelectorSliderId = id
-    varSelectorSliderName = name 
 end
 
 local function getVarReadSwitch()
-    return varReadSwitchId, varReadSwitchName
+    return varReadSwitchId
 end
 
-local function setVarReadSwitch(id, name)
+local function setVarReadSwitch(id)
     varReadSwitchId = id
-    varReadSwitchName = name
 end
 
 local function getWorkTimeSwitch()
-    return workTimeSwitchId, workTimeSwitchName 
+    return workTimeSwitchId
 end
 
-local function setWorkTimeSwitch(id, name)
+local function setWorkTimeSwitch(id)
     workTimeSwitchId = id
-    workTimeSwitchName = name
+end
+
+local function getCfgNumberField(iter)
+    local str = iter()
+    if str == nil then
+        return 0
+    end
+    return tonumber(str)
+end
+
+local function getCfgStrField(iter)
+    local str = iter()
+    if str == nil then
+        return ""
+    end
+    return str
 end
 
 
 local function readFromFile()
+    local cfgFilePath = gScriptDir .. "3k.cfg"
+    local cfgFile = io.open(cfgFilePath, 'r')
+    if cfgFile == nil then
+        return
+    end
+
+    local content = io.read(cfgFile, 200)
+    io.close(cfgFile)
+    local iter = string.gmatch(content, '([^\r\n]+)') 
+    varSelectorSliderId = getCfgNumberField(iter)
+    varReadSwitchId = getCfgNumberField(iter)
+    workTimeSwitchId = getCfgNumberField(iter)
+
 end
 
 local function writeToFile()
+    local cfgFilePath = gScriptDir .. "3k.cfg"
+    local cfgFile = io.open(cfgFilePath, 'w')
+    if cfgFile == nil then
+        return
+    end
+    io.write(cfgFile, varSelectorSliderId .. "\r\n")
+    io.write(cfgFile, varReadSwitchId .. "\r\n")
+    io.write(cfgFile, workTimeSwitchId .. "\r\n")
+
+    io.close(cfgFile)
 end
 
 return {readFromFile = readFromFile,
