@@ -1,6 +1,6 @@
-
-local varSliderSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
+dofile("/SCRIPTS/TELEMETRY/Fields.lua")
 initFieldsInfo()
+local varSliderSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
 varSliderSelector.setFieldType(FIELDS_INPUT)
 local readSwitchSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
 readSwitchSelector.setFieldType(FIELDS_SWITCH)
@@ -80,7 +80,7 @@ local function run(event, time)
     lcd.drawText(2, 22, "Read Switch", SMLSIZE + LEFT)
     readSwitchSelector.drawSelector(64, 22, invers)
     lcd.drawText(2, 34, "WTime Switch", SMLSIZE + LEFT)
-    workTimeSwitchSelector.drawSelector(64, 34)
+    workTimeSwitchSelector.drawSelector(64, 34, invers)
 
 end
 

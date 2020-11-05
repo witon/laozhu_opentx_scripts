@@ -1,90 +1,3 @@
-FIELDS_CHANNEL = {
-    nameArray = {
-        "ch1",
-        "ch2",
-        "ch3",
-        "ch4",
-        "ch5",
-        "ch6",
-        "ch7",
-        "ch8",
-        "ch9",
-        "ch10",
-        "ch11",
-        "ch12",
-        "ch13",
-        "ch14",
-        "ch15",
-        "ch16"
-    },
-    idArray = {
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16
-    }
-}
-
-FIELDS_SWITCH = {
-    nameArray = {
-        "sa",
-        "sb",
-        "sc",
-        "sd",
-        "se",
-        "sf",
-        "sg",
-        "sh"
-    },
-    idArray = {
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-    }
-
-}
-
-FIELDS_INPUT = {
-    nameArray = {
-        "ail",
-        "ele",
-        "rud",
-        "thr",
-        "s1",
-        "s2",
-        "s3",
-        "ls",
-        "rs"
-    },
-    idArray = {
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
-    }
-}
 
 local selectedIndex = 1
 local fieldTable = FIELDS_CHANNEL
@@ -95,8 +8,31 @@ local function getSelectedItemId()
     return fieldTable.idArray[selectedIndex]
 end
 
+local function startDetectField()
+    for i=1, #fieldTable.valueArray, 1 do
+        fieldTable.valueArray[i] = getValue(fieldTable.idArray[i])
+    end
+end
+
+
 local function setFocusState(state)
     focusState = state
+    if state == 2 then
+        startDetectField()
+    end
+end
+
+local function detectField()
+    for i=1, #fieldTable.valueArray, 1 do
+        local v = getValue(fieldTable.idArray[i])
+        if math.abs(fieldTable.valueArray[i] - v) > 256 then
+            selectedIndex = i
+            fieldTable.valueArray[i] = v
+            return
+        else
+            fieldTable.valueArray[i] = v
+        end
+    end
 end
 
 local function setSelectedItemById(id)
@@ -108,26 +44,6 @@ local function setSelectedItemById(id)
     end
     selectedIndex = 1
 end
-
-local function filterTable(fieldTable)
-    local newTable = {nameArray = {}, idArray = {}}
-    for i=#fieldTable.nameArray, 1, -1 do
-        local fieldInfo = getFieldInfo(fieldTable.nameArray[i])
-        if fieldInfo then
-            fieldTable.idArray[i] = fieldInfo.id
-            newTable.idArray[#newTable.idArray+1] = fieldInfo.id 
-            newTable.nameArray[#newTable.nameArray+1] = fieldInfo.name
-        end
-    end
-    return newTable
-end
-
-function initFieldsInfo()
-    FIELDS_CHANNEL = filterTable(FIELDS_CHANNEL)
-    FIELDS_INPUT = filterTable(FIELDS_INPUT)
-    FIELDS_SWITCH = filterTable(FIELDS_SWITCH)
-end
-
 
 local function setFieldType(type)
     fieldTable = type
@@ -156,10 +72,12 @@ local function drawSelector(x, y, invers)
         drawOption = drawOption + INVERS
     end
     lcd.drawText(x, y, fieldTable.nameArray[selectedIndex], drawOption)
+    if focusState == 2 then
+        detectField()
+    end
 end
 
 return {drawSelector = drawSelector,
-        initFieldsInfo = initFieldsInfo,
         setFieldType = setFieldType,
         setFocusState = setFocusState,
         doKey=doKey,
