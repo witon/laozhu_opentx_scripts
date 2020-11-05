@@ -5,9 +5,13 @@ local displayIndex = 0
 local selectedIndex = 1
 
 local setupPage = nil
+f3kCfg = nil
 local function init()
 	dofile("/SCRIPTS/LAOZHU/utils.lua")
+	f3kCfg = dofile("/SCRIPTS/LAOZHU/F3kCfg.lua")
+	f3kCfg.readFromFile()
 	setupPage = dofile("/SCRIPTS/TELEMETRY/3k/SetupPage.lua")
+	setupPage.init()
 end
 
 local function drawSetupPage(event, time)

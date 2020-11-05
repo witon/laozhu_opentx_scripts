@@ -91,8 +91,22 @@ local fieldTable = FIELDS_CHANNEL
 local isFocuse = false
 local focusState = 0    --0: unselected, 1: selected, 2: editing
 
+local function getSelectedItemId()
+    return fieldTable.idArray[selectedIndex]
+end
+
 local function setFocusState(state)
     focusState = state
+end
+
+local function setSelectedItemById(id)
+    for i=1, #fieldTable.idArray, 1 do
+        if fieldTable.idArray[i] == id then
+            selectedIndex = i
+            return
+        end
+    end
+    selectedIndex = 1
 end
 
 local function filterTable(fieldTable)
@@ -144,4 +158,10 @@ local function drawSelector(x, y, invers)
     lcd.drawText(x, y, fieldTable.nameArray[selectedIndex], drawOption)
 end
 
-return {drawSelector = drawSelector, initFieldsInfo = initFieldsInfo, setFieldType = setFieldType, setFocusState = setFocusState, doKey=doKey}
+return {drawSelector = drawSelector,
+        initFieldsInfo = initFieldsInfo,
+        setFieldType = setFieldType,
+        setFocusState = setFocusState,
+        doKey=doKey,
+        setSelectedItemById=setSelectedItemById,
+        getSelectedItemId=getSelectedItemId}

@@ -15,9 +15,19 @@ function testSetSwitchsAndRead()
     id, name = f3kCfg.getWorkTimeSwitch()
     luaunit.assertEquals(id, 3)
     luaunit.assertEquals(name, "worktimeSwitch1")
+end
+
+function testWriteToFile()
+    local f3kCfg = dofile(HOME_DIR .. "LAOZHU/F3kCfg.lua")
+    f3kCfg.setVarSelectorSlider(1, "slider1")
+    f3kCfg.setVarReadSwitch(2, "varReadSwitch1")
+    f3kCfg.setWorkTimeSwitch(3, "worktimeSwitch1")
+    f3kCfg.writeToFile()
+
 
 
 end
+
 
 
 HOME_DIR = os.getenv("HOME_DIR")
