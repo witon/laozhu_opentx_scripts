@@ -1,6 +1,7 @@
 local curVar = -1
 local curReadSwitchState = 0
 local varMap = nil
+local lastReadTime = 0
 
 local function setVarMap(map)
     varMap = map
@@ -20,24 +21,29 @@ local function getSelectedVar(varSelect)
     return v
 end
 
-local function readVar()
+local function readVar(time)
+    if time - lastReadTime < 10 then
+        return
+    end
+    lastReadTime = time
     local fun = varMap[curVar]
     local value, unit = fun()
     playNumber(value, unit)
 end
 
-local function doReadVar(varSelect, readSwitch)
+local function doReadVar(varSelect, readSwitch, time)
+    print(varSelect)
     local v = getSelectedVar(varSelect)
     if curVar == -1 then
         curVar = v
     elseif curVar ~= v then
         curVar = v
-        readVar()
+        readVar(time)
     end
 
     if readSwitch ~= curReadSwitchState then
         if readSwitch < 0 then
-            readVar()
+            readVar(time)
         end
         curReadSwitchState = readSwitch
     end

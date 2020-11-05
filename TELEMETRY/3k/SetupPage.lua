@@ -1,10 +1,10 @@
-dofile("/SCRIPTS/TELEMETRY/Fields.lua")
+dofile(gScriptDir .. "TELEMETRY/Fields.lua")
 initFieldsInfo()
-local varSliderSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
+local varSliderSelector = dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
 varSliderSelector.setFieldType(FIELDS_INPUT)
-local readSwitchSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
+local readSwitchSelector = dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
 readSwitchSelector.setFieldType(FIELDS_SWITCH)
-local workTimeSwitchSelector = dofile("/SCRIPTS/TELEMETRY/InputSelector.lua")
+local workTimeSwitchSelector = dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
 workTimeSwitchSelector.setFieldType(FIELDS_SWITCH)
 
 
@@ -70,7 +70,7 @@ end
 
 local function run(event, time)
     local invers = false
-    if time % 2 == 1 then
+    if getRtcTime() % 2 == 1 then
         invers = true
     end
     doKey(event)

@@ -87,6 +87,9 @@ FIELDS_INPUT = {
 
 local function filterTable(fieldTable)
     local newTable = {nameArray = {}, idArray = {}, valueArray = {}}
+    newTable.nameArray[1] = " "
+    newTable.idArray[1] = 0
+    newTable.valueArray[1] = 0
     for i=#fieldTable.nameArray, 1, -1 do
         local fieldInfo = getFieldInfo(fieldTable.nameArray[i])
         if fieldInfo then
