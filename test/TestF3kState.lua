@@ -168,6 +168,15 @@ function testLaunchAlt() --launch alt
     luaunit.assertEquals(20, F3kState.getLaunchAlt())
 end
 
+function testSetAndGetDestFlightTime()
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    F3kState.newFlight()
+    F3kState.setDestFlightTime(10)
+    local destFlightTime = F3kState.getDestFlightTime()
+    luaunit.assertEquals(10, destFlightTime)
+end
+
+
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"

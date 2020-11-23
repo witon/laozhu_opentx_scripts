@@ -30,6 +30,7 @@ local function init()
 	f3kCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
 	f3kCfg.readFromFile(gConfigFileName)
 
+
 	for i = 1, #pages do
 		local page = pages[i]
 		local pagePath = gScriptDir .. "TELEMETRY/" .. page

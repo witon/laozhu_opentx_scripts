@@ -12,6 +12,10 @@ function Timer_new()
         }
 end
 
+function Timer_setDuration(timer, d)
+    timer.duration = d
+end
+
 function Timer_resetTimer(timer, d)
     timer.startTime = 0
     timer.stopTime = 0
@@ -93,6 +97,9 @@ end
 
 
 function Timer_readRemainTime(timer)
+    if timer.duration <= 0 then
+        return
+    end
     local remainSeconds = Timer_getRemainTime(timer)
     if remainSeconds == timer.lastReadTime then
         return
@@ -112,6 +119,9 @@ end
 function Timer_readRunTime(timer)
     local remainSeconds = Timer_getRemainTime(timer)
     if remainSeconds < timer.downcountSeconds and remainSeconds >= 0 then
+        if timer.duration <= 0 then
+            return
+        end
         if remainSeconds == timer.lastReadTime then
             return
         end

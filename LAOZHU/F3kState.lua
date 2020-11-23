@@ -6,7 +6,7 @@ local curAlt = 0
 local launchDatetime = 0
 local flightStateStartTime = 0
 local f3kFlightRecord = dofile(gScriptDir .. "LAOZHU/F3kFlightRecord.lua")
-
+local destFlightTime = 0
 local flightTimer = Timer_new()
 
 local function getFlightRecord()
@@ -16,6 +16,16 @@ end
 local function setAlt(alt)
     curAlt = alt
 end
+
+local function setDestFlightTime(time)
+    destFlightTime = time
+    Timer_setDuration(flightTimer, time)
+end
+
+local function getDestFlightTime()
+    return destFlightTime
+end
+
 
 local function getLaunchAlt()
     return launchAlt
@@ -43,7 +53,7 @@ end
 
 local function newFlight(curTime)
     flightState = 0
-    Timer_resetTimer(flightTimer, 30)
+    Timer_resetTimer(flightTimer, destFlightTime)
     Timer_setDowncount(flightTimer, 15)
     Timer_start(flightTimer)
     launchAlt = 0
@@ -130,4 +140,6 @@ return {newFlight = newFlight,
     setAlt = setAlt,
     getLaunchAlt = getLaunchAlt,
     getFlightRecord = getFlightRecord,
+    setDestFlightTime = setDestFlightTime,
+    getDestFlightTime = getDestFlightTime
 }
