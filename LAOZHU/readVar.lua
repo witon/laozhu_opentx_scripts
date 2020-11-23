@@ -32,13 +32,13 @@ local function readVar(time)
 end
 
 local function doReadVar(varSelect, readSwitch, time)
-    print(varSelect)
     local v = getSelectedVar(varSelect)
     if curVar == -1 then
         curVar = v
     elseif curVar ~= v then
         curVar = v
         readVar(time)
+        return
     end
 
     if readSwitch ~= curReadSwitchState then

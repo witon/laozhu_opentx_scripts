@@ -1,7 +1,15 @@
 gScriptDir = "/SCRIPTS/"
+gConfigFileName = "3k.cfg"
+dofile(gScriptDir .. "LAOZHU/Timer.lua")
+gWorktimeTimer = Timer_new()
+gWorktimeTimer.mute = true
+Timer_setForward(gWorktimeTimer, false)
 
+	
 gFlightState = nil
 f3kCfg = nil
+
+gCurAlt = 0
 
 local displayIndex = 1
 
@@ -12,10 +20,17 @@ local function init()
 	dofile(gScriptDir .. "LAOZHU/utils.lua")
 	gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
 
-	f3kCfg = dofile(gScriptDir .. "/LAOZHU/F3kCfg.lua")
-	f3kCfg.readFromFile()
+	dofile(gScriptDir .. "TELEMETRY/Fields.lua")
+	initFieldsInfo()
+	dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
 
-	for i = 1, 4 do
+	Timer_resetTimer(gWorktimeTimer, 600)
+
+
+	f3kCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
+	f3kCfg.readFromFile(gConfigFileName)
+
+	for i = 1, #pages do
 		local page = pages[i]
 		local pagePath = gScriptDir .. "TELEMETRY/" .. page
 		pages[i] = dofile(pagePath)
@@ -52,25 +67,43 @@ local function run(event)
 	gFlightState.setAlt(gCurAlt)
 	gFlightState.doFlightState(curTime, flightModeName)
 
-	readVar.doReadVar(getValue(f3kCfg.getVarSelectorSlider()), getValue(f3kCfg.getVarReadSwitch()), curTime)
+
+	local workTimeSwitchValue = getValue(f3kCfg.getNumberField('WtSw'))
+	if workTimeSwitchValue > 0 then
+		Timer_resetTimer(gWorktimeTimer, 600)
+		Timer_setCurTime(gWorktimeTimer, curTime)
+		Timer_start(gWorktimeTimer)
+	end
+	Timer_setCurTime(gWorktimeTimer, curTime)
+	Timer_run(gWorktimeTimer)
+
+	local varSelectorSliderValue = getValue(f3kCfg.getNumberField('SelSlider'))
+	local varReadSwitchValue = getValue(f3kCfg.getNumberField('ReadSw'))
+	
+	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 
 
 
 	lcd.clear()
-	pages[displayIndex].run(event, curTime)
+
+	local eventProcessed = pages[displayIndex].run(event, curTime)
+	if eventProcessed then
+		return
+	end
+
 	if event==38 then 
 		displayIndex = displayIndex - 1
 		if displayIndex < 1 then
-			displayIndex = 4 
+			displayIndex = #pages
 		end
 	elseif event == 37 then
 		displayIndex = displayIndex + 1
-		if displayIndex > 4 then
+		if displayIndex > #pages then
 			displayIndex = 1
 		end
 
 	end
-	
+
 end
 
 return { run=run, init=init }

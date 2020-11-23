@@ -1,0 +1,4 @@
+
+function laozhuAssert(c)
+    
+end

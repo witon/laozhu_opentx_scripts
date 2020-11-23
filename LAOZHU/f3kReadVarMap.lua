@@ -4,7 +4,7 @@ local function getCurAlt()
 end
 
 local function getFlightTime()
-    return gFlightState.getFlightTime()/100, 0
+    return gFlightState.getFlightTime(), 0
 end
 
 local function getRssi()

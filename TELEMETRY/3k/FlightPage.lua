@@ -1,4 +1,3 @@
-local roundStartTime = getTime()
 
 local function drawFlightInfo()
 	lcd.drawText(1, 1, model.getInfo().name, SMLSIZE)
@@ -9,8 +8,7 @@ local function drawFlightInfo()
 	lcd.drawChannel(90, 1, "RxBt", RIGHT + SMLSIZE)
 
 	lcd.drawText(1, 18, "WT", SMLSIZE)
-	local workTimeRemain = 60000 - (getTime() - roundStartTime)
-	lcd.drawText(22, 11, LZ_formatTime(workTimeRemain), LEFT + DBLSIZE)
+	lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gWorktimeTimer)), LEFT + DBLSIZE)
 
 	lcd.drawText(67, 18, "ST", SMLSIZE)
 	lcd.drawText(87, 11, gFlightState.getCurFlightStateName(), LEFT + DBLSIZE)
@@ -21,10 +19,10 @@ local function drawFlightInfo()
 
 
 
-	if gFlightState.getFlightState()==2 or gFlightState.getFlightState()==1 then
+	--if gFlightState.getFlightState()==2 or gFlightState.getFlightState()==1 then
 		lcd.drawText(67, 36, "FT", SMLSIZE)
 		lcd.drawText(87, 29, LZ_formatTime(gFlightState.getFlightTime()), LEFT + DBLSIZE)
-	end
+	--end
 
 	lcd.drawText(1, 53, "ALT", SMLSIZE)
 	lcd.drawChannel(62, 47, "Alt", RIGHT + DBLSIZE)
@@ -40,10 +38,6 @@ end
 
 
 local function run(event, time)
-
-	if getValue(f3kCfg.getWorkTimeSwitch()) > 0 then
-			roundStartTime = time 
-	end
 
     drawFlightInfo()
 end

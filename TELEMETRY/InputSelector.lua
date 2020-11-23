@@ -1,85 +1,79 @@
 
-local selectedIndex = 1
-local fieldTable = FIELDS_CHANNEL
-local isFocuse = false
-local focusState = 0    --0: unselected, 1: selected, 2: editing
 
-local function getSelectedItemId()
-    return fieldTable.idArray[selectedIndex]
+function ISnewInputSelector()
+    return {selectedIndex = 1, fieldTable = FIELDS_CHANNEL, isFocuse = false, focusState = 0}
+    --focusState --0: unselected, 1: selected, 2: editing
 end
 
-local function startDetectField()
-    for i=1, #fieldTable.valueArray, 1 do
-        fieldTable.valueArray[i] = getValue(fieldTable.idArray[i])
+function ISgetSelectedItemId(selector)
+    return selector.fieldTable.idArray[selector.selectedIndex]
+end
+
+local function startDetectField(selector)
+    for i=1, #selector.fieldTable.valueArray, 1 do
+        selector.fieldTable.valueArray[i] = getValue(selector.fieldTable.idArray[i])
     end
 end
 
 
-local function setFocusState(state)
-    focusState = state
-    if state == 2 then
-        startDetectField()
+function ISsetFocusState(selector, state)
+    selector.focusState = state
+    if selector.state == 2 then
+        startDetectField(selector)
     end
 end
 
-local function detectField()
-    for i=1, #fieldTable.valueArray, 1 do
-        local v = getValue(fieldTable.idArray[i])
-        if math.abs(fieldTable.valueArray[i] - v) > 256 then
-            selectedIndex = i
-            fieldTable.valueArray[i] = v
+local function detectField(selector)
+    for i=1, #selector.fieldTable.valueArray, 1 do
+        local v = getValue(selector.fieldTable.idArray[i])
+        if math.abs(selector.fieldTable.valueArray[i] - v) > 256 then
+            selector.selectedIndex = i
+            selector.fieldTable.valueArray[i] = v
             return
         else
-            fieldTable.valueArray[i] = v
+            selector.fieldTable.valueArray[i] = v
         end
     end
 end
 
-local function setSelectedItemById(id)
-    for i=1, #fieldTable.idArray, 1 do
-        if fieldTable.idArray[i] == id then
-            selectedIndex = i
+function ISsetSelectedItemById(selector, id)
+    for i=1, #selector.fieldTable.idArray, 1 do
+        if selector.fieldTable.idArray[i] == id then
+            selector.selectedIndex = i
             return
         end
     end
-    selectedIndex = 1
+    selector.selectedIndex = 1
 end
 
-local function setFieldType(type)
-    fieldTable = type
+function ISsetFieldType(selector, type)
+    selector.fieldTable = type
 end
 
-local function doKey(event)
+function ISdoKey(selector, event)
     if event == 35 or event == 67 then
-        selectedIndex = selectedIndex + 1
-        if selectedIndex > #fieldTable.nameArray then
-            selectedIndex = #fieldTable.nameArray
+        selector.selectedIndex = selector.selectedIndex + 1
+        if selector.selectedIndex > #selector.fieldTable.nameArray then
+            selector.selectedIndex = #selector.fieldTable.nameArray
         end
     elseif event == 36 or event == 68 then
-        selectedIndex = selectedIndex - 1
-        if selectedIndex < 1 then
-            selectedIndex = 1
+        selector.selectedIndex = selector.selectedIndex - 1
+        if selector.selectedIndex < 1 then
+            selector.selectedIndex = 1
         end
     end
 end
 
 
-local function drawSelector(x, y, invers)
+function ISdrawSelector(selector, x, y, invers)
     local drawOption = 0
-    if focusState == 2 and invers then
+    if selector.focusState == 2 and invers then
         drawOption = drawOption + INVERS
-    elseif focusState == 1 then
+    elseif selector.focusState == 1 then
         drawOption = drawOption + INVERS
     end
-    lcd.drawText(x, y, fieldTable.nameArray[selectedIndex], drawOption)
-    if focusState == 2 then
-        detectField()
+    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], drawOption)
+    if selector.focusState == 2 then
+        detectField(selector)
     end
 end
-
-return {drawSelector = drawSelector,
-        setFieldType = setFieldType,
-        setFocusState = setFocusState,
-        doKey=doKey,
-        setSelectedItemById=setSelectedItemById,
-        getSelectedItemId=getSelectedItemId}
