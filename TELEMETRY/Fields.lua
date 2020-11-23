@@ -16,24 +16,6 @@ FIELDS_CHANNEL = {
         "ch14",
         "ch15",
         "ch16"
-    },
-    idArray = {
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16
     }
 }
 
@@ -47,16 +29,6 @@ FIELDS_SWITCH = {
         "sf",
         "sg",
         "sh"
-    },
-    idArray = {
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
     }
 }
 
@@ -71,26 +43,17 @@ FIELDS_INPUT = {
         "s3",
         "ls",
         "rs"
-    },
-    idArray = {
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9
     }
 }
 
 local function filterTable(fieldTable)
     local newTable = {nameArray = {}, idArray = {}, valueArray = {}}
+    newTable.nameArray[1] = " "
+    newTable.idArray[1] = 0
+    newTable.valueArray[1] = 0
     for i=#fieldTable.nameArray, 1, -1 do
         local fieldInfo = getFieldInfo(fieldTable.nameArray[i])
         if fieldInfo then
-            fieldTable.idArray[i] = fieldInfo.id
             newTable.idArray[#newTable.idArray+1] = fieldInfo.id 
             newTable.nameArray[#newTable.nameArray+1] = fieldInfo.name
             newTable.valueArray[#newTable.valueArray+1] = 0

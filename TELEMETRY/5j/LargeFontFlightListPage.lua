@@ -1,5 +1,6 @@
 local selectedIndex = 1
 local flightArray = nil
+
 local function drawFlightList()
 	local x = 127 
 	local y = 10 
@@ -9,20 +10,25 @@ local function drawFlightList()
 	lcd.drawText(126, 1, "FTime", SMLSIZE + RIGHT)
 	local i = 0
 	local v = 0
-	for i, flight in ipairs(flightArray) do
-		if i>selectedIndex-4 and i<selectedIndex+4 then
+	for i, v in ipairs(gLaunchDateTimeArray) do
+		if i > selectedIndex - 5 and i<selectedIndex + 6 then
 			local drawOption = 0
 			if i==selectedIndex then
-				lcd.drawFilledRectangle(0, y-1, 129, 14, 0)
+				lcd.drawFilledRectangle(0, y-1, 129, 9, 0)
 				drawOption = INVERS
 			end
-			lcd.drawText(2, y, LZ_formatDateTime(flight.flightStartTime), MIDSIZE + LEFT + drawOption)
-			lcd.drawNumber(85, y, flight.launchAlt, MIDSIZE + RIGHT + drawOption)
-			lcd.drawText(126, y, LZ_formatTime(flight.flightTime), MIDSIZE + RIGHT + drawOption)
-			y = y + 14 
+			lcd.drawText(2, y, LZ_formatDateTime(gLaunchDateTimeArray[i]), SMLSIZE + LEFT + drawOption)
+			lcd.drawNumber(85, y, gLaunchALTArray[i], SMLSIZE + RIGHT + drawOption)
+			if gPowerOnAgainArray[i] then
+				lcd.drawText(86, y, "*", SMLSIZE + LEFT + drawOption)
+			end
+			lcd.drawText(126, y, LZ_formatTime(gFlightTimeArray[i]), SMLSIZE + RIGHT + drawOption)
+			y = y + 10 
 		end
 	end
 end
+
+
 
 local function init()
 

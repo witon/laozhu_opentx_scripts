@@ -1,6 +1,6 @@
 function LZ_formatTime(time)
-	local minute = time / 6000
-	local second= time / 100 % 60
+	local minute = time / 60
+	local second= time % 60
 	local str = string.format("%02d:%02d", minute, second)
 	return str
 end
@@ -15,5 +15,32 @@ function getTelemetryId(name)
 	else
 		return -1
 	end
+end
+
+function LZ_playNumber(value, flag)
+	local t = math.floor(getTime()/90)
+	if t == lz_lastPlayNumberTime then
+		return
+	end
+	lz_lastPlayNumberTime = t
+	playNumber(value, flag)
+end
+
+function LZ_playTime(time)
+	local t = math.floor(getTime()/90)
+	if t == lz_lastPlayNumberTime then
+		return
+	end
+
+	lz_lastPlayNumberTime = t
+	local minute = math.floor(time / 60)
+	if minute ~= 0 then
+		playNumber(minute, 36)
+	end
+	local second = time % 60
+	if second ~= 0 then
+		playNumber(second, 37)
+	end
+
 end
 
