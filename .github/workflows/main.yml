@@ -31,6 +31,8 @@ jobs:
           # Command line flags passed to make when building Lua
           luaCompileFlags: # optional
       - uses: leafo/gh-actions-luarocks@v2
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         with:
           luarocksVersion: "3.1.3"
        # Install some package
