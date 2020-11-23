@@ -21,10 +21,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - uses: xpol/setup-lua@v0.2
+      - uses: leafo/gh-actions-lua@v8.0.0
         with:
-          lua-version: "5.2.2"
+          # The version of Lua to install, must be available on https://www.lua.org/ftp/ or http://luajit.org/download.html
+          luaVersion: 5.2.2
+          # Command line flags passed to make when building Lua
+          luaCompileFlags: # optional
       - uses: leafo/gh-actions-luarocks@v2
         with:
           luarocksVersion: "3.1.3"
