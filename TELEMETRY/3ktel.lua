@@ -3,6 +3,12 @@ gConfigFileName = "3k.cfg"
 dofile(gScriptDir .. "LAOZHU/Timer.lua")
 gWorktimeTimer = Timer_new()
 gWorktimeTimer.mute = true
+gWorktimeArray = {
+	420,
+	600,
+	900
+}
+gSelectWorktimeIndex = 2
 Timer_setForward(gWorktimeTimer, false)
 
 	
@@ -24,7 +30,7 @@ local function init()
 	initFieldsInfo()
 	dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
 
-	Timer_resetTimer(gWorktimeTimer, 600)
+	Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 
 
 	f3kCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
@@ -71,7 +77,7 @@ local function run(event)
 
 	local workTimeSwitchValue = getValue(f3kCfg.getNumberField('WtSw'))
 	if workTimeSwitchValue > 0 then
-		Timer_resetTimer(gWorktimeTimer, 600)
+		Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 		Timer_setCurTime(gWorktimeTimer, curTime)
 		Timer_start(gWorktimeTimer)
 	end
