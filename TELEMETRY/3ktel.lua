@@ -26,9 +26,9 @@ local function init()
 	dofile(gScriptDir .. "LAOZHU/utils.lua")
 	gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
 
-	dofile(gScriptDir .. "TELEMETRY/Fields.lua")
+	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
-	dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
+	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
 
 	Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 

@@ -17,9 +17,9 @@ end
 
 local function init()
 	dofile(gScriptDir .. "LAOZHU/utils.lua")
-	dofile(gScriptDir .. "TELEMETRY/Fields.lua")
+	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
-	dofile(gScriptDir .. "TELEMETRY/InputSelector.lua")
+	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
 
 	gFlightState = dofile(gScriptDir .. "LAOZHU/F5jState.lua")
 
