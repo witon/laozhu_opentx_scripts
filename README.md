@@ -1,3 +1,6 @@
-Introduction:
-======
-Laozhu opentx scripts are some scripts for RC thermal glider training.
+#安装#
+1. 将"LAOZHU"、"TELEMETRY"两个目录copy到遥控器SD卡"SCRIPTS"目录下。
+2. 进入遥控器"DISPLAY"设置界面，选择"3ktel"(for 3k)或者"5jtel"(for 5j)。<br>
+![](document/screenshot_xlites_install.png)
+3. 在遥控器主界面，长按摇杆"下"，进入"飞行信息"界面。<br>![](document/screenshot_xlites_flightpage.png)
+4. 连续按摇杆"右"，进入"设置"界面。<br>![](document/screenshot_xlites_setting.png)
