@@ -1,4 +1,4 @@
-#安装#
+#安装
 1. 将"LAOZHU"、"TELEMETRY"两个目录copy到遥控器SD卡"SCRIPTS"目录下。
 2. 进入遥控器"DISPLAY"设置界面，选择"3ktel"(for 3k)或者"5jtel"(for 5j)。<br>
 ![](document/screenshot_xlites_install.png)
