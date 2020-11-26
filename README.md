@@ -31,7 +31,7 @@
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_preset.png)<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_zoom.png)<br>
 从飞行模式"zoom"进入除"preset"外的飞行模式，计时器继续计时。<br>
-![](document/screenshot_xlites_state_flight.png)<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_flight.png)<br>
 正常飞行结束，进入一次飞行模式"preset"（按压发射按钮一次），进入降落状态，计时器停止计时，并且保存当前飞行记录。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_landed.png)<br>
 
