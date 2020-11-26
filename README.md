@@ -21,7 +21,7 @@
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_set_dest_flighttime.png)
 
 4. 记录飞行时间：<br>
-3k的脚本通过检测飞行模式变化来开始或终止飞行计时，起飞和爬升的飞行模式命名必须分别为"preset"和"zoom"。<br>
+3k的脚本通过检测飞行模式变化来开始或终止飞行计时，发射和爬升的飞行模式命名必须分别为"preset"和"zoom"。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_flight_modes.png)<br>
 从飞行模式"preset"进入飞行模式"zoom"时飞行时间计时器清零并且开始计时。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_preset.png)<br>
