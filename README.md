@@ -1,3 +1,7 @@
+兼容性
+====
+本脚本在FrSky XLite遥控 & OpenTX2.3固件上测试通过。
+ 
 安装
 ====
 1. 将"LAOZHU"、"TELEMETRY"两个目录copy到遥控器SD卡"SCRIPTS"目录下。
