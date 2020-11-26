@@ -9,6 +9,13 @@
 
 3K使用指引
 ====
+主要功能：<br>
+显示剩余工作时间<br>
+飞行计时<br>
+设置目标飞行时间并倒数15秒<br>
+记录多条飞行记录<br>
+使用旋钮选择并语音播报飞行信息<br>
+
 1. 设置：<br>
 在"飞行信息"界面，连续按摇杆"右"进入设置界面，按摇杆"上"、"下"选中设置项，按摇杆"确定"进入设置，按摇杆"上"、"下"改变设置，再次按摇杆"确定"完成设置。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_3k_setting.png)
