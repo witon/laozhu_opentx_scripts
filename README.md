@@ -9,22 +9,18 @@
 
 3K使用指引
 ====
-1. 设置工作时间：
-----
+1. 设置工作时间：<br>
 在"飞行信息"界面，按摇杆"上"、"下"移动焦点，选中工作时间，按摇杆"确定"进入工作时间设置，工作时间会闪烁，此时按摇杆"上"、"下"可改变工作时间。再次按"确定"，结束工作时间设置。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_set_worktime.png)
 
-2. 复位工作时间：
-----
+2. 复位工作时间：<br>
 拨动设置里选择的工作时间复位开关进行复位。
 
-3. 设置目标飞行时间（可用于倒数QT）：
-----
+3. 设置目标飞行时间（可用于倒数QT）：<br>
 在"飞行信息"界面，按摇杆"上"、"下"移动焦点，选中目标飞行时间，按摇杆"确定"进入目标时间设置，目标飞行时间会闪烁，此时按摇杆"上"、"下"可改变目标时间。再次按"确定"，结束目标飞行时间设置，在飞行时间达到目标时间15秒后，开始语音倒数。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_set_dest_flighttime.png)
 
-4. 记录飞行时间：
-----
+4. 记录飞行时间：<br>
 从飞行模式"preset"进入飞行模式"zoom"时飞行时间计时器清零并且开始计时。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_preset.png)<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_zoom.png)<br>
@@ -34,12 +30,10 @@
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_state_landed.png)
 
 
-5. 查看飞行记录：
-----
+5. 查看飞行记录：<br>
 在"飞行信息"界面，按摇杆"右"进入飞行记录界面，按摇杆"上"、"下"滚动记录。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_flight_records.png)
 
-6. 设置：
-----
+6. 设置：<br>
 在"飞行信息"界面，连续按摇杆"右"进入设置界面，按摇杆"上"、"下"选中设置项，按摇杆"确定"进入设置，按摇杆"上"、"下"改变设置，再次按摇杆"确定"完成设置。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_3k_setting.png)
