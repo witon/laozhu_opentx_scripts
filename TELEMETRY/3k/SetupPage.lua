@@ -1,3 +1,4 @@
+dofile(gScriptDir .. "TELEMETRY/common/InputView.lua")
 local varSliderSelector = ISnewInputSelector()
 ISsetFieldType(varSliderSelector, FIELDS_INPUT)
 local readSwitchSelector = ISnewInputSelector()
@@ -34,7 +35,7 @@ end
 local function doKey(event)
     if editingSelector then
         if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
-            ISsetFocusState(editingSelector, 1)
+            IVsetFocusState(editingSelector, 1)
             editingSelector = nil
             setCfgValue()
             f3kCfg.writeToFile(gConfigFileName)
@@ -46,7 +47,7 @@ local function doKey(event)
  
     if(event == EVT_ENTER_BREAK) then
         editingSelector = selectorArray[curSelectorIndex]
-        ISsetFocusState(editingSelector, 2)
+        IVsetFocusState(editingSelector, 2)
         return true
     end
     local eventProcessed = false
@@ -65,8 +66,8 @@ local function doKey(event)
         end
         eventProcessed = true
     end
-    ISsetFocusState(preFocus, 0)
-    ISsetFocusState(selectorArray[curSelectorIndex], 1)
+    IVsetFocusState(preFocus, 0)
+    IVsetFocusState(selectorArray[curSelectorIndex], 1)
     return eventProcessed
 end
 
@@ -77,11 +78,11 @@ local function run(event, time)
     end
     local drawOptions
     lcd.drawText(2, 10, "Var Slider", SMLSIZE + LEFT)
-    ISdrawSelector(varSliderSelector, 64, 10, invers)
+    IVdraw(varSliderSelector, 64, 10, invers)
     lcd.drawText(2, 22, "Read Switch", SMLSIZE + LEFT)
-    ISdrawSelector(readSwitchSelector, 64, 22, invers)
+    IVdraw(readSwitchSelector, 64, 22, invers)
     lcd.drawText(2, 34, "WTime Switch", SMLSIZE + LEFT)
-    ISdrawSelector(workTimeSwitchSelector, 64, 34, invers)
+    IVdraw(workTimeSwitchSelector, 64, 34, invers)
     return doKey(event)
 end
 

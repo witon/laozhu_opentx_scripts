@@ -25,7 +25,7 @@ local function readFromFile(fileName)
     local cfgFilePath = gScriptDir .. fileName
     local cfgFile = io.open(cfgFilePath, 'r')
     if cfgFile == nil then
-        return
+        return false
     end
 
     local content = io.read(cfgFile, 200)
@@ -41,6 +41,7 @@ local function readFromFile(fileName)
             end
         end
     end
+    return true
 end
 
 local function writeToFile(fileName)

@@ -1,14 +1,4 @@
 
-
-function ISnewInputSelector()
-    return {selectedIndex = 1, fieldTable = FIELDS_CHANNEL, isFocuse = false, focusState = 0}
-    --focusState --0: unselected, 1: selected, 2: editing
-end
-
-function ISgetSelectedItemId(selector)
-    return selector.fieldTable.idArray[selector.selectedIndex]
-end
-
 local function startDetectField(selector)
     for i=1, #selector.fieldTable.valueArray, 1 do
         selector.fieldTable.valueArray[i] = getValue(selector.fieldTable.idArray[i])
@@ -16,12 +6,18 @@ local function startDetectField(selector)
 end
 
 
+
 function ISsetFocusState(selector, state)
-    selector.focusState = state
     if selector.state == 2 then
         startDetectField(selector)
     end
 end
+
+
+function ISgetSelectedItemId(selector)
+    return selector.fieldTable.idArray[selector.selectedIndex]
+end
+
 
 local function detectField(selector)
     for i=1, #selector.fieldTable.valueArray, 1 do
@@ -65,15 +61,19 @@ function ISdoKey(selector, event)
 end
 
 
-function ISdrawSelector(selector, x, y, invers)
-    local drawOption = 0
-    if selector.focusState == 2 and invers then
-        drawOption = drawOption + INVERS
-    elseif selector.focusState == 1 then
-        drawOption = drawOption + INVERS
-    end
-    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], drawOption)
+function ISdraw(selector, x, y, invers)
+    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], invers)
     if selector.focusState == 2 then
         detectField(selector)
     end
+end
+
+function ISnewInputSelector()
+    return {selectedIndex = 1,
+            fieldTable = FIELDS_CHANNEL,
+            isFocuse = false,
+            focusState = 0,
+            setFocusState = ISsetFocusState,
+            draw = ISdraw,
+            doKey = ISdoKey}
 end

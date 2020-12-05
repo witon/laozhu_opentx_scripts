@@ -1,3 +1,5 @@
+dofile(gScriptDir .. "TELEMETRY/common/InputView.lua")
+
 local varSliderSelector = ISnewInputSelector()
 ISsetFieldType(varSliderSelector, FIELDS_INPUT)
 local readSwitchSelector = ISnewInputSelector()
@@ -46,7 +48,7 @@ end
 local function doKey(event)
     if editingSelector then
         if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
-            ISsetFocusState(editingSelector, 1)
+            IVsetFocusState(editingSelector, 1)
             editingSelector = nil
             setCfgValue()
             f5jCfg.writeToFile(gConfigFileName)
@@ -58,7 +60,7 @@ local function doKey(event)
  
     if(event == EVT_ENTER_BREAK) then
         editingSelector = selectorArray[curSelectorIndex]
-        ISsetFocusState(editingSelector, 2)
+        IVsetFocusState(editingSelector, 2)
         return true
     end
 
@@ -78,8 +80,8 @@ local function doKey(event)
         end
         eventProcessed = true
     end
-    ISsetFocusState(preFocus, 0)
-    ISsetFocusState(selectorArray[curSelectorIndex], 1)
+    IVsetFocusState(preFocus, 0)
+    IVsetFocusState(selectorArray[curSelectorIndex], 1)
     return eventProcessed
 end
 
@@ -90,15 +92,15 @@ local function run(event, time)
     end
     local drawOptions
     lcd.drawText(2, 5, "Var Slider", SMLSIZE + LEFT)
-    ISdrawSelector(varSliderSelector, 84, 5, invers)
+    IVdraw(varSliderSelector, 84, 5, invers)
     lcd.drawText(2, 17, "Read Switch", SMLSIZE + LEFT)
-    ISdrawSelector(readSwitchSelector, 84, 17, invers)
+    IVdraw(readSwitchSelector, 84, 17, invers)
     lcd.drawText(2, 29, "Reset Switch", SMLSIZE + LEFT)
-    ISdrawSelector(resetSwitchSelector, 84, 29, invers)
+    IVdraw(resetSwitchSelector, 84, 29, invers)
     lcd.drawText(2, 41, "Flight Switch", SMLSIZE + LEFT)
-    ISdrawSelector(flightSwitchSelector, 84, 41, invers)
+    IVdraw(flightSwitchSelector, 84, 41, invers)
     lcd.drawText(2, 53, "Throttle Channel", SMLSIZE + LEFT)
-    ISdrawSelector(throttleChannelSelector, 84, 53, invers)
+    IVdraw(throttleChannelSelector, 84, 53, invers)
     return doKey(event)
 
 end
