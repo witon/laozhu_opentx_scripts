@@ -87,7 +87,7 @@
 油门摇杆推到上1/4或者再小一点(避免一开始过大超出机械行程损坏结构)，按压摇杆"上"、"下"，移动光标到max，按压"确定"，光标开始闪烁，按压摇杆"上"、"下"改变数值，直到两个舵面处于最大角度并且一致。(当安装不够一致时，其中一个最大角度α比另一个小，调整到两个舵面角度都是α即可)。继续推大油门摇杆，重复以上调整直到一致并且机械不干涉并且角度最大。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_adjust_max.png)<br>
 调整最小：<br>
-同上。
+同上。<br>
 调整中位：<br>
 油门摇杆至于中位(thr显示最好是0或者接近0)，按压摇杆"上"、"下"，移动光标到center，按压"确定"，光标开始闪烁，按压摇杆"上"、"下"改变数值。直到所调整的两个舵面处于中位(一般是处于最大和最小角度的中值)，并且一致。<br>
 ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_adjust_center.png)<br>
