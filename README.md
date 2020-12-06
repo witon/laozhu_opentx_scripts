@@ -69,7 +69,7 @@
 <span id="adjust_usage">adjust使用指引</span>
 ====
 1. 进入adjust界面<br>
-![](document/screenshot_xlites_adjust.png)<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_adjust.png)<br>
 "thr"当前油门摇杆输出的值<br>
 "adj"是否开始调整，初始进入默认为"n"<br>
 "output1"待调整输出1，用于选择第一个被调整的输出通道。<br>
@@ -77,20 +77,20 @@
 2. 选择调整通道<br>
 在"adj"为"n"时，移动光标到output1和output2上，按摇杆"确定"，光标开始闪烁，按压摇杆"上"、"下"选择要调整的副翼通道，再次按压摇杆"确定"，退出选择。<br>
 注意！！！调整通道时，所选通道的输出会根据油门摇杆所处的位置，可能处于最大输出、最小输出。如果是有动力的飞机，切记断开电机线后调整，或者确保所调整的通道不是油门通道。非油门通道或者非动力飞机，也需要关注所调整通道是否信号输出范围超过机械限位，否则会损坏机械结构，建议非油门通道调整时，油门摇杆推到中间位置。<br>
-![](document/screenshot_xlites_select_output.png)<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_select_output.png)<br>
 3. 打开调整选项<br>
 按压摇杆"上"、"下"，移动光标到"adj"上，按压摇杆"确定"，光标开始闪烁，按压摇杆"上"、"下"，打开或者关闭调整。再次按压"确定"，结束选择。
 注意！！！打开调整选项时，确保所选择调整的两个通道不是油门通道。同时建议断开电机线，并且油门摇杆置于中位。<br>
-![](document/screenshot_xlites_enable_adjust.png)<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_enable_adjust.png)<br>
 4. 调整两个通道的最小、中位、最大<br>
 调整最大：<br>
 油门摇杆推到上1/4或者再小一点(避免一开始过大超出机械行程损坏结构)，按压摇杆"上"、"下"，移动光标到max，按压"确定"，光标开始闪烁，按压摇杆"上"、"下"改变数值，直到两个舵面处于最大角度并且一致。(当安装不够一致时，其中一个最大角度α比另一个小，调整到两个舵面角度都是α即可)。继续推大油门摇杆，重复以上调整直到一致并且机械不干涉并且角度最大。<br>
-![](document/screenshot_xlites_adjust_max.png)<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_adjust_max.png)<br>
 调整最小：<br>
 同上。
 调整中位：<br>
 油门摇杆至于中位(thr显示最好是0或者接近0)，按压摇杆"上"、"下"，移动光标到center，按压"确定"，光标开始闪烁，按压摇杆"上"、"下"改变数值。直到所调整的两个舵面处于中位(一般是处于最大和最小角度的中值)，并且一致。<br>
-![](document/screenshot_xlites_adjust_center.png)<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_adjust_center.png)<br>
 5. 结束output调整<br>
 光标移动到"adj"，设置为"n"。
 
