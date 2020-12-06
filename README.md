@@ -1,3 +1,4 @@
+
 ......
 [TOC]
 ......
@@ -8,10 +9,12 @@
 5jtel：F5J比赛和训练飞行辅助<br>
 adjust：调机小工具，当前支持调整两个副翼或者两个襟翼舵机输出的行程和一致性。<br>
 
+
 兼容性
 ====
 本脚本在FrSky XLite遥控 & OpenTX2.3固件上测试通过。
- 
+
+
 安装
 ====
 1. 将"LAOZHU"、"TELEMETRY"两个目录copy到遥控器SD卡"SCRIPTS"目录下。
@@ -67,6 +70,7 @@ adjust：调机小工具，当前支持调整两个副翼或者两个襟翼舵�
 ====
 *待续...*
 
+
 adjust使用指引
 ====
 1. 进入adjust界面<br>
@@ -94,3 +98,5 @@ adjust使用指引
 ![](document/screenshot_xlites_adjust_center.png)<br>
 5. 结束output调整<br>
 光标移动到"adj"，设置为"n"。
+
+
