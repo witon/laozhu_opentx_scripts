@@ -1,13 +1,8 @@
-
-......
-[TOC]
-......
-
 介绍
 ====
 [3ktel：F3K比赛和训练飞行辅助](#f3k_usage)<br>
-5jtel：F5J比赛和训练飞行辅助<br>
-adjust：调机小工具，当前支持调整两个副翼或者两个襟翼舵机输出的行程和一致性。<br>
+[5jtel：F5J比赛和训练飞行辅助](#f5j_usage)<br>
+[adjust：调机小工具](#adjust_usage)，当前支持调整两个副翼或者两个襟翼舵机输出的行程和一致性。<br>
 
 
 兼容性
@@ -66,12 +61,12 @@ adjust：调机小工具，当前支持调整两个副翼或者两个襟翼舵�
 7. 语音播报飞行信息：<br>
 通过"设置"中选择的"Var Slider"旋钮，选择播报的信息，依次为"当前飞行时间"、"当前高度"、"接收信号强度"、"发射高度"。拨动"设置"中选择的"Read Switch"开关，播报选择的信息。
 
-5J使用指引
+<span id="f5j_usage">5J使用指引</span>
 ====
 *待续...*
 
 
-adjust使用指引
+<span id="adjust_usage">adjust使用指引</span>
 ====
 1. 进入adjust界面<br>
 ![](document/screenshot_xlites_adjust.png)<br>
