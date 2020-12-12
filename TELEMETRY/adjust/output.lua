@@ -1,6 +1,10 @@
 local output1 = OSnewOutputSelector()
 local output2 = OSnewOutputSelector()
 local adjustCheckBox = CBnewCheckBox()
+local channel1ReverseCB= CBnewCheckBox()
+local channel2ReverseCB= CBnewCheckBox()
+
+
 
 
 
@@ -48,10 +52,12 @@ local function onAdjustCheckBoxChange(checkBox)
             channel1CenterNumEdit,
             channel2CenterNumEdit,
             channel1MaxNumEdit,
-            channel2MaxNumEdit
+            channel2MaxNumEdit,
+            channel1ReverseCB,
+            channel2ReverseCB
         }
-        replaceMix(output1.selectedIndex)
-        replaceMix(output2.selectedIndex)
+        replaceMix(output1.selectedIndex, channel1ReverseCB.checked)
+        replaceMix(output2.selectedIndex, channel2ReverseCB.checked)
     else
         ivArray = {
             adjustCheckBox,
@@ -61,6 +67,16 @@ local function onAdjustCheckBoxChange(checkBox)
         recoverMix(output1.selectedIndex)
         recoverMix(output2.selectedIndex)
     end
+end
+
+local function onReverseCheckBoxChange(checkBox)
+    local channel = output1.selectedIndex
+    if checkBox == channel2ReverseCB then
+        channel = output2.selectedIndex
+    end
+    recoverMix(channel)
+    replaceMix(channel, checkBox.checked)
+
 end
 
 
@@ -101,6 +117,9 @@ local function init()
     OSsetOnChange(output1, onOutputSelectorChange)
     OSsetOnChange(output2, onOutputSelectorChange)
     CBsetOnChange(adjustCheckBox, onAdjustCheckBoxChange)
+    CBsetOnChange(channel1ReverseCB, onReverseCheckBoxChange)
+    CBsetOnChange(channel2ReverseCB, onReverseCheckBoxChange)
+ 
     dofile(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
     onOutputSelectorChange(output1)
     onOutputSelectorChange(output2)
@@ -148,30 +167,34 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    local drawOptions
 
-    lcd.drawText(2, 10, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(34, 10, getValue("thr"), SMLSIZE+LEFT)
+    lcd.drawText(2, 5, "thr:", SMLSIZE + LEFT)
+    lcd.drawText(34, 5, getValue("thr"), SMLSIZE+LEFT)
 
-    lcd.drawText(64, 10, "adj:", SMLSIZE + LEFT)
-    IVdraw(adjustCheckBox, 84, 10, invers)
+    lcd.drawText(64, 5, "adj:", SMLSIZE + LEFT)
+    IVdraw(adjustCheckBox, 84, 5, invers)
 
-    lcd.drawText(2, 20, "output1:", SMLSIZE + LEFT)
-    IVdraw(output1, 42, 20, invers)
-    lcd.drawText(66, 20, "output2:", SMLSIZE + LEFT)
-    IVdraw(output2, 106, 20, invers)
+    lcd.drawText(2, 15, "output1:", SMLSIZE + LEFT)
+    IVdraw(output1, 42, 15, invers)
+    lcd.drawText(66, 15, "output2:", SMLSIZE + LEFT)
+    IVdraw(output2, 106, 15, invers)
 
-    lcd.drawText(2, 30, "min:", SMLSIZE+LEFT)
-    IVdraw(channel1MinNumEdit, 62, 30, invers)
-    IVdraw(channel2MinNumEdit, 126, 30, invers)
+    lcd.drawText(2, 25, "min:", SMLSIZE+LEFT)
+    IVdraw(channel1MinNumEdit, 62, 25, invers)
+    IVdraw(channel2MinNumEdit, 126, 25, invers)
 
-    lcd.drawText(2, 40, "center:", SMLSIZE+LEFT)
-    IVdraw(channel1CenterNumEdit, 62, 40, invers)
-    IVdraw(channel2CenterNumEdit, 126, 40, invers)
+    lcd.drawText(2, 35, "center:", SMLSIZE+LEFT)
+    IVdraw(channel1CenterNumEdit, 62, 35, invers)
+    IVdraw(channel2CenterNumEdit, 126, 35, invers)
 
-    lcd.drawText(2, 50, "max:", SMLSIZE+LEFT)
-    IVdraw(channel1MaxNumEdit, 62, 50, invers)
-    IVdraw(channel2MaxNumEdit, 126, 50, invers)
+    lcd.drawText(2, 45, "max:", SMLSIZE+LEFT)
+    IVdraw(channel1MaxNumEdit, 62, 45, invers)
+    IVdraw(channel2MaxNumEdit, 126, 45, invers)
+
+    lcd.drawText(2, 55, "reverse:", SMLSIZE+LEFT)
+    IVdraw(channel1ReverseCB, 56, 55, invers)
+    IVdraw(channel2ReverseCB, 120, 55, invers)
+
 
     return doKey(event)
 end
