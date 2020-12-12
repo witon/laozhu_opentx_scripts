@@ -1,8 +1,12 @@
 
-function replaceMix(channel)
+function replaceMix(channel, reverse)
     local mixesCount = model.getMixesCount(channel)
     local mix = {}
-    mix.weight=150
+    if reverse then
+        mix.weight = -150
+    else
+        mix.weight = 150
+    end
     mix.name = "ad_tmp"
     mix.source = getFieldInfo("thr").id
     mix.multiplex = 2
