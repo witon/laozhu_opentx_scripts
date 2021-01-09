@@ -49,13 +49,16 @@ end
 local function destFlightTimeViewDoEvent(event)
 	if(event==36 or event==68) then
 		local destFlightTime = gFlightState.getDestFlightTime()
-		destFlightTime = destFlightTime + 10
+		destFlightTime = destFlightTime + f3kCfg.getNumberField("DestTimeStep", 15)
+		LZ_playTime(destFlightTime, true)
 		gFlightState.setDestFlightTime(destFlightTime)
 	elseif(event==35 or event==67) then
 		local destFlightTime = gFlightState.getDestFlightTime()
-		destFlightTime = destFlightTime - 10
+		destFlightTime = destFlightTime - f3kCfg.getNumberField("DestTimeStep", 15)
 		if destFlightTime < 0 then
 			destFlightTime = 0
+		else
+			LZ_playTime(destFlightTime, true)
 		end
 		gFlightState.setDestFlightTime(destFlightTime)
 	end

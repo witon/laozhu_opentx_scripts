@@ -5,7 +5,7 @@ end
 
 function NEdoKey(numEdit, event)
     if event == 35 then
-        numEdit.num = numEdit.num - 1
+        numEdit.num = numEdit.num - numEdit.step
         if numEdit.min and numEdit.min > numEdit.num then
             numEdit.num = numEdit.min
         end
@@ -21,7 +21,7 @@ function NEdoKey(numEdit, event)
             numEdit.onChange(numEdit)
         end
     elseif event == 36 then
-        numEdit.num = numEdit.num + 1
+        numEdit.num = numEdit.num + numEdit.step
         if numEdit.max and numEdit.max < numEdit.num then
             numEdit.num = numEdit.max
         end
@@ -49,6 +49,6 @@ function NEsetOnChange(numEdit, onChange)
 end
 
 function NEnewNumEdit()
-    return {num = 0, isFocuse = false, focusState = 0, doKey = NEdoKey, draw = NEdraw}
+    return {num = 0, step = 1, isFocuse = false, focusState = 0, doKey = NEdoKey, draw = NEdraw}
 end
 

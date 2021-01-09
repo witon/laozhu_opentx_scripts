@@ -5,12 +5,16 @@ local readSwitchSelector = ISnewInputSelector()
 ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
 local workTimeSwitchSelector = ISnewInputSelector()
 ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
+local destTimeSettingStepNumEdit = NEnewNumEdit()
+destTimeSettingStepNumEdit.step = 5
+
 
 
 local selectorArray = {
     varSliderSelector,
     readSwitchSelector,
-    workTimeSwitchSelector
+    workTimeSwitchSelector,
+    destTimeSettingStepNumEdit
 }
 local curSelectorIndex = 1
 local editingSelector = nil
@@ -20,6 +24,7 @@ local function setCfgValue()
     cfgs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
     cfgs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
     cfgs["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
+    cfgs["DestTimeStep"] = destTimeSettingStepNumEdit.num
 end
 
 local function getCfgValue()
@@ -27,7 +32,9 @@ local function getCfgValue()
     ISsetSelectedItemById(readSwitchSelector, cfgs["ReadSw"])
     ISsetSelectedItemById(varSliderSelector, cfgs["SelSlider"])
     ISsetSelectedItemById(workTimeSwitchSelector, cfgs["WtSw"])
+    destTimeSettingStepNumEdit.num = f3kCfg.getNumberField("DestTimeStep", 15)
 end
+
 local function init()
     getCfgValue()
 end
@@ -41,7 +48,7 @@ local function doKey(event)
             f3kCfg.writeToFile(gConfigFileName)
             return true
         end
-        ISdoKey(editingSelector, event)
+        editingSelector.doKey(editingSelector, event)
         return true
     end
  
@@ -83,6 +90,9 @@ local function run(event, time)
     IVdraw(readSwitchSelector, 64, 22, invers)
     lcd.drawText(2, 34, "WTime Switch", SMLSIZE + LEFT)
     IVdraw(workTimeSwitchSelector, 64, 34, invers)
+    lcd.drawText(2, 46, "FTime Step", SMLSIZE + LEFT)
+    IVdraw(destTimeSettingStepNumEdit, 64, 46, invers)
+ 
     return doKey(event)
 end
 

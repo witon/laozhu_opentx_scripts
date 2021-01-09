@@ -29,6 +29,7 @@ local function init()
 	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
 	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+	dofile(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 
 	Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 

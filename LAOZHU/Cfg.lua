@@ -4,10 +4,13 @@ local function getCfgs()
     return cfgs
 end
 
-local function getNumberField(fieldName)
+local function getNumberField(fieldName, default)
     local v = cfgs[fieldName]
+    if v == nil and default then
+        return default
+    end
     if v == nil then
-        return 0
+        v = 0
     end
     return v
 end
