@@ -20,12 +20,14 @@ local function init()
 	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
 	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+	dofile(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 
 	gFlightState = dofile(gScriptDir .. "LAOZHU/F5jState.lua")
 
 	f5jCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
 	f5jCfg.readFromFile(gConfigFileName)
 	altID = getTelemetryId("Alt")
+	gFlightState.setThrottleThreshold(f5jCfg.getNumberField("ThThreshold"))
 	loadPage()
 end
 

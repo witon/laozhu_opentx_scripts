@@ -11,13 +11,17 @@ local flightSwitchSelector = ISnewInputSelector()
 ISsetFieldType(flightSwitchSelector, FIELDS_SWITCH)
 local throttleChannelSelector = ISnewInputSelector()
 ISsetFieldType(throttleChannelSelector, FIELDS_CHANNEL) 
+local throttleThresholdNumEdit = NEnewNumEdit()
 
-local selectorArray = {
+
+
+local inputArray = {
     varSliderSelector,
     readSwitchSelector,
     resetSwitchSelector,
     flightSwitchSelector,
-    throttleChannelSelector
+    throttleChannelSelector,
+    throttleThresholdNumEdit
 }
 
 local curSelectorIndex = 1
@@ -30,6 +34,7 @@ local function setCfgValue()
     cfgs["RsSw"] = ISgetSelectedItemId(resetSwitchSelector)
     cfgs["FlSw"] = ISgetSelectedItemId(flightSwitchSelector)
     cfgs["ThCh"] = ISgetSelectedItemId(throttleChannelSelector)
+    cfgs["ThThreshold"] = throttleThresholdNumEdit.num
 end
 
 local function getCfgValue()
@@ -39,6 +44,7 @@ local function getCfgValue()
     ISsetSelectedItemById(resetSwitchSelector, cfgs["RsSw"])
     ISsetSelectedItemById(flightSwitchSelector, cfgs["FlSw"])
     ISsetSelectedItemById(throttleChannelSelector, cfgs["ThCh"])
+    throttleThresholdNumEdit.num = f5jCfg.getNumberField("ThThreshold", 0)
 end
 
 local function init()
@@ -54,19 +60,19 @@ local function doKey(event)
             f5jCfg.writeToFile(gConfigFileName)
             return true
         end
-        ISdoKey(editingSelector, event)
+        editingSelector.doKey(editingSelector, event)
         return true
     end
  
     if(event == EVT_ENTER_BREAK) then
-        editingSelector = selectorArray[curSelectorIndex]
+        editingSelector = inputArray[curSelectorIndex]
         IVsetFocusState(editingSelector, 2)
         return true
     end
 
     local eventProcessed = false
 
-    local preFocus = selectorArray[curSelectorIndex]
+    local preFocus = inputArray[curSelectorIndex]
 	if(event==36 or event==68) then
 		curSelectorIndex = curSelectorIndex - 1
 		if curSelectorIndex < 1 then
@@ -75,13 +81,13 @@ local function doKey(event)
         eventProcessed = true
 	elseif(event==35 or event==67) then
 		curSelectorIndex = curSelectorIndex + 1
-		if curSelectorIndex > #selectorArray then
-			curSelectorIndex = #selectorArray
+		if curSelectorIndex > #inputArray then
+			curSelectorIndex = #inputArray
         end
         eventProcessed = true
     end
     IVsetFocusState(preFocus, 0)
-    IVsetFocusState(selectorArray[curSelectorIndex], 1)
+    IVsetFocusState(inputArray[curSelectorIndex], 1)
     return eventProcessed
 end
 
@@ -91,16 +97,19 @@ local function run(event, time)
         invers = true
     end
     local drawOptions
-    lcd.drawText(2, 5, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 84, 5, invers)
-    lcd.drawText(2, 17, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 84, 17, invers)
-    lcd.drawText(2, 29, "Reset Switch", SMLSIZE + LEFT)
-    IVdraw(resetSwitchSelector, 84, 29, invers)
-    lcd.drawText(2, 41, "Flight Switch", SMLSIZE + LEFT)
-    IVdraw(flightSwitchSelector, 84, 41, invers)
-    lcd.drawText(2, 53, "Throttle Channel", SMLSIZE + LEFT)
-    IVdraw(throttleChannelSelector, 84, 53, invers)
+    lcd.drawText(2, 1, "Var Slider", SMLSIZE + LEFT)
+    IVdraw(varSliderSelector, 100, 1, invers)
+    lcd.drawText(2, 11, "Read Switch", SMLSIZE + LEFT)
+    IVdraw(readSwitchSelector, 100, 11, invers)
+    lcd.drawText(2, 21, "Reset Switch", SMLSIZE + LEFT)
+    IVdraw(resetSwitchSelector, 100, 21, invers)
+    lcd.drawText(2, 31, "Flight Switch", SMLSIZE + LEFT)
+    IVdraw(flightSwitchSelector, 100, 31, invers)
+    lcd.drawText(2, 41, "Throttle Channel", SMLSIZE + LEFT)
+    IVdraw(throttleChannelSelector, 100, 41, invers)
+    lcd.drawText(2, 51, "Throttle Threshold", SMLSIZE + LEFT)
+    IVdraw(throttleThresholdNumEdit, 117, 51, invers)
+ 
     return doKey(event)
 
 end
