@@ -63,7 +63,52 @@
 
 <span id="f5j_usage">5J使用指引</span>
 ====
-*待续...*
+主要功能：<br>
+飞行计时<br>
+完全按照5j规则自动记录起飞高度（起飞动力30秒，关动力后10秒，记录期间最高高度为起飞高度）<br>
+定时定点降落语音倒数<br>
+使用旋钮选择并语音播报飞行信息（飞行时间、飞行高度、起飞高度、接收信号强度）<br>
+
+1. 设置：<br>
+在"飞行信息"界面，连续按摇杆"右"进入设置界面，按摇杆"上"、"下"选中设置项，按摇杆"确定"进入设置，按摇杆"上"、"下"改变设置，再次按摇杆"确定"完成设置。<br>
+Var Slider: 语音播报选择旋钮<br>
+Read Switch: 语音播报触发开关，触发播报一次选择的信息。<br>
+Reset Switch: 复位开关，复位到准备起飞的状态。<br>
+Flight Switch: 飞行开关，建议与油门开关联动，开：开始飞行计时；关：结束飞行计时。<br>
+Throttle Channel: 油门通道，用于检测开或者关动力。<br>
+Throttle Threshold: 检测动力开或者关的油门阈值，（调整到电机不转时油门最大的值减5）。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_setting.png)<br>
+
+2. 准备状态：<br>
+在动力关闭的状态下，触发复位开关（见“设置”），进入准备状态，此时ST显示“Prep”。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_state_prepare.png)
+
+3. 开动力状态：<br>
+在准备状态下，打开飞行开关（见“设置”）并且油门通道输出大于油门阈值（见“设置”），进入开动力状态，此时ST显示“PwOn”，此时飞机可以起飞。在开动力状态下，PT显示当前动力时间，并且当动力时间超过20秒，会有倒数提示动力时间结束，作为辅助训练时，需要飞手在动力时间提示为0时，关闭动力。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_state_power.png)
+
+4. 关动力后10秒钟内状态：<br>
+在开动力状态下，达到30秒动力时间，或者飞手关闭动力，进入“关动力后10秒钟内状态”，此时ST显示“PwOf”。在此期间，语音倒数10秒，并且PT显示剩余倒数时间。期间如果重新开动力，LALT旁边会显示一个*号。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_state_poweroff_10s.png)<br>
+
+5. 飞行状态：<br>
+在关动力10秒钟后，进入飞行状态。此时ST显示“Fligh”。FT显示飞行时间。期间如果重新开动力，LALT旁边会显示一个*号。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_state_flight.png)<br>
+
+
+6. 降落状态：<br>
+在飞机降落的瞬间，关闭飞行开关（“见设置”），进入降落状态。此时ST显示“Land”。飞行计时器停止计时，FT显示飞行时间，LALT显示起飞高度。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_state_landed.png)
+
+7. 在工作时间结束前20秒，如果还没进入降落状态，语音播报工作时间结束倒数秒数，以便定时定点降落。
+
+8. 准备下一次飞行：<br>
+在动力关闭的状态下，触发复位开关（见“设置”），进入准备状态，此时ST显示“Prep”。<br>
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_5j_state_prepare.png)
+
+
+9. 语音播报飞行信息：<br>
+通过"设置"中选择的"Var Slider"旋钮，选择播报的信息，依次为"当前飞行时间"、"当前高度"、"接收信号强度"、"发射高度"。拨动"设置"中选择的"Read Switch"开关，播报选择的信息。
 
 
 <span id="adjust_usage">adjust使用指引</span>

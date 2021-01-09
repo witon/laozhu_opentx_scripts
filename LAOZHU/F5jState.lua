@@ -83,7 +83,9 @@ local function resetFlight()
 	launchAlt = 0
 	launchTime = 0
     powerOnAgain = false
-
+    Timer_stop(worktimeTimer)
+    Timer_resetTimer(worktimeTimer, 600)
+    Timer_stop(stateTimer)
 end
 
 local function startPoweronTimer()
@@ -117,6 +119,7 @@ local function doState10sAfterPowerOff()
     end
     
     if flightSwitch < 0 then
+        Timer_stop(stateTimer)
         flightState = 4
         return
         --addFlightResult()
