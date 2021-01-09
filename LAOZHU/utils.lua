@@ -26,7 +26,8 @@ function LZ_playNumber(value, flag)
 	playNumber(value, flag)
 end
 
-function LZ_playTime(time)
+
+function LZ_playTime(time, withoutUnit)
 	local t = math.floor(getTime()/90)
 	if t == lz_lastPlayNumberTime then
 		return
@@ -35,11 +36,19 @@ function LZ_playTime(time)
 	lz_lastPlayNumberTime = t
 	local minute = math.floor(time / 60)
 	if minute ~= 0 then
-		playNumber(minute, 36)
+		if not withoutUnit then
+			playNumber(minute, 36)
+		else
+			playNumber(minute, 0)
+		end
 	end
 	local second = time % 60
 	if second ~= 0 then
-		playNumber(second, 37)
+		if not withoutUnit then
+			playNumber(second, 37)
+		else
+			playNumber(second, 0)
+		end
 	end
 
 end
