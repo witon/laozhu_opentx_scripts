@@ -21,7 +21,7 @@ local displayIndex = 1
 
 local altID = 0
 local readVar = nil
-local pages = {"3k/FlightPage.lua", "3k/LargeFontFlightListPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
+local pages = {"3k/FlightPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
 local function init()
 	dofile(gScriptDir .. "LAOZHU/utils.lua")
 	gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
