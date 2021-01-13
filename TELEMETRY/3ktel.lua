@@ -99,12 +99,12 @@ local function run(event)
 		return
 	end
 
-	if event==38 then 
+	if event==38 or event==EVT_ROT_LEFT then 
 		displayIndex = displayIndex - 1
 		if displayIndex < 1 then
 			displayIndex = #pages
 		end
-	elseif event == 37 then
+	elseif event == 37 or event==EVT_ROT_RIGHT then
 		displayIndex = displayIndex + 1
 		if displayIndex > #pages then
 			displayIndex = 1
