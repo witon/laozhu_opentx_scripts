@@ -15,13 +15,13 @@ local function worktimeViewSelectingDraw(b)
 end
 
 local function worktimeViewDoEvent(event)
-	if(event==36 or event==68) then
+	if(event==36 or event==68 or event==EVT_ROT_RIGHT) then
 		gSelectWorktimeIndex = gSelectWorktimeIndex + 1
 		if gSelectWorktimeIndex > #gWorktimeArray then
 			gSelectWorktimeIndex = 1
 		end
 		Timer_setDuration(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
-	elseif(event==35 or event==67) then
+	elseif(event==35 or event==67 or event==EVT_ROT_LEFT) then
 		gSelectWorktimeIndex = gSelectWorktimeIndex - 1
 		if gSelectWorktimeIndex <= 0 then
 			gSelectWorktimeIndex = #gWorktimeArray
@@ -47,12 +47,12 @@ local function destFlightTimeViewSelectingDraw(b)
 end
 
 local function destFlightTimeViewDoEvent(event)
-	if(event==36 or event==68) then
+	if(event==36 or event==68 or event==EVT_ROT_RIGHT) then
 		local destFlightTime = gFlightState.getDestFlightTime()
 		destFlightTime = destFlightTime + f3kCfg.getNumberField("DestTimeStep", 15)
 		LZ_playTime(destFlightTime, true)
 		gFlightState.setDestFlightTime(destFlightTime)
-	elseif(event==35 or event==67) then
+	elseif(event==35 or event==67 or event==EVT_ROT_LEFT) then
 		local destFlightTime = gFlightState.getDestFlightTime()
 		destFlightTime = destFlightTime - f3kCfg.getNumberField("DestTimeStep", 15)
 		if destFlightTime < 0 then
@@ -142,6 +142,7 @@ local function run(event, time)
 	end
 	if isFocusViewEditing then
 		focusView.doEvent(event)
+		return true
 	else
 		if(event==36 or event==68) or (event==35 or event==67) then
 			if focusView == worktimeView then
