@@ -53,3 +53,14 @@ function LZ_playTime(time, withoutUnit)
 
 end
 
+function LZ_clearTable(t)
+    if type(t) == "table" then
+        for i, v in pairs(t) do
+            if type(v) == "table" then
+                clearTable(v)
+            end
+            t[i] = nil
+        end
+    end
+    return t
+end

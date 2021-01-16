@@ -58,6 +58,7 @@ local function run(event)
 		if displayIndex < 1 then
 			displayIndex = #pages
 		end
+		LZ_clearTable(curPage)
 		curPage = nil
 		collectgarbage()
 		gcTime = curTime
@@ -66,6 +67,7 @@ local function run(event)
 		if displayIndex > #pages then
 			displayIndex = 1
 		end
+		LZ_clearTable(curPage)
 		curPage = nil
 		collectgarbage()
 		gcTime = curTime
