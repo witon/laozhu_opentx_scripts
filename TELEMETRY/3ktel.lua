@@ -1,6 +1,9 @@
 gScriptDir = "/SCRIPTS/"
 gConfigFileName = "3k.cfg"
-dofile(gScriptDir .. "LAOZHU/Timer.lua")
+local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "c")
+fun()
+
+LZ_runModule(gScriptDir .. "LAOZHU/Timer.lua")
 gWorktimeTimer = Timer_new()
 gWorktimeTimer.mute = true
 gWorktimeArray = {
@@ -26,34 +29,36 @@ local rxbtID = 0
 
 local readVar = nil
 local pages = {"3k/FlightPage.lua", "3k/FlightStaticPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
-local function init()
-	dofile(gScriptDir .. "LAOZHU/utils.lua")
-	gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
-	gFLightStatic = dofile(gScriptDir .. "LAOZHU/FlightStatic.lua")
+local curPage = nil
 
-	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
+local function init()
+	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	gFlightState = LZ_runModule(gScriptDir .. "LAOZHU/F3kState.lua")
+	gFLightStatic = LZ_runModule(gScriptDir .. "LAOZHU/FlightStatic.lua")
+
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
-	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 
 	Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 
 
-	f3kCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
+	f3kCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
 	f3kCfg.readFromFile(gConfigFileName)
 
 
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
 
-	readVar = dofile(gScriptDir .. "LAOZHU/readVar.lua")
-	local f3kReadVarMap = dofile(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
+	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
+	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
 	readVar.setVarMap(f3kReadVarMap)
 end
 
 local function loadPage()
 	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[displayIndex]
-	curPage = dofile(pagePath)
+	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end
 

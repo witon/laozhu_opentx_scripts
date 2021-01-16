@@ -1,4 +1,4 @@
-dofile(gScriptDir .. "TELEMETRY/common/InputView.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
 local varSliderSelector = ISnewInputSelector()
 ISsetFieldType(varSliderSelector, FIELDS_INPUT)
 local readSwitchSelector = ISnewInputSelector()
