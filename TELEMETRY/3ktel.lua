@@ -13,6 +13,8 @@ Timer_setForward(gWorktimeTimer, false)
 
 	
 gFlightState = nil
+gFLightStatic = nil
+
 f3kCfg = nil
 
 gCurAlt = 0
@@ -20,11 +22,14 @@ gCurAlt = 0
 local displayIndex = 1
 
 local altID = 0
+local rxbtID = 0
+
 local readVar = nil
-local pages = {"3k/FlightPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
+local pages = {"3k/FlightPage.lua", "3k/FlightStaticPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
 local function init()
 	dofile(gScriptDir .. "LAOZHU/utils.lua")
 	gFlightState = dofile(gScriptDir .. "LAOZHU/F3kState.lua")
+	gFLightStatic = dofile(gScriptDir .. "LAOZHU/FlightStatic.lua")
 
 	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
@@ -47,6 +52,7 @@ local function init()
 
 
 	altID = getTelemetryId("Alt")
+	rxbtID = getTelemetryId("RxBt")
 
 	readVar = dofile(gScriptDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = dofile(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
@@ -74,6 +80,8 @@ local function run(event)
 
 	gFlightState.setAlt(gCurAlt)
 	gFlightState.doFlightState(curTime, flightModeName)
+
+	gFLightStatic.update(getValue(rxbtID), getRSSI(), gCurAlt)
 
 
 	local workTimeSwitchValue = getValue(f3kCfg.getNumberField('WtSw'))
