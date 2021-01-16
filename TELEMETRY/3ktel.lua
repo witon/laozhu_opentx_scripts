@@ -43,14 +43,6 @@ local function init()
 	f3kCfg.readFromFile(gConfigFileName)
 
 
-	for i = 1, #pages do
-		local page = pages[i]
-		local pagePath = gScriptDir .. "TELEMETRY/" .. page
-		pages[i] = dofile(pagePath)
-		pages[i].init()
-	end 
-
-
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
 
@@ -59,19 +51,12 @@ local function init()
 	readVar.setVarMap(f3kReadVarMap)
 end
 
-local function drawSetupPage(event, time)
-	setupPage.run(event, time)
+local function loadPage()
+	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[displayIndex]
+	curPage = dofile(pagePath)
+	curPage.init()
 end
 
-local function DrawLargeFontFlightList(event, time)
-	largeFontFlightListPage.run(event, time)
-end
-
-
-local function DrawSmallFontFlightList(event, time)
-	smallFontFlightListPage.run(event, time)
-
-end
 
 local function run(event)
 	local curTime = getTime()
@@ -98,26 +83,33 @@ local function run(event)
 	
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 
-
-
 	lcd.clear()
 
-	local eventProcessed = pages[displayIndex].run(event, curTime)
+	if curPage == nil then
+		loadPage()
+	end
+	local eventProcessed = curPage.run(event, curTime)
 	if eventProcessed then
 		return
 	end
-
-	if event==38 or event==EVT_ROT_LEFT then 
+	if event==38 then 
 		displayIndex = displayIndex - 1
 		if displayIndex < 1 then
 			displayIndex = #pages
 		end
-	elseif event == 37 or event==EVT_ROT_RIGHT then
+		LZ_clearTable(curPage)
+		curPage = nil
+		collectgarbage()
+		gcTime = curTime
+	elseif event == 37 then
 		displayIndex = displayIndex + 1
 		if displayIndex > #pages then
 			displayIndex = 1
 		end
-
+		LZ_clearTable(curPage)
+		curPage = nil
+		collectgarbage()
+		gcTime = curTime
 	end
 
 end
