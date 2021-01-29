@@ -39,6 +39,14 @@ function Timer_start(timer)
     timer.startTime = timer.curTime
 end
 
+function Timer_isstart(timer)
+    if timer.startTime > 0 and timer.stopTime == 0 then
+        return true
+    else
+        return false
+    end
+end
+
 function Timer_stop(timer)
     timer.stopTime = timer.curTime
 end
