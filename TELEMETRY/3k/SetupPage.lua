@@ -5,16 +5,19 @@ local readSwitchSelector = ISnewInputSelector()
 ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
 local workTimeSwitchSelector = ISnewInputSelector()
 ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
+local workTimeResetSwitchSelector = ISnewInputSelector()
+ISsetFieldType(workTimeResetSwitchSelector, FIELDS_SWITCH)
 local destTimeSettingStepNumEdit = NEnewNumEdit()
 destTimeSettingStepNumEdit.step = 5
 
 
 
 local selectorArray = {
+    destTimeSettingStepNumEdit,
+    workTimeSwitchSelector,
+    workTimeResetSwitchSelector,
     varSliderSelector,
     readSwitchSelector,
-    workTimeSwitchSelector,
-    destTimeSettingStepNumEdit
 }
 local curSelectorIndex = 1
 local editingSelector = nil
@@ -24,6 +27,7 @@ local function setCfgValue()
     cfgs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
     cfgs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
     cfgs["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
+    cfgs["WtResetSw"] = ISgetSelectedItemId(workTimeResetSwitchSelector)
     cfgs["DestTimeStep"] = destTimeSettingStepNumEdit.num
 end
 
@@ -32,6 +36,7 @@ local function getCfgValue()
     ISsetSelectedItemById(readSwitchSelector, cfgs["ReadSw"])
     ISsetSelectedItemById(varSliderSelector, cfgs["SelSlider"])
     ISsetSelectedItemById(workTimeSwitchSelector, cfgs["WtSw"])
+    ISsetSelectedItemById(workTimeResetSwitchSelector, cfgs["WtResetSw"])
     destTimeSettingStepNumEdit.num = f3kCfg.getNumberField("DestTimeStep", 15)
 end
 
@@ -84,14 +89,16 @@ local function run(event, time)
         invers = true
     end
     local drawOptions
-    lcd.drawText(2, 10, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 64, 10, invers)
-    lcd.drawText(2, 22, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 64, 22, invers)
-    lcd.drawText(2, 34, "WTime Switch", SMLSIZE + LEFT)
-    IVdraw(workTimeSwitchSelector, 64, 34, invers)
-    lcd.drawText(2, 46, "FTime Step", SMLSIZE + LEFT)
-    IVdraw(destTimeSettingStepNumEdit, 64, 46, invers)
+    lcd.drawText(2, 2, "Target Flight Time Step", SMLSIZE + LEFT)
+    IVdraw(destTimeSettingStepNumEdit, 122, 2, invers)
+    lcd.drawText(2, 12, "WTime Start Switch", SMLSIZE + LEFT)
+    IVdraw(workTimeSwitchSelector, 110, 12, invers)
+    lcd.drawText(2, 22, "WTime Reset Switch", SMLSIZE + LEFT)
+    IVdraw(workTimeResetSwitchSelector, 110, 22, invers)
+    lcd.drawText(2, 32, "Var Slider", SMLSIZE + LEFT)
+    IVdraw(varSliderSelector, 110, 32, invers)
+    lcd.drawText(2, 42, "Read Switch", SMLSIZE + LEFT)
+    IVdraw(readSwitchSelector, 110, 42, invers)
  
     return doKey(event)
 end

@@ -4,6 +4,7 @@ local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "c"
 fun()
 
 LZ_runModule(gScriptDir .. "LAOZHU/Timer.lua")
+LZ_runModule(gScriptDir .. "LAOZHU/SwitchTrigeDetector.lua")
 gWorktimeTimer = Timer_new()
 gWorktimeTimer.mute = true
 gWorktimeArray = {
@@ -54,6 +55,7 @@ local function init()
 	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
 	readVar.setVarMap(f3kReadVarMap)
+	gWTResetSwitchTrigeDetector = STD_new(getValue(f3kCfg.getNumberField('WtResetSw')))
 end
 
 local function loadPage()
@@ -75,11 +77,16 @@ local function run(event)
 
 
 	local workTimeSwitchValue = getValue(f3kCfg.getNumberField('WtSw'))
-	if workTimeSwitchValue > 0 then
-		Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
-		Timer_setCurTime(gWorktimeTimer, curTime)
+	if workTimeSwitchValue > 0 and not Timer_isstart(gWorktimeTimer) then
 		Timer_start(gWorktimeTimer)
 	end
+
+	local workTimeResetSwitchValue = getValue(f3kCfg.getNumberField('WtResetSw'))
+	if STD_run(gWTResetSwitchTrigeDetector, workTimeResetSwitchValue) then
+		Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
+		Timer_setCurTime(gWorktimeTimer, curTime)
+	end
+
 	Timer_setCurTime(gWorktimeTimer, curTime)
 	Timer_run(gWorktimeTimer)
 
