@@ -17,7 +17,6 @@ Timer_setForward(gWorktimeTimer, false)
 
 	
 gFlightState = nil
-gFLightStatic = nil
 
 f3kCfg = nil
 
@@ -35,7 +34,6 @@ local curPage = nil
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
 	gFlightState = LZ_runModule(gScriptDir .. "LAOZHU/F3kState.lua")
-	gFLightStatic = LZ_runModule(gScriptDir .. "LAOZHU/FlightStatic.lua")
 
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
@@ -73,7 +71,6 @@ local function run(event)
 	gFlightState.setAlt(gCurAlt)
 	gFlightState.doFlightState(curTime, flightModeName)
 
-	gFLightStatic.update(getValue(rxbtID), getRSSI(), gCurAlt)
 
 
 	local workTimeSwitchValue = getValue(f3kCfg.getNumberField('WtSw'))

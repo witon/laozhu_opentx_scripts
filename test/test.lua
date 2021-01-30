@@ -11,7 +11,6 @@ dofile(HOME_DIR .. "test/TestReadVar.lua")
 dofile(HOME_DIR .. "test/TestF5jState.lua")
 dofile(HOME_DIR .. "test/TestTimer.lua")
 dofile(HOME_DIR .. "test/TestSwitchTrigeDetector.lua")
-dofile(HOME_DIR .. "test/TestFlightStatic.lua")
 
 
 
