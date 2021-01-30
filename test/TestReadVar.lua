@@ -1,17 +1,17 @@
 local function fun1()
-    return 10, 1
+    playNumber(10, 1)
 end
 
 local function fun2()
-    return 20, 2
+    playNumber(20, 2)
 end
 
 local function fun3()
-    return 30, 3
+    playNumber(30, 3)
 end
 
 local function fun4()
-    return 40, 4
+    playNumber(40, 4)
 end
 
 
