@@ -1,20 +1,20 @@
 
-local function getCurAlt()
-    return gCurAlt, 9
+local function readCurAlt()
+    playNumber(gCurAlt, 9)
 end
 
-local function getFlightTime()
-    return gFlightTime/100, 0
+local function readFlightTime()
+    playDuration(gFlightTime/100)
 end
 
-local function getRssi()
+local function readRssi()
     local rssi, alarm_low, alarm_crit = getRSSI()
-    return rssi, 17
+    playNumber(rssi, 17)
 end
 
-local function getLaunchAlt()
-    return gLaunchALT, 9
+local function readLaunchAlt()
+    playNumber(gLaunchALT, 9)
 end
 
-return {getFlightTime, getCurAlt, getRssi, getLaunchAlt}
+return {readFlightTime, readCurAlt, readRssi, readLaunchAlt}
 

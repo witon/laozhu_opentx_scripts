@@ -1,20 +1,20 @@
 
-local function getCurAlt()
-    return gCurAlt, 9
+local function readCurAlt()
+    playNumber(gCurAlt, 9)
 end
 
-local function getFlightTime()
-    return gFlightState.getFlightTime(), 0
+local function readFlightTime()
+    playDuration(gFlightState.getFlightTime())
 end
 
-local function getRssi()
+local function readRssi()
     local rssi, alarm_low, alarm_crit = getRSSI()
-    return rssi, 17
+    playNumber(rssi, 17)
 end
 
-local function getLaunchAlt()
-    return gFlightState.getLaunchAlt(), 9
+local function readLaunchAlt()
+    playNumber(gFlightState.getLaunchAlt(), 9)
 end
 
-return {getFlightTime, getCurAlt, getRssi, getLaunchAlt}
+return {readFlightTime, readCurAlt, readRssi, readLaunchAlt}
 
