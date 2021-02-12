@@ -1,6 +1,12 @@
 gScriptDir = "/SCRIPTS/"
 gConfigFileName = "adjust.cfg"
 
+gConfigFileName = "3k.cfg"
+local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+fun()
+
+
+
 local focusIndex = 1
 local pages = {"adjust/GlobalVar.lua", "adjust/output.lua", "adjust/Setup.lua"}
 local curPage = nil
