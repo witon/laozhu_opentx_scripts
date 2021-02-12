@@ -4,7 +4,8 @@ gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 local testFiles = {
     "/SCRIPTS/emutest/testCfg.lua",
-    "/SCRIPTS/emutest/testLoadModule.lua"
+    "/SCRIPTS/emutest/testLoadModule.lua",
+    "/SCRIPTS/emutest/testManagerOutput.lua",
 }
 
 

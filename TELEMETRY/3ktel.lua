@@ -1,6 +1,6 @@
 gScriptDir = "/SCRIPTS/"
 gConfigFileName = "3k.cfg"
-local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "c")
+local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 
 LZ_runModule(gScriptDir .. "LAOZHU/Timer.lua")
