@@ -1,201 +1,201 @@
-local output1 = OSnewOutputSelector()
-local output2 = OSnewOutputSelector()
-local adjustCheckBox = CBnewCheckBox()
-local channel1ReverseCB= CBnewCheckBox()
-local channel2ReverseCB= CBnewCheckBox()
+local adjustChannels = {}
+local outputEditRows = {}
+local outputNameArray = {}
+local scrollLine = 0
+local selectChannelsButton = nil
+local enableAdjustCheckBox = nil
+local viewMatrix = nil
+
+local selectChannelPage = nil
 
 
 
-
-
-local channel1MinNumEdit = NEnewNumEdit()
-local channel1CenterNumEdit = NEnewNumEdit()
-local channel1MaxNumEdit = NEnewNumEdit()
-local channel2MinNumEdit = NEnewNumEdit()
-local channel2CenterNumEdit = NEnewNumEdit()
-local channel2MaxNumEdit = NEnewNumEdit()
-
-local ivArray = {
-    adjustCheckBox,
-    output1,
-    output2,
-}
-
-local function onOutputSelectorChange(outputSelector)
-    local o = model.getOutput(outputSelector.selectedIndex)
-    if not o then
-        return
+local function getOutputValue(rowNum, index, row)
+    local output = model.getOutput(index-1)
+    row[1].num = math.ceil(output.min * 99 / 1500)
+    row[2].num = math.ceil(output.offset * 99 / 1500)
+    row[3].num = math.ceil(output.max * 99 / 1500)
+    if output.revert == 0 then
+        row[4].checked = false
+    else
+        row[4].checked = true
     end
-    if outputSelector == output1 then
-        channel1MinNumEdit.num = o.min
-        channel1MaxNumEdit.num = o.max
-        channel1CenterNumEdit.num = o.offset
-    elseif outputSelector == output2 then
-        channel2MinNumEdit.num = o.min
-        channel2MaxNumEdit.num = o.max
-        channel2CenterNumEdit.num = o.offset
+    outputNameArray[rowNum] = output.name
+    if output.name == "" then
+        outputNameArray[rowNum] = index
     end
 end
 
-local function onAdjustCheckBoxChange(checkBox)
-    if checkBox.checked then
-        if output1.selectedIndex == output2.selectedIndex then
-            checkBox.checked = false
-            return
-        end
-        onOutputSelectorChange(output1)
-        onOutputSelectorChange(output2)
-        ivArray = {
-            adjustCheckBox,
-            channel1MinNumEdit,
-            channel2MinNumEdit,
-            channel1CenterNumEdit,
-            channel2CenterNumEdit,
-            channel1MaxNumEdit,
-            channel2MaxNumEdit,
-            channel1ReverseCB,
-            channel2ReverseCB
-        }
-        replaceMix(output1.selectedIndex, channel1ReverseCB.checked)
-        replaceMix(output2.selectedIndex, channel2ReverseCB.checked)
-    else
-        ivArray = {
-            adjustCheckBox,
-            output1,
-            output2
-        }
-        recoverMix(output1.selectedIndex)
-        recoverMix(output2.selectedIndex)
-    end
+local function saveOutputValue(index, neRow)
+    local output = model.getOutput(index)
+    output.min = neRow[1].num * 1500 / 99
+    output.offset = neRow[2].num * 1500 / 99
+    output.max = neRow[3].num *1500 / 99
+    model.setOutput(index, output)
 end
 
 local function onReverseCheckBoxChange(checkBox)
-    local channel = output1.selectedIndex
-    if checkBox == channel2ReverseCB then
-        channel = output2.selectedIndex
-    end
+    local channel = checkBox.channel - 1
     recoverMix(channel)
     replaceMix(channel, checkBox.checked)
-
 end
 
-
 local function onNumEditChange(numEdit)
-    if numEdit == channel1MinNumEdit or numEdit == channel1MaxNumEdit or numEdit == channel1CenterNumEdit then
-        local o1 = model.getOutput(output1.selectedIndex)
-        o1.min = channel1MinNumEdit.num
-        o1.max = channel1MaxNumEdit.num
-        o1.offset = channel1CenterNumEdit.num
-        model.setOutput(output1.selectedIndex, o1)
-    elseif  numEdit == channel2MinNumEdit or numEdit == channel2MaxNumEdit or numEdit == channel2CenterNumEdit then 
-        local o2 = model.getOutput(output2.selectedIndex)
-        o2.min = channel2MinNumEdit.num
-        o2.max = channel2MaxNumEdit.num
-        o2.offset = channel2CenterNumEdit.num
-        model.setOutput(output2.selectedIndex, o2)
+    local row = outputEditRows[numEdit.row-1]
+    saveOutputValue(numEdit.channel-1, row)
+end
+
+local function newParamNe(row, channel)
+    local ne = NEnewNumEdit()
+    ne.max = 99
+    ne.min = -99
+    ne.row = row
+    ne.channel = channel
+    NEsetOnChange(ne, onNumEditChange)
+    return ne
+end
+
+local function updateviewMatrix()
+    for i=2, #viewMatrix.matrix, 1 do
+        viewMatrix.matrix[i] = nil
+    end
+    if enableAdjustCheckBox.checked then
+        for i=1, #outputEditRows, 1 do
+            viewMatrix.matrix[i+1] = {}
+            local outputEditRow = outputEditRows[i]
+            for j=1, #outputEditRow, 1 do
+                viewMatrix.matrix[i+1][j] = outputEditRow[j]
+            end
+        end
     end
 end
 
-local curIvIndex = 1
-local editingIv = nil
+local function onEnableAdjustCheckBoxChange(checkBox)
+    if checkBox.checked then
+        for i=1, #adjustChannels, 1 do
+            replaceMix(adjustChannels[i]-1, outputEditRows[i][4].checked)
+        end
+    else
+        for i=1, #adjustChannels, 1 do
+            recoverMix(adjustChannels[i]-1)
+        end
+    end
+    updateviewMatrix()
+    
+end
+
+local function onSelectChannelsButtonClick(button)
+    if enableAdjustCheckBox.checked then
+        return
+    end
+    if not selectChannelPage then
+        selectChannelPage = LZ_runModule(gScriptDir .. "TELEMETRY/adjust/SelectChannel.lua")
+        selectChannelPage.init()
+        selectChannelPage.setSelectedChannels(adjustChannels)
+    end
+end
 
 local function init()
-    NEsetOnChange(channel1MinNumEdit, onNumEditChange)
-    NEsetOnChange(channel1CenterNumEdit, onNumEditChange)
-    NEsetOnChange(channel1MaxNumEdit, onNumEditChange)
-    NEsetOnChange(channel2MinNumEdit, onNumEditChange)
-    NEsetOnChange(channel2CenterNumEdit, onNumEditChange)
-    NEsetOnChange(channel2MaxNumEdit, onNumEditChange)
+    LZ_runModule(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
+    selectChannelsButton = BTnewButton()
+    BTsetOnClick(selectChannelsButton, onSelectChannelsButtonClick)
+    selectChannelsButton.text = "channels"
+    enableAdjustCheckBox = CBnewCheckBox()
+    CBsetOnChange(enableAdjustCheckBox, onEnableAdjustCheckBoxChange)
 
-    NEsetRange(channel1MinNumEdit, -1500, 1500)
-    NEsetRange(channel1CenterNumEdit, -1500, 1500)
-    NEsetRange(channel1MaxNumEdit, -1500, 1500)
-    NEsetRange(channel2MinNumEdit, -1500, 1500)
-    NEsetRange(channel2CenterNumEdit, -1500, 1500)
-    NEsetRange(channel2MaxNumEdit, -1500, 1500)
+    viewMatrix = VMnewViewMatrix()
+    viewMatrix.matrix[1] = {}
+    viewMatrix.matrix[1][1] = selectChannelsButton
+    viewMatrix.matrix[1][2] = enableAdjustCheckBox 
+    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
+    for i=0, 16, 1 do
+        recoverMix(i)
+    end
+end
+
+
+local function updateAdjustChannels()
+    LZ_clearTable(outputNameArray)
+    LZ_clearTable(outputEditRows)
+    outputEditRows = {}
+    outputNameArray = {}
+    for i=1, #adjustChannels, 1 do
+        --viewMatrix.matrix[i+1] = {}
+        local outputEditRow = {}
+        for j=1, 3, 1 do
+           outputEditRow[j] = newParamNe(i+1, adjustChannels[i])
+           --viewMatrix.matrix[i+1][j] = outputEditRow[j]
+        end
+        outputEditRow[4] = CBnewCheckBox()
+        CBsetOnChange(outputEditRow[4], onReverseCheckBoxChange)
+        outputEditRow[4].channel = adjustChannels[i]
  
-    OSsetOnChange(output1, onOutputSelectorChange)
-    OSsetOnChange(output2, onOutputSelectorChange)
-    CBsetOnChange(adjustCheckBox, onAdjustCheckBoxChange)
-    CBsetOnChange(channel1ReverseCB, onReverseCheckBoxChange)
-    CBsetOnChange(channel2ReverseCB, onReverseCheckBoxChange)
- 
-    dofile(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
-    onOutputSelectorChange(output1)
-    onOutputSelectorChange(output2)
+        outputEditRows[i] = outputEditRow
+        --viewMatrix.matrix[i+1][4] = outputEditRow[4]
+        getOutputValue(i, adjustChannels[i], outputEditRow)
+    end
 end
 
 local function doKey(event)
-    if editingIv then
-        if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
-            IVsetFocusState(editingIv, 1)
-            editingIv = nil
-            return true
+    viewMatrix.doKey(viewMatrix, event)
+    if event==36 then
+        if viewMatrix.selectedRow - scrollLine < 2 and scrollLine > 0 then
+            scrollLine = scrollLine - 1
         end
-        editingIv.doKey(editingIv, event)
-        return true
-    end
- 
-    if(event == EVT_ENTER_BREAK) then
-        editingIv = ivArray[curIvIndex]
-        IVsetFocusState(editingIv, 2)
-        return true
-    end
-    local eventProcessed = false
-
-    local preFocus = ivArray[curIvIndex]
-	if(event==36 or event==68) then
-		curIvIndex = curIvIndex - 1
-		if curIvIndex < 1 then
-            curIvIndex = 1
+    elseif event==35 then
+        if viewMatrix.selectedRow - scrollLine > 5 then
+                scrollLine = scrollLine + 1
         end
-        eventProcessed = true
-	elseif(event==35 or event==67) then
-        curIvIndex = curIvIndex + 1
-		if curIvIndex > #ivArray then
-            curIvIndex = #ivArray
+        if scrollLine > 12 then
+            scrollLine = 12 
         end
-        eventProcessed = true
+    elseif event==EVT_EXIT_BREAK then
+        enableAdjustCheckBox.checked = false
+        onEnableAdjustCheckBoxChange(enableAdjustCheckBox)
     end
-    IVsetFocusState(preFocus, 0)
-    IVsetFocusState(ivArray[curIvIndex], 1)
-    return eventProcessed
 end
 
 local function run(event, time)
+    if selectChannelPage then
+        local processed = selectChannelPage.run(event, time)
+        if processed then
+            return true
+        end
+		if event == EVT_EXIT_BREAK then
+            adjustChannels = {}
+            selectChannelPage.getSelectedChannels(adjustChannels)
+            LZ_clearTable(selectChannelPage)
+            selectChannelPage = nil
+            collectgarbage()
+            updateAdjustChannels()
+		end
+        return true
+    end
     local invers = false
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-
-    lcd.drawText(2, 5, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(34, 5, getValue("thr"), SMLSIZE+LEFT)
-
-    lcd.drawText(64, 5, "adj:", SMLSIZE + LEFT)
-    IVdraw(adjustCheckBox, 84, 5, invers)
-
-    lcd.drawText(2, 15, "output1:", SMLSIZE + LEFT)
-    IVdraw(output1, 42, 15, invers)
-    lcd.drawText(66, 15, "output2:", SMLSIZE + LEFT)
-    IVdraw(output2, 106, 15, invers)
-
-    lcd.drawText(2, 25, "min:", SMLSIZE+LEFT)
-    IVdraw(channel1MinNumEdit, 62, 25, invers)
-    IVdraw(channel2MinNumEdit, 126, 25, invers)
-
-    lcd.drawText(2, 35, "center:", SMLSIZE+LEFT)
-    IVdraw(channel1CenterNumEdit, 62, 35, invers)
-    IVdraw(channel2CenterNumEdit, 126, 35, invers)
-
-    lcd.drawText(2, 45, "max:", SMLSIZE+LEFT)
-    IVdraw(channel1MaxNumEdit, 62, 45, invers)
-    IVdraw(channel2MaxNumEdit, 126, 45, invers)
-
-    lcd.drawText(2, 55, "reverse:", SMLSIZE+LEFT)
-    IVdraw(channel1ReverseCB, 56, 55, invers)
-    IVdraw(channel2ReverseCB, 120, 55, invers)
-
-
+    lcd.drawText(2, 1, "thr:", SMLSIZE + LEFT)
+    lcd.drawText(22, 1, getValue("thr"), SMLSIZE+LEFT)
+    IVdraw(selectChannelsButton, 52, 1, invers)
+    lcd.drawText(100, 1, "adj:", SMLSIZE + LEFT)
+    IVdraw(enableAdjustCheckBox, 120, 1, invers)
+    lcd.drawText(2, 11, "name", LEFT)
+    lcd.drawText(48, 11, "min", RIGHT)
+    lcd.drawText(71, 11, "mid", RIGHT)
+    lcd.drawText(94, 11, "max", RIGHT)
+    lcd.drawText(127, 11, "rev", RIGHT)
+ 
+    for i=scrollLine + 1, scrollLine + 6, 1 do
+        if i <= #adjustChannels then
+            lcd.drawText(2, 10 * (i-scrollLine + 1), outputNameArray[i])
+            for j=1, 4, 1 do
+                if i <= 16 then
+                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 10 * (i - scrollLine + 1), invers)
+                end
+            end
+        end
+    end
     return doKey(event)
 end
 

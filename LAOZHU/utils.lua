@@ -57,7 +57,7 @@ function LZ_clearTable(t)
     if type(t) == "table" then
         for i, v in pairs(t) do
             if type(v) == "table" then
-                clearTable(v)
+                LZ_clearTable(v)
             end
             t[i] = nil
         end

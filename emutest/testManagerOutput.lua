@@ -9,7 +9,7 @@ local function testGetOutputsFromFile()
     backupOutputsToFile(1)
     local backupInfo, outputs = getOutputsFromFile(1)
     assert(backupInfo.name == model.getInfo().name)
-    assert(outputs[2].name == "rud")
+    assert(outputs[2].name == model.getOutput(1).name)
 end
 
 
