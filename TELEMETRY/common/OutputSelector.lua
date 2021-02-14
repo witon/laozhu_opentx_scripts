@@ -40,8 +40,8 @@ function OSsetOnChange(selector, onChange)
 end
 
 
-function OSdraw(selector, x, y, invers)
-    lcd.drawText(x, y, selector.selectedName, invers)
+function OSdraw(selector, x, y, invers, option)
+    lcd.drawText(x, y, selector.selectedName, option)
 end
 
 function OSnewOutputSelector()

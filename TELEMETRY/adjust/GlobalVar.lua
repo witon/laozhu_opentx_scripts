@@ -130,7 +130,7 @@ local function run(event, time)
     end
  
     for j=1, 4, 1 do
-        IVdraw(gvNumEditArray[j][1], 48 + (j-1) * 25, 10, invers)
+        IVdraw(gvNumEditArray[j][1], 48 + (j-1) * 25, 10, invers, SMLSIZE + RIGHT)
     end
 
     for i=scrollLine + 2, 9, 1 do
@@ -145,7 +145,7 @@ local function run(event, time)
 
     for i = 1, 4, 1 do
         for j=scrollLine + 2, 9, 1 do
-            IVdraw(gvNumEditArray[i][j], 48 + (i-1) * 25, 10*(j-scrollLine), invers)
+            IVdraw(gvNumEditArray[i][j], 48 + (i-1) * 25, 10*(j-scrollLine), invers, SMLSIZE + RIGHT)
         end
     end
     return doKey(event)

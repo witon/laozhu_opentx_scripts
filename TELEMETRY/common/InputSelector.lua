@@ -61,8 +61,8 @@ function ISdoKey(selector, event)
 end
 
 
-function ISdraw(selector, x, y, invers)
-    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], invers)
+function ISdraw(selector, x, y, invers, options)
+    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], options)
     if selector.focusState == 2 then
         detectField(selector)
     end

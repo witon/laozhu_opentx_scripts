@@ -10,11 +10,11 @@ function CBdoKey(checkBox, event)
 end
 
 
-function CBdraw(checkBox, x, y, invers)
+function CBdraw(checkBox, x, y, invers, option)
     if checkBox.checked then
-        lcd.drawText(x, y, 'y', invers)
+        lcd.drawText(x, y, 'y', option)
     else
-        lcd.drawText(x, y, 'n', invers)
+        lcd.drawText(x, y, 'n', option)
     end
 end
 

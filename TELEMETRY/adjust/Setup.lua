@@ -90,13 +90,13 @@ local function run(event, time)
     end
     local drawOptions
     lcd.drawText(2, 1, "flap gv index:", SMLSIZE + LEFT)
-    IVdraw(flapGvIndexNumEdit, 94, 1, invers)
+    IVdraw(flapGvIndexNumEdit, 94, 1, invers, SMLSIZE + RIGHT)
     lcd.drawText(2, 11, "ele gv index:", SMLSIZE + LEFT)
-    IVdraw(eleGvIndexNumEdit, 94, 11, invers)
+    IVdraw(eleGvIndexNumEdit, 94, 11, invers, SMLSIZE + RIGHT)
     lcd.drawText(2, 21, "dr gv index:", SMLSIZE + LEFT)
-    IVdraw(drGvIndexNumEdit, 94, 21, invers)
+    IVdraw(drGvIndexNumEdit, 94, 21, invers, SMLSIZE + RIGHT)
     lcd.drawText(2, 31, "edr gv index:", SMLSIZE + LEFT)
-    IVdraw(edrGvIndexNumEdit, 94, 31, invers)
+    IVdraw(edrGvIndexNumEdit, 94, 31, invers, SMLSIZE + RIGHT)
     return doKey(event)
 end
 
