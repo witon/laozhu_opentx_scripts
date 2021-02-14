@@ -1,14 +1,13 @@
 gScriptDir = "/SCRIPTS/"
 gConfigFileName = "adjust.cfg"
 
-gConfigFileName = "3k.cfg"
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 
 
 
 local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/Setup.lua", "adjust/SelectChannel.lua"}
+local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua"}
 local curPage = nil
 adjustCfg = nil
 
@@ -28,6 +27,8 @@ local function init()
 	dofile(gScriptDir .. "TELEMETRY/common/OutputSelector.lua")
 	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
+	
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
 
 
