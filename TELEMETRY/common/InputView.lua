@@ -14,4 +14,3 @@ function IVdraw(iv, x, y, invers)
     end
     iv.draw(iv, x, y, drawOption)
 end
-

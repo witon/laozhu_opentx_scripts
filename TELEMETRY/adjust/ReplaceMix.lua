@@ -16,8 +16,12 @@ end
 
 function recoverMix(channel)
     local mixesCount = model.getMixesCount(channel)
-    local mix = model.getMix(channel, mixesCount-1)
-    if mix.name == "ad_tmp" then
-        model.deleteMix(channel, mixesCount-1)
+    for i=mixesCount-1, 0, -1 do
+        local mix = model.getMix(channel, i)
+        if mix.name == "ad_tmp" then
+            model.deleteMix(channel, i)
+        else
+            return
+        end
     end
 end
