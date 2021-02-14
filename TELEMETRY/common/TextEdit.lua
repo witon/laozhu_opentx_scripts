@@ -1,4 +1,7 @@
 local function preProcess(textEdit)
+    if textEdit.str == "" then
+        textEdit.str = " "
+    end
     textEdit.headStr = string.sub(textEdit.str, 0, textEdit.modiIndex-1)
     textEdit.modiChar = string.byte(textEdit.str, textEdit.modiIndex) 
     textEdit.tailStr = string.sub(textEdit.str, textEdit.modiIndex+1, -1)

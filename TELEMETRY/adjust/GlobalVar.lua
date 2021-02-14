@@ -1,7 +1,9 @@
 
+local gvNameEditArray = {}
 local gvNumEditArray = {}
 local ivArray = nil
 local scrollLine = 0
+local viewMatrix = nil
 
 local function getGVValue(index, mode)
     local value = model.getGlobalVariable(index, mode)
@@ -9,6 +11,15 @@ local function getGVValue(index, mode)
         return getGVValue(index, value - 1025)
     end
     return value
+end
+
+local function getGVName()
+    for i=1, 4, 1 do
+        gvNameEditArray[i].str = adjustCfg.getStrField("gvname" .. i)
+        if gvNameEditArray[i].str == "" then
+            gvNameEditArray[i].str = tostring(i)
+        end
+    end
 end
 
 local function setGVValue(index, mode, value)
@@ -21,9 +32,9 @@ local function setGVValue(index, mode, value)
 end
 
 local function readGVValue()
-    for i=1, 4, 1 do
-        for j=1, 9, 1 do
-            gvNumEditArray[i][j].num = getGVValue(i-1, j-1)
+    for i=1, 9, 1 do
+        for j=1, 4, 1 do
+            gvNumEditArray[i][j].num = getGVValue(j-1, i-1)
         end
     end
 
@@ -34,80 +45,64 @@ local function onNumEditChange(numEdit)
     readGVValue()
 end
 
+local function onTextEditChange(textEdit)
+    local cfgs = adjustCfg.getCfgs()
+    for i=1, #gvNameEditArray, 1 do
+        cfgs["gvname" .. i] = gvNameEditArray[i].str
+    end
+    adjustCfg.writeToFile(gConfigFileName)
+ 
+
+end
+
+
 local curIvIndex = 1
 local curIvColIndex = 1
 local editingIv = nil
 
 local function init()
-    for i=1, 4, 1 do 
+    viewMatrix = VMnewViewMatrix()
+    for i=1, 9, 1 do 
         gvNumEditArray[i] = {}
-        for j=1, 9, 1 do
+        for j=1, 4, 1 do
             gvNumEditArray[i][j] = NEnewNumEdit()
-            gvNumEditArray[i][j].num = -10
             NEsetOnChange(gvNumEditArray[i][j], onNumEditChange)
-            --NEsetRange(gvNumEditArray[i][j], -150, 150)
-            gvNumEditArray[i][j].num = getGVValue(i-1, j-1)
-            gvNumEditArray[i][j].mode = j - 1
-            gvNumEditArray[i][j].index = i - 1
+            gvNumEditArray[i][j].num = getGVValue(j-1, i-1)
+            gvNumEditArray[i][j].mode = i - 1
+            gvNumEditArray[i][j].index = j - 1
         end
     end
-    ivArray = gvNumEditArray[curIvColIndex]
+    viewMatrix.matrix[1] = {}
+    for j=1, 4, 1 do
+        gvNameEditArray[j] = TEnewTextEdit()
+        gvNameEditArray[j].str = tostring(j)
+        TEsetOnChange(gvNameEditArray[j], onTextEditChange)
+        viewMatrix.matrix[1][j] = gvNameEditArray[j]
+    end
+    for i=1, #gvNumEditArray, 1 do
+        viewMatrix.matrix[i+1] = {}
+        for j=1, #gvNumEditArray[i], 1 do
+            viewMatrix.matrix[i+1][j] = gvNumEditArray[i][j]
+        end
+    end
+    viewMatrix.selectedRow = 2
+    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
     dofile(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
+    getGVName()
 end
 
 
 local function doKey(event)
-    if editingIv then
-        if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
-            IVsetFocusState(editingIv, 1)
-            editingIv = nil
-            return true
-        end
-        editingIv.doKey(editingIv, event)
-        return true
-    end
- 
-    if(event == EVT_ENTER_BREAK) then
-        editingIv = ivArray[curIvIndex]
-        IVsetFocusState(editingIv, 2)
-        return true
-    end
-    local eventProcessed = false
-
-    local preFocus = ivArray[curIvIndex]
+    viewMatrix.doKey(viewMatrix, event)
 	if (event==36 or event==68) then
-        if curIvIndex > 1 then
-            curIvIndex = curIvIndex - 1
-            if scrollLine - curIvIndex > -2 and scrollLine > 0 then
-                scrollLine = scrollLine - 1
-            end
- 
+        if viewMatrix.selectedRow - scrollLine < 3 and scrollLine > 0 then
+            scrollLine = scrollLine - 1
         end
-        eventProcessed = true
 	elseif (event==35 or event==67) then
-        if curIvIndex < #ivArray then
-            curIvIndex = curIvIndex + 1
-            if curIvIndex - scrollLine > 5 then
-                scrollLine = scrollLine + 1
-            end
+        if viewMatrix.selectedRow - scrollLine > 6 then
+            scrollLine = scrollLine + 1
         end
-        eventProcessed = true
-    elseif (event==38) then
-        if curIvColIndex > 1 then
-            curIvColIndex = curIvColIndex - 1
-            ivArray = gvNumEditArray[curIvColIndex]
-        end
-        eventProcessed = true
-    elseif (event == 37) then
-        if curIvColIndex < 4 then
-            curIvColIndex = curIvColIndex + 1
-            ivArray = gvNumEditArray[curIvColIndex]
-        end
-        eventProcessed = true
     end
-    IVsetFocusState(preFocus, 0)
-    IVsetFocusState(ivArray[curIvIndex], 1)
-    return eventProcessed
 end
 
 local function run(event, time)
@@ -116,11 +111,6 @@ local function run(event, time)
         invers = true
     end
     lcd.drawText(2, 0, "mode", SMLSIZE + LEFT)
-    lcd.drawText(2 + 48 + adjustCfg.getNumberField("flapGvIndex", 0) * 24, 0, "flap", SMLSIZE + RIGHT)
-    lcd.drawText(2 + 48 + adjustCfg.getNumberField("eleGvIndex", 0) * 24, 0, "ele", SMLSIZE + RIGHT)
-    lcd.drawText(2 + 48 + adjustCfg.getNumberField("drGvIndex", 0) * 24, 0, "dr", SMLSIZE + RIGHT)
-    lcd.drawText(2 + 48 + adjustCfg.getNumberField("edrGvIndex", 0) * 24, 0, "edr", SMLSIZE + RIGHT)
-    
 
     local curModeIndex = getFlightMode()
     local index, name = getFlightMode(0)
@@ -130,11 +120,11 @@ local function run(event, time)
     end
  
     for j=1, 4, 1 do
-        IVdraw(gvNumEditArray[j][1], 48 + (j-1) * 25, 10, invers, SMLSIZE + RIGHT)
+        IVdraw(gvNameEditArray[j], 48 + (j-1) * 25, 1, invers, SMLSIZE + RIGHT)
+        IVdraw(gvNumEditArray[1][j], 48 + (j-1) * 25, 10, invers, SMLSIZE + RIGHT)
     end
 
     for i=scrollLine + 2, 9, 1 do
-        --lcd.drawText(4, (i-scrollLine)*10, i-1, SMLSIZE + LEFT)
         index, name = getFlightMode(i-1)
         lcd.drawText(1, (i-scrollLine)*10, name, SMLSIZE + LEFT)
         if curModeIndex==i-1 then
@@ -145,7 +135,7 @@ local function run(event, time)
 
     for i = 1, 4, 1 do
         for j=scrollLine + 2, 9, 1 do
-            IVdraw(gvNumEditArray[i][j], 48 + (i-1) * 25, 10*(j-scrollLine), invers, SMLSIZE + RIGHT)
+            IVdraw(gvNumEditArray[j][i], 48 + (i-1) * 25, 10*(j-scrollLine), invers, SMLSIZE + RIGHT)
         end
     end
     return doKey(event)
