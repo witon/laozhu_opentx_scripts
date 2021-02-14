@@ -90,15 +90,15 @@ local function run(event, time)
     end
     local drawOptions
     lcd.drawText(2, 2, "Target Flight Time Step", SMLSIZE + LEFT)
-    IVdraw(destTimeSettingStepNumEdit, 122, 2, invers)
+    IVdraw(destTimeSettingStepNumEdit, 122, 2, invers, SMLSIZE + RIGHT)
     lcd.drawText(2, 12, "WTime Start Switch", SMLSIZE + LEFT)
-    IVdraw(workTimeSwitchSelector, 110, 12, invers)
+    IVdraw(workTimeSwitchSelector, 110, 12, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 22, "WTime Reset Switch", SMLSIZE + LEFT)
-    IVdraw(workTimeResetSwitchSelector, 110, 22, invers)
+    IVdraw(workTimeResetSwitchSelector, 110, 22, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 32, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 110, 32, invers)
+    IVdraw(varSliderSelector, 110, 32, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 42, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 110, 42, invers)
+    IVdraw(readSwitchSelector, 110, 42, invers, SMLSIZE + LEFT)
  
     return doKey(event)
 end

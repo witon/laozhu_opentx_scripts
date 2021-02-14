@@ -10,8 +10,8 @@ function BTdoKey(button, event)
     return false
 end
 
-function BTdraw(button, x, y, invers)
-    lcd.drawText(x, y, button.text, SMLSIZE + invers)
+function BTdraw(button, x, y, invers, option)
+    lcd.drawText(x, y, button.text, option)
 end
 
 function BTsetOnClick(button, onClick)

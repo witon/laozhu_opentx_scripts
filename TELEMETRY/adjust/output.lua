@@ -177,9 +177,9 @@ local function run(event, time)
     end
     lcd.drawText(2, 1, "thr:", SMLSIZE + LEFT)
     lcd.drawText(22, 1, getValue("thr"), SMLSIZE+LEFT)
-    IVdraw(selectChannelsButton, 52, 1, invers)
+    IVdraw(selectChannelsButton, 52, 1, invers, SMLSIZE + LEFT)
     lcd.drawText(100, 1, "adj:", SMLSIZE + LEFT)
-    IVdraw(enableAdjustCheckBox, 120, 1, invers)
+    IVdraw(enableAdjustCheckBox, 120, 1, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 11, "name", LEFT)
     lcd.drawText(48, 11, "min", RIGHT)
     lcd.drawText(71, 11, "mid", RIGHT)
@@ -191,7 +191,7 @@ local function run(event, time)
             lcd.drawText(2, 10 * (i-scrollLine + 1), outputNameArray[i])
             for j=1, 4, 1 do
                 if i <= 16 then
-                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 10 * (i - scrollLine + 1), invers)
+                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 10 * (i - scrollLine + 1), invers, SMLSIZE + RIGHT)
                 end
             end
         end

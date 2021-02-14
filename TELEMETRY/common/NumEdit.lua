@@ -40,8 +40,8 @@ function NEdoKey(numEdit, event)
 end
 
 
-function NEdraw(numEdit, x, y, invers)
-    lcd.drawText(x, y, numEdit.num, invers + RIGHT)
+function NEdraw(numEdit, x, y, invers, option)
+    lcd.drawText(x, y, numEdit.num, option)
 end
 
 function NEsetOnChange(numEdit, onChange)
