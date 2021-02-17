@@ -2,6 +2,7 @@
 local gvNameEditArray = {}
 local gvNumEditArray = {}
 local scrollLine = 0
+local scrollCol = 0
 local viewMatrix = nil
 local this = nil
 local curGetGVIndex = -1
@@ -20,7 +21,7 @@ end
 
 
 local function getGVName()
-    for i=1, 4, 1 do
+    for i=1, 6, 1 do
         gvNameEditArray[i].str = adjustCfg.getStrField("gvname" .. i)
         if gvNameEditArray[i].str == "" then
             gvNameEditArray[i].str = tostring(i)
@@ -61,7 +62,7 @@ end
 local function init()
     for i=1, 9, 1 do 
         gvNumEditArray[i] = {}
-        for j=1, 4, 1 do
+        for j=1, 6, 1 do
             gvNumEditArray[i][j] = NEnewNumEdit()
             NEsetOnChange(gvNumEditArray[i][j], onNumEditChange)
             gvNumEditArray[i][j].num = 0 --getGVValue(j-1, i-1)
@@ -72,7 +73,7 @@ local function init()
 
     viewMatrix = VMnewViewMatrix()
     viewMatrix.matrix[1] = {}
-    for j=1, 4, 1 do
+    for j=1, 6, 1 do
         gvNameEditArray[j] = TEnewTextEdit()
         gvNameEditArray[j].str = tostring(j)
         TEsetOnChange(gvNameEditArray[j], onTextEditChange)
@@ -101,6 +102,14 @@ local function doKey(event)
         if viewMatrix.selectedRow - scrollLine > 6 then
             scrollLine = scrollLine + 1
         end
+    elseif (event==37) then
+        if viewMatrix.selectedCol - scrollCol > 4 then
+            scrollCol = scrollCol + 1
+        end
+    elseif (event==38) then
+        if viewMatrix.selectedCol - scrollCol < 1  then
+            scrollCol = scrollCol - 1
+        end
     end
 end
 
@@ -108,7 +117,7 @@ local function run(event, time)
     if curGetGVIndex >= 0 then
         curGetGVIndex = curGetGVIndex + 1
         readGVValue(curGetGVIndex)
-        if curGetGVIndex == 4 then
+        if curGetGVIndex == 6 then
             curGetGVIndex = -1
         end
     end
@@ -121,20 +130,27 @@ local function run(event, time)
 
     local curModeIndex = getFlightMode()
     local index, name = getFlightMode(0)
+    if name == "" then
+        name = "FM0"
+    end
     lcd.drawText(0, 12, name, SMLSIZE + LEFT)
+    
     if curModeIndex==0 then
         lcd.drawText(lcd.getLastPos(), 10, "*", SMLSIZE + BLINK +  LEFT)
     end
 
     lcd.drawLine(0, 9, 128, 9, DOTTED, 0)
-    for j=1, 4, 1 do
-        IVdraw(gvNameEditArray[j], 48 + (j-1) * 25, 1, invers, SMLSIZE + RIGHT)
-        IVdraw(gvNumEditArray[1][j], 48 + (j-1) * 25, 12, invers, SMLSIZE + RIGHT)
+    for j=scrollCol+1, 6, 1 do
+        IVdraw(gvNameEditArray[j], 48 + (j-1-scrollCol) * 25, 1, invers, SMLSIZE + RIGHT)
+        IVdraw(gvNumEditArray[1][j], 48 + (j-1-scrollCol) * 25, 12, invers, SMLSIZE + RIGHT)
     end
 
     for i=scrollLine + 2, 9, 1 do
         local y = (i-scrollLine)*8 + 4
         index, name = getFlightMode(i-1)
+        if name == "" then
+            name = "FM" .. i
+        end
         lcd.drawText(0, y, name, SMLSIZE + LEFT)
         if curModeIndex==i-1 then
             lcd.drawText(lcd.getLastPos(), y, "*", SMLSIZE + BLINK +  LEFT)
@@ -142,10 +158,10 @@ local function run(event, time)
  
     end
 
-    for i = 1, 4, 1 do
+    for i = scrollCol+1, 6, 1 do
         for j=scrollLine + 2, 9, 1 do
             local y = (j-scrollLine)*8 + 4
-            IVdraw(gvNumEditArray[j][i], 48 + (i-1) * 25, y, invers, SMLSIZE + RIGHT)
+            IVdraw(gvNumEditArray[j][i], 48 + (i-1-scrollCol) * 25, y, invers, SMLSIZE + RIGHT)
         end
     end
     return doKey(event)
