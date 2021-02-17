@@ -40,7 +40,6 @@ end
 local function readGVValue(gvIndex)
     for i=1, 9, 1 do
         gvNumEditArray[i][gvIndex].num = getGVValue(gvIndex-1, i-1)
-        print("----------", i)
     end
 end
 
