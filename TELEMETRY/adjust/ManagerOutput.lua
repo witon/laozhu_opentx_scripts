@@ -124,7 +124,7 @@ end
 function getOutputsFromFile(index)
     local cfgFilePath = gScriptDir .. index .. ".output"
     local outputFile = io.open(cfgFilePath, "r")
-    local buf = io.read(outputFile, 10000)
+    local buf = io.read(outputFile, 1000)
     local backupInfo, pos = getBackupInfofromBuf(buf, 1)
     if not backupInfo then
         return nil
@@ -141,7 +141,7 @@ end
 function restoreOutputsFromFile(index)
     local cfgFilePath = gScriptDir .. index .. ".output"
     local outputFile = io.open(cfgFilePath, "r")
-    local buf = io.read(outputFile, 10000)
+    local buf = io.read(outputFile, 1000)
     local backupInfo, pos = getBackupInfofromBuf(buf, 1)
     pos = pos + 1
     local outputs = getAllOutputsFromBuf(buf, pos)

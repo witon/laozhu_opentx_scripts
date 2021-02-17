@@ -64,3 +64,48 @@ function LZ_clearTable(t)
     end
     return t
 end
+
+function LZ_getOutputName(index)
+    local output = model.getOutput(index)
+    if not output then
+        return nil
+    end
+    if output.name == "" then
+        return "ch" .. (index + 1)
+    end
+    return output.name
+end
+
+function LZ_getCurveName(index)
+    if (not index) or index == -1 then
+        return "-"
+    end
+    local curve = model.getCurve(index)
+    if not curve then
+        return nil
+    end
+    if curve.name == "" then
+        return "cur" .. (index + 1)
+    end
+    return curve.name
+end
+
+function LZ_error(message)
+	if message == nil then
+		assert(false)
+		return
+	end
+	local dateTime = getDateTime()
+	local dateStr = string.format("%04d%02d%02d", dateTime["year"], dateTime["mon"], dateTime["day"])
+	local timeStr = LZ_formatDateTime(dateTime)
+    local errLogFilePath = gScriptDir .. "err_" .. dateStr .. ".log"
+    local errLogFile = io.open(errLogFilePath, 'a')
+    if errLogFile == nil then
+		assert(false, message)
+        return
+    end
+	io.write(errLogFile, timeStr, " ", message, "\r\n")
+    io.close(errLogFile)
+	assert(false, message)
+	return 
+end
