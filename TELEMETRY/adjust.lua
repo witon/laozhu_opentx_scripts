@@ -1,5 +1,6 @@
 gScriptDir = "/SCRIPTS/"
 gConfigFileName = "adjust.cfg"
+local bgFlag = false
 
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
@@ -13,34 +14,47 @@ adjustCfg = nil
 
 local function loadPage(index)
 	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[index]
-	curPage = dofile(pagePath)
+	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end
 
 local function init()
-	dofile(gScriptDir .. "LAOZHU/utils.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/InputView.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
+	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
 	
-	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/OutputSelector.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/OutputSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
-	
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/CurveSelector.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-
 
 	initFieldsInfo()
 
-	adjustCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
+	adjustCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
 	adjustCfg.readFromFile(gConfigFileName)
+end
 
+local function background()
+    if curPage and curPage.pageState == 1 then
+		curPage = nil
+    end
 
+    if not bgFlag then
+        bgFlag = true
+        return
+    else
+        if curPage then
+            curPage.bg()
+        end
+    end
 end
 
 local function run(event)
+	bgFlag = false
 	lcd.clear()
 	if curPage then
 		local eventProcessed = curPage.run(event, getTime())
@@ -74,6 +88,6 @@ local function run(event)
 	end
 end
 
-return { run=run, init=init }
+return { run=run, init=init, background = background }
 
 

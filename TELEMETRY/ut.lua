@@ -6,6 +6,7 @@ local checkBox = nil
 local inputSelector = nil
 local numEdit = nil
 local outputSelector = nil
+local curveSelector = nil
 
 local viewMatrix = nil
 
@@ -14,6 +15,7 @@ local testFiles = {
     "/SCRIPTS/emutest/testCfg.lua",
     "/SCRIPTS/emutest/testLoadModule.lua",
     "/SCRIPTS/emutest/testManagerOutput.lua",
+    --"/SCRIPTS/emutest/testOutputCurveManager.lua",
 }
 
 
@@ -21,12 +23,7 @@ local curCaseIndex = 1
 local curFileIndex = 1
 local curCases = nil
 
-local function init()
-    curCases = dofile(testFiles[curFileIndex])
-    curCaseIndex = 1
-    dofile(gScriptDir .. "LAOZHU/EmuTestUtils.lua")
-    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
-    fun()
+local function initUI()
     LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
@@ -36,6 +33,7 @@ local function init()
 	initFieldsInfo()
     LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/OutputSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/CurveSelector.lua")
 	
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
     viewMatrix = VMnewViewMatrix()
@@ -51,9 +49,8 @@ local function init()
 
     numEdit = NEnewNumEdit()
     outputSelector = OSnewOutputSelector()
+    curveSelector = CSnewCurveSelector()
 
-    
- 
     viewMatrix.matrix = {}
     viewMatrix.matrix[1] = {}
     viewMatrix.matrix[1][1] = checkBox
@@ -64,30 +61,54 @@ local function init()
     viewMatrix.matrix[3] = {}
     viewMatrix.matrix[3][1] = numEdit
     viewMatrix.matrix[3][2] = outputSelector
+    viewMatrix.matrix[4] = {}
+    viewMatrix.matrix[4][1] = curveSelector
  
     IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
  
+end
+
+local function init()
+    local c2 = collectgarbage("count")
+    print("----------------c2", c2)
+    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+    fun()
+    curCases = LZ_runModule(testFiles[curFileIndex])
+    curCaseIndex = 1
+    LZ_runModule(gScriptDir .. "LAOZHU/EmuTestUtils.lua")
+    LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+
 end
 
 local function doOneCase()
     if curCaseIndex > #curCases then
         curFileIndex = curFileIndex + 1
         if curFileIndex > #testFiles then
-            return
+            return false
         end
         curCaseIndex = 1
         local testFile = testFiles[curFileIndex]
-        curCases = dofile(testFile)
+        curCases = LZ_runModule(testFile)
     end
     curCases[curCaseIndex]()
     curCaseIndex = curCaseIndex + 1
+    return true
 
 end
 
 local function run(event)
+    if curFileIndex <= #testFiles then
+        doOneCase()
+        return
+    end
+
     local invers = false
     if getRtcTime() % 2 == 1 then
         invers = true
+    end
+
+    if viewMatrix == nil then
+        initUI()
     end
  
     lcd.clear()
@@ -110,10 +131,12 @@ local function run(event)
     lcd.drawText(60, 20, "opselect:", SMLSIZE + LEFT)
     IVdraw(outputSelector, 128, 20, invers, SMLSIZE + RIGHT)
 
-    if curFileIndex > #testFiles then
-        return
-    end
-    doOneCase()
+    lcd.drawText(60, 30, "csselect:", SMLSIZE + LEFT)
+    IVdraw(curveSelector, 128, 30, invers, SMLSIZE + RIGHT)
+    --local c3 = collectgarbage("count")
+    --print("----------------c3", c3)
+ 
+
 end
 
 return {run=run, init=init }

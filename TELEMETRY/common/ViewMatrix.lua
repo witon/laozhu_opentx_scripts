@@ -1,5 +1,52 @@
+function VMaddRow(vm)
+    vm.matrix[(#vm.matrix) + 1] = {}
+    return vm.matrix[#vm.matrix]
+end
+
+function VMdelRow(vm, rowIndex)
+    if rowIndex > #vm.matrix then
+        return
+    end
+    for i=rowIndex, #vm.matrix - 1, 1 do
+        vm.matrix[i] = vm.matrix[i+1]
+    end
+    vm.matrix[#vm.matrix] = nil
+end
+
+function VMgetCurIV(vm)
+    return vm.matrix[vm.selectedRow][vm.selectedCol]
+end
+
+function VMclear(vm)
+    vm.matrix = {}
+    vm.selectedCol = 1
+    vm.selectedRow = 1
+end
+
+function VMisEmpty(vm)
+    if vm.matrix[vm.selectedRow] == nil then
+        return true
+    end
+    if vm.matrix[vm.selectedRow][vm.selectedCol] == nil then
+        return true
+    end
+    return false
+end
+
+function VMupdateCurIVFocus(vm)
+    if VMisEmpty(vm) then
+        return
+    end
+    local iv = VMgetCurIV(vm)
+    IVsetFocusState(iv, 1)
+end
+
 
 function VMdoKey(vm, event)
+    if VMisEmpty(vm) then
+        return false
+    end
+
     if vm.editingIv then
         if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
             IVsetFocusState(vm.editingIv, 1)
@@ -59,8 +106,6 @@ function VMdoKey(vm, event)
         IVsetFocusState(vm.matrix[vm.selectedRow][vm.selectedCol], 1)
         return true
     end
-
-
 end
 
 function VMnewViewMatrix()

@@ -3,11 +3,13 @@ local outputEditRows = {}
 local outputNameArray = {}
 local scrollLine = 0
 local selectChannelsButton = nil
+local curvesButton = nil
 local enableAdjustCheckBox = nil
 local viewMatrix = nil
 
 local selectChannelPage = nil
-
+local curvesPage = nil
+local this = nil
 
 
 local function getOutputValue(rowNum, index, row)
@@ -67,6 +69,11 @@ local function updateviewMatrix()
                 viewMatrix.matrix[i+1][j] = outputEditRow[j]
             end
         end
+    else
+        for i=1, #outputEditRows, 1 do
+            viewMatrix.matrix[i+1] = {}
+            viewMatrix.matrix[i+1][1] = outputEditRows[i][4]
+        end
     end
 end
 
@@ -75,10 +82,12 @@ local function onEnableAdjustCheckBoxChange(checkBox)
         for i=1, #adjustChannels, 1 do
             replaceMix(adjustChannels[i]-1, outputEditRows[i][4].checked)
         end
+        OCMdisableCurve(adjustChannels)
     else
         for i=1, #adjustChannels, 1 do
             recoverMix(adjustChannels[i]-1)
         end
+        OCMrecoverCurve(adjustChannels)
     end
     updateviewMatrix()
     
@@ -95,9 +104,28 @@ local function onSelectChannelsButtonClick(button)
     end
 end
 
+local function onCurvesButtonClick()
+    if enableAdjustCheckBox.checked then
+        return
+    end
+    if not curvesPage then
+        curvesPage = LZ_runModule(gScriptDir .. "TELEMETRY/adjust/OutputCurve.lua")
+        curvesPage.init()
+        local revertArray = {}
+        for i=1, #adjustChannels, 1 do
+            revertArray[i] = outputEditRows[i][4].checked
+        end
+        curvesPage.setSelectedChannels(adjustChannels, revertArray)
+    end
+end
+
 local function init()
     LZ_runModule(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/adjust/OutputCurveManager.lua")
     selectChannelsButton = BTnewButton()
+    curvesButton = BTnewButton()
+    curvesButton.text = "curves"
+    BTsetOnClick(curvesButton, onCurvesButtonClick)
     BTsetOnClick(selectChannelsButton, onSelectChannelsButtonClick)
     selectChannelsButton.text = "channels"
     enableAdjustCheckBox = CBnewCheckBox()
@@ -107,12 +135,13 @@ local function init()
     viewMatrix.matrix[1] = {}
     viewMatrix.matrix[1][1] = selectChannelsButton
     viewMatrix.matrix[1][2] = enableAdjustCheckBox 
+    viewMatrix.matrix[1][3] = curvesButton
+ 
     IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
     for i=0, 16, 1 do
         recoverMix(i)
     end
 end
-
 
 local function updateAdjustChannels()
     LZ_clearTable(outputNameArray)
@@ -120,18 +149,15 @@ local function updateAdjustChannels()
     outputEditRows = {}
     outputNameArray = {}
     for i=1, #adjustChannels, 1 do
-        --viewMatrix.matrix[i+1] = {}
         local outputEditRow = {}
         for j=1, 3, 1 do
            outputEditRow[j] = newParamNe(i+1, adjustChannels[i])
-           --viewMatrix.matrix[i+1][j] = outputEditRow[j]
         end
         outputEditRow[4] = CBnewCheckBox()
         CBsetOnChange(outputEditRow[4], onReverseCheckBoxChange)
         outputEditRow[4].channel = adjustChannels[i]
  
         outputEditRows[i] = outputEditRow
-        --viewMatrix.matrix[i+1][4] = outputEditRow[4]
         getOutputValue(i, adjustChannels[i], outputEditRow)
     end
 end
@@ -156,6 +182,7 @@ local function doKey(event)
 end
 
 local function run(event, time)
+
     if selectChannelPage then
         local processed = selectChannelPage.run(event, time)
         if processed then
@@ -168,30 +195,50 @@ local function run(event, time)
             selectChannelPage = nil
             collectgarbage()
             updateAdjustChannels()
+            updateviewMatrix()
+		end
+        return true
+    elseif curvesPage then
+        local processed = curvesPage.run(event, time)
+        if processed then
+            return true
+        end
+		if event == EVT_EXIT_BREAK then
+            LZ_clearTable(curvesPage)
+            curvesPage = nil
+            collectgarbage()
 		end
         return true
     end
+
     local invers = false
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    lcd.drawText(2, 1, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(22, 1, getValue("thr"), SMLSIZE+LEFT)
-    IVdraw(selectChannelsButton, 52, 1, invers, SMLSIZE + LEFT)
-    lcd.drawText(100, 1, "adj:", SMLSIZE + LEFT)
-    IVdraw(enableAdjustCheckBox, 120, 1, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 11, "name", LEFT)
-    lcd.drawText(48, 11, "min", RIGHT)
-    lcd.drawText(71, 11, "mid", RIGHT)
-    lcd.drawText(94, 11, "max", RIGHT)
-    lcd.drawText(127, 11, "rev", RIGHT)
+    IVdraw(selectChannelsButton, 3, 0, invers, SMLSIZE + LEFT)
+    lcd.drawText(50, 0, "adj:", SMLSIZE + LEFT)
+    IVdraw(enableAdjustCheckBox, 75, 0, invers, SMLSIZE + RIGHT)
+    IVdraw(curvesButton, 125, 0, invers, SMLSIZE + RIGHT)
+
+    lcd.drawText(2, 9, "thr:", SMLSIZE + LEFT)
+    lcd.drawText(22, 9, math.floor(getValue("thr") * 100 / 1024), SMLSIZE+LEFT)
+    lcd.drawText(64, 9, "output:", SMLSIZE + LEFT)
+    lcd.drawText(98, 9, math.floor(getValue("thr") * 150/1024), SMLSIZE+LEFT)
+ 
+
+    lcd.drawFilledRectangle(0, 17, 128, 9, FORCE)
+    lcd.drawText(2, 18, "name", SMLSIZE + LEFT + INVERS)
+    lcd.drawText(48, 18, "min", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(71, 18, "mid", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(94, 18, "max", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(127, 18, "rev", SMLSIZE + RIGHT + INVERS)
  
     for i=scrollLine + 1, scrollLine + 6, 1 do
         if i <= #adjustChannels then
-            lcd.drawText(2, 10 * (i-scrollLine + 1), outputNameArray[i])
+            lcd.drawText(2, 9 * (i-scrollLine + 2), outputNameArray[i])
             for j=1, 4, 1 do
                 if i <= 16 then
-                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 10 * (i - scrollLine + 1), invers, SMLSIZE + RIGHT)
+                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 9 * (i - scrollLine + 2), invers, SMLSIZE + RIGHT)
                 end
             end
         end
@@ -199,4 +246,14 @@ local function run(event, time)
     return doKey(event)
 end
 
-return {run = run, init=init}
+local function bg()
+    enableAdjustCheckBox.checked = false
+    onEnableAdjustCheckBoxChange(enableAdjustCheckBox)
+    if curvesPage then
+        curvesPage.bg()
+    end
+    this.pageState = 1
+end
+
+this = {run = run, init=init, bg = bg, pageState=0}
+return this

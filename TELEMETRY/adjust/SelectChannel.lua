@@ -21,7 +21,7 @@ local function doKey(event)
         if selectedRow > 16 then
             selectedRow = 16
         end
-        if selectedRow - scrollLine > 4 then
+        if selectedRow - scrollLine > 5 then
                 scrollLine = scrollLine + 1
         end
         if scrollLine > 12 then
@@ -33,12 +33,10 @@ local function doKey(event)
 end
 
 local function run(event, time)
-    lcd.drawText(2, 1, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(34, 1, getValue("thr"), SMLSIZE+LEFT)
-    lcd.drawText(64, 1, "adj:", SMLSIZE + LEFT)
-    lcd.drawText(2, 11, "name", SMLSIZE + LEFT)
-    lcd.drawText(68, 11, "value", SMLSIZE + RIGHT)
-    lcd.drawText(128, 11, "selected", SMLSIZE + RIGHT)
+    lcd.drawFilledRectangle(0, 0, 128, 9, FORCE)
+    lcd.drawText(2, 1, "name", SMLSIZE + LEFT + INVERS)
+    lcd.drawText(68, 1, "value", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(128, 1, "selected", SMLSIZE + RIGHT + INVERS)
  
     for i=scrollLine + 1, scrollLine + 6, 1 do
         local output = model.getOutput(i-1)
@@ -46,18 +44,18 @@ local function run(event, time)
         if i <= 16 then
             if i==selectedRow then
                 option = INVERS
-                lcd.drawFilledRectangle(1, 10 * (i-scrollLine + 1) - 1, 127, 10)
+                lcd.drawFilledRectangle(1, 9 * (i-scrollLine) + 1, 126, 9, FORCE)
             end
             if output.name == "" then
-                lcd.drawText(2, 10 * (i-scrollLine + 1), i, SMLSIZE + LEFT + option)
+                lcd.drawText(2, 9 * (i-scrollLine)+2, i, SMLSIZE + LEFT + option)
             else
-                lcd.drawText(2, 10 * (i-scrollLine + 1), output.name, SMLSIZE + LEFT + option)
+                lcd.drawText(2, 9 * (i-scrollLine)+2, output.name, SMLSIZE + LEFT + option)
             end
-            lcd.drawText(68, 10 * (i-scrollLine + 1), getValue(i), SMLSIZE + RIGHT + option)
+            lcd.drawText(68, 9 * (i-scrollLine)+2, getValue(i), SMLSIZE + RIGHT + option)
             if channels[i] then
-                lcd.drawText(128, 10 * (i-scrollLine + 1), "y", SMLSIZE + RIGHT + option)
+                lcd.drawText(128, 9 * (i-scrollLine)+2, "y", SMLSIZE + RIGHT + option)
             else
-                lcd.drawText(128, 10 * (i-scrollLine + 1), "n", SMLSIZE + RIGHT + option)
+                lcd.drawText(128, 9 * (i-scrollLine)+2, "n", SMLSIZE + RIGHT + option)
             end
         end
     end
