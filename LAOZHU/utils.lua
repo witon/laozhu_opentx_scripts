@@ -104,8 +104,62 @@ function LZ_error(message)
 		assert(false, message)
         return
     end
-	io.write(errLogFile, timeStr, " ", message, "\r\n")
+	local modelName = model.getInfo().name
+	io.write(errLogFile, timeStr, " ", modelName, " ", message, "\r\n")
     io.close(errLogFile)
 	assert(false, message)
 	return 
 end
+
+function LZ_isNeedCompile()
+    local flgFilePath = gScriptDir .. "lzinstall.flag"
+    local flgFile = io.open(flgFilePath, 'r')
+	if flgFile == nil then
+		return false
+	end
+    local content = io.read(flgFile, 200)
+	io.close(flgFile)
+	flgFile = nil
+	if string.sub(content, 1, 8) == "not init" then
+		return true
+	end
+	return false
+end
+
+function LZ_markCompiled()
+    local flgFilePath = gScriptDir .. "lzinstall.flag"
+	local flgFile = io.open(flgFilePath, 'w')
+	if flgFile ~= nil then
+		io.close(flgFile)
+	end
+	flgFile = nil
+end
+
+function LZ_getGVValue(index, mode)
+    local value = model.getGlobalVariable(index, mode)
+    if value >= 1025 then
+        local m = value - 1025
+        if m >= mode then
+            m = m + 1
+        end
+        value = model.getGlobalVariable(index, m)
+        if value > 1024 then
+            LZ_error("invalid gv value, index:" .. index .. ", mode:" .. mode .. ", value:" .. value)
+        end
+    end
+    return value
+end
+
+function LZ_setGVValue(index, mode, value)
+    local curValue = model.getGlobalVariable(index, mode)
+    if curValue >= 1025 then
+        local m = curValue - 1025
+        if m >= mode then
+            m = m + 1
+        end
+        model.setGlobalVariable(index, m, value)
+    else
+        model.setGlobalVariable(index, mode, value)
+    end
+end
+
