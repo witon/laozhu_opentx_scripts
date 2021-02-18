@@ -1,5 +1,3 @@
-gScriptDir = "/SCRIPTS/"
-
 local compileFiles = {
     "TELEMETRY/adjust/output.lua",
     "TELEMETRY/adjust.lua",
@@ -20,22 +18,38 @@ local compileFiles = {
     "TELEMETRY/common/ViewMatrix.lua"
 }
 
-
 local curFileIndex = 1
+local this = nil
 
 local function init()
     local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
     fun()
 end
 
-local function run(event)
-    lcd.clear()
-    if curFileIndex > #compileFiles then
-        return
-    end
-    local fun, err = loadScript(gScriptDir .. compileFiles[curFileIndex], "bt")
-    lcd.drawText(2, 20, compileFiles[curFileIndex], SMLSIZE+LEFT)
-    curFileIndex = curFileIndex + 1
+local function bg()
 end
 
-return {run=run, init=init }
+
+local function run(event, time)
+    lcd.clear()
+    if curFileIndex > #compileFiles then
+        lcd.drawText(1, 20, "installation completed.", SMLSIZE+LEFT)
+        lcd.drawText(1, 30, "you must restart the radio", SMLSIZE+LEFT)
+        lcd.drawText(1, 40, "to use this script.", SMLSIZE+LEFT)
+        return true
+    end
+    local fun, err = loadScript(gScriptDir .. compileFiles[curFileIndex], "bt")
+    LZ_clearTable(fun)
+    fun = nil
+    collectgarbage()
+    lcd.drawText(1, 20, compileFiles[curFileIndex], SMLSIZE+LEFT)
+    curFileIndex = curFileIndex + 1
+    if curFileIndex > #compileFiles then
+        LZ_markCompiled()
+    end
+    return true
+end
+
+this = {run=run, init=init, bg=bg, pageState=0}
+
+return this

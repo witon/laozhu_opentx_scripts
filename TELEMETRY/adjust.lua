@@ -18,8 +18,20 @@ local function loadPage(index)
 	curPage.init()
 end
 
+
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+
+	if LZ_isNeedCompile() then
+		local pagePath = gScriptDir .. "TELEMETRY/common/comp.lua"
+		curPage = LZ_runModule(pagePath)
+		curPage.init()
+	end
+
+
+	adjustCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	adjustCfg.readFromFile(gConfigFileName)
+
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
@@ -34,12 +46,11 @@ local function init()
 
 	initFieldsInfo()
 
-	adjustCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
-	adjustCfg.readFromFile(gConfigFileName)
 end
 
 local function background()
     if curPage and curPage.pageState == 1 then
+		LZ_clearTable(curPage)
 		curPage = nil
     end
 
@@ -62,6 +73,8 @@ local function run(event)
 			return
 		end
 		if event == EVT_EXIT_BREAK then
+			LZ_clearTable(curPage)
+			collectgarbage()
 			curPage = nil
 		end
 		return
