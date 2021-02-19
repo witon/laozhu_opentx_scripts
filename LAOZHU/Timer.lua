@@ -1,5 +1,3 @@
-dofile(gScriptDir .. "LAOZHU/utils.lua")
-
 function Timer_new()
     return {startTime=0,
             stopTime = 0,

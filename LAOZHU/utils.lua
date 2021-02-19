@@ -7,6 +7,17 @@ end
 function LZ_formatDateTime(dateTime)
 	return string.format("%02d:%02d:%02d", dateTime["hour"], dateTime["min"], dateTime["sec"])
 end
+
+function LZ_formatTimeStamp(time)
+	local secondsInDay = (time % (24*60*60))
+	local hour = math.floor(secondsInDay/60/60)
+	local secondsInHour = secondsInDay % (60*60) 
+	local minute = math.floor(secondsInHour/60)
+	local second = secondsInHour % 60
+	local str = string.format("%02d:%02d:%02d", hour, minute, second)
+	return str
+end
+
 function getTelemetryId(name)
 	
 	local field = getFieldInfo(name)

@@ -7,6 +7,9 @@ function VMdelRow(vm, rowIndex)
     if rowIndex > #vm.matrix then
         return
     end
+    if rowIndex == vm.selectedRow then
+        VMclearCurIVFocus(vm)
+    end
     for i=rowIndex, #vm.matrix - 1, 1 do
         vm.matrix[i] = vm.matrix[i+1]
     end
@@ -39,6 +42,14 @@ function VMupdateCurIVFocus(vm)
     end
     local iv = VMgetCurIV(vm)
     IVsetFocusState(iv, 1)
+end
+
+function VMclearCurIVFocus(vm)
+    if VMisEmpty(vm) then
+        return
+    end
+    local iv = VMgetCurIV(vm)
+    IVsetFocusState(iv, 0)
 end
 
 

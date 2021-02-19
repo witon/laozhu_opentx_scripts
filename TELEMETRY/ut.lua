@@ -7,6 +7,8 @@ local inputSelector = nil
 local numEdit = nil
 local outputSelector = nil
 local curveSelector = nil
+local modeSelector = nil
+
 
 local viewMatrix = nil
 
@@ -34,6 +36,8 @@ local function initUI()
     LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/OutputSelector.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/CurveSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/ModeSelector.lua")
 	
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
     viewMatrix = VMnewViewMatrix()
@@ -50,6 +54,8 @@ local function initUI()
     numEdit = NEnewNumEdit()
     outputSelector = OSnewOutputSelector()
     curveSelector = CSnewCurveSelector()
+    modeSelector = MSnewModeSelector()
+
 
     viewMatrix.matrix = {}
     viewMatrix.matrix[1] = {}
@@ -62,7 +68,8 @@ local function initUI()
     viewMatrix.matrix[3][1] = numEdit
     viewMatrix.matrix[3][2] = outputSelector
     viewMatrix.matrix[4] = {}
-    viewMatrix.matrix[4][1] = curveSelector
+    viewMatrix.matrix[4][1] = modeSelector
+    viewMatrix.matrix[4][2] = curveSelector
  
     IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
  
@@ -133,6 +140,10 @@ local function run(event)
 
     lcd.drawText(60, 30, "csselect:", SMLSIZE + LEFT)
     IVdraw(curveSelector, 128, 30, invers, SMLSIZE + RIGHT)
+
+    lcd.drawText(0, 30, "mdselect:", SMLSIZE + LEFT)
+    IVdraw(modeSelector, 58, 30, invers, SMLSIZE + RIGHT)
+ 
     --local c3 = collectgarbage("count")
     --print("----------------c3", c3)
  

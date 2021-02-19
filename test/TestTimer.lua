@@ -1,4 +1,6 @@
+
 function testTimerNormal()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 100)
@@ -24,6 +26,7 @@ function testTimerNormal()
 end
 
 function testStop()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 100)
@@ -54,6 +57,8 @@ function testStop()
 end
 
 function testReadRunTime30s()
+
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 120)
@@ -75,6 +80,7 @@ function testReadRunTime30s()
 end
 
 function testReadRunTimeMultiIn1s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 120)
@@ -104,6 +110,7 @@ function testReadRunTimeMultiIn1s()
 end
 
 function testReadRunTime60s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -126,6 +133,7 @@ function testReadRunTime60s()
 end
 
 function testReadRunTime90s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -145,6 +153,7 @@ function testReadRunTime90s()
 end
 
 function testReadRemainTime91s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -165,6 +174,7 @@ end
 
 
 function testReadRemainTime90s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -184,6 +194,7 @@ function testReadRemainTime90s()
 end
 
 function testReadRemainTime60s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -203,6 +214,7 @@ function testReadRemainTime60s()
 end
 
 function testReadRemainTime30s()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -222,6 +234,7 @@ function testReadRemainTime30s()
 end
 
 function testDowncount()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -269,6 +282,7 @@ function testDowncount()
 end
 
 function testForwardTimer()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -314,6 +328,7 @@ function testForwardTimer()
 end
 
 function testBackwardTimer()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
@@ -350,6 +365,7 @@ function testBackwardTimer()
 end
 
 function testGetDuration()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
     dofile(HOME_DIR .. "LAOZHU/Timer.lua")
  
     local timer = Timer_new()
