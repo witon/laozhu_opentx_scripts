@@ -1,5 +1,5 @@
 
-local function testCfgLM()
+local function testCfg()
     dofile(gScriptDir .. "LAOZHU/Cfg.lua")
     local cfg1 = CFGnewCfg()
     local cfg2 = CFGnewCfg()
@@ -14,4 +14,4 @@ local function testCfgLM()
 end
 
 
-return {testCfgLM}
+return {testCfg}
