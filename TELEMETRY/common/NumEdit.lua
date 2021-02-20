@@ -52,3 +52,11 @@ function NEnewNumEdit()
     return {num = 0, step = 1, focusState = 0, doKey = NEdoKey, draw = NEdraw}
 end
 
+function NEunload()
+    NEsetRange = nil
+    NEdoKey = nil
+    NEdraw = nil
+    NEsetOnChange = nil
+    NEnewNumEdit = nil
+    NEunload = nil
+end

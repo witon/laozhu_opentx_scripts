@@ -41,3 +41,11 @@ function OSnewOutputSelector()
             draw = OSdraw,
             doKey = OSdoKey}
 end
+
+function OSunload()
+    OSdoKey = nil
+    OSsetOnChange = nil
+    OSdraw = nil
+    OSnewOutputSelector = nil
+    OSunload = nil
+end

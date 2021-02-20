@@ -6,8 +6,21 @@ local scrollCol = 0
 local viewMatrix = nil
 local this = nil
 local curGetGVIndex = -1
+local adjustCfg = nil
 
+local function loadModule()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+end
 
+local function unloadModule()
+    IVunload()
+    VMunload()
+    TEunload()
+    NEunload()
+end
 
 local function startGetAllGVValue()
     curGetGVIndex = 1
@@ -43,6 +56,10 @@ local function onTextEditChange(textEdit)
 end
 
 local function init()
+    loadModule()
+	adjustCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	adjustCfg.readFromFile(gConfigFileName)
+
     viewMatrix = VMnewViewMatrix()
     viewMatrix.matrix[1] = {}
     for j=1, 6, 1 do
@@ -72,7 +89,7 @@ end
 
 
 local function doKey(event)
-    viewMatrix.doKey(viewMatrix, event)
+    local ret = viewMatrix.doKey(viewMatrix, event)
 	if (event==36 or event==68) then
         if viewMatrix.selectedRow - scrollLine < 3 and scrollLine > 0 then
             scrollLine = scrollLine - 1
@@ -90,6 +107,11 @@ local function doKey(event)
             scrollCol = scrollCol - 1
         end
     end
+    if not ret and event == EVT_EXIT_BREAK then
+        this.pageState = 1
+        unloadModule()
+    end
+    return ret
 end
 
 local function run(event, time)

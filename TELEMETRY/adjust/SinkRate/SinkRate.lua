@@ -12,6 +12,29 @@ local altID = 0
 local sinkRateRecord = nil
 local recordListView = nil
 
+local function loadModule()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ModeSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+    initFieldsInfo()
+end
+
+local function unloadModule()
+    MSunload()
+    Sunload()
+    ISunload()
+    VMunload()
+    BTunload()
+    NEunload()
+    IVunload()
+    FieldsUnload()
+end
+
 local function onNumEditChange(numEdit)
     local modeIndex = sinkRateCfg.getNumberField("mode", -1)
     if modeIndex == -1 then
@@ -130,6 +153,7 @@ local function onSinkRateStateChange(state, isStart)
 end
 
 local function init()
+    loadModule()
     LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateState.lua")
     sinkRateState = SRSnewSinkRateState()
     SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
@@ -154,7 +178,12 @@ local function init()
 end
 
 local function doKey(event)
-    return viewMatrix.doKey(viewMatrix, event)
+    local ret = viewMatrix.doKey(viewMatrix, event)
+    if (not ret) and event == EVT_EXIT_BREAK then
+        this.pageState = 1
+        unloadModule()
+    end
+    return ret
 end
 
 local function run(event, time)

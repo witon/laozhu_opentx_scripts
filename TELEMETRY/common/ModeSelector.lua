@@ -40,3 +40,12 @@ function MSnewModeSelector()
     SsetTextFun(modeSelector, MSgetText)
     return modeSelector
 end
+
+function MSunload()
+    MSgetText = nil
+    MSinc = nil
+    MSdec = nil
+    SsetSelectFun = nil
+    MSnewModeSelector = nil
+    MSunload = nil
+end

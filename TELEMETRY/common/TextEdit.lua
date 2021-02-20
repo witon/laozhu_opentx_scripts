@@ -89,3 +89,15 @@ function TEnewTextEdit()
     return {modiIndex = 1, str = {}, focusState = 0, setFocusState = TEsetFocusState, doKey = TEdoKey, draw = TEdraw}
 end
 
+
+function TEunload()
+    preProcess = nil
+    postProcess = nil
+    TEsetFocusState = nil
+    TEdoKey = nil
+    TEsetText = nil
+    TEdraw = nil
+    TEsetOnChange = nil
+    TEnewTextEdit = nil
+    TEunload = nil
+end

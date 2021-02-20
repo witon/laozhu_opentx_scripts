@@ -2,6 +2,9 @@
 function RLVdoKey(recordListView, event)
     if event ==  EVT_ENTER_BREAK then
         local record = recordListView.records[#recordListView.records - recordListView.selectedRow + 1]
+        if record == nil then
+            return true
+        end
         if record.invalid ~= nil then
             record.invalid = not record.invalid
         else
@@ -24,7 +27,7 @@ function RLVdoKey(recordListView, event)
             recordListView.scrollRow = recordListView.scrollRow - 1
         end
         return true
-    end
+   end
     return false
 end
 
