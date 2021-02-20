@@ -8,7 +8,7 @@ local function preProcess(textEdit)
 end
 
 local function postProcess(textEdit)
-    textEdit.str = textEdit.headStr .. string.char(textEdit.modiChar) .. textEdit.tailStr
+    textEdit.str = string.gsub(textEdit.headStr .. string.char(textEdit.modiChar) .. textEdit.tailStr, "[ \t\n\r]+$", "")
     textEdit.headStr = nil
     textEdit.modiChar = nil
     textEdit.tailStr = nil
@@ -31,13 +31,25 @@ end
 function TEdoKey(textEdit, event)
     if event == 35 or event == 67 then
         textEdit.modiChar = textEdit.modiChar + 1
-        if textEdit.modiChar > 122 then
+        if textEdit.modiChar == 33 then
+            textEdit.modiChar = 48
+        elseif textEdit.modiChar == 58 then
+            textEdit.modiChar = 65
+        elseif textEdit.modiChar == 91 then
+            textEdit.modiChar = 95
+        elseif textEdit.modiChar > 122 then
             textEdit.modiChar = 122
         end
     elseif event == 36 or event == 68 then
         textEdit.modiChar = textEdit.modiChar - 1
         if textEdit.modiChar < 32 then
             textEdit.modiChar = 32 
+        elseif textEdit.modiChar == 47 then
+            textEdit.modiChar = 32
+        elseif textEdit.modiChar == 64 then
+            textEdit.modiChar = 57
+        elseif textEdit.modiChar == 94 then
+            textEdit.modiChar = 90
         end
     elseif event == 37 then
         postProcess(textEdit)
