@@ -76,3 +76,16 @@ function ISnewInputSelector()
             draw = ISdraw,
             doKey = ISdoKey}
 end
+
+function ISunload()
+    startDetectField = nil
+    ISsetFocusState = nil
+    ISgetSelectedItemId = nil
+    detectField = nil
+    ISsetSelectedItemById = nil
+    ISsetFieldType = nil
+    ISdoKey = nil
+    ISdraw = nil
+    ISnewInputSelector = nil
+    ISunload = nil
+end

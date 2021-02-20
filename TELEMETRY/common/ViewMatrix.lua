@@ -137,3 +137,16 @@ function VMnewViewMatrix()
     return {editingIV = nil, selectedRow = 1, selectedCol = 1, matrix={}, doKey = VMdoKey}
 end
 
+function VMunload()
+    VMaddRow = nil
+    VMdelRow = nil
+    VMclearRow = nil
+    VMgetCurIV = nil
+    VMclear = nil
+    VMisEmpty = nil
+    VMupdateCurIVFocus = nil
+    VMclearCurIVFocus = nil
+    VMdoKey = nil
+    VMnewViewMatrix = nil
+    VMunload = nil
+end

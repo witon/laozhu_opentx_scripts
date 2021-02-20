@@ -14,3 +14,9 @@ function IVdraw(iv, x, y, invers, option)
     end
     iv.draw(iv, x, y, invers, drawOption)
 end
+
+function IVunload()
+    IVsetFocusState = nil
+    IVdraw = nil
+    IVunload = nil
+end

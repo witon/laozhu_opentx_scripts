@@ -22,3 +22,10 @@ function BTnewButton()
     return {noEdit = true, text = "", focusState = 0, doKey = BTdoKey, draw = BTdraw}
 end
 
+function BTunload()
+    BTdoKey = nil
+    BTdraw = nil
+    BTsetOnClick = nil
+    BTnewButton = nil
+    BTunload = nil
+end

@@ -45,3 +45,14 @@ function SnewSelector()
             draw = Sdraw,
             doKey = SdoKey}
 end
+
+function Sunload()
+    SsetTextFun = nil
+    SsetSelectFun = nil
+    SgetSelectedText = nil
+    SdoKey = nil
+    SsetOnChange = nil
+    Sdraw = nil
+    SnewSelector = nil
+    Sunload = nil
+end

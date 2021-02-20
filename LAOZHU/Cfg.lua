@@ -1,11 +1,6 @@
-local cfgs = {}
 
-local function getCfgs()
-    return cfgs
-end
-
-local function getNumberField(fieldName, default)
-    local v = cfgs[fieldName]
+function CFGgetNumberField(cfg, fieldName, default)
+    local v = cfg[fieldName]
     if v == nil and default then
         return default
     end
@@ -15,8 +10,8 @@ local function getNumberField(fieldName, default)
     return v
 end
 
-local function getStrField(fieldName)
-    local v = cfgs[fieldName]
+function CFGgetStrField(cfg, fieldName)
+    local v = cfg[fieldName]
     if v == nil then
         return ""
     end
@@ -24,7 +19,7 @@ local function getStrField(fieldName)
 end
 
 
-local function readFromFile(fileName)
+function CFGreadFromFile(cfg, fileName)
     local cfgFilePath = gScriptDir .. fileName
     local cfgFile = io.open(cfgFilePath, 'r')
     if cfgFile == nil then
@@ -38,22 +33,22 @@ local function readFromFile(fileName)
         local k, v, t = string.match(line, '([^=]+)=(.+):(.)')
         if k and v and t then
             if t == 's' then
-                cfgs[k] = v
+                cfg[k] = v
             else
-                cfgs[k] = tonumber(v)
+                cfg[k] = tonumber(v)
             end
         end
     end
     return true
 end
 
-local function writeToFile(fileName)
+function CFGwriteToFile(cfg, fileName)
     local cfgFilePath = gScriptDir .. fileName
     local cfgFile = io.open(cfgFilePath, 'w')
     if cfgFile == nil then
         return
     end
-    for k, v in pairs(cfgs) do
+    for k, v in pairs(cfg) do
         if type(v) == "string" then
            io.write(cfgFile, k, '=', v, ':s\r\n')
         else
@@ -63,9 +58,15 @@ local function writeToFile(fileName)
     io.close(cfgFile)
 end
 
-return {readFromFile = readFromFile,
-        writeToFile = writeToFile,
-        getCfgs = getCfgs,
-        getNumberField = getNumberField,
-        getStrField = getStrField
-    }
+function CFGnewCfg()
+    return {}
+end
+
+function CFGunload()
+    CFGgetNumberField = nil
+    CFGgetStrField = nil
+    CFGreadFromFile = nil
+    CFGwriteToFile = nil
+    CFGnewCfg = nil
+    CFGunload = nil
+end

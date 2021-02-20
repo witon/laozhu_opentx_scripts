@@ -42,3 +42,11 @@ function CSnewCurveSelector()
             draw = CSdraw,
             doKey = CSdoKey}
 end
+
+function CSunload()
+    CSdoKey = nil
+    CSsetOnChange = nil
+    CSdraw = nil
+    CSnewCurveSelector = nil
+    CSunload = nil
+end

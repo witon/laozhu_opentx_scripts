@@ -23,21 +23,19 @@ local curSelectorIndex = 1
 local editingSelector = nil
 
 local function setCfgValue()
-    local cfgs = f3kCfg.getCfgs()
-    cfgs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
-    cfgs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
-    cfgs["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
-    cfgs["WtResetSw"] = ISgetSelectedItemId(workTimeResetSwitchSelector)
-    cfgs["DestTimeStep"] = destTimeSettingStepNumEdit.num
+    f3kCfg["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
+    f3kCfg["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
+    f3kCfg["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
+    f3kCfg["WtResetSw"] = ISgetSelectedItemId(workTimeResetSwitchSelector)
+    f3kCfg["DestTimeStep"] = destTimeSettingStepNumEdit.num
 end
 
 local function getCfgValue()
-    local cfgs = f3kCfg.getCfgs()
-    ISsetSelectedItemById(readSwitchSelector, cfgs["ReadSw"])
-    ISsetSelectedItemById(varSliderSelector, cfgs["SelSlider"])
-    ISsetSelectedItemById(workTimeSwitchSelector, cfgs["WtSw"])
-    ISsetSelectedItemById(workTimeResetSwitchSelector, cfgs["WtResetSw"])
-    destTimeSettingStepNumEdit.num = f3kCfg.getNumberField("DestTimeStep", 15)
+    ISsetSelectedItemById(readSwitchSelector, f3kCfg["ReadSw"])
+    ISsetSelectedItemById(varSliderSelector, f3kCfg["SelSlider"])
+    ISsetSelectedItemById(workTimeSwitchSelector, f3kCfg["WtSw"])
+    ISsetSelectedItemById(workTimeResetSwitchSelector, f3kCfg["WtResetSw"])
+    destTimeSettingStepNumEdit.num = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
 end
 
 local function init()
@@ -50,7 +48,7 @@ local function doKey(event)
             IVsetFocusState(editingSelector, 1)
             editingSelector = nil
             setCfgValue()
-            f3kCfg.writeToFile(gConfigFileName)
+            CFGwriteToFile(f3kCfg, gConfigFileName)
             return true
         end
         editingSelector.doKey(editingSelector, event)

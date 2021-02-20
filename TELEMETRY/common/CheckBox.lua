@@ -26,3 +26,11 @@ function CBnewCheckBox()
     return {checked = false, focusState = 0, doKey = CBdoKey, draw = CBdraw}
 end
 
+function CBunload()
+    CBdoKey = nil
+    CBdraw = nil
+    CBsetOnChange = nil
+    CBnewCheckBox = nil
+    CBunload = nil
+end
+

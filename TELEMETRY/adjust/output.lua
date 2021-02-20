@@ -11,6 +11,21 @@ local selectChannelPage = nil
 local curvesPage = nil
 local this = nil
 
+local function loadModule()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+end
+
+local function unloadModule()
+    VMunload()
+    BTunload()
+    NEunload()
+    IVunload()
+    CBunload()
+end
 
 local function getOutputValue(rowNum, index, row)
     local output = model.getOutput(index-1)
@@ -120,6 +135,8 @@ local function onCurvesButtonClick()
 end
 
 local function init()
+    loadModule()
+
     LZ_runModule(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/adjust/OutputCurveManager.lua")
     selectChannelsButton = BTnewButton()
@@ -163,7 +180,7 @@ local function updateAdjustChannels()
 end
 
 local function doKey(event)
-    viewMatrix.doKey(viewMatrix, event)
+    local ret = viewMatrix.doKey(viewMatrix, event)
     if event==36 then
         if viewMatrix.selectedRow - scrollLine < 2 and scrollLine > 0 then
             scrollLine = scrollLine - 1
@@ -175,9 +192,12 @@ local function doKey(event)
         if scrollLine > 12 then
             scrollLine = 12 
         end
-    elseif event==EVT_EXIT_BREAK then
+    end
+    if not ret and event==EVT_EXIT_BREAK then
         enableAdjustCheckBox.checked = false
         onEnableAdjustCheckBoxChange(enableAdjustCheckBox)
+        this.pageState = 1
+        unloadModule()
     end
 end
 
@@ -253,6 +273,7 @@ local function bg()
         curvesPage.bg()
     end
     this.pageState = 1
+    unloadModule()
 end
 
 this = {run = run, init=init, bg = bg, pageState=0}

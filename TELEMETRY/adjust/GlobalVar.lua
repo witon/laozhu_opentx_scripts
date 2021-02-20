@@ -7,7 +7,24 @@ local viewMatrix = nil
 local this = nil
 local curGetGVIndex = -1
 
+local configFileName = "output.cfg"
+local outputCfg = nil
 
+local function loadModule()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
+end
+
+local function unloadModule()
+    IVunload()
+    VMunload()
+    TEunload()
+    NEunload()
+    CFGunload()
+end
 
 local function startGetAllGVValue()
     curGetGVIndex = 1
@@ -15,7 +32,7 @@ end
 
 local function getGVName()
     for i=1, 6, 1 do
-        gvNameEditArray[i].str = adjustCfg.getStrField("gvname" .. i)
+        gvNameEditArray[i].str = CFGgetStrField(outputCfg, "gvname" .. i)
         if gvNameEditArray[i].str == "" then
             gvNameEditArray[i].str = tostring(i)
         end
@@ -35,14 +52,17 @@ local function onNumEditChange(numEdit)
 end
 
 local function onTextEditChange(textEdit)
-    local cfgs = adjustCfg.getCfgs()
     for i=1, #gvNameEditArray, 1 do
-        cfgs["gvname" .. i] = gvNameEditArray[i].str
+        outputCfg["gvname" .. i] = gvNameEditArray[i].str
     end
-    adjustCfg.writeToFile(gConfigFileName)
+    CFGwriteToFile(outputCfg, configFileName)
 end
 
 local function init()
+    loadModule()
+    outputCfg = CFGnewCfg()
+	CFGreadFromFile(outputCfg, configFileName)
+
     viewMatrix = VMnewViewMatrix()
     viewMatrix.matrix[1] = {}
     for j=1, 6, 1 do
@@ -72,7 +92,7 @@ end
 
 
 local function doKey(event)
-    viewMatrix.doKey(viewMatrix, event)
+    local ret = viewMatrix.doKey(viewMatrix, event)
 	if (event==36 or event==68) then
         if viewMatrix.selectedRow - scrollLine < 3 and scrollLine > 0 then
             scrollLine = scrollLine - 1
@@ -90,6 +110,11 @@ local function doKey(event)
             scrollCol = scrollCol - 1
         end
     end
+    if not ret and event == EVT_EXIT_BREAK then
+        this.pageState = 1
+        unloadModule()
+    end
+    return ret
 end
 
 local function run(event, time)

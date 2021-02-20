@@ -69,3 +69,12 @@ function initFieldsInfo()
     FIELDS_SWITCH = filterTable(FIELDS_SWITCH)
 end
 
+function FieldsUnload()
+    FIELDS_CHANNEL = nil
+    FIELDS_INPUT = nil
+    FIELDS_SWITCH = nil
+    filterTable = nil
+    initFieldsInfo = nil
+    FieldsUnload = nil
+end
+
