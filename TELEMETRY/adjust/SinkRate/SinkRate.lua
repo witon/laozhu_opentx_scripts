@@ -11,7 +11,7 @@ local sinkRateState = nil
 local altID = 0
 local sinkRateRecord = nil
 local recordListView = nil
-
+local playingTone = false
 local function loadModule()
     LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
@@ -218,17 +218,24 @@ local function run(event, time)
         local time = getRtcTime()
         local alt = getValue(altID)
         SRSrun(sinkRateState, time, alt, getValue(testSwIndex))
+
+        if SRSisStart(sinkRateState) and invers and playingTone == false then
+            playTone(1000, 100, 0, 0)
+            playingTone = true
+        end
+        if not invers and playingTone then
+            playingTone = false
+        end
+
         lcd.drawText(0, 10, "dur:", SMLSIZE + LEFT)
         lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState, time)), SMLSIZE + RIGHT)
         lcd.drawText(44, 10, "sink:", SMLSIZE + LEFT)
         lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState, alt)), SMLSIZE + RIGHT)
         lcd.drawText(80, 10, "srate:", SMLSIZE + LEFT)
         lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState, time, alt)*100, SMLSIZE + RIGHT)
- 
     end
 
     IVdraw(recordListView, 0, 19, invers, 0)
-
     return doKey(event)
 end
 
