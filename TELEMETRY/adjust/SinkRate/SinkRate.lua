@@ -10,6 +10,7 @@ local flap2GvNumEdit = nil
 local sinkRateState = nil
 local altID = 0
 local sinkRateRecord = nil
+local recordListView = nil
 
 local function onNumEditChange(numEdit)
     local modeIndex = sinkRateCfg.getNumberField("mode", -1)
@@ -56,9 +57,15 @@ end
 
 
 local function updateGvNumEdit()
-    VMdelRow(viewMatrix, 1)
-    local row = VMaddRow(viewMatrix)
-
+    VMclearCurIVFocus(viewMatrix)
+    local row = nil
+    if VMisEmpty(viewMatrix) then
+        VMaddRow(viewMatrix)
+        row = VMaddRow(viewMatrix)
+        row[1] = recordListView
+    end
+    VMclearRow(viewMatrix, 1)
+    row = viewMatrix.matrix[1]
     local eleGvIndex = sinkRateCfg.getNumberField("elegv", -1)
     local flap1GvIndex = sinkRateCfg.getNumberField("flap1gv", -1)
     local flap2GvIndex = sinkRateCfg.getNumberField("flap2gv", -1)
@@ -123,13 +130,11 @@ local function onSinkRateStateChange(state, isStart)
 end
 
 local function init()
-
     LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateState.lua")
     sinkRateState = SRSnewSinkRateState()
     SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
     LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateRecord.lua")
-    sinkRateRecord = SRRnewSinkRateRecord(getRtcTime())
-
+    sinkRateRecord = SRRnewSinkRateRecord()
 
     sinkRateCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
     sinkRateCfg.readFromFile(sinkRateCfgFileName)
@@ -138,15 +143,18 @@ local function init()
     cfgButton = BTnewButton()
     cfgButton.text = "*"
     BTsetOnClick(cfgButton, onCfgButtonClick)
-    updateGvNumEdit()
 
+    LZ_runModule(gScriptDir .. "/TELEMETRY/adjust/SinkRate/RecordListView.lua")
+    recordListView = RLVnewRecordListView()
+    recordListView.records = sinkRateRecord
+    updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
 	
 end
 
 local function doKey(event)
-    viewMatrix.doKey(viewMatrix, event)
+    return viewMatrix.doKey(viewMatrix, event)
 end
 
 local function run(event, time)
@@ -197,26 +205,7 @@ local function run(event, time)
  
     end
 
-    lcd.drawFilledRectangle(0, 19, 128, 9, FORCE)
-    lcd.drawText(0, 20, "time", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(57, 20, "ele", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(80, 20, "f1", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(103, 20, "f2", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(128, 20, "sr", SMLSIZE + RIGHT + INVERS)
-
-    for i=1, #sinkRateRecord, 1 do
-        local record = sinkRateRecord[#sinkRateRecord - i + 1]
-        local y = 30 + (i-1) * 10
-        lcd.drawText(0, y, LZ_formatTimeStamp(record.startTime), SMLSIZE + LEFT)
-        lcd.drawText(57, y, record.ele, SMLSIZE + RIGHT)
-        lcd.drawText(80, y, record.flap1, SMLSIZE + RIGHT)
-        lcd.drawText(103, y, record.flap2, SMLSIZE + RIGHT)
-        lcd.drawNumber(128, y, SRRgetRecordSinkRate(record), SMLSIZE + RIGHT)
- 
-    end
-  
-
-
+    IVdraw(recordListView, 0, 19, invers, 0)
 
     return doKey(event)
 end

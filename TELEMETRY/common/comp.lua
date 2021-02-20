@@ -10,6 +10,7 @@ local compileFiles = {
     "TELEMETRY/adjust/SelectChannel.lua",
     "TELEMETRY/adjust/SinkRate/SinkRate.lua",
     "TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua",
+    "TELEMETRY/adjust/SinkRate/RecordListView.lua",
     "TELEMETRY/common/button.lua",
     "TELEMETRY/common/CheckBox.lua",
     "TELEMETRY/common/CurveSelector.lua",
