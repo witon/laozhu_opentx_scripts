@@ -9,34 +9,41 @@ local displayIndex = 1
 local pages = {"5j/FlightPage.lua", "5j/SetupPage.lua"}
 local curPage = nil
 
+local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+fun()
+
 local function loadPage()
 	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[displayIndex]
-	curPage = dofile(pagePath)
+	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end
 
 local function init()
-	dofile(gScriptDir .. "LAOZHU/utils.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/Fields.lua")
+	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
-	dofile(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-	dofile(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 
-	gFlightState = dofile(gScriptDir .. "LAOZHU/F5jState.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 
-	f5jCfg = dofile(gScriptDir .. "/LAOZHU/Cfg.lua")
-	f5jCfg.readFromFile(gConfigFileName)
+	gFlightState = LZ_runModule(gScriptDir .. "LAOZHU/F5jState.lua")
+
+	LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	f5jCfg = CFGnewCfg()
+
+	CFGreadFromFile(f5jCfg, gConfigFileName)
 	altID = getTelemetryId("Alt")
-	gFlightState.setThrottleThreshold(f5jCfg.getNumberField("ThThreshold"))
+	gFlightState.setThrottleThreshold(CFGgetNumberField(f5jCfg, "ThThreshold"))
 	loadPage()
 end
 
 local function run(event)
 	local curTime = getTime()
 	local curAlt = getValue(altID)
-	local resetSwitchValue = getValue(f5jCfg.getNumberField('RsSw'))
-	local flightSwitchValue = getValue(f5jCfg.getNumberField('FlSw'))
-	local throttleValue = getValue(f5jCfg.getNumberField('ThCh'))
+	local resetSwitchValue = getValue(CFGgetNumberField(f5jCfg, 'RsSw'))
+	local flightSwitchValue = getValue(CFGgetNumberField(f5jCfg, 'FlSw'))
+	local throttleValue = getValue(CFGgetNumberField(f5jCfg, 'ThCh'))
 	gFlightState.setAlt(curAlt)
 	gFlightState.doFlightState(curTime, resetSwitchValue, throttleValue, flightSwitchValue)
 

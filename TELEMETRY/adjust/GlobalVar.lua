@@ -6,13 +6,16 @@ local scrollCol = 0
 local viewMatrix = nil
 local this = nil
 local curGetGVIndex = -1
-local adjustCfg = nil
+
+local configFileName = "output.cfg"
+local outputCfg = nil
 
 local function loadModule()
     LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
 end
 
 local function unloadModule()
@@ -20,6 +23,7 @@ local function unloadModule()
     VMunload()
     TEunload()
     NEunload()
+    CFGunload()
 end
 
 local function startGetAllGVValue()
@@ -28,7 +32,7 @@ end
 
 local function getGVName()
     for i=1, 6, 1 do
-        gvNameEditArray[i].str = adjustCfg.getStrField("gvname" .. i)
+        gvNameEditArray[i].str = CFGgetStrField(outputCfg, "gvname" .. i)
         if gvNameEditArray[i].str == "" then
             gvNameEditArray[i].str = tostring(i)
         end
@@ -48,17 +52,16 @@ local function onNumEditChange(numEdit)
 end
 
 local function onTextEditChange(textEdit)
-    local cfgs = adjustCfg.getCfgs()
     for i=1, #gvNameEditArray, 1 do
-        cfgs["gvname" .. i] = gvNameEditArray[i].str
+        outputCfg["gvname" .. i] = gvNameEditArray[i].str
     end
-    adjustCfg.writeToFile(gConfigFileName)
+    CFGwriteToFile(outputCfg, configFileName)
 end
 
 local function init()
     loadModule()
-	adjustCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
-	adjustCfg.readFromFile(gConfigFileName)
+    outputCfg = CFGnewCfg()
+	CFGreadFromFile(outputCfg, configFileName)
 
     viewMatrix = VMnewViewMatrix()
     viewMatrix.matrix[1] = {}

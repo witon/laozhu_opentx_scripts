@@ -1,5 +1,4 @@
 gScriptDir = "/SCRIPTS/"
-gConfigFileName = "adjust.cfg"
 local bgFlag = false
 
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")

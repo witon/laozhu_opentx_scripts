@@ -41,9 +41,9 @@ local function run(event, time)
     lcd.clear()
     if curFileIndex > #compileFiles then
         lcd.drawText(1, 20, "installation completed.", SMLSIZE+LEFT)
-        lcd.drawText(1, 30, "you must restart the radio", SMLSIZE+LEFT)
-        lcd.drawText(1, 40, "to use this script.", SMLSIZE+LEFT)
-        return true
+        --lcd.drawText(1, 30, "you must restart the radio", SMLSIZE+LEFT)
+        --lcd.drawText(1, 40, "to use this script.", SMLSIZE+LEFT)
+        return false
     end
     local fun, err = loadScript(gScriptDir .. compileFiles[curFileIndex])
     if fun == nil then

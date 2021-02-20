@@ -15,6 +15,8 @@ local viewMatrix = nil
 
 local testFiles = {
     "/SCRIPTS/emutest/testCfg.lua",
+    "/SCRIPTS/emutest/testCfgLM.lua",
+ 
     "/SCRIPTS/emutest/testLoadModule.lua",
     "/SCRIPTS/emutest/testManagerOutput.lua",
     --"/SCRIPTS/emutest/testOutputCurveManager.lua",

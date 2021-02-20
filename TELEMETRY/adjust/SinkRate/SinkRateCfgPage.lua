@@ -9,18 +9,32 @@ local testSwitchSelector = nil
 local cfgFileName = nil
 local sinkRateCfg = nil
 
+local function loadModule()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ModeSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+    initFieldsInfo()
+end
+
+local function unloadModule()
+    MSunload()
+    Sunload()
+    ISunload()
+    FieldsUnload()
+end
+
 local function setCfgFileName(fileName)
     cfgFileName = fileName
 end
 
 local function saveCfg()
-    local cfgs = sinkRateCfg.getCfgs()
-    cfgs['elegv'] = eleNumedit.num
-    cfgs['flap1gv'] = flap1Numedit.num
-    cfgs['flap2gv'] = flap2Numedit.num
-    cfgs['mode'] = modeSelector.selectedIndex
-    cfgs['testsw'] = ISgetSelectedItemId(testSwitchSelector)
-    sinkRateCfg.writeToFile(cfgFileName)
+    sinkRateCfg['elegv'] = eleNumedit.num
+    sinkRateCfg['flap1gv'] = flap1Numedit.num
+    sinkRateCfg['flap2gv'] = flap2Numedit.num
+    sinkRateCfg['mode'] = modeSelector.selectedIndex
+    sinkRateCfg['testsw'] = ISgetSelectedItemId(testSwitchSelector)
+    CFGwriteToFile(sinkRateCfg, cfgFileName)
 end
 
 local function newGVInput()
@@ -32,19 +46,20 @@ local function newGVInput()
 end
 
 local function init()
-    sinkRateCfg = LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
-    sinkRateCfg.readFromFile(cfgFileName)
+    loadModule()
+    sinkRateCfg = CFGnewCfg()
+    CFGreadFromFile(sinkRateCfg, cfgFileName)
     
     viewMatrix = VMnewViewMatrix()
 
     modeSelector = MSnewModeSelector()
-    modeSelector.selectedIndex = sinkRateCfg.getNumberField("mode", -1)
+    modeSelector.selectedIndex = CFGgetNumberField(sinkRateCfg, "mode", -1)
     eleNumedit = newGVInput()
-    eleNumedit.num = sinkRateCfg.getNumberField("elegv", -1)
+    eleNumedit.num = CFGgetNumberField(sinkRateCfg, "elegv", -1)
     flap1Numedit = newGVInput()
-    flap1Numedit.num = sinkRateCfg.getNumberField("flap1gv", -1)
+    flap1Numedit.num = CFGgetNumberField(sinkRateCfg, "flap1gv", -1)
     flap2Numedit = newGVInput()
-    flap2Numedit.num = sinkRateCfg.getNumberField("flap2gv", -1)
+    flap2Numedit.num = CFGgetNumberField(sinkRateCfg, "flap2gv", -1)
 
     local vmRow = VMaddRow(viewMatrix)
     vmRow[1] = modeSelector
@@ -60,7 +75,7 @@ local function init()
 
     testSwitchSelector = ISnewInputSelector()
     ISsetFieldType(testSwitchSelector, FIELDS_SWITCH)
-    ISsetSelectedItemById(testSwitchSelector, sinkRateCfg.getNumberField("testsw", -1))
+    ISsetSelectedItemById(testSwitchSelector, CFGgetNumberField(sinkRateCfg, "testsw", -1))
  
     vmRow = VMaddRow(viewMatrix)
     vmRow[1] = testSwitchSelector
@@ -76,6 +91,7 @@ local function doKey(event)
     if event == EVT_EXIT_BREAK then
         saveCfg()
         this.pageState = 1
+        unloadModule()
     end
     return true
 end

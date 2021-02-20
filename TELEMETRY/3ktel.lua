@@ -43,8 +43,9 @@ local function init()
 	Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 
 
-	f3kCfg = LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
-	f3kCfg.readFromFile(gConfigFileName)
+	LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	f3kCfg = CFGnewCfg()
+	CFGreadFromFile(f3kCfg, gConfigFileName)
 
 
 	altID = getTelemetryId("Alt")
@@ -53,7 +54,7 @@ local function init()
 	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
 	readVar.setVarMap(f3kReadVarMap)
-	gWTResetSwitchTrigeDetector = STD_new(getValue(f3kCfg.getNumberField('WtResetSw')))
+	gWTResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'WtResetSw')))
 end
 
 local function loadPage()
@@ -73,12 +74,12 @@ local function run(event)
 
 
 
-	local workTimeSwitchValue = getValue(f3kCfg.getNumberField('WtSw'))
+	local workTimeSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'WtSw'))
 	if workTimeSwitchValue > 0 and not Timer_isstart(gWorktimeTimer) then
 		Timer_start(gWorktimeTimer)
 	end
 
-	local workTimeResetSwitchValue = getValue(f3kCfg.getNumberField('WtResetSw'))
+	local workTimeResetSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'WtResetSw'))
 	if STD_run(gWTResetSwitchTrigeDetector, workTimeResetSwitchValue) then
 		Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
 		Timer_setCurTime(gWorktimeTimer, curTime)
@@ -87,8 +88,8 @@ local function run(event)
 	Timer_setCurTime(gWorktimeTimer, curTime)
 	Timer_run(gWorktimeTimer)
 
-	local varSelectorSliderValue = getValue(f3kCfg.getNumberField('SelSlider'))
-	local varReadSwitchValue = getValue(f3kCfg.getNumberField('ReadSw'))
+	local varSelectorSliderValue = getValue(CFGgetNumberField(f3kCfg, 'SelSlider'))
+	local varReadSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'ReadSw'))
 	
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 
