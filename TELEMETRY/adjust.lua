@@ -8,7 +8,7 @@ fun()
 
 
 local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua"}
+local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua"}
 local curPage = nil
 adjustCfg = nil
 
@@ -26,6 +26,7 @@ local function init()
 		local pagePath = gScriptDir .. "TELEMETRY/common/comp.lua"
 		curPage = LZ_runModule(pagePath)
 		curPage.init()
+		return
 	end
 
 
@@ -37,6 +38,8 @@ local function init()
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
 	
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/ModeSelector.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/OutputSelector.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")

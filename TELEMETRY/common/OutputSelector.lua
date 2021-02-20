@@ -37,7 +37,6 @@ end
 function OSnewOutputSelector()
     return {selectedIndex = 0,
             selectedName = LZ_getOutputName(0),
-            isFocuse = false,
             focusState = 0,
             draw = OSdraw,
             doKey = OSdoKey}

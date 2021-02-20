@@ -23,6 +23,6 @@ function CBsetOnChange(checkBox, onChange)
 end
 
 function CBnewCheckBox()
-    return {checked = false, isFocuse = false, focusState = 0, doKey = CBdoKey, draw = CBdraw}
+    return {checked = false, focusState = 0, doKey = CBdoKey, draw = CBdraw}
 end
 

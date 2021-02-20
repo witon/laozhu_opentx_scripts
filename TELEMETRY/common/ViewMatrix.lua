@@ -7,11 +7,25 @@ function VMdelRow(vm, rowIndex)
     if rowIndex > #vm.matrix then
         return
     end
+    if rowIndex == vm.selectedRow then
+        VMclearCurIVFocus(vm)
+    end
     for i=rowIndex, #vm.matrix - 1, 1 do
         vm.matrix[i] = vm.matrix[i+1]
     end
     vm.matrix[#vm.matrix] = nil
 end
+
+function VMclearRow(vm, rowIndex)
+    if rowIndex > #vm.matrix then
+        return
+    end
+    local row = vm.matrix[rowIndex]
+    while #row > 0 do
+        row[#row] = nil
+    end
+end
+
 
 function VMgetCurIV(vm)
     return vm.matrix[vm.selectedRow][vm.selectedCol]
@@ -24,10 +38,10 @@ function VMclear(vm)
 end
 
 function VMisEmpty(vm)
-    if vm.matrix[vm.selectedRow] == nil then
+    if #vm.matrix == 0 then
         return true
     end
-    if vm.matrix[vm.selectedRow][vm.selectedCol] == nil then
+    if #vm.matrix[1] == 0 then
         return true
     end
     return false
@@ -41,6 +55,14 @@ function VMupdateCurIVFocus(vm)
     IVsetFocusState(iv, 1)
 end
 
+function VMclearCurIVFocus(vm)
+    if VMisEmpty(vm) then
+        return
+    end
+    local iv = VMgetCurIV(vm)
+    IVsetFocusState(iv, 0)
+end
+
 
 function VMdoKey(vm, event)
     if VMisEmpty(vm) then
@@ -48,12 +70,15 @@ function VMdoKey(vm, event)
     end
 
     if vm.editingIv then
+        local processed = vm.editingIv.doKey(vm.editingIv, event)
+        if processed then
+            return true
+        end
         if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
             IVsetFocusState(vm.editingIv, 1)
             vm.editingIv = nil
             return true
         end
-        vm.editingIv.doKey(vm.editingIv, event)
         return true
     end
 

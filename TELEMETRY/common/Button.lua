@@ -19,6 +19,6 @@ function BTsetOnClick(button, onClick)
 end
 
 function BTnewButton()
-    return {noEdit = true, text = "", isFocuse = false, focusState = 0, doKey = BTdoKey, draw = BTdraw}
+    return {noEdit = true, text = "", focusState = 0, doKey = BTdoKey, draw = BTdraw}
 end
 

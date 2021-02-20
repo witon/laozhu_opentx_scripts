@@ -71,7 +71,6 @@ end
 function ISnewInputSelector()
     return {selectedIndex = 1,
             fieldTable = FIELDS_CHANNEL,
-            isFocuse = false,
             focusState = 0,
             setFocusState = ISsetFocusState,
             draw = ISdraw,

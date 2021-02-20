@@ -49,6 +49,6 @@ function NEsetOnChange(numEdit, onChange)
 end
 
 function NEnewNumEdit()
-    return {num = 0, step = 1, isFocuse = false, focusState = 0, doKey = NEdoKey, draw = NEdraw}
+    return {num = 0, step = 1, focusState = 0, doKey = NEdoKey, draw = NEdraw}
 end
 
