@@ -79,3 +79,9 @@ function RLVnewRecordListView()
     return {scrollRow = 0, selectedRow = 1, records = nil, focusState = 0, doKey = RLVdoKey, draw = RLVdraw}
 end
 
+function RLVunload()
+    RLVdoKey = nil
+    RLVdraw = nil
+    RLVnewRecordListView = nil
+    RLVunload = nil
+end

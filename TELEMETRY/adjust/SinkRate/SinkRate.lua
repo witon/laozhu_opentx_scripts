@@ -17,7 +17,11 @@ local function loadModule()
     LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
     LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "LAOZHU/DataFileDecode.lua")
     LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
+    LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateRecord.lua")
+    LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateState.lua")
+    LZ_runModule(gScriptDir .. "/TELEMETRY/adjust/SinkRate/RecordListView.lua")
 end
 
 local function unloadModule()
@@ -26,6 +30,10 @@ local function unloadModule()
     NEunload()
     IVunload()
     CFGunload()
+    DFDunload()
+    SRRunload()
+    SRSunload()
+    RLVunload()
 end
 
 local function onNumEditChange(numEdit)
@@ -134,7 +142,7 @@ local function onSinkRateStateChange(state, isStart)
     if flap2GvNumEdit then
         flap2 = flap2GvNumEdit.num
     end
-    SRRaddOneRecord(sinkRateRecord,
+    local record = SRRaddOneRecord(sinkRateRecord,
                     state.startTime,
                     state.startAlt,
                     state.stopTime,
@@ -142,16 +150,16 @@ local function onSinkRateStateChange(state, isStart)
                     ele,
                     flap1,
                     flap2)
+    SRRwriteOneRecordToFile(getDateTime(), record)
     SRSreset(state)
 end
 
 local function init()
     loadModule()
-    LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateState.lua")
     sinkRateState = SRSnewSinkRateState()
     SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
-    LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateRecord.lua")
     sinkRateRecord = SRRnewSinkRateRecord()
+    SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
 
     sinkRateCfg = CFGnewCfg()
     CFGreadFromFile(sinkRateCfg, sinkRateCfgFileName)
@@ -161,9 +169,8 @@ local function init()
     cfgButton.text = "*"
     BTsetOnClick(cfgButton, onCfgButtonClick)
 
-    LZ_runModule(gScriptDir .. "/TELEMETRY/adjust/SinkRate/RecordListView.lua")
     recordListView = RLVnewRecordListView()
-    recordListView.records = sinkRateRecord
+    recordListView.records = sinkRateRecord.records
     updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
