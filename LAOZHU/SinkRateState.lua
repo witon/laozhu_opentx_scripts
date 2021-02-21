@@ -86,3 +86,18 @@ function SRSrun(sinkRateState, time, alt, testSwitchValue)
         end
     end
 end
+
+
+function SRSunload()
+    SRSnewSinkRateState = nil
+    SRSreset = nil
+    SRSisStart = nil
+    SRSgetDuration = nil
+    SRSgetCurDuration = nil
+    SRSgetCurSinkAlt = nil
+    SRSgetCurSinkRate = nil
+    SRSgetSinkAlt = nil
+    SRSgetSinkRate = nil
+    SRSrun = nil
+    SRSunload = nil
+end
