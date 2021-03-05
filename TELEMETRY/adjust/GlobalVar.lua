@@ -121,7 +121,7 @@ local function run(event, time)
     if curGetGVIndex >= 0 then
         readOneGVValue(curGetGVIndex)
         curGetGVIndex = curGetGVIndex + 1
-        if curGetGVIndex == 6 then
+        if curGetGVIndex == 7 then
             curGetGVIndex = -1
         end
     end
