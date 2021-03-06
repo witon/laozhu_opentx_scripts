@@ -3,98 +3,48 @@ gConfigFileName = "3k.cfg"
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 
-LZ_runModule(gScriptDir .. "LAOZHU/Timer.lua")
-LZ_runModule(gScriptDir .. "LAOZHU/SwitchTrigeDetector.lua")
-gWorktimeTimer = Timer_new()
-gWorktimeTimer.mute = true
-gWorktimeArray = {
-	420,
-	600,
-	900
-}
-gSelectWorktimeIndex = 2
-Timer_setForward(gWorktimeTimer, false)
-
-	
-gFlightState = nil
+gF3kCore = nil
 
 f3kCfg = nil
 
-gCurAlt = 0
-
 local displayIndex = 1
-
-local altID = 0
-local rxbtID = 0
-
-local readVar = nil
 local pages = {"3k/FlightPage.lua", "3k/FlightStaticPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
 local curPage = nil
 
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
-	gFlightState = LZ_runModule(gScriptDir .. "LAOZHU/F3kState.lua")
-
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
-	initFieldsInfo()
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-
-	Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
-
-
-	LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
-	f3kCfg = CFGnewCfg()
-	CFGreadFromFile(f3kCfg, gConfigFileName)
-
-
-	altID = getTelemetryId("Alt")
-	rxbtID = getTelemetryId("RxBt")
-
-	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
-	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
-	readVar.setVarMap(f3kReadVarMap)
-	gWTResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'WtResetSw')))
+	if LZ_isNeedCompile() then
+		local pagePath = gScriptDir .. "TELEMETRY/common/comp.lua"
+		curPage = LZ_runModule(pagePath)
+		curPage.init()
+		return
+	end
 end
 
+
 local function loadPage()
+	if gF3kCore == nil then
+		LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
+		f3kCfg = CFGnewCfg()
+		CFGreadFromFile(f3kCfg, gConfigFileName)
+		gF3kCore = LZ_runModule(gScriptDir .. "TELEMETRY/3k/f3kCore.lua")
+		gF3kCore.init()
+	end
 	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[displayIndex]
 	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end
 
+local function background()
+	if gF3kCore == nil then
+		return
+	end
+	gF3kCore.run()
+end
 
 local function run(event)
-	local curTime = getTime()
-	local flightMode, flightModeName = getFlightMode()
-	gCurAlt = getValue(altID)
-
-	gFlightState.setAlt(gCurAlt)
-	gFlightState.doFlightState(curTime, flightModeName)
-
-
-
-	local workTimeSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'WtSw'))
-	if workTimeSwitchValue > 0 and not Timer_isstart(gWorktimeTimer) then
-		Timer_start(gWorktimeTimer)
-	end
-
-	local workTimeResetSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'WtResetSw'))
-	if STD_run(gWTResetSwitchTrigeDetector, workTimeResetSwitchValue) then
-		Timer_resetTimer(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
-		Timer_setCurTime(gWorktimeTimer, curTime)
-	end
-
-	Timer_setCurTime(gWorktimeTimer, curTime)
-	Timer_run(gWorktimeTimer)
-
-	local varSelectorSliderValue = getValue(CFGgetNumberField(f3kCfg, 'SelSlider'))
-	local varReadSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'ReadSw'))
-	
-	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
-
 	lcd.clear()
-
+	local curTime = getTime()
 	if curPage == nil then
 		loadPage()
 	end
@@ -102,6 +52,12 @@ local function run(event)
 	if eventProcessed then
 		return
 	end
+	if event == EVT_EXIT_BREAK then
+		LZ_clearTable(curPage)
+		curPage = nil
+		collectgarbage()
+	end
+
 	if event==38 then 
 		displayIndex = displayIndex - 1
 		if displayIndex < 1 then
@@ -110,7 +66,6 @@ local function run(event)
 		LZ_clearTable(curPage)
 		curPage = nil
 		collectgarbage()
-		gcTime = curTime
 	elseif event == 37 then
 		displayIndex = displayIndex + 1
 		if displayIndex > #pages then
@@ -119,9 +74,8 @@ local function run(event)
 		LZ_clearTable(curPage)
 		curPage = nil
 		collectgarbage()
-		gcTime = curTime
 	end
 
 end
 
-return { run=run, init=init }
+return { run=run, init=init, background=background }
