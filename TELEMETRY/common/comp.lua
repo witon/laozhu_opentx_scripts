@@ -56,7 +56,6 @@ local compileFiles = {
     "TELEMETRY/3ktel.lua",
     "TELEMETRY/5jtel.lua",
     "TELEMETRY/adjust.lua",
-    "TELEMETRY/OCL.lua",
     "TELEMETRY/ut.lua"
 }
 
