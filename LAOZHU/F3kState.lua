@@ -17,6 +17,10 @@ local function setAlt(alt)
     curAlt = alt
 end
 
+local function getCurAlt()
+    return curAlt
+end
+
 local function setDestFlightTime(time)
     destFlightTime = time
     Timer_setDuration(flightTimer, time)
@@ -138,6 +142,7 @@ return {newFlight = newFlight,
     getFlightTime = getFlightTime,
     getCurFlightStateName = getCurFlightStateName,
     setAlt = setAlt,
+    getCurAlt = getCurAlt,
     getLaunchAlt = getLaunchAlt,
     getFlightRecord = getFlightRecord,
     setDestFlightTime = setDestFlightTime,

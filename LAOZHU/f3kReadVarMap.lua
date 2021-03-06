@@ -1,10 +1,12 @@
+local this = {}
+local f3kState = nil
 
 local function readCurAlt()
-    playNumber(gCurAlt, 9)
+    playNumber(f3kState.getCurAlt(), 9)
 end
 
 local function readFlightTime()
-    playDuration(gFlightState.getFlightTime())
+    playDuration(f3kState.getFlightTime())
 end
 
 local function readRssi()
@@ -13,8 +15,18 @@ local function readRssi()
 end
 
 local function readLaunchAlt()
-    playNumber(gFlightState.getLaunchAlt(), 9)
+    playNumber(f3kState.getLaunchAlt(), 9)
 end
 
-return {readFlightTime, readCurAlt, readRssi, readLaunchAlt}
+local function setF3kState(flightState)
+    f3kState = flightState
+end
+
+this[1] = readFlightTime
+this[2] = readCurAlt
+this[3] = readRssi
+this[4] = readLaunchAlt
+this.setF3kState = setF3kState
+
+return this
 

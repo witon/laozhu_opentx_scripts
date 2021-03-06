@@ -1,24 +1,10 @@
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-local varSliderSelector = ISnewInputSelector()
-ISsetFieldType(varSliderSelector, FIELDS_INPUT)
-local readSwitchSelector = ISnewInputSelector()
-ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
-local workTimeSwitchSelector = ISnewInputSelector()
-ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
-local workTimeResetSwitchSelector = ISnewInputSelector()
-ISsetFieldType(workTimeResetSwitchSelector, FIELDS_SWITCH)
-local destTimeSettingStepNumEdit = NEnewNumEdit()
-destTimeSettingStepNumEdit.step = 5
+local varSliderSelector = nil
+local readSwitchSelector = nil
+local workTimeSwitchSelector = nil
+local workTimeResetSwitchSelector = nil
+local destTimeSettingStepNumEdit = nil
 
-
-
-local selectorArray = {
-    destTimeSettingStepNumEdit,
-    workTimeSwitchSelector,
-    workTimeResetSwitchSelector,
-    varSliderSelector,
-    readSwitchSelector,
-}
+local selectorArray = nil
 local curSelectorIndex = 1
 local editingSelector = nil
 
@@ -39,6 +25,30 @@ local function getCfgValue()
 end
 
 local function init()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+    initFieldsInfo()
+    varSliderSelector = ISnewInputSelector()
+    ISsetFieldType(varSliderSelector, FIELDS_INPUT)
+    readSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
+    workTimeSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
+    workTimeResetSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(workTimeResetSwitchSelector, FIELDS_SWITCH)
+    destTimeSettingStepNumEdit = NEnewNumEdit()
+    destTimeSettingStepNumEdit.step = 5
+    selectorArray = {
+        destTimeSettingStepNumEdit,
+        workTimeSwitchSelector,
+        workTimeResetSwitchSelector,
+        varSliderSelector,
+        readSwitchSelector
+    }
+
+
     getCfgValue()
 end
 
