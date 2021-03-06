@@ -1,41 +1,54 @@
-dofile(gScriptDir .. "TELEMETRY/common/InputView.lua")
-local varSliderSelector = ISnewInputSelector()
-ISsetFieldType(varSliderSelector, FIELDS_INPUT)
-local readSwitchSelector = ISnewInputSelector()
-ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
-local workTimeSwitchSelector = ISnewInputSelector()
-ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
-local destTimeSettingStepNumEdit = NEnewNumEdit()
-destTimeSettingStepNumEdit.step = 5
+local varSliderSelector = nil
+local readSwitchSelector = nil
+local workTimeSwitchSelector = nil
+local workTimeResetSwitchSelector = nil
+local destTimeSettingStepNumEdit = nil
 
-
-
-local selectorArray = {
-    varSliderSelector,
-    readSwitchSelector,
-    workTimeSwitchSelector,
-    destTimeSettingStepNumEdit
-}
+local selectorArray = nil
 local curSelectorIndex = 1
 local editingSelector = nil
 
 local function setCfgValue()
-    local cfgs = f3kCfg.getCfgs()
-    cfgs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
-    cfgs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
-    cfgs["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
-    cfgs["DestTimeStep"] = destTimeSettingStepNumEdit.num
+    f3kCfg["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
+    f3kCfg["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
+    f3kCfg["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
+    f3kCfg["WtResetSw"] = ISgetSelectedItemId(workTimeResetSwitchSelector)
+    f3kCfg["DestTimeStep"] = destTimeSettingStepNumEdit.num
 end
 
 local function getCfgValue()
-    local cfgs = f3kCfg.getCfgs()
-    ISsetSelectedItemById(readSwitchSelector, cfgs["ReadSw"])
-    ISsetSelectedItemById(varSliderSelector, cfgs["SelSlider"])
-    ISsetSelectedItemById(workTimeSwitchSelector, cfgs["WtSw"])
-    destTimeSettingStepNumEdit.num = f3kCfg.getNumberField("DestTimeStep", 15)
+    ISsetSelectedItemById(readSwitchSelector, f3kCfg["ReadSw"])
+    ISsetSelectedItemById(varSliderSelector, f3kCfg["SelSlider"])
+    ISsetSelectedItemById(workTimeSwitchSelector, f3kCfg["WtSw"])
+    ISsetSelectedItemById(workTimeResetSwitchSelector, f3kCfg["WtResetSw"])
+    destTimeSettingStepNumEdit.num = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
 end
 
 local function init()
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+    initFieldsInfo()
+    varSliderSelector = ISnewInputSelector()
+    ISsetFieldType(varSliderSelector, FIELDS_INPUT)
+    readSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
+    workTimeSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
+    workTimeResetSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(workTimeResetSwitchSelector, FIELDS_SWITCH)
+    destTimeSettingStepNumEdit = NEnewNumEdit()
+    destTimeSettingStepNumEdit.step = 5
+    selectorArray = {
+        destTimeSettingStepNumEdit,
+        workTimeSwitchSelector,
+        workTimeResetSwitchSelector,
+        varSliderSelector,
+        readSwitchSelector
+    }
+
+
     getCfgValue()
 end
 
@@ -45,7 +58,7 @@ local function doKey(event)
             IVsetFocusState(editingSelector, 1)
             editingSelector = nil
             setCfgValue()
-            f3kCfg.writeToFile(gConfigFileName)
+            CFGwriteToFile(f3kCfg, gConfigFileName)
             return true
         end
         editingSelector.doKey(editingSelector, event)
@@ -84,14 +97,16 @@ local function run(event, time)
         invers = true
     end
     local drawOptions
-    lcd.drawText(2, 10, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 64, 10, invers)
-    lcd.drawText(2, 22, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 64, 22, invers)
-    lcd.drawText(2, 34, "WTime Switch", SMLSIZE + LEFT)
-    IVdraw(workTimeSwitchSelector, 64, 34, invers)
-    lcd.drawText(2, 46, "FTime Step", SMLSIZE + LEFT)
-    IVdraw(destTimeSettingStepNumEdit, 64, 46, invers)
+    lcd.drawText(2, 2, "Target Flight Time Step", SMLSIZE + LEFT)
+    IVdraw(destTimeSettingStepNumEdit, 122, 2, invers, SMLSIZE + RIGHT)
+    lcd.drawText(2, 12, "WTime Start Switch", SMLSIZE + LEFT)
+    IVdraw(workTimeSwitchSelector, 110, 12, invers, SMLSIZE + LEFT)
+    lcd.drawText(2, 22, "WTime Reset Switch", SMLSIZE + LEFT)
+    IVdraw(workTimeResetSwitchSelector, 110, 22, invers, SMLSIZE + LEFT)
+    lcd.drawText(2, 32, "Var Slider", SMLSIZE + LEFT)
+    IVdraw(varSliderSelector, 110, 32, invers, SMLSIZE + LEFT)
+    lcd.drawText(2, 42, "Read Switch", SMLSIZE + LEFT)
+    IVdraw(readSwitchSelector, 110, 42, invers, SMLSIZE + LEFT)
  
     return doKey(event)
 end

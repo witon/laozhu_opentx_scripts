@@ -1,18 +1,8 @@
 
-local function getOutputName(index)
-    local output = model.getOutput(index)
-    if not output then
-        return nil
-    end
-    if output.name == "" then
-        return "ch" .. (index + 1)
-    end
-    return output.name
-end
 function OSdoKey(selector, event)
     if event == 35 or event == 67 then
         selector.selectedIndex = selector.selectedIndex + 1
-        local outputName = getOutputName(selector.selectedIndex)
+        local outputName = LZ_getOutputName(selector.selectedIndex)
         if not outputName then
             selector.selectedIndex = selector.selectedIndex - 1
             return
@@ -23,7 +13,7 @@ function OSdoKey(selector, event)
         end
     elseif event == 36 or event == 68 then
         selector.selectedIndex = selector.selectedIndex - 1
-        local outputName = getOutputName(selector.selectedIndex)
+        local outputName = LZ_getOutputName(selector.selectedIndex)
         if not outputName then
             selector.selectedIndex = selector.selectedIndex + 1
             return
@@ -40,15 +30,22 @@ function OSsetOnChange(selector, onChange)
 end
 
 
-function OSdraw(selector, x, y, invers)
-    lcd.drawText(x, y, selector.selectedName, invers)
+function OSdraw(selector, x, y, invers, option)
+    lcd.drawText(x, y, selector.selectedName, option)
 end
 
 function OSnewOutputSelector()
     return {selectedIndex = 0,
-            selectedName = getOutputName(0),
-            isFocuse = false,
+            selectedName = LZ_getOutputName(0),
             focusState = 0,
             draw = OSdraw,
             doKey = OSdoKey}
+end
+
+function OSunload()
+    OSdoKey = nil
+    OSsetOnChange = nil
+    OSdraw = nil
+    OSnewOutputSelector = nil
+    OSunload = nil
 end

@@ -1,4 +1,3 @@
-dofile(gScriptDir .. "TELEMETRY/common/InputView.lua")
 
 local varSliderSelector = ISnewInputSelector()
 ISsetFieldType(varSliderSelector, FIELDS_INPUT)
@@ -28,23 +27,21 @@ local curSelectorIndex = 1
 local editingSelector = nil
 
 local function setCfgValue()
-    local cfgs = f5jCfg.getCfgs()
-    cfgs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
-    cfgs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
-    cfgs["RsSw"] = ISgetSelectedItemId(resetSwitchSelector)
-    cfgs["FlSw"] = ISgetSelectedItemId(flightSwitchSelector)
-    cfgs["ThCh"] = ISgetSelectedItemId(throttleChannelSelector)
-    cfgs["ThThreshold"] = throttleThresholdNumEdit.num
+    f5jCfg["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
+    f5jCfg["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
+    f5jCfg["RsSw"] = ISgetSelectedItemId(resetSwitchSelector)
+    f5jCfg["FlSw"] = ISgetSelectedItemId(flightSwitchSelector)
+    f5jCfg["ThCh"] = ISgetSelectedItemId(throttleChannelSelector)
+    f5jCfg["ThThreshold"] = throttleThresholdNumEdit.num
 end
 
 local function getCfgValue()
-    local cfgs = f5jCfg.getCfgs()
-    ISsetSelectedItemById(readSwitchSelector, cfgs["ReadSw"])
-    ISsetSelectedItemById(varSliderSelector, cfgs["SelSlider"])
-    ISsetSelectedItemById(resetSwitchSelector, cfgs["RsSw"])
-    ISsetSelectedItemById(flightSwitchSelector, cfgs["FlSw"])
-    ISsetSelectedItemById(throttleChannelSelector, cfgs["ThCh"])
-    throttleThresholdNumEdit.num = f5jCfg.getNumberField("ThThreshold", 0)
+    ISsetSelectedItemById(readSwitchSelector, f5jCfg["ReadSw"])
+    ISsetSelectedItemById(varSliderSelector, f5jCfg["SelSlider"])
+    ISsetSelectedItemById(resetSwitchSelector, f5jCfg["RsSw"])
+    ISsetSelectedItemById(flightSwitchSelector, f5jCfg["FlSw"])
+    ISsetSelectedItemById(throttleChannelSelector, f5jCfg["ThCh"])
+    throttleThresholdNumEdit.num = CFGgetNumberField(f5jCfg, "ThThreshold", 0)
 end
 
 local function init()
@@ -57,7 +54,7 @@ local function doKey(event)
             IVsetFocusState(editingSelector, 1)
             editingSelector = nil
             setCfgValue()
-            f5jCfg.writeToFile(gConfigFileName)
+            CFGwriteToFile(f5jCfg, gConfigFileName)
             return true
         end
         editingSelector.doKey(editingSelector, event)
@@ -98,17 +95,17 @@ local function run(event, time)
     end
     local drawOptions
     lcd.drawText(2, 1, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 100, 1, invers)
+    IVdraw(varSliderSelector, 100, 1, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 11, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 100, 11, invers)
+    IVdraw(readSwitchSelector, 100, 11, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 21, "Reset Switch", SMLSIZE + LEFT)
-    IVdraw(resetSwitchSelector, 100, 21, invers)
+    IVdraw(resetSwitchSelector, 100, 21, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 31, "Flight Switch", SMLSIZE + LEFT)
-    IVdraw(flightSwitchSelector, 100, 31, invers)
+    IVdraw(flightSwitchSelector, 100, 31, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 41, "Throttle Channel", SMLSIZE + LEFT)
-    IVdraw(throttleChannelSelector, 100, 41, invers)
+    IVdraw(throttleChannelSelector, 100, 41, invers, SMLSIZE + LEFT)
     lcd.drawText(2, 51, "Throttle Threshold", SMLSIZE + LEFT)
-    IVdraw(throttleThresholdNumEdit, 117, 51, invers)
+    IVdraw(throttleThresholdNumEdit, 117, 51, invers, SMLSIZE + RIGHT)
  
     return doKey(event)
 

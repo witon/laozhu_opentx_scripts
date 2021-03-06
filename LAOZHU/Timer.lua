@@ -1,5 +1,3 @@
-dofile(gScriptDir .. "LAOZHU/utils.lua")
-
 function Timer_new()
     return {startTime=0,
             stopTime = 0,
@@ -37,6 +35,14 @@ end
 
 function Timer_start(timer)
     timer.startTime = timer.curTime
+end
+
+function Timer_isstart(timer)
+    if timer.startTime > 0 and timer.stopTime == 0 then
+        return true
+    else
+        return false
+    end
 end
 
 function Timer_stop(timer)

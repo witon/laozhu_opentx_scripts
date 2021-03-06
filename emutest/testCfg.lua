@@ -1,18 +1,16 @@
 
 local function testCfg()
-    local cfg1 = dofile(gScriptDir .. "LAOZHU/Cfg.lua")
-    local cfg2 = dofile(gScriptDir .. "LAOZHU/Cfg.lua")
+    dofile(gScriptDir .. "LAOZHU/Cfg.lua")
+    local cfg1 = CFGnewCfg()
+    local cfg2 = CFGnewCfg()
 
-    local cfgs = cfg1.getCfgs()
-    cfgs.id = 1
-    cfgs.name = "haha"
-    cfg1.writeToFile('3k')
+    cfg1.id = 1
+    cfg1.name = "haha"
+    CFGwriteToFile(cfg1, '3k')
 
-    cfgs = {}
-    cfg2.readFromFile('3k')
-    cfgs = cfg2.getCfgs()
-    assert(cfgs.id == 1, gAssertFlag)
-    assert(cfgs.name == "haha", gAssertFlag)
+    CFGreadFromFile(cfg2, '3k')
+    assert(cfg2.id == 1, gAssertFlag)
+    assert(cfg2.name == "haha", gAssertFlag)
 end
 
 

@@ -61,8 +61,8 @@ function ISdoKey(selector, event)
 end
 
 
-function ISdraw(selector, x, y, invers)
-    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], invers)
+function ISdraw(selector, x, y, invers, options)
+    lcd.drawText(x, y, selector.fieldTable.nameArray[selector.selectedIndex], options)
     if selector.focusState == 2 then
         detectField(selector)
     end
@@ -71,9 +71,21 @@ end
 function ISnewInputSelector()
     return {selectedIndex = 1,
             fieldTable = FIELDS_CHANNEL,
-            isFocuse = false,
             focusState = 0,
             setFocusState = ISsetFocusState,
             draw = ISdraw,
             doKey = ISdoKey}
+end
+
+function ISunload()
+    startDetectField = nil
+    ISsetFocusState = nil
+    ISgetSelectedItemId = nil
+    detectField = nil
+    ISsetSelectedItemById = nil
+    ISsetFieldType = nil
+    ISdoKey = nil
+    ISdraw = nil
+    ISnewInputSelector = nil
+    ISunload = nil
 end

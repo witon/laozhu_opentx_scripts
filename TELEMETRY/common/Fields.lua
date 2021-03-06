@@ -48,7 +48,7 @@ FIELDS_INPUT = {
 
 local function filterTable(fieldTable)
     local newTable = {nameArray = {}, idArray = {}, valueArray = {}}
-    newTable.nameArray[1] = " "
+    newTable.nameArray[1] = "-"
     newTable.idArray[1] = 0
     newTable.valueArray[1] = 0
     for i=#fieldTable.nameArray, 1, -1 do
@@ -67,5 +67,14 @@ function initFieldsInfo()
     FIELDS_CHANNEL = filterTable(FIELDS_CHANNEL)
     FIELDS_INPUT = filterTable(FIELDS_INPUT)
     FIELDS_SWITCH = filterTable(FIELDS_SWITCH)
+end
+
+function FieldsUnload()
+    FIELDS_CHANNEL = nil
+    FIELDS_INPUT = nil
+    FIELDS_SWITCH = nil
+    filterTable = nil
+    initFieldsInfo = nil
+    FieldsUnload = nil
 end
 

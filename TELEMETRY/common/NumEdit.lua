@@ -40,8 +40,8 @@ function NEdoKey(numEdit, event)
 end
 
 
-function NEdraw(numEdit, x, y, invers)
-    lcd.drawText(x, y, numEdit.num, invers + RIGHT)
+function NEdraw(numEdit, x, y, invers, option)
+    lcd.drawText(x, y, numEdit.num, option)
 end
 
 function NEsetOnChange(numEdit, onChange)
@@ -49,6 +49,14 @@ function NEsetOnChange(numEdit, onChange)
 end
 
 function NEnewNumEdit()
-    return {num = 0, step = 1, isFocuse = false, focusState = 0, doKey = NEdoKey, draw = NEdraw}
+    return {num = 0, step = 1, focusState = 0, doKey = NEdoKey, draw = NEdraw}
 end
 
+function NEunload()
+    NEsetRange = nil
+    NEdoKey = nil
+    NEdraw = nil
+    NEsetOnChange = nil
+    NEnewNumEdit = nil
+    NEunload = nil
+end

@@ -26,9 +26,7 @@ local function readVar(time)
         return
     end
     lastReadTime = time
-    local fun = varMap[curVar]
-    local value, unit = fun()
-    playNumber(value, unit)
+    varMap[curVar]()
 end
 
 local function doReadVar(varSelect, readSwitch, time)

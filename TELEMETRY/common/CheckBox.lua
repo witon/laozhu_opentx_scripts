@@ -10,11 +10,11 @@ function CBdoKey(checkBox, event)
 end
 
 
-function CBdraw(checkBox, x, y, invers)
+function CBdraw(checkBox, x, y, invers, option)
     if checkBox.checked then
-        lcd.drawText(x, y, 'y', invers)
+        lcd.drawText(x, y, 'y', option)
     else
-        lcd.drawText(x, y, 'n', invers)
+        lcd.drawText(x, y, 'n', option)
     end
 end
 
@@ -23,6 +23,14 @@ function CBsetOnChange(checkBox, onChange)
 end
 
 function CBnewCheckBox()
-    return {checked = false, isFocuse = false, focusState = 0, doKey = CBdoKey, draw = CBdraw}
+    return {checked = false, focusState = 0, doKey = CBdoKey, draw = CBdraw}
+end
+
+function CBunload()
+    CBdoKey = nil
+    CBdraw = nil
+    CBsetOnChange = nil
+    CBnewCheckBox = nil
+    CBunload = nil
 end
 

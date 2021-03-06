@@ -1,66 +1,59 @@
+local flightState = nil
 local function worktimeViewFocusDraw()
-	lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gWorktimeTimer)), LEFT + DBLSIZE + INVERS)
+	lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gF3kCore.getWorktimeTimer())), LEFT + DBLSIZE + INVERS)
 end
 
 local function worktimeViewUnfocusDraw()
-	lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gWorktimeTimer)), LEFT + DBLSIZE)
+	lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gF3kCore.getWorktimeTimer())), LEFT + DBLSIZE)
 end
 
 local function worktimeViewSelectingDraw(b)
 	if b then
-		lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gWorktimeTimer)), LEFT + DBLSIZE)
+		lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gF3kCore.getWorktimeTimer())), LEFT + DBLSIZE)
 	else
-		lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gWorktimeTimer)), LEFT + DBLSIZE + INVERS)
+		lcd.drawText(22, 11, LZ_formatTime(Timer_getRemainTime(gF3kCore.getWorktimeTimer())), LEFT + DBLSIZE + INVERS)
 	end
 end
 
 local function worktimeViewDoEvent(event)
-	if(event==36 or event==68) then
-		gSelectWorktimeIndex = gSelectWorktimeIndex + 1
-		if gSelectWorktimeIndex > #gWorktimeArray then
-			gSelectWorktimeIndex = 1
-		end
-		Timer_setDuration(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
-	elseif(event==35 or event==67) then
-		gSelectWorktimeIndex = gSelectWorktimeIndex - 1
-		if gSelectWorktimeIndex <= 0 then
-			gSelectWorktimeIndex = #gWorktimeArray
-		end
-		Timer_setDuration(gWorktimeTimer, gWorktimeArray[gSelectWorktimeIndex])
+	if(event==36 or event==68 or event==EVT_ROT_RIGHT) then
+		gF3kCore.increaseWorktimeIndex()
+	elseif(event==35 or event==67 or event==EVT_ROT_LEFT) then
+		gF3kCore.decreaseWorktimeIndex()
 	end
 end
 
 local function destFlightTimeViewFocusDraw()
-	lcd.drawText(65, 38, LZ_formatTime(gFlightState.getDestFlightTime()), LEFT + SMLSIZE + INVERS)
+	lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE + INVERS)
 end
 
 local function destFlightTimeViewUnfocusDraw()
-	lcd.drawText(65, 38, LZ_formatTime(gFlightState.getDestFlightTime()), LEFT + SMLSIZE)
+	lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE)
 end
 
 local function destFlightTimeViewSelectingDraw(b)
 	if b then
-		lcd.drawText(65, 38, LZ_formatTime(gFlightState.getDestFlightTime()), LEFT + SMLSIZE)
+		lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE)
 	else
-		lcd.drawText(65, 38, LZ_formatTime(gFlightState.getDestFlightTime()), LEFT + SMLSIZE + INVERS)
+		lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE + INVERS)
 	end
 end
 
 local function destFlightTimeViewDoEvent(event)
-	if(event==36 or event==68) then
-		local destFlightTime = gFlightState.getDestFlightTime()
-		destFlightTime = destFlightTime + f3kCfg.getNumberField("DestTimeStep", 15)
+	if(event==36 or event==68 or event==EVT_ROT_RIGHT) then
+		local destFlightTime = flightState.getDestFlightTime()
+		destFlightTime = destFlightTime + CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
 		LZ_playTime(destFlightTime, true)
-		gFlightState.setDestFlightTime(destFlightTime)
-	elseif(event==35 or event==67) then
-		local destFlightTime = gFlightState.getDestFlightTime()
-		destFlightTime = destFlightTime - f3kCfg.getNumberField("DestTimeStep", 15)
+		flightState.setDestFlightTime(destFlightTime)
+	elseif(event==35 or event==67 or event==EVT_ROT_LEFT) then
+		local destFlightTime = flightState.getDestFlightTime()
+		destFlightTime = destFlightTime - CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
 		if destFlightTime < 0 then
 			destFlightTime = 0
 		else
 			LZ_playTime(destFlightTime, true)
 		end
-		gFlightState.setDestFlightTime(destFlightTime)
+		flightState.setDestFlightTime(destFlightTime)
 	end
 end
 
@@ -109,7 +102,7 @@ local function drawFlightInfo()
 	drawView(worktimeView, focusView == worktimeView, isFocusViewEditing, invers)
 
 	lcd.drawText(65, 18, "ST", SMLSIZE)
-	lcd.drawText(87, 11, gFlightState.getCurFlightStateName(), LEFT + DBLSIZE)
+	lcd.drawText(87, 11, flightState.getCurFlightStateName(), LEFT + DBLSIZE)
 
 
 	lcd.drawText(1, 36, "RSSI", SMLSIZE)
@@ -119,18 +112,18 @@ local function drawFlightInfo()
 
 	lcd.drawText(65, 30, "FT", SMLSIZE)
 	drawView(destFlightTimeView, focusView == destFlightTimeView, isFocusViewEditing, invers)
-	lcd.drawText(87, 29, LZ_formatTime(gFlightState.getFlightTime()), LEFT + DBLSIZE)
+	lcd.drawText(87, 29, LZ_formatTime(flightState.getFlightTime()), LEFT + DBLSIZE)
 
 	lcd.drawText(1, 53, "ALT", SMLSIZE)
-	lcd.drawNumber(62, 47, gCurAlt, RIGHT + DBLSIZE)
+	lcd.drawNumber(62, 47, flightState.getCurAlt(), RIGHT + DBLSIZE)
 
 	lcd.drawText(65, 53, "LALT", SMLSIZE)
-	lcd.drawNumber(128, 47, gFlightState.getLaunchAlt(), RIGHT + DBLSIZE)
+	lcd.drawNumber(128, 47, flightState.getLaunchAlt(), RIGHT + DBLSIZE)
 
 end
 
 local function init()
-
+	flightState = gF3kCore.getFlightState()
 end
 
 
@@ -142,6 +135,7 @@ local function run(event, time)
 	end
 	if isFocusViewEditing then
 		focusView.doEvent(event)
+		return true
 	else
 		if(event==36 or event==68) or (event==35 or event==67) then
 			if focusView == worktimeView then

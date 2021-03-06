@@ -1,5 +1,6 @@
 local selectedIndex = 1
 local flightArray = nil
+
 local function drawFlightList()
 	local x = 127 
 	local y = 10 
@@ -10,7 +11,7 @@ local function drawFlightList()
 	local i = 0
 	local v = 0
 
-	local flightArray = gFlightState.getFlightRecord().getFlightArray()
+	local flightArray = gF3kCore.getFlightState().getFlightRecord().getFlightArray()
 	for i, flight in ipairs(flightArray) do
 		if i > selectedIndex - 5 and i<selectedIndex + 6 then
 			local drawOption = 0
@@ -45,7 +46,7 @@ local function doKey(event)
 end
 
 local function run(event, time)
-	flightArray = gFlightState.getFlightRecord().getFlightArray()
+	flightArray = gF3kCore.getFlightState().getFlightRecord().getFlightArray()
     drawFlightList()
     doKey(event)
 end
