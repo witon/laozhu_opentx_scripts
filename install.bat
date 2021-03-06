@@ -1,6 +1,6 @@
-set dirs=TELEMETRY LAOZHU emutest test
-del *.luac /S
 @echo off
+set dirs=TELEMETRY LAOZHU emutest test
+rem del *.luac /S
 set disk=%1%
 if "%disk%" == "" (
     echo input the disk to install, such as "f:"
