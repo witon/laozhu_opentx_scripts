@@ -126,21 +126,22 @@ function LZ_isNeedCompile()
     local flgFilePath = gScriptDir .. "lzinstall.flag"
     local flgFile = io.open(flgFilePath, 'r')
 	if flgFile == nil then
-		return false
-	end
-    local content = io.read(flgFile, 200)
-	io.close(flgFile)
-	flgFile = nil
-	if string.sub(content, 1, 8) == "not init" then
 		return true
 	end
-	return false
+    local content = io.read(flgFile, 10)
+	io.close(flgFile)
+	flgFile = nil
+	if string.sub(content, 1, 6) == "inited" then
+		return false
+	end
+	return true
 end
 
 function LZ_markCompiled()
     local flgFilePath = gScriptDir .. "lzinstall.flag"
 	local flgFile = io.open(flgFilePath, 'w')
 	if flgFile ~= nil then
+		io.write(flgFile, "inited")
 		io.close(flgFile)
 	end
 	flgFile = nil
