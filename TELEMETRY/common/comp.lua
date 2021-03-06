@@ -75,7 +75,7 @@ local function run(event, time)
     lcd.clear()
     if curFileIndex > #compileFiles then
         lcd.drawText(1, 20, "installation completed.", SMLSIZE+LEFT)
-        lcd.drawText(1, 30, "press exist key to start.", SMLSIZE+LEFT)
+        lcd.drawText(1, 30, "press exit key to start.", SMLSIZE+LEFT)
         --lcd.drawText(1, 30, "you must restart the radio", SMLSIZE+LEFT)
         --lcd.drawText(1, 40, "to use this script.", SMLSIZE+LEFT)
         if event ~= EVT_EXIT_BREAK then

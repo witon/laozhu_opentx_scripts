@@ -1,5 +1,5 @@
 @echo off
-set dirs=TELEMETRY LAOZHU emutest test
+set dirs=TELEMETRY LAOZHU data emutest test
 rem del *.luac /S
 set disk=%1%
 if "%disk%" == "" (
@@ -11,5 +11,5 @@ if "%disk%" == "" (
 )
 @echo on
 for %%d IN (%dirs%) do xcopy /I /Y /E %%d %disk%\SCRIPTS\%%d
-mkdir %disk%\SCRIPTS\data
+rem mkdir %disk%\SCRIPTS\data
 echo not init > %disk%\SCRIPTS\lzinstall.flag 
