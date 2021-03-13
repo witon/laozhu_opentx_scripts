@@ -5,14 +5,18 @@ local flightIndex = 0
 
 local function addFlight(flightTime, launchAlt, flightStartTime)
 	flightIndex = flightIndex + 1
-	if flightIndex > 25 then
-		flightIndex = 1
-    end
     local flightRecord = {}
     flightRecord.flightTime = flightTime
     flightRecord.launchAlt = launchAlt
     flightRecord.flightStartTime = flightStartTime
-    flightArray[flightIndex] = flightRecord
+    flightRecord.index = flightIndex
+    if #flightArray > 24 then
+        for i=1, #flightArray-1, 1 do
+            flightArray[i] = flightArray[i+1]
+        end
+        flightArray[25] = nil
+    end
+    flightArray[#flightArray+1] = flightRecord
 end 
 
 local function getFlightArray()
