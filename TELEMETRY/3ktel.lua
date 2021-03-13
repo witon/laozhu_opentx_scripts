@@ -53,6 +53,9 @@ local function run(event)
 		return
 	end
 	if event == EVT_EXIT_BREAK then
+		if curPage.destroy then
+			curPage.destroy()
+		end
 		LZ_clearTable(curPage)
 		curPage = nil
 		collectgarbage()
@@ -63,6 +66,9 @@ local function run(event)
 		if displayIndex < 1 then
 			displayIndex = #pages
 		end
+		if curPage.destroy then
+			curPage.destroy()
+		end
 		LZ_clearTable(curPage)
 		curPage = nil
 		collectgarbage()
@@ -70,6 +76,9 @@ local function run(event)
 		displayIndex = displayIndex + 1
 		if displayIndex > #pages then
 			displayIndex = 1
+		end
+		if curPage.destroy then
+			curPage.destroy()
 		end
 		LZ_clearTable(curPage)
 		curPage = nil

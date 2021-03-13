@@ -41,10 +41,15 @@ function testAddMoreThen25Flights()
 
     flightRecords = F3kFlightRecord.getFlightArray()
     luaunit.assertEquals(25, #flightRecords)
-    record1 = flightRecords[2]
+    record1 = flightRecords[25]
     luaunit.assertEquals(27000, record1.flightTime)
     luaunit.assertEquals(31, record1.launchAlt)
     luaunit.assertEquals(270000, record1.flightStartTime)
+    record2 = flightRecords[1]
+    luaunit.assertEquals(3000, record2.flightTime)
+    luaunit.assertEquals(7, record2.launchAlt)
+    luaunit.assertEquals(30000, record2.flightStartTime)
+
 end
 
 

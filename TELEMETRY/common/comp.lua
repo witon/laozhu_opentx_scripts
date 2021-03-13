@@ -21,6 +21,8 @@ local compileFiles = {
     "TELEMETRY/3k/LargeFontFlightListPage.lua",
     "TELEMETRY/3k/SetupPage.lua",
     "TELEMETRY/3k/SmallFontFlightListPage.lua",
+    "TELEMETRY/3k/F3kRecordListView.lua",
+
 
     "TELEMETRY/5j/FlightPage.lua",
     "TELEMETRY/5j/LargeFontFlightListPage.lua",

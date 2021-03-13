@@ -5,7 +5,7 @@ function LZ_formatTime(time)
 	return str
 end
 function LZ_formatDateTime(dateTime)
-	return string.format("%02d:%02d:%02d", dateTime["hour"], dateTime["min"], dateTime["sec"])
+	return string.format("%02d:%02d", dateTime["hour"], dateTime["min"])
 end
 
 function LZ_formatTimeStamp(time)

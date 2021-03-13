@@ -111,4 +111,12 @@ local function run(event, time)
     return doKey(event)
 end
 
-return {run = run, init=init}
+local function unloadModule()
+    IVunload()
+    ISunload()
+    NEunload()
+    FieldsUnload()
+end
+
+
+return {run = run, init=init, destroy=unloadModule}
