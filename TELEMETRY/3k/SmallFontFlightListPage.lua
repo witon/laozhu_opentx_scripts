@@ -1,7 +1,3 @@
-local selectedIndex = 1
-local scrollLine = 0
-local flightArray = nil
-
 local f3kRecordListView = nil
 
 local function init()
@@ -17,7 +13,6 @@ local function doKey(event)
 end
 
 local function run(event, time)
-	flightArray = gF3kCore.getFlightState().getFlightRecord().getFlightArray()
 	IVdraw(f3kRecordListView, 0, 0, false, 0)
     doKey(event)
 end
