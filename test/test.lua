@@ -13,6 +13,11 @@ dofile(HOME_DIR .. "test/TestTimer.lua")
 dofile(HOME_DIR .. "test/TestSwitchTrigeDetector.lua")
 dofile(HOME_DIR .. "test/TestSinkRateState.lua")
 dofile(HOME_DIR .. "test/TestLaozhuUtils.lua")
+dofile(HOME_DIR .. "test/TestQueue.lua")
+dofile(HOME_DIR .. "test/TestSensor.lua")
+
+
+
 
 
 
