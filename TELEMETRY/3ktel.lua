@@ -11,6 +11,7 @@ local displayIndex = 1
 local pages = {"3k/FlightPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
 local curPage = nil
 
+
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
 	if LZ_isNeedCompile() then

@@ -16,6 +16,8 @@ local rxbtID = 0
 local readVar = nil
 local WTResetSwitchTrigeDetector = nil
 
+--local monitor = nil
+
 local function init()
 	worktimeTimer = Timer_new()
 	worktimeTimer.mute = true
@@ -28,6 +30,12 @@ local function init()
 	rxbtID = getTelemetryId("RxBt")
 	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
+
+	--LZ_runModule(gScriptDir .. "LAOZHU/Sensor.lua")
+	--LZ_runModule(gScriptDir .. "LAOZHU/Queue.lua")
+	--monitor = LZ_runModule(gScriptDir .. "LAOZHU/Monitor.lua")
+	--monitor.init()
+
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
 	WTResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'WtResetSw')))
@@ -37,6 +45,9 @@ local function run(event)
 	local curTime = getTime()
 	local flightMode, flightModeName = getFlightMode()
 	curAlt = getValue(altID)
+
+	local rtcTime = getRtcTime()
+	--monitor.run(rtcTime, 0, getValue(rxbtID), 0)
 
 	flightState.setAlt(curAlt)
 	flightState.doFlightState(curTime, flightModeName)
