@@ -1,5 +1,5 @@
 function testAddFlightRecordsAndGet()
-    local F3kFlightRecord = dofile(HOME_DIR .. "LAOZHU/F3kFlightRecord.lua")
+    local F3kFlightRecord = dofile(HOME_DIR .. "LAOZHU/F3k/F3kFlightRecord.lua")
     local flightTime = 1000
     local launchAlt = 50
     local flightStartTime = 10000
@@ -27,7 +27,7 @@ function testAddFlightRecordsAndGet()
 end
 
 function testAddMoreThen25Flights()
-    local F3kFlightRecord = dofile(HOME_DIR .. "LAOZHU/F3kFlightRecord.lua")
+    local F3kFlightRecord = dofile(HOME_DIR .. "LAOZHU/F3k/F3kFlightRecord.lua")
     local flightTime = 1000
     local launchAlt = 5
     local flightStartTime = 10000

@@ -1,13 +1,23 @@
 
+LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
+
 local flightState = 0 --0:preset 1:zoom 2:launched 3:landed
 local launchTime = 0
 local launchAlt = 0
 local curAlt = 0
 local launchDatetime = 0
 local flightStateStartTime = 0
-local f3kFlightRecord = dofile(gScriptDir .. "LAOZHU/F3kFlightRecord.lua")
+local f3kFlightRecord = F3KFRnewFlightRecord()
+f3kFlightRecord.maxNum = 25
 local destFlightTime = 0
 local flightTimer = Timer_new()
+local landedCallback = nil
+
+
+
+local function setLandedCallback(callback)
+    landedCallback = callback
+end
 
 local function getFlightRecord()
     return f3kFlightRecord
@@ -62,7 +72,7 @@ local function newFlight(curTime)
     Timer_start(flightTimer)
     launchAlt = 0
     launchTime = 0
-    launchDatetime = getDateTime()
+    launchDatetime = getRtcTime()
     launchTime = curTime
 end
 
@@ -87,7 +97,10 @@ local function doStateLaunched(curTime, flightModeName)
     if flightModeName == "preset" then
         Timer_stop(flightTimer)
         flightState = 3
-        f3kFlightRecord.addFlight(Timer_getRunTime(flightTimer), launchAlt, launchDatetime)
+        F3KFRaddFlight(f3kFlightRecord, Timer_getRunTime(flightTimer), launchAlt, launchDatetime)
+        if landedCallback then
+            landedCallback(Timer_getRunTime(flightTimer), launchAlt, launchDatetime)
+        end
     end
     if curTime - flightStateStartTime < 150 then --still update launch alt in 1.5's after zoom
         getMaxLaunchAlt()
@@ -146,5 +159,6 @@ return {newFlight = newFlight,
     getLaunchAlt = getLaunchAlt,
     getFlightRecord = getFlightRecord,
     setDestFlightTime = setDestFlightTime,
-    getDestFlightTime = getDestFlightTime
+    getDestFlightTime = getDestFlightTime,
+    setLandedCallback = setLandedCallback
 }

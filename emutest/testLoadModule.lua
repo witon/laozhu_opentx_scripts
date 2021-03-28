@@ -1,6 +1,5 @@
 
 local function testLoadModule()
-    print(gScriptDir)
     dofile(gScriptDir .. "TELEMETRY/common/LoadModule.lua")
     local fun = LZ_loadModule(gScriptDir .. "emutest/luaForTestLoadModule.lua")
     assert(fun)

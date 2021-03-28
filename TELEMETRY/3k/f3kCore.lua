@@ -1,35 +1,35 @@
 gConfigFileName = "3k.cfg"
 LZ_runModule(gScriptDir .. "LAOZHU/Timer.lua")
 LZ_runModule(gScriptDir .. "LAOZHU/SwitchTrigeDetector.lua")
-local worktimeTimer = nil
-local worktimeArray = {
-	420,
-	600,
-	900
-}
-local selectWorktimeIndex = 2
 local flightState = nil
-
 local curAlt = 0
 local altID = 0
 local rxbtID = 0
 local readVar = nil
-local WTResetSwitchTrigeDetector = nil
+local roundResetSwitchTrigeDetector = nil
+local f3kRound = nil
 
 --local monitor = nil
 
-local function init()
-	worktimeTimer = Timer_new()
-	worktimeTimer.mute = true
-	Timer_setForward(worktimeTimer, false)
+local function landedCallBack(flightTime, launchAlt, launchTime)
+	f3kRound.getTask().addFlight(flightTime, launchAlt, launchTime)
+end
 
-	flightState = LZ_runModule(gScriptDir .. "LAOZHU/F3kState.lua")
-	Timer_resetTimer(worktimeTimer, worktimeArray[selectWorktimeIndex])
+local function init()
+
+	flightState = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kState.lua")
+
+	f3kRound = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kRound.lua")
+	f3kRound.init()
+	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "OperTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 60), CFGgetStrField(f3kCfg, 'task', "Train"))
+	
+	
+	flightState.setLandedCallback(landedCallBack)
 	LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
 	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
-	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/f3kReadVarMap.lua")
+	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/F3k/f3kReadVarMap.lua")
 
 	--LZ_runModule(gScriptDir .. "LAOZHU/Sensor.lua")
 	--LZ_runModule(gScriptDir .. "LAOZHU/Queue.lua")
@@ -38,11 +38,12 @@ local function init()
 
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
-	WTResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'WtResetSw')))
+	roundResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'RdResetSw')))
 end
 
 local function run(event)
 	local curTime = getTime()
+	f3kRound.run(curTime)
 	local flightMode, flightModeName = getFlightMode()
 	curAlt = getValue(altID)
 
@@ -52,19 +53,18 @@ local function run(event)
 	flightState.setAlt(curAlt)
 	flightState.doFlightState(curTime, flightModeName)
 
-	local workTimeSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'WtSw'))
-	if workTimeSwitchValue > 0 and not Timer_isstart(worktimeTimer) then
-		Timer_start(worktimeTimer)
+
+	local roundStartSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'RdSw'))
+	if roundStartSwitchValue > 0 and not f3kRound.isStart() then
+		f3kRound.start(curTime)
+	end
+	
+	local roundResetSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'RdResetSw'))
+	if STD_run(roundResetSwitchTrigeDetector, roundResetSwitchValue) then
+		f3kRound.stop()
+		f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "OperTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 60), CFGgetStrField(f3kCfg, 'task'))
 	end
 
-	local workTimeResetSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'WtResetSw'))
-	if STD_run(WTResetSwitchTrigeDetector, workTimeResetSwitchValue) then
-		Timer_resetTimer(worktimeTimer, worktimeArray[selectWorktimeIndex])
-		Timer_setCurTime(worktimeTimer, curTime)
-	end
-
-	Timer_setCurTime(worktimeTimer, curTime)
-	Timer_run(worktimeTimer)
 
 	local varSelectorSliderValue = getValue(CFGgetNumberField(f3kCfg, 'SelSlider'))
 	local varReadSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'ReadSw'))
@@ -72,28 +72,12 @@ local function run(event)
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 end
 
-local function increaseWorktimeIndex()
-	selectWorktimeIndex = selectWorktimeIndex + 1
-	if selectWorktimeIndex > #worktimeArray then
-		selectWorktimeIndex = 1
-	end
-	Timer_setDuration(worktimeTimer, worktimeArray[selectWorktimeIndex])
-end
-
-local function decreaseWorktimeIndex()
-	selectWorktimeIndex = selectWorktimeIndex - 1
-	if selectWorktimeIndex <= 0 then
-		selectWorktimeIndex = #worktimeArray
-	end
-	Timer_setDuration(worktimeTimer, worktimeArray[selectWorktimeIndex])
-end
-
-local function getWorktimeTimer()
-	return worktimeTimer
+local function getRound()
+	return f3kRound
 end
 
 local function getFlightState()
 	return flightState
 end
 
-return {run=run, init=init, increaseWorktimeIndex=increaseWorktimeIndex, decreaseWorktimeIndex=decreaseWorktimeIndex, getWorktimeTimer=getWorktimeTimer, getFlightState=getFlightState}
+return {run=run, init=init, getRound=getRound, getFlightState=getFlightState}

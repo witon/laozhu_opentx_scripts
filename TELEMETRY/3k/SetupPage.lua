@@ -1,93 +1,115 @@
 local varSliderSelector = nil
 local readSwitchSelector = nil
-local workTimeSwitchSelector = nil
-local workTimeResetSwitchSelector = nil
+local roundSwitchSelector = nil
+local roundResetSwitchSelector = nil
 local destTimeSettingStepNumEdit = nil
-
-local selectorArray = nil
-local curSelectorIndex = 1
-local editingSelector = nil
-
+local operTimeEdit = nil
+local testTimeEdit = nil
+local viewMatrix = nil
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
+    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+ 
+ 
 local function setCfgValue()
     f3kCfg["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
     f3kCfg["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
-    f3kCfg["WtSw"] = ISgetSelectedItemId(workTimeSwitchSelector)
-    f3kCfg["WtResetSw"] = ISgetSelectedItemId(workTimeResetSwitchSelector)
+    f3kCfg["RdSw"] = ISgetSelectedItemId(roundSwitchSelector)
+    f3kCfg["RdResetSw"] = ISgetSelectedItemId(roundResetSwitchSelector)
     f3kCfg["DestTimeStep"] = destTimeSettingStepNumEdit.num
+    f3kCfg["OperTime"] = operTimeEdit.num
+    f3kCfg["TestTime"] = testTimeEdit.num
 end
 
 local function getCfgValue()
     ISsetSelectedItemById(readSwitchSelector, f3kCfg["ReadSw"])
     ISsetSelectedItemById(varSliderSelector, f3kCfg["SelSlider"])
-    ISsetSelectedItemById(workTimeSwitchSelector, f3kCfg["WtSw"])
-    ISsetSelectedItemById(workTimeResetSwitchSelector, f3kCfg["WtResetSw"])
+    ISsetSelectedItemById(roundSwitchSelector, f3kCfg["RdSw"])
+    ISsetSelectedItemById(roundResetSwitchSelector, f3kCfg["RdResetSw"])
     destTimeSettingStepNumEdit.num = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
+    operTimeEdit.num = CFGgetNumberField(f3kCfg, "OperTime", 120)
+    testTimeEdit.num = CFGgetNumberField(f3kCfg, "TestTime", 120)
+end
+
+local function onInputSelectorChange(selector)
+    setCfgValue()
+    CFGwriteToFile(f3kCfg, gConfigFileName)
+end
+
+local function onNumEditChange(numEdit)
+    setCfgValue()
+    CFGwriteToFile(f3kCfg, gConfigFileName)
+end
+
+local function destroy()
+    VMunload()
+    IVunload()
+    ISunload()
+    NEunload()
+    TIMEEunload()
+    FieldsUnload()
 end
 
 local function init()
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
-    initFieldsInfo()
+   initFieldsInfo()
+
     varSliderSelector = ISnewInputSelector()
     ISsetFieldType(varSliderSelector, FIELDS_INPUT)
+    ISsetOnChange(varSliderSelector, onInputSelectorChange)
+
     readSwitchSelector = ISnewInputSelector()
     ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
-    workTimeSwitchSelector = ISnewInputSelector()
-    ISsetFieldType(workTimeSwitchSelector, FIELDS_SWITCH)
-    workTimeResetSwitchSelector = ISnewInputSelector()
-    ISsetFieldType(workTimeResetSwitchSelector, FIELDS_SWITCH)
+    ISsetOnChange(readSwitchSelector, onInputSelectorChange)
+
+    roundSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(roundSwitchSelector, FIELDS_SWITCH)
+    ISsetOnChange(roundSwitchSelector, onInputSelectorChange)
+
+    roundResetSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(roundResetSwitchSelector, FIELDS_SWITCH)
+    ISsetOnChange(roundResetSwitchSelector, onInputSelectorChange)
+
+
     destTimeSettingStepNumEdit = NEnewNumEdit()
     destTimeSettingStepNumEdit.step = 5
-    selectorArray = {
-        destTimeSettingStepNumEdit,
-        workTimeSwitchSelector,
-        workTimeResetSwitchSelector,
-        varSliderSelector,
-        readSwitchSelector
-    }
+    NEsetRange(destTimeSettingStepNumEdit, 1, 60)
+    NEsetOnChange(destTimeSettingStepNumEdit, onNumEditChange)
 
+    operTimeEdit = TIMEEnewTimeEdit()
+    NEsetRange(operTimeEdit, 0, 600)
+    operTimeEdit.step = 5
+    NEsetOnChange(operTimeEdit, onNumEditChange)
+
+    testTimeEdit = TIMEEnewTimeEdit()
+    NEsetRange(testTimeEdit, 0, 600)
+    testTimeEdit.step = 5
+    NEsetOnChange(testTimeEdit, onNumEditChange)
+
+    viewMatrix = VMnewViewMatrix()
+    local row = VMaddRow(viewMatrix)
+    row[1] = destTimeSettingStepNumEdit
+    row = VMaddRow(viewMatrix)
+    row[1] = roundSwitchSelector
+    row = VMaddRow(viewMatrix)
+    row[1] = roundResetSwitchSelector
+    row = VMaddRow(viewMatrix)
+    row[1] = varSliderSelector
+    row = VMaddRow(viewMatrix)
+    row[1] = readSwitchSelector
+    row = VMaddRow(viewMatrix)
+    row[1] = operTimeEdit
+    row = VMaddRow(viewMatrix)
+    row[1] = testTimeEdit
+    VMupdateCurIVFocus(viewMatrix)
 
     getCfgValue()
 end
 
 local function doKey(event)
-    if editingSelector then
-        if(event == EVT_EXIT_BREAK or event == EVT_ENTER_BREAK) then
-            IVsetFocusState(editingSelector, 1)
-            editingSelector = nil
-            setCfgValue()
-            CFGwriteToFile(f3kCfg, gConfigFileName)
-            return true
-        end
-        editingSelector.doKey(editingSelector, event)
-        return true
-    end
- 
-    if(event == EVT_ENTER_BREAK) then
-        editingSelector = selectorArray[curSelectorIndex]
-        IVsetFocusState(editingSelector, 2)
-        return true
-    end
-    local eventProcessed = false
-
-    local preFocus = selectorArray[curSelectorIndex]
-	if(event==36 or event==68) then
-		curSelectorIndex = curSelectorIndex - 1
-		if curSelectorIndex < 1 then
-            curSelectorIndex = 1
-        end
-        eventProcessed = true
-	elseif(event==35 or event==67) then
-		curSelectorIndex = curSelectorIndex + 1
-		if curSelectorIndex > #selectorArray then
-			curSelectorIndex = #selectorArray
-        end
-        eventProcessed = true
-    end
-    IVsetFocusState(preFocus, 0)
-    IVsetFocusState(selectorArray[curSelectorIndex], 1)
+    local eventProcessed = VMdoKey(viewMatrix, event)
     return eventProcessed
 end
 
@@ -97,26 +119,23 @@ local function run(event, time)
         invers = true
     end
     local drawOptions
-    lcd.drawText(2, 2, "Target Flight Time Step", SMLSIZE + LEFT)
-    IVdraw(destTimeSettingStepNumEdit, 122, 2, invers, SMLSIZE + RIGHT)
-    lcd.drawText(2, 12, "WTime Start Switch", SMLSIZE + LEFT)
-    IVdraw(workTimeSwitchSelector, 110, 12, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 22, "WTime Reset Switch", SMLSIZE + LEFT)
-    IVdraw(workTimeResetSwitchSelector, 110, 22, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 32, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 110, 32, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 42, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 110, 42, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 0, "Target Flight Time Step", SMLSIZE + LEFT)
+    IVdraw(destTimeSettingStepNumEdit, 122, 0, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 9, "Round Start Switch", SMLSIZE + LEFT)
+    IVdraw(roundSwitchSelector, 110, 9, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 18, "Round Reset Switch", SMLSIZE + LEFT)
+    IVdraw(roundResetSwitchSelector, 110, 18, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 27, "Var Slider", SMLSIZE + LEFT)
+    IVdraw(varSliderSelector, 110, 27, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 36, "Read Switch", SMLSIZE + LEFT)
+    IVdraw(readSwitchSelector, 110, 36, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 45, "Oper Time", SMLSIZE + LEFT)
+    IVdraw(operTimeEdit, 120, 45, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 54, "Test Time", SMLSIZE + LEFT)
+    IVdraw(testTimeEdit, 120, 54, invers, SMLSIZE + RIGHT)
  
     return doKey(event)
 end
 
-local function unloadModule()
-    IVunload()
-    ISunload()
-    NEunload()
-    FieldsUnload()
-end
 
-
-return {run = run, init=init, destroy=unloadModule}
+return {run = run, init=init, destroy=destroy}

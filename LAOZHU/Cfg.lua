@@ -10,8 +10,11 @@ function CFGgetNumberField(cfg, fieldName, default)
     return v
 end
 
-function CFGgetStrField(cfg, fieldName)
+function CFGgetStrField(cfg, fieldName, default)
     local v = cfg[fieldName]
+    if v == nil and default then
+        return default
+    end
     if v == nil then
         return ""
     end

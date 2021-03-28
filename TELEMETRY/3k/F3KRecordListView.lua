@@ -42,14 +42,14 @@ function F3KRLVdraw(recordListView, x, y, invers, option)
         local scrollRow = recordListView.scrollRow
         for i=scrollRow+1, #records, 1 do
             local record = records[#records - i + 1]
-            local y = 10 + (i-scrollRow-1) * 10
+            local y = 10 + (i-scrollRow-1) * 8
             local op = 0
             if i==recordListView.selectedRow and recordListView.focusState == 2 then
                 op = INVERS
                 lcd.drawFilledRectangle(0, y-1, 127, 8, FORCE)
             end
 			lcd.drawText(1, y, "(" .. record.index .. ") ", SMLSIZE + LEFT + op)
-			lcd.drawText(lcd.getLastRightPos(), y, LZ_formatDateTime(record.flightStartTime), SMLSIZE + LEFT + op)
+			lcd.drawText(lcd.getLastRightPos(), y, LZ_formatTimeStamp(record.flightStartTime), SMLSIZE + LEFT + op)
             lcd.drawNumber(85, y, record.launchAlt, SMLSIZE + RIGHT + op)
             lcd.drawText(128, y, LZ_formatTime(record.flightTime), SMLSIZE + RIGHT + op)
  

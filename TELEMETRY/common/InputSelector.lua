@@ -1,3 +1,6 @@
+function ISsetOnChange(selector, onChange)
+    selector.onChange = onChange
+end
 
 local function startDetectField(selector)
     for i=1, #selector.fieldTable.valueArray, 1 do
@@ -25,6 +28,9 @@ local function detectField(selector)
         if math.abs(selector.fieldTable.valueArray[i] - v) > 256 then
             selector.selectedIndex = i
             selector.fieldTable.valueArray[i] = v
+            if selector.onChange then
+                selector.onChange(selector)
+            end
             return
         else
             selector.fieldTable.valueArray[i] = v
@@ -51,11 +57,19 @@ function ISdoKey(selector, event)
         selector.selectedIndex = selector.selectedIndex + 1
         if selector.selectedIndex > #selector.fieldTable.nameArray then
             selector.selectedIndex = #selector.fieldTable.nameArray
+        else
+            if selector.onChange then
+                selector.onChange(selector)
+            end
         end
     elseif event == 36 or event == 68 then
         selector.selectedIndex = selector.selectedIndex - 1
         if selector.selectedIndex < 1 then
             selector.selectedIndex = 1
+        else
+            if selector.onChange then
+                selector.onChange(selector)
+            end
         end
     end
 end
@@ -87,5 +101,6 @@ function ISunload()
     ISdoKey = nil
     ISdraw = nil
     ISnewInputSelector = nil
+    ISsetOnChange = nil
     ISunload = nil
 end

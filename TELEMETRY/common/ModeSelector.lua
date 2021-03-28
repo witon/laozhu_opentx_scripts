@@ -28,10 +28,6 @@ end
 
 
 
-function SsetSelectFun(selector, incFun, decFun)
-    selector.incFun = incFun
-    selector.decFun = decFun
-end
 
 
 function MSnewModeSelector()
@@ -45,7 +41,6 @@ function MSunload()
     MSgetText = nil
     MSinc = nil
     MSdec = nil
-    SsetSelectFun = nil
     MSnewModeSelector = nil
     MSunload = nil
 end

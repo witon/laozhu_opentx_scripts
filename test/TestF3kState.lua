@@ -4,7 +4,7 @@ function testNormalProcess()
     _G.getDateTime = Mock()
     _G.getDateTime:whenCalled {thenReturn = {curDateTime}}
 
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     local state = F3kState.getFlightState()
     luaunit.assertEquals(state, 0)
@@ -56,7 +56,7 @@ function testPresetState_presetMode2CuriseMode() --"on preset state, from preset
     _G.getDateTime = Mock()
     _G.getDateTime:whenCalled {thenReturn = {curDateTime}}
 
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     local state = F3kState.getFlightState()
     luaunit.assertEquals(state, 0)
@@ -70,7 +70,7 @@ function testZoomState_zoomMode2PresetMode() --on zoom state, from zoom mode to 
     _G.getDateTime = Mock()
     _G.getDateTime:whenCalled {thenReturn = {curDateTime}}
 
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     local state = F3kState.getFlightState()
 
@@ -88,7 +88,7 @@ function testLaunchedState_curiseMode2ZoomMode() --on launched state, from curis
     _G.getDateTime = Mock()
     _G.getDateTime:whenCalled {thenReturn = {curDateTime}}
 
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
 
     local curTime = 10000
@@ -109,7 +109,7 @@ function testLandedState_curiseMode2PresetMode() --on landed state, from curise 
     _G.getDateTime = Mock()
     _G.getDateTime:whenCalled {thenReturn = {curDateTime}}
 
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     local state = F3kState.getFlightState()
 
@@ -139,7 +139,7 @@ function testLaunchAlt() --launch alt
     _G.getDateTime = Mock()
     _G.getDateTime:whenCalled {thenReturn = {curDateTime}}
 
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     luaunit.assertEquals(0, F3kState.getLaunchAlt())
 
@@ -169,7 +169,7 @@ function testLaunchAlt() --launch alt
 end
 
 function testSetAndGetDestFlightTime()
-    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3kState.lua")
+    local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     F3kState.setDestFlightTime(10)
     local destFlightTime = F3kState.getDestFlightTime()
