@@ -9,7 +9,7 @@ function testF3kRoundNormal()
     end
     local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3k/F3kRound.lua")
     f3kRound.init()
-    f3kRound.setRoundParam(120, 40, "Train")
+    f3kRound.setRoundParam(120, 40, "TEST")
     luaunit.assertEquals(f3kRound.getState(), 1) --begin
     local time = 10
     f3kRound.start(time)
@@ -35,11 +35,11 @@ function testF3kRoundNormal()
     f3kRound.run(time)
     luaunit.assertEquals(f3kRound.getState(), 4) --task time nofly
 
-    time = time + 6000
+    time = time + 500
     f3kRound.run(time)
     luaunit.assertEquals(f3kRound.getState(), 4) --task time flight
 
-    time = time + 60000
+    time = time + 500
     f3kRound.run(time)
     luaunit.assertEquals(f3kRound.getState(), 4) --task time landing
 
@@ -57,7 +57,7 @@ function testF3kRoundStopAndStart()
     end
  
     f3kRound.init()
-    f3kRound.setRoundParam(120, 40, "Train")
+    f3kRound.setRoundParam(120, 40, "TEST")
     luaunit.assertEquals(f3kRound.getState(), 1) --begin
     local time = 10
     f3kRound.start(time)
