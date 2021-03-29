@@ -7,6 +7,8 @@ function TSgetText(index)
     elseif index == 2 then
         return "AULD"
     elseif index == 3 then
+        return "OtherTask"
+    elseif index == 4 then
         return "TEST"
     else
         return "-"
@@ -20,8 +22,10 @@ function TSsetTask(selector, taskName)
         selector.selectedIndex = 1
     elseif taskName == "AULD" then
         selector.selectedIndex = 2
+    elseif taskName == "OtherTask" then
+        selector.selectedIndex = 3 
     elseif taskName == "TEST" then
-        selector.selectedIndex = 3
+        selector.selectedIndex = 4
     else
         selector.selectedIndex = -1
     end

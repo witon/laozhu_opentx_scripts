@@ -51,7 +51,7 @@ local function run(event)
 	--monitor.run(rtcTime, 0, getValue(rxbtID), 0)
 
 	flightState.setAlt(curAlt)
-	flightState.doFlightState(curTime, flightModeName)
+	flightState.doFlightState(curTime, flightModeName, rtcTime)
 
 
 	local roundStartSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'RdSw'))

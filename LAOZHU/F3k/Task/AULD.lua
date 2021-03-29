@@ -8,7 +8,7 @@ local workTime = 180 * 3
 --3: landing
 
 local flightRecord = F3KFRnewFlightRecord()
-flightRecord.maxNum = 10
+flightRecord.maxNum = 8
 
 local function addFlight(flightTime, launchAlt, flightStartTime)
     if state == 2 or state == 3 then

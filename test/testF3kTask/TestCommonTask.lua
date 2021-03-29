@@ -5,10 +5,10 @@ end
 
 function testTrainNormal()
     dofile(HOME_DIR .. "LAOZHU/timer.lua")
+    LZ_playFile = function (path)
+    end
     local task = dofile(HOME_DIR .. "LAOZHU/F3k/Task/CommonTask.lua")
-    task.setTaskName("train")
-    task.setWorkTime(600)
-    
+    task.setTaskParam("train", 600, 60)
 
     local timer = Timer_new()
     local time = 10

@@ -7,7 +7,7 @@ local noFlyTime = 60
 --3: landing
 
 local flightRecord = F3KFRnewFlightRecord()
-flightRecord.maxNum = 10
+flightRecord.maxNum = 8
 
 local function addFlight(flightTime, launchAlt, flightStartTime)
     if state == 2 or state == 3 then
@@ -89,32 +89,30 @@ local function getTaskName()
 end
 
 local function start(timer)
-    LZ_playFile("LAOZHU/nofly.wav", true)
-    state = 1
-    Timer_resetTimer(timer, noFlyTime)
-    Timer_setDowncount(timer, 10)
-    timer.mute = false
-    Timer_start(timer)
+    if noFlyTime > 0 then
+        LZ_playFile("LAOZHU/nofly.wav", true)
+        state = 1
+        Timer_resetTimer(timer, noFlyTime)
+        Timer_setDowncount(timer, 10)
+        timer.mute = false
+        Timer_start(timer)
+    else
+        changeState2Flight(timer)
+    end
 end
 
 local function getState()
     return state
 end
 
-local function setWorkTime(t)
-    workTime = t
-end
-
 local function getWorkTime()
     return workTime
 end
 
-local function setTaskName(name)
-    taskName = name
-end
-
-local function setNoFlyTime(t)
-    noFlyTime = t
+local function setTaskParam(tName, wTime, nflyTime)
+    taskName = tName
+    workTime = wTime
+    noFlyTime = nflyTime
 end
 
 return {
@@ -123,10 +121,8 @@ return {
     start = start,
     getState = getState,
     getStateDisc = getStateDisc,
-    setWorkTime = setWorkTime,
+    setTaskParam = setTaskParam,
     getWorkTime = getWorkTime,
-    setNoFlyTime = setNoFlyTime,
-    setTaskName = setTaskName,
     getFlightRecord = getFlightRecord,
     addFlight = addFlight
 }
