@@ -4,7 +4,7 @@ function LZ_runModule(file)
 end
 
 function testF3kRoundNormal()
-    dofile(HOME_DIR .. "LAOZHU/timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
     LZ_playFile = function (filepath)
     end
     local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3k/F3kRound.lua")
@@ -51,7 +51,7 @@ function testF3kRoundNormal()
 end
 
 function testF3kRoundStopAndStart()
-    dofile(HOME_DIR .. "LAOZHU/timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
     local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3k/F3kRound.lua")
     LZ_playFile = function (filepath)
     end
