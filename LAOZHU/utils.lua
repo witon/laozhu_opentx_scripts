@@ -8,13 +8,18 @@ function LZ_formatDateTime(dateTime)
 	return string.format("%02d:%02d", dateTime["hour"], dateTime["min"])
 end
 
-function LZ_formatTimeStamp(time)
+function LZ_formatTimeStamp(time, type)
 	local secondsInDay = (time % (24*60*60))
 	local hour = math.floor(secondsInDay/60/60)
 	local secondsInHour = secondsInDay % (60*60) 
 	local minute = math.floor(secondsInHour/60)
 	local second = secondsInHour % 60
-	local str = string.format("%02d:%02d:%02d", hour, minute, second)
+	local str = nil
+	if type == nil or type == 1 then
+		str = string.format("%02d:%02d:%02d", hour, minute, second)
+	else
+		str = string.format("%02d:%02d", hour, minute)
+	end
 	return str
 end
 
@@ -35,6 +40,20 @@ function LZ_playNumber(value, flag)
 	end
 	lz_lastPlayNumberTime = t
 	playNumber(value, flag)
+end
+
+function LZ_playFile(path, force)
+	local t = math.floor(getTime()/90)
+	if force then
+		playFile(path)
+		lz_lastPlayNumberTime = t
+	else
+		if t == lz_lastPlayNumberTime then
+			return
+		end
+		lz_lastPlayNumberTime = t
+		playFile(path)
+	end
 end
 
 

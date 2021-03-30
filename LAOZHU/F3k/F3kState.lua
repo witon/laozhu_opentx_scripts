@@ -1,13 +1,23 @@
 
+LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
+
 local flightState = 0 --0:preset 1:zoom 2:launched 3:landed
 local launchTime = 0
 local launchAlt = 0
 local curAlt = 0
-local launchDatetime = 0
+local launchRtcTime = 0
 local flightStateStartTime = 0
-local f3kFlightRecord = dofile(gScriptDir .. "LAOZHU/F3kFlightRecord.lua")
+local f3kFlightRecord = F3KFRnewFlightRecord()
+f3kFlightRecord.maxNum = 25
 local destFlightTime = 0
 local flightTimer = Timer_new()
+local landedCallback = nil
+
+
+
+local function setLandedCallback(callback)
+    landedCallback = callback
+end
 
 local function getFlightRecord()
     return f3kFlightRecord
@@ -55,14 +65,14 @@ local function getFlightTime()
     return Timer_getRunTime(flightTimer)
 end
 
-local function newFlight(curTime)
+local function newFlight(curTime, curRtcTime)
     flightState = 0
     Timer_resetTimer(flightTimer, destFlightTime)
     Timer_setDowncount(flightTimer, 15)
     Timer_start(flightTimer)
     launchAlt = 0
     launchTime = 0
-    launchDatetime = getDateTime()
+    launchRtcTime = curRtcTime
     launchTime = curTime
 end
 
@@ -87,49 +97,52 @@ local function doStateLaunched(curTime, flightModeName)
     if flightModeName == "preset" then
         Timer_stop(flightTimer)
         flightState = 3
-        f3kFlightRecord.addFlight(Timer_getRunTime(flightTimer), launchAlt, launchDatetime)
+        F3KFRaddFlight(f3kFlightRecord, Timer_getRunTime(flightTimer), launchAlt, launchRtcTime)
+        if landedCallback then
+            landedCallback(Timer_getRunTime(flightTimer), launchAlt, launchRtcTime)
+        end
     end
     if curTime - flightStateStartTime < 150 then --still update launch alt in 1.5's after zoom
         getMaxLaunchAlt()
     end
 end
 
-local function doStateLanded(curTime, flightModeName)
+local function doStateLanded(curTime, flightModeName, curRtcTime)
     if flightModeName == "zoom" then
         flightState = 0
-        newFlight(curTime)
+        newFlight(curTime, curRtcTime)
     end
 end
 
-local function getLaunchDateTime()
-    return launchDatetime
+local function getLaunchRtcTime()
+    return launchRtcTime
 end
 
 local function getLaunchTime()
     return launchTime
 end
 
-local function doStatePreset(curTime, flightModeName)
+local function doStatePreset(curTime, flightModeName, curRtcTime)
     if flightModeName == "zoom" then
-        newFlight(curTime)
+        newFlight(curTime, curRtcTime)
         flightState = 1
     end
 
 end
 
-local function doFlightState(curTime, flightModeName)
+local function doFlightState(curTime, flightModeName, curRtcTime)
 
     Timer_setCurTime(flightTimer, curTime)
     Timer_run(flightTimer)
  
     if flightState == 0 then
-        doStatePreset(curTime, flightModeName)
+        doStatePreset(curTime, flightModeName, curRtcTime)
     elseif flightState == 1 then
         doStateZoom(curTime, flightModeName)
     elseif flightState == 2 then
         doStateLaunched(curTime, flightModeName)
     elseif flightState == 3 then
-        doStateLanded(curTime, flightModeName)
+        doStateLanded(curTime, flightModeName, curRtcTime)
     end
 end
 
@@ -137,7 +150,7 @@ end
 return {newFlight = newFlight,
     doFlightState = doFlightState,
     getFlightState = getFlightState,
-    getLaunchDateTime = getLaunchDateTime,
+    getLaunchRtcTime = getLaunchRtcTime,
     getLaunchTime = getLaunchTime,
     getFlightTime = getFlightTime,
     getCurFlightStateName = getCurFlightStateName,
@@ -146,5 +159,6 @@ return {newFlight = newFlight,
     getLaunchAlt = getLaunchAlt,
     getFlightRecord = getFlightRecord,
     setDestFlightTime = setDestFlightTime,
-    getDestFlightTime = getDestFlightTime
+    getDestFlightTime = getDestFlightTime,
+    setLandedCallback = setLandedCallback
 }

@@ -8,7 +8,7 @@ gF3kCore = nil
 f3kCfg = nil
 
 local displayIndex = 1
-local pages = {"3k/FlightPage.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
+local pages = {"3k/FlightPageNew.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
 local curPage = nil
 
 

@@ -8,6 +8,8 @@ local numEdit = nil
 local outputSelector = nil
 local curveSelector = nil
 local modeSelector = nil
+local taskSelector = nil
+local timeEdit = nil
 
 
 local viewMatrix = nil
@@ -54,6 +56,12 @@ local function testLoadAndUnload()
     MSunload()
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
     VMunload()
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
+    TIMEEunload()
+
+	LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
+    TSunload()
+
 end
 
 local function initUI()
@@ -71,6 +79,9 @@ local function initUI()
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ModeSelector.lua")
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
+	LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
+ 
     viewMatrix = VMnewViewMatrix()
 
     inputSelector = ISnewInputSelector()
@@ -86,6 +97,12 @@ local function initUI()
     outputSelector = OSnewOutputSelector()
     curveSelector = CSnewCurveSelector()
     modeSelector = MSnewModeSelector()
+    taskSelector = TSnewTaskSelector()
+
+    timeEdit = TIMEEnewTimeEdit()
+    NEsetRange(timeEdit, 0, 600)
+    timeEdit.step = 15
+
 
 
     viewMatrix.matrix = {}
@@ -101,6 +118,10 @@ local function initUI()
     viewMatrix.matrix[4] = {}
     viewMatrix.matrix[4][1] = modeSelector
     viewMatrix.matrix[4][2] = curveSelector
+    viewMatrix.matrix[5] = {}
+    viewMatrix.matrix[5][1] = taskSelector
+    viewMatrix.matrix[6] = {}
+    viewMatrix.matrix[6][1] = timeEdit
  
     IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
  
@@ -173,11 +194,12 @@ local function run(event)
 
     lcd.drawText(0, 30, "mdselect:", SMLSIZE + LEFT)
     IVdraw(modeSelector, 58, 30, invers, SMLSIZE + RIGHT)
- 
-    --local c3 = collectgarbage("count")
-    --print("----------------c3", c3)
- 
 
+    lcd.drawText(0, 40, "tsselect:", SMLSIZE + LEFT)
+    IVdraw(taskSelector, 84, 40, invers, SMLSIZE + RIGHT)
+
+    lcd.drawText(0, 50, "timeedit:", SMLSIZE + LEFT)
+    IVdraw(timeEdit, 84, 50, invers, SMLSIZE + RIGHT)
 end
 
 return {run=run, init=init }

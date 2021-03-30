@@ -13,7 +13,7 @@ function NEdoKey(numEdit, event)
             numEdit.onChange(numEdit)
         end
     elseif event == 67 then
-        numEdit.num = numEdit.num - 10
+        numEdit.num = numEdit.num - 10 * numEdit.step
         if numEdit.min and numEdit.min > numEdit.num then
             numEdit.num = numEdit.min
         end
@@ -29,7 +29,7 @@ function NEdoKey(numEdit, event)
             numEdit.onChange(numEdit)
         end
     elseif event == 68 then
-        numEdit.num = numEdit.num + 10
+        numEdit.num = numEdit.num + 10 * numEdit.step
         if numEdit.max and numEdit.max < numEdit.num then
             numEdit.num = numEdit.max
         end
