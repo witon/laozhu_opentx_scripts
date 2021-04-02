@@ -8,9 +8,11 @@ gF3kCore = nil
 f3kCfg = nil
 
 local displayIndex = 1
-local pages = {"3k/FlightPageNew.lua", "3k/SmallFontFlightListPage.lua", "3k/SetupPage.lua"}
+local flightPagePages = {"3k/FlightPageNew.lua", "3k/SmallFontFlightListPage.lua"}
+local setupPages = {"3k/RoundSetupPage.lua", "3k/SetupPage.lua"}
+local pages = flightPagePages
 local curPage = nil
-
+local lastEvent = 0
 
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
@@ -43,6 +45,15 @@ local function background()
 	gF3kCore.run()
 end
 
+local function unloadCurPage()
+	if curPage.destroy then
+		curPage.destroy()
+	end
+	LZ_clearTable(curPage)
+	curPage = nil
+	collectgarbage()
+end
+
 local function run(event)
 	lcd.clear()
 	local curTime = getTime()
@@ -54,12 +65,14 @@ local function run(event)
 		return
 	end
 	if event == EVT_EXIT_BREAK then
-		if curPage.destroy then
-			curPage.destroy()
+		if pages == setupPages then
+			pages = flightPagePages
+			displayIndex = 1
+			unloadCurPage()
 		end
-		LZ_clearTable(curPage)
-		curPage = nil
-		collectgarbage()
+		if gF3kCore == nil then	--compiling page
+			unloadCurPage()
+		end
 	end
 
 	if event==38 then 
@@ -67,23 +80,26 @@ local function run(event)
 		if displayIndex < 1 then
 			displayIndex = #pages
 		end
-		if curPage.destroy then
-			curPage.destroy()
-		end
-		LZ_clearTable(curPage)
-		curPage = nil
-		collectgarbage()
+		unloadCurPage()
 	elseif event == 37 then
-		displayIndex = displayIndex + 1
-		if displayIndex > #pages then
+		if lastEvent == 69 then	--because system will trigger event 37 once after event 69
+			lastEvent = event
+		else
+			displayIndex = displayIndex + 1
+			if displayIndex > #pages then
+				displayIndex = 1
+			end
+			unloadCurPage()
+		end
+	end
+
+	if event == 69 then
+		lastEvent = 69
+		if pages == flightPagePages then
+			unloadCurPage()
+			pages = setupPages
 			displayIndex = 1
 		end
-		if curPage.destroy then
-			curPage.destroy()
-		end
-		LZ_clearTable(curPage)
-		curPage = nil
-		collectgarbage()
 	end
 
 end

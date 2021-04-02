@@ -21,7 +21,7 @@ local function init()
 
 	f3kRound = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kRound.lua")
 	f3kRound.init()
-	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "OperTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 60), CFGgetStrField(f3kCfg, 'task', "Train"))
+	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "PrepTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 60), CFGgetStrField(f3kCfg, 'task', "Train"))
 	
 	
 	flightState.setLandedCallback(landedCallBack)
@@ -39,6 +39,11 @@ local function init()
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
 	roundResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'RdResetSw')))
+end
+
+local function resetRound()
+	f3kRound.stop()
+	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "PrepTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 60), CFGgetStrField(f3kCfg, 'task'))
 end
 
 local function run(event)
@@ -61,8 +66,7 @@ local function run(event)
 	
 	local roundResetSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'RdResetSw'))
 	if STD_run(roundResetSwitchTrigeDetector, roundResetSwitchValue) then
-		f3kRound.stop()
-		f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "OperTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 60), CFGgetStrField(f3kCfg, 'task'))
+		resetRound()
 	end
 
 
@@ -80,4 +84,4 @@ local function getFlightState()
 	return flightState
 end
 
-return {run=run, init=init, getRound=getRound, getFlightState=getFlightState}
+return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound, destFlightTime=0}
