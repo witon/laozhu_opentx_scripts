@@ -1,13 +1,10 @@
 local viewMatrix = nil
-local taskSelector = nil
 local destFlightTimeEdit = nil
 
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
 
 
 local function drawFlightList()
@@ -27,12 +24,9 @@ end
 
 local function onDestFlightTimeChange(timeEdit)
 	LZ_playTime(timeEdit.num, true)
+	gF3kCore.destFlightTime = timeEdit.num
 end
 
-local function onTaskSelectorChange(taskSelector)
-    f3kCfg["task"] = SgetSelectedText(taskSelector)
-	CFGwriteToFile(f3kCfg, gConfigFileName)
-end
 
 local function drawFlightInfo()
     local invers = false
@@ -43,7 +37,7 @@ local function drawFlightInfo()
 	local flightState = gF3kCore.getFlightState()
 
 	lcd.drawText(1, 0, model.getInfo().name, 0)
-	IVdraw(taskSelector, 64, 0, invers, RIGHT)
+	lcd.drawText(64, 0, f3kCfg["task"], RIGHT)
 	lcd.drawLine(0, 9, 64, 9, SOLID, 0)
 	lcd.drawLine(0, 46, 64, 46, SOLID, 0)
 	lcd.drawText(64, 48, flightState.getCurFlightStateName(), RIGHT)
@@ -56,13 +50,13 @@ local function drawFlightInfo()
 		lcd.drawText(0, 18, "WT", smlsize)
 		lcd.drawText(24, 11, LZ_formatTime(gF3kCore.getRound().getTask().getWorkTime()), LEFT + DBLSIZE)
 	elseif roundState == 2 then
-		lcd.drawText(0, 18, "Prep", smlsize)
+		lcd.drawText(0, 18, "PREP", smlsize)
 	elseif roundState == 3 then
-		lcd.drawText(0, 18, "Test", smlsize)
+		lcd.drawText(0, 18, "TEST", smlsize)
 	elseif roundState == 4 then
 		lcd.drawText(0, 18, gF3kCore.getRound().getTask().getStateDisc(), smlsize)
 	elseif roundState == 5 then
-		lcd.drawText(0, 18, "End", smlsize)
+		lcd.drawText(0, 18, "END", smlsize)
 	end
 	if roundState ~= 1 then
 		lcd.drawText(24, 11, LZ_formatTime(Timer_getRemainTime(gF3kCore.getRound().getTimer())), LEFT + DBLSIZE)
@@ -78,16 +72,12 @@ end
 
 local function init()
 	viewMatrix = VMnewViewMatrix()
-	taskSelector = TSnewTaskSelector()
-    TSsetTask(taskSelector, f3kCfg["task"])
-	SsetOnChange(taskSelector, onTaskSelectorChange)
 	destFlightTimeEdit = TIMEEnewTimeEdit()
+	destFlightTimeEdit.num = gF3kCore.destFlightTime
 	NEsetRange(destFlightTimeEdit, 0, 900)
 	destFlightTimeEdit.step = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
 	NEsetOnChange(destFlightTimeEdit, onDestFlightTimeChange)
 	local row = VMaddRow(viewMatrix)
-	row[1] = taskSelector
-	row = VMaddRow(viewMatrix)
 	row[1] = destFlightTimeEdit
     VMupdateCurIVFocus(viewMatrix)
 end
@@ -105,8 +95,6 @@ local function destroy()
 	IVunload()
 	NEunload()
 	TIMEEunload()
-	Sunload()
-	TSunload()
 end
 
 return {run = run, init=init, destroy=destroy}
