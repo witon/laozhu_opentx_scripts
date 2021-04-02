@@ -13,13 +13,11 @@ LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
 
-
- local function onTaskSelectorChange(taskSelector)
+local function onTaskSelectorChange(taskSelector)
     f3kCfg["task"] = SgetSelectedText(taskSelector)
-	CFGwriteToFile(f3kCfg, gConfigFileName)
+    CFGwriteToFile(f3kCfg, gConfigFileName)
     gF3kCore.resetRound()
 end
-
 
 local function setCfgValue()
     f3kCfg["DestTimeStep"] = destTimeSettingStepNumEdit.num
@@ -57,9 +55,9 @@ local function init()
     resetButton.text = "Reset Round"
     BTsetOnClick(resetButton, onResetRoundButtonClicked)
 
-	taskSelector = TSnewTaskSelector()
+    taskSelector = TSnewTaskSelector()
     TSsetTask(taskSelector, f3kCfg["task"])
-	SsetOnChange(taskSelector, onTaskSelectorChange)
+    SsetOnChange(taskSelector, onTaskSelectorChange)
 
     destTimeSettingStepNumEdit = NEnewNumEdit()
     destTimeSettingStepNumEdit.step = 5
@@ -118,5 +116,8 @@ local function run(event, time)
     return doKey(event)
 end
 
-
-return {run = run, init=init, destroy=destroy}
+return {
+    run = run,
+    init = init,
+    destroy = destroy
+}
