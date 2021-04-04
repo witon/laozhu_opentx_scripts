@@ -6,7 +6,9 @@ function Timer_new()
             downcountSeconds = -1,
             isForward = true,
             curTime = 0,
-            mute = false
+            mute = false,
+            announceTime = 0,
+            announceCallback = nil
         }
 end
 
@@ -19,6 +21,8 @@ function Timer_resetTimer(timer, d)
     timer.stopTime = 0
     timer.duration = d
     timer.lastReadTime = -1
+    timer.announceTime = 0
+    timer.announceCallback = nil
 end
 
 function Timer_setCurTime(timer, t)
@@ -142,7 +146,18 @@ function Timer_readRunTime(timer)
 end
 
 function Timer_run(timer)
-    if timer.startTime == 0 or timer.mute then
+    if timer.startTime == 0 then
+        return
+    end
+    if timer.announceTime ~= 0 and timer.announceCallback then
+        if (timer.isForward and timer.announceTime == Timer_getRunTime(timer)) or
+            ((not timer.isForward) and timer.announceTime == Timer_getRemainTime(timer)) then
+            timer.announceCallback(timer)
+            timer.announceTime = 0
+        end
+    end
+
+    if timer.mute then
         return
     end
     if timer.isForward then
@@ -150,4 +165,25 @@ function Timer_run(timer)
     else
         Timer_readRemainTime(timer)
     end
+
+end
+
+function Timer_unload()
+    Timer_new = nil
+    Timer_setDuration = nil
+    Timer_resetTimer = nil
+    Timer_setCurTime = nil
+    Timer_setForward = nil
+    Timer_setDowncount = nil
+    Timer_start = nil
+    Timer_isstart = nil
+    Timer_stop = nil
+    Timer_getRemainTime = nil
+    Timer_getRunTime = nil
+    Timer_getDuration = nil
+    readDowncount = nil
+    readIntegralTime = nil
+    Timer_readRemainTime = nil
+    Timer_readRunTime = nil
+    Timer_run = nil
 end

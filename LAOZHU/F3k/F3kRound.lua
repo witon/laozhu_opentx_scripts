@@ -3,7 +3,7 @@ local testTime = 40
 local startTime = 0
 local task = nil
 local timer = nil
-local roundState = 1 --1: begin; 2: preparationTime; 3: testTime; 4: taskTime; 5: end
+local roundState = 1 --1: begin; 2: preparationTime; 3: testTime; 4: taskTime; 5: end; 6: task nofly; 7: task flight; 8: task land;
 
 local function setTask(taskName)
     if task ~= nil then
@@ -56,29 +56,76 @@ local function start(time)
     roundState = 1
 end
 
-local function change2StateOperationTime()
-    LZ_playFile("LAOZHU/prep.wav")
-    roundState = 2
-    Timer_resetTimer(timer, preparationTime)
-    Timer_setDowncount(timer, 0)
-    timer.mute = true
-    Timer_start(timer)
+local function beforeTestCallback(t)
+    LZ_playTime(10)
+    LZ_playFile("LAOZHU/be-tst.wav", true)
 end
 
-local function change2StateTestTime()
-    LZ_playFile("LAOZHU/test.wav")
-    roundState = 3
-    Timer_stop(timer)
-    Timer_resetTimer(timer, testTime)
-    Timer_setDowncount(timer, 15)
-    timer.mute = false
-    Timer_start(timer)
+local function beforeNoFlyCallback(t)
+    LZ_playTime(20)
+    LZ_playFile("LAOZHU/be-nfl.wav", true)
+end
+
+local function setAnnounceCallback()
+    if roundState == 1 then
+        goto prep
+    elseif roundState == 2 then
+        goto test
+    elseif roundState == 3 then
+        goto task
+    end
+    ::prep::
+    if preparationTime > 0 then
+        return
+    end
+    ::test::
+    if testTime > 0 then
+        timer.announceTime = 10
+        timer.announceCallback = beforeTestCallback
+        return
+    end
+    ::task::
+    if task.getNoFlyTime() > 0 then
+        timer.announceTime = 20
+        timer.announceCallback = beforeNoFlyCallback
+        return
+    end
 end
 
 local function change2StateTaskTime()
     Timer_stop(timer)
     roundState = 4
     task.start(timer)
+end
+
+
+local function change2StateTestTime()
+    if testTime > 0 then
+        LZ_playFile("LAOZHU/test.wav", true)
+        roundState = 3
+        Timer_stop(timer)
+        Timer_resetTimer(timer, testTime)
+        Timer_setDowncount(timer, 15)
+        setAnnounceCallback()
+        timer.mute = false
+        Timer_start(timer)
+    else
+        change2StateTaskTime()
+    end
+end
+
+local function change2StateOperationTime()
+    if preparationTime > 0 then
+        LZ_playFile("LAOZHU/prep.wav")
+        roundState = 2
+        Timer_resetTimer(timer, preparationTime)
+        Timer_setDowncount(timer, 5)
+        timer.mute = false
+        setAnnounceCallback()
+        Timer_start(timer)
+    else
+        change2StateTestTime()
+    end
 end
 
 local function change2StateEnd()
@@ -100,21 +147,11 @@ local function run(time)
 	Timer_run(timer)
     if roundState == 1 then --doBegin()
         if startTime > 0 then
-            if preparationTime > 0 then
-                change2StateOperationTime()
-            elseif testTime > 0 then
-                change2StateTestTime()
-            else
-                change2StateTaskTime()
-            end
+            change2StateOperationTime()
         end
     elseif roundState == 2 then --doPreparationTime()
         if Timer_getRemainTime(timer) <= 0 then
-            if testTime > 0 then
-                change2StateTestTime()
-            else
-                change2StateTaskTime()
-            end
+            change2StateTestTime()
         end
     elseif roundState == 3 then --doTestTime()
         if Timer_getRemainTime(timer) <= 0 then
