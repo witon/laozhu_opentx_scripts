@@ -84,4 +84,4 @@ local function getFlightState()
 	return flightState
 end
 
-return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound, destFlightTime=0}
+return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}

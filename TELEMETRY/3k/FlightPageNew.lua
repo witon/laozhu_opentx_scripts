@@ -24,7 +24,7 @@ end
 
 local function onDestFlightTimeChange(timeEdit)
 	LZ_playTime(timeEdit.num, true)
-	gF3kCore.destFlightTime = timeEdit.num
+	gF3kCore.getFlightState().setDestFlightTime(timeEdit.num)
 end
 
 
@@ -73,7 +73,7 @@ end
 local function init()
 	viewMatrix = VMnewViewMatrix()
 	destFlightTimeEdit = TIMEEnewTimeEdit()
-	destFlightTimeEdit.num = gF3kCore.destFlightTime
+	destFlightTimeEdit.num = gF3kCore.getFlightState().getDestFlightTime()
 	NEsetRange(destFlightTimeEdit, 0, 900)
 	destFlightTimeEdit.step = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
 	NEsetOnChange(destFlightTimeEdit, onDestFlightTimeChange)

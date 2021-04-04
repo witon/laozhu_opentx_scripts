@@ -395,6 +395,66 @@ function testGetDuration()
     luaunit.assertEquals(duration, 35)
 end
 
+function testForwardAnnounce()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
+    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+
+    local haveDoneCallback = false
+
+    local function announceCallback(t)
+        haveDoneCallback = true
+    end
+ 
+    local timer = Timer_new()
+    Timer_resetTimer(timer, 0)
+    local curTime = 10
+    Timer_setForward(timer, true)
+    Timer_setCurTime(timer, curTime)
+    timer.announceTime = 10
+    timer.announceCallback = announceCallback
+    Timer_start(timer)
+
+    curTime = 910
+    Timer_setCurTime(timer, curTime)
+    Timer_run(timer)
+    luaunit.assertFalse(haveDoneCallback)
+
+    curTime = 1010
+    Timer_setCurTime(timer, curTime)
+    Timer_run(timer)
+    luaunit.assertTrue(haveDoneCallback)
+end
+
+function testBackwardAnnounce()
+    dofile(HOME_DIR .. "LAOZHU/utils.lua")
+    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+
+    local haveDoneCallback = false
+
+    local function announceCallback(t)
+        haveDoneCallback = true
+    end
+ 
+    local timer = Timer_new()
+    Timer_resetTimer(timer, 10)
+    local curTime = 10
+    Timer_setForward(timer, false)
+    Timer_setCurTime(timer, curTime)
+    timer.announceTime = 3
+    timer.announceCallback = announceCallback
+    Timer_start(timer)
+
+    curTime = 110
+    Timer_setCurTime(timer, curTime)
+    Timer_run(timer)
+    luaunit.assertFalse(haveDoneCallback)
+
+    curTime = 710
+    Timer_setCurTime(timer, curTime)
+    Timer_run(timer)
+    luaunit.assertTrue(haveDoneCallback)
+end
+
 
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then

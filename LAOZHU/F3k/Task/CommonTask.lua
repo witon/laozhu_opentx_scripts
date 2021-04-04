@@ -15,6 +15,12 @@ local function addFlight(flightTime, launchAlt, flightStartTime)
     end
 end
 
+local function announceCallback(timer)
+    if state == 1 then
+        LZ_playTime(15)
+        LZ_playFile("LAOZHU/be-wok.wav", true)
+    end
+end
 
 local function getFlightRecord()
     return flightRecord
@@ -94,6 +100,8 @@ local function start(timer)
         state = 1
         Timer_resetTimer(timer, noFlyTime)
         Timer_setDowncount(timer, 10)
+        timer.announceTime = 15
+        timer.announceCallback = announceCallback
         timer.mute = false
         Timer_start(timer)
     else
@@ -115,6 +123,10 @@ local function setTaskParam(tName, wTime, nflyTime)
     noFlyTime = nflyTime
 end
 
+local function getNoFlyTime()
+    return noFlyTime
+end
+
 return {
     run = run,
     getTaskName = getTaskName,
@@ -124,6 +136,7 @@ return {
     setTaskParam = setTaskParam,
     getWorkTime = getWorkTime,
     getFlightRecord = getFlightRecord,
-    addFlight = addFlight
+    addFlight = addFlight,
+    getNoFlyTime = getNoFlyTime
 }
 
