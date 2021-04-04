@@ -9,7 +9,7 @@ function LZ_loadModule(file)
 end
 
 function LZ_runModule(file)
-    local fun, err = loadScript(file)
+    local fun, err = loadScript(file, "t")
     if (fun ~= nil) then
         return fun()
     else

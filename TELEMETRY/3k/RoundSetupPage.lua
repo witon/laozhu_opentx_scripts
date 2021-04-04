@@ -2,6 +2,7 @@ local destTimeSettingStepNumEdit = nil
 local resetButton = nil
 local prepTimeEdit = nil
 local testTimeEdit = nil
+local noflyTimeEdit = nil
 local taskSelector = nil
 local viewMatrix = nil
 
@@ -23,12 +24,14 @@ local function setCfgValue()
     f3kCfg["DestTimeStep"] = destTimeSettingStepNumEdit.num
     f3kCfg["PrepTime"] = prepTimeEdit.num
     f3kCfg["TestTime"] = testTimeEdit.num
+    f3kCfg["NFlyTime"] = noflyTimeEdit.num
 end
 
 local function getCfgValue()
     destTimeSettingStepNumEdit.num = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
     prepTimeEdit.num = CFGgetNumberField(f3kCfg, "PrepTime", 120)
-    testTimeEdit.num = CFGgetNumberField(f3kCfg, "TestTime", 120)
+    testTimeEdit.num = CFGgetNumberField(f3kCfg, "TestTime", 40)
+    noflyTimeEdit.num = CFGgetNumberField(f3kCfg, "NFlyTime", 60)
 end
 
 local function onNumEditChange(numEdit)
@@ -74,6 +77,11 @@ local function init()
     testTimeEdit.step = 5
     NEsetOnChange(testTimeEdit, onNumEditChange)
 
+    noflyTimeEdit = TIMEEnewTimeEdit()
+    NEsetRange(noflyTimeEdit, 0, 600)
+    noflyTimeEdit.step = 5
+    NEsetOnChange(noflyTimeEdit, onNumEditChange)
+
     viewMatrix = VMnewViewMatrix()
     local row = VMaddRow(viewMatrix)
     row[1] = resetButton
@@ -85,6 +93,8 @@ local function init()
     row[1] = prepTimeEdit
     row = VMaddRow(viewMatrix)
     row[1] = testTimeEdit
+    row = VMaddRow(viewMatrix)
+    row[1] = noflyTimeEdit
     VMupdateCurIVFocus(viewMatrix)
     getCfgValue()
 end
@@ -105,14 +115,17 @@ local function run(event, time)
 
     local drawOptions
     IVdraw(resetButton, 128, 10, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 20, "Task", SMLSIZE + LEFT)
-    IVdraw(taskSelector, 128, 20, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 30, "Flight Time Step", SMLSIZE + LEFT)
-    IVdraw(destTimeSettingStepNumEdit, 128, 30, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 40, "Preparation Time", SMLSIZE + LEFT)
-    IVdraw(prepTimeEdit, 128, 40, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 50, "Test Time", SMLSIZE + LEFT)
-    IVdraw(testTimeEdit, 128, 50, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 19, "Task", SMLSIZE + LEFT)
+    IVdraw(taskSelector, 128, 19, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 28, "Flight Time Step", SMLSIZE + LEFT)
+    IVdraw(destTimeSettingStepNumEdit, 128, 28, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 37, "Preparation Time", SMLSIZE + LEFT)
+    IVdraw(prepTimeEdit, 128, 37, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 46, "Test Time", SMLSIZE + LEFT)
+    IVdraw(testTimeEdit, 128, 46, invers, SMLSIZE + RIGHT)
+    lcd.drawText(0, 55, "No Fly Time", SMLSIZE + LEFT)
+    IVdraw(noflyTimeEdit, 128, 55, invers, SMLSIZE + RIGHT)
+ 
     return doKey(event)
 end
 
