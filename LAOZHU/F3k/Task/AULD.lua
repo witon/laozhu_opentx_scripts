@@ -2,6 +2,7 @@ local flightTime = 180
 local state = 1
 local curFlight = 1
 local flightCount = 3
+local noflyTime = 60
 local workTime = 180 * 3 + 30 * 3 + 120
 --1: no fly
 --2: flight
@@ -11,7 +12,7 @@ local flightRecord = F3KFRnewFlightRecord()
 flightRecord.maxNum = 8
 
 local function getNoFlyTime()
-    return 60
+    return noflyTime
 end
 
 local function addFlight(flightTime, launchAlt, flightStartTime)
@@ -121,8 +122,9 @@ local function getTaskName()
     return "AULD"
 end
 
-local function setFlightCount(count)
+local function setTaskParam(count, nTime)
     flightCount = count
+    noflyTime = nTime
 end
 
 local function getWorkTime()
@@ -132,7 +134,7 @@ end
 return {run=run,
         getTaskName = getTaskName,
         start=changeState2NoFly,
-        setFlightCount=setFlightCount,
+        setTaskParam = setTaskParam,
         getStateDisc=getStateDisc,
         addFlight=addFlight,
         getFlightRecord=getFlightRecord,

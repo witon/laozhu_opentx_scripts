@@ -10,7 +10,7 @@ function testTrainNormal()
     local timer = Timer_new()
     local time = 10
     Timer_setCurTime(timer, time)
-    task.setFlightCount(2)
+    task.setTaskParam(2, 60)
     task.start(timer)
     luaunit.assertEquals(task.getState(), 1) --no fly
 
