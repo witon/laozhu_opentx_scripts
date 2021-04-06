@@ -4,6 +4,7 @@ local startTime = 0
 local task = nil
 local timer = nil
 local roundState = 1 --1: begin; 2: preparationTime; 3: testTime; 4: taskTime; 5: end; 6: task nofly; 7: task flight; 8: task land;
+local isTimerMuted = false
 
 local function setTask(taskName, noflyTime)
     if task ~= nil then
@@ -13,19 +14,19 @@ local function setTask(taskName, noflyTime)
     end
     if taskName == "LastFl" then
         task = LZ_runModule(gScriptDir .. "LAOZHU/F3k/Task/CommonTask.lua")
-        task.setTaskParam("LastFl", 420, noflyTime)
+        task.setTaskParam("LastFl", 420, noflyTime, isTimerMuted)
     elseif taskName == "Train" or taskName == "-" then
         task = LZ_runModule(gScriptDir .. "LAOZHU/F3k/Task/CommonTask.lua")
-        task.setTaskParam("Train", 600, noflyTime)
+        task.setTaskParam("Train", 600, noflyTime, isTimerMuted)
     elseif taskName == "OtherTask" or taskName == "-" then
         task = LZ_runModule(gScriptDir .. "LAOZHU/F3k/Task/CommonTask.lua")
-        task.setTaskParam("Train", 600, noflyTime)
+        task.setTaskParam("Train", 600, noflyTime, isTimerMuted)
     elseif taskName == "AULD" then
         task = LZ_runModule(gScriptDir .. "LAOZHU/F3k/Task/AULD.lua")
-        task.setTaskParam(3, noflyTime)
+        task.setTaskParam(3, noflyTime, isTimerMuted)
     elseif taskName == "TEST" then
         task = LZ_runModule(gScriptDir .. "LAOZHU/F3k/Task/CommonTask.lua")
-        task.setTaskParam("TEST", 5, noflyTime)
+        task.setTaskParam("TEST", 5, noflyTime, isTimerMuted)
     end
 end
 
@@ -41,10 +42,11 @@ local function stop()
     roundState = 1
 end
 
-local function setRoundParam(oTime, tTime, taskName, noflyTime)
+local function setRoundParam(oTime, tTime, taskName, noflyTime, mute)
     stop()
     preparationTime = oTime
     testTime = tTime
+    isTimerMuted = mute
     setTask(taskName, noflyTime)
 end
 
@@ -108,7 +110,7 @@ local function change2StateTestTime()
         Timer_resetTimer(timer, testTime)
         Timer_setDowncount(timer, 15)
         setAnnounceCallback()
-        timer.mute = false
+        timer.mute = isTimerMuted
         Timer_start(timer)
     else
         change2StateTaskTime()
@@ -121,7 +123,7 @@ local function change2StateOperationTime()
         roundState = 2
         Timer_resetTimer(timer, preparationTime)
         Timer_setDowncount(timer, 5)
-        timer.mute = false
+        timer.mute = isTimerMuted
         setAnnounceCallback()
         Timer_start(timer)
     else
@@ -138,7 +140,7 @@ end
 
 local function init()
 	timer = Timer_new()
-	timer.mute = false
+	timer.mute = isTimerMuted
 	Timer_setForward(timer, false)
     Timer_setDuration(timer, preparationTime)
 end
