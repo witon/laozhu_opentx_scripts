@@ -17,7 +17,16 @@ end
 
 local function resetRound()
 	f3kRound.stop()
-	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "PrepTime", 120), CFGgetNumberField(f3kCfg, "TestTime", 40), CFGgetStrField(f3kCfg, 'task'), CFGgetNumberField(f3kCfg, "NFlyTime", 60))
+	local isRoundTimerMuted = false
+	if CFGgetNumberField(f3kCfg, "MuteRndTimer", 0) == 1 then
+		isRoundTimerMuted = true
+	end
+	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "PrepTime", 120),
+							CFGgetNumberField(f3kCfg, "TestTime", 40),
+							CFGgetStrField(f3kCfg, 'task'),
+							CFGgetNumberField(f3kCfg, "NFlyTime", 60),
+							isRoundTimerMuted
+						)
 end
 
 local function init()

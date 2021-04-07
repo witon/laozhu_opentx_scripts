@@ -127,6 +127,9 @@ function VMdoKey(vm, event)
         if vm.selectedCol > #vm.matrix[vm.selectedRow] then
             vm.selectedCol = #vm.matrix[vm.selectedRow]
         end
+        if vm.selectedRow - vm.scrollLine < 1 then
+            vm.scrollLine = vm.scrollLine - 1
+        end
         IVsetFocusState(vm.matrix[vm.selectedRow][vm.selectedCol], 1)
         return true
     elseif event==35 or event==67 then
@@ -138,13 +141,16 @@ function VMdoKey(vm, event)
         if vm.selectedCol > #vm.matrix[vm.selectedRow] then
             vm.selectedCol = #vm.matrix[vm.selectedRow]
         end
+        if vm.selectedRow - vm.scrollLine > vm.visibleRows then
+            vm.scrollLine = vm.scrollLine + 1
+        end
         IVsetFocusState(vm.matrix[vm.selectedRow][vm.selectedCol], 1)
         return true
     end
 end
 
 function VMnewViewMatrix()
-    return {editingIV = nil, selectedRow = 1, selectedCol = 1, matrix={}, doKey = VMdoKey}
+    return {editingIV = nil, selectedRow = 1, selectedCol = 1, matrix={}, doKey = VMdoKey, visibleRows = 5, scrollLine = 0}
 end
 
 function VMunload()

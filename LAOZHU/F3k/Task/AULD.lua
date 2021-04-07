@@ -4,6 +4,7 @@ local curFlight = 1
 local flightCount = 3
 local noflyTime = 60
 local workTime = 180 * 3 + 30 * 3 + 120
+local isTimerMuted = false
 --1: no fly
 --2: flight
 --3: landing
@@ -56,7 +57,7 @@ local function changeState2NoFly(timer)
     Timer_setDowncount(timer, 5)
     timer.announceTime = 10
     timer.announceCallback = announceCallback
-    timer.mute = false
+    timer.mute = isTimerMuted
     Timer_start(timer)
 end
 
@@ -77,7 +78,7 @@ local function changeState2Landing(timer)
     Timer_setDowncount(timer, 10)
     timer.announceTime = 15
     timer.announceCallback = announceCallback
-    timer.mute = false
+    timer.mute = isTimerMuted
     Timer_start(timer)
 end
 
@@ -122,9 +123,10 @@ local function getTaskName()
     return "AULD"
 end
 
-local function setTaskParam(count, nTime)
+local function setTaskParam(count, nTime, mute)
     flightCount = count
     noflyTime = nTime
+    isTimerMuted = mute
 end
 
 local function getWorkTime()

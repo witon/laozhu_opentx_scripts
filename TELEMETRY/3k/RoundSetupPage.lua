@@ -4,7 +4,9 @@ local prepTimeEdit = nil
 local testTimeEdit = nil
 local noflyTimeEdit = nil
 local taskSelector = nil
+local muteCheckbox = nil
 local viewMatrix = nil
+local lineArray = nil
 
 LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
@@ -13,6 +15,7 @@ LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
 
 local function onTaskSelectorChange(taskSelector)
     f3kCfg["task"] = SgetSelectedText(taskSelector)
@@ -25,6 +28,11 @@ local function setCfgValue()
     f3kCfg["PrepTime"] = prepTimeEdit.num
     f3kCfg["TestTime"] = testTimeEdit.num
     f3kCfg["NFlyTime"] = noflyTimeEdit.num
+    if muteCheckbox.checked then
+        f3kCfg["MuteRndTimer"] = 1
+    else
+        f3kCfg["MuteRndTimer"] = 0
+    end
 end
 
 local function getCfgValue()
@@ -32,6 +40,12 @@ local function getCfgValue()
     prepTimeEdit.num = CFGgetNumberField(f3kCfg, "PrepTime", 120)
     testTimeEdit.num = CFGgetNumberField(f3kCfg, "TestTime", 40)
     noflyTimeEdit.num = CFGgetNumberField(f3kCfg, "NFlyTime", 60)
+    TSsetTask(taskSelector, CFGgetStrField(f3kCfg, "task", "Train"))
+    if CFGgetNumberField(f3kCfg, "MuteRndTimer", 0) == 0 then
+        muteCheckbox.checked = false
+    else
+        muteCheckbox.checked = true
+    end
 end
 
 local function onNumEditChange(numEdit)
@@ -47,10 +61,16 @@ local function destroy()
     BTunload()
     Sunload()
     TSunload()
+    CBunload()
 end
 
 local function onResetRoundButtonClicked()
     gF3kCore.resetRound()
+end
+
+local function onMuteCheckBoxChanged(checkbox)
+    setCfgValue()
+    CFGwriteToFile(f3kCfg, gConfigFileName)
 end
 
 local function init()
@@ -59,7 +79,6 @@ local function init()
     BTsetOnClick(resetButton, onResetRoundButtonClicked)
 
     taskSelector = TSnewTaskSelector()
-    TSsetTask(taskSelector, f3kCfg["task"])
     SsetOnChange(taskSelector, onTaskSelectorChange)
 
     destTimeSettingStepNumEdit = NEnewNumEdit()
@@ -82,12 +101,16 @@ local function init()
     noflyTimeEdit.step = 5
     NEsetOnChange(noflyTimeEdit, onNumEditChange)
 
+    muteCheckbox = CBnewCheckBox()
+    CBsetOnChange(muteCheckbox, onMuteCheckBoxChanged)
+    muteCheckbox.checked = false
+
     viewMatrix = VMnewViewMatrix()
     local row = VMaddRow(viewMatrix)
     row[1] = resetButton
-    local row = VMaddRow(viewMatrix)
+    row = VMaddRow(viewMatrix)
     row[1] = taskSelector
-    local row = VMaddRow(viewMatrix)
+    row = VMaddRow(viewMatrix)
     row[1] = destTimeSettingStepNumEdit
     row = VMaddRow(viewMatrix)
     row[1] = prepTimeEdit
@@ -95,14 +118,25 @@ local function init()
     row[1] = testTimeEdit
     row = VMaddRow(viewMatrix)
     row[1] = noflyTimeEdit
+    row = VMaddRow(viewMatrix)
+    row[1] = muteCheckbox
     VMupdateCurIVFocus(viewMatrix)
+    lineArray = {{"", resetButton},
+        {"Task", taskSelector},
+        {"Flight Time Step", destTimeSettingStepNumEdit},
+        {"Preparation Time", prepTimeEdit},
+        {"Test Time", testTimeEdit},
+        {"No Fly Time", noflyTimeEdit},
+        {"Mute Round Timer", muteCheckbox}}
     getCfgValue()
+    viewMatrix.visibleRows = 6
 end
 
 local function doKey(event)
     local eventProcessed = VMdoKey(viewMatrix, event)
     return eventProcessed
 end
+
 
 local function run(event, time)
     local invers = false
@@ -114,18 +148,13 @@ local function run(event, time)
     lcd.drawText(0, 0, "Round Setup", SMLSIZE + LEFT + INVERS)
 
     local drawOptions
-    IVdraw(resetButton, 128, 10, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 19, "Task", SMLSIZE + LEFT)
-    IVdraw(taskSelector, 128, 19, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 28, "Flight Time Step", SMLSIZE + LEFT)
-    IVdraw(destTimeSettingStepNumEdit, 128, 28, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 37, "Preparation Time", SMLSIZE + LEFT)
-    IVdraw(prepTimeEdit, 128, 37, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 46, "Test Time", SMLSIZE + LEFT)
-    IVdraw(testTimeEdit, 128, 46, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 55, "No Fly Time", SMLSIZE + LEFT)
-    IVdraw(noflyTimeEdit, 128, 55, invers, SMLSIZE + RIGHT)
- 
+
+    local y = 10
+    for i=viewMatrix.scrollLine + 1, 7, 1 do
+        lcd.drawText(0, y, lineArray[i][1], SMLSIZE + LEFT)
+        IVdraw(lineArray[i][2], 128, y, invers, SMLSIZE + RIGHT)
+        y = y + 9
+    end
     return doKey(event)
 end
 

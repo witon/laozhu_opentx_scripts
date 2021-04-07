@@ -2,6 +2,7 @@ local workTime = 600
 local state = 1
 local taskName = "Comm"
 local noFlyTime = 60
+local isTimerMuted = false
 --1: no noFly
 --2: flight
 --3: landing
@@ -50,7 +51,7 @@ local function changeState2Landing(timer)
     state = 3
     Timer_resetTimer(timer, 30)
     Timer_setDowncount(timer, 15)
-    timer.mute = false
+    timer.mute = isTimerMuted 
     Timer_start(timer)
 end
 
@@ -102,7 +103,7 @@ local function start(timer)
         Timer_setDowncount(timer, 10)
         timer.announceTime = 15
         timer.announceCallback = announceCallback
-        timer.mute = false
+        timer.mute = isTimerMuted
         Timer_start(timer)
     else
         changeState2Flight(timer)
@@ -117,10 +118,11 @@ local function getWorkTime()
     return workTime
 end
 
-local function setTaskParam(tName, wTime, nflyTime)
+local function setTaskParam(tName, wTime, nflyTime, mute)
     taskName = tName
     workTime = wTime
     noFlyTime = nflyTime
+    isTimerMuted = mute
 end
 
 local function getNoFlyTime()
