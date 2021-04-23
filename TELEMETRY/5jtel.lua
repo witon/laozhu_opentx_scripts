@@ -20,6 +20,8 @@ end
 
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	LZ_runModule(gScriptDir .. "LAOZHU/comm/OTSound.lua")
+	
 	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
 

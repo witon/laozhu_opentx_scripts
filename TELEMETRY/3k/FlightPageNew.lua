@@ -37,7 +37,10 @@ local function drawFlightInfo()
 	local flightState = gF3kCore.getFlightState()
 
 	lcd.drawText(1, 0, model.getInfo().name, 0)
-	lcd.drawText(64, 0, f3kCfg["task"], RIGHT)
+
+	local taskName = CFGgetStrField(f3kCfg, "task", "-")
+	
+	lcd.drawText(64, 0, taskName, RIGHT)
 	lcd.drawLine(0, 9, 64, 9, SOLID, 0)
 	lcd.drawLine(0, 46, 64, 46, SOLID, 0)
 	lcd.drawText(64, 48, flightState.getCurFlightStateName(), RIGHT)
