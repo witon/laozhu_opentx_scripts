@@ -12,15 +12,16 @@ local compileFiles = {
     "LAOZHU/SinkRateRecord.lua",
     "LAOZHU/SinkRateState.lua",
     "LAOZHU/SwitchTrigeDetector.lua",
-    "LAOZHU/Timer.lua",
+    "LAOZHU/comm/Timer.lua",
     "LAOZHU/utils.lua",
-
+	"LAOZHU/comm/OTSound.lua",
+	
     "LAOZHU/F3k/F3kFlightRecord.lua",
     "LAOZHU/F3k/f3kReadVarMap.lua",
     "LAOZHU/F3k/F3kState.lua",
-    "LAOZHU/F3k/F3kRound.lua",
-    "LAOZHU/F3k/Task/AULD.lua",
-    "LAOZHU/F3k/Task/CommonTask.lua",
+    "LAOZHU/F3kWF/F3kRoundWF.lua",
+    "LAOZHU/F3kWF/AULDWF.lua",
+    "LAOZHU/F3kWF/CommonTaskWF.lua",
  
     "TELEMETRY/3k/f3kCore.lua",
     "TELEMETRY/3k/F3kRecordListView.lua",
@@ -29,7 +30,7 @@ local compileFiles = {
     "TELEMETRY/3k/FlightStaticPage.lua",
     "TELEMETRY/3k/RoundSetupPage.lua",
     "TELEMETRY/3k/SetupPage.lua",
-    "TELEMETRY/3k/LargeFontFlightListPage.lua",
+    --"TELEMETRY/3k/LargeFontFlightListPage.lua",
     "TELEMETRY/3k/SmallFontFlightListPage.lua",
     "TELEMETRY/3k/TaskSelector.lua",
 

@@ -1,5 +1,5 @@
 gConfigFileName = "3k.cfg"
-LZ_runModule(gScriptDir .. "LAOZHU/Timer.lua")
+LZ_runModule(gScriptDir .. "LAOZHU/comm/Timer.lua")
 LZ_runModule(gScriptDir .. "LAOZHU/SwitchTrigeDetector.lua")
 local flightState = nil
 local curAlt = 0
@@ -23,7 +23,7 @@ local function resetRound()
 	end
 	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "PrepTime", 120),
 							CFGgetNumberField(f3kCfg, "TestTime", 40),
-							CFGgetStrField(f3kCfg, 'task'),
+							CFGgetStrField(f3kCfg, 'task', "-"),
 							CFGgetNumberField(f3kCfg, "NFlyTime", 60),
 							isRoundTimerMuted
 						)
@@ -33,7 +33,7 @@ local function init()
 
 	flightState = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kState.lua")
 
-	f3kRound = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kRound.lua")
+	f3kRound = LZ_runModule(gScriptDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
 	resetRound()
 	flightState.setLandedCallback(landedCallBack)

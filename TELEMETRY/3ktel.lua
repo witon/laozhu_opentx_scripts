@@ -16,6 +16,8 @@ local lastEvent = 0
 
 local function init()
 	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	LZ_runModule(gScriptDir .. "LAOZHU/comm/OTSound.lua")
+
 	if LZ_isNeedCompile() then
 		local pagePath = gScriptDir .. "TELEMETRY/common/comp.lua"
 		curPage = LZ_runModule(pagePath)

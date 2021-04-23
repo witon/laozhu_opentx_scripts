@@ -4,11 +4,11 @@ function LZ_runModule(file)
 end
 
 function testF3kRoundNormal()
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     LZ_playFile = function (filepath)
     end
     LZ_playTime = function () end
-    local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3k/F3kRound.lua")
+    local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3kWF/F3kRoundWF.lua")
     f3kRound.init()
     f3kRound.setRoundParam(120, 40, "TEST", 5)
     luaunit.assertEquals(f3kRound.getState(), 1) --begin
@@ -52,8 +52,8 @@ function testF3kRoundNormal()
 end
 
 function testF3kRoundStopAndStart()
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
-    local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3k/F3kRound.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3kWF/F3kRoundWF.lua")
     LZ_playFile = function (filepath)
     end
 

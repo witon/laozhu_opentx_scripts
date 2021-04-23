@@ -14,7 +14,7 @@ local throttle = 0
 local resetSwitch = 0
 local flightSwitch = 0
 
-dofile(gScriptDir .. "LAOZHU/Timer.lua")
+dofile(gScriptDir .. "LAOZHU/comm/Timer.lua")
 
 local worktimeTimer = Timer_new()
 Timer_resetTimer(worktimeTimer, 600)

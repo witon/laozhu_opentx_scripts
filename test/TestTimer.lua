@@ -1,7 +1,7 @@
 
 function testTimerNormal()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 100)
     local curTime = 10
@@ -27,7 +27,7 @@ end
 
 function testStop()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 100)
     local curTime = 10
@@ -59,7 +59,7 @@ end
 function testReadRunTime30s()
 
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 120)
     local curTime = 10
@@ -81,7 +81,8 @@ end
 
 function testReadRunTimeMultiIn1s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/OTSound.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     local timer = Timer_new()
     Timer_resetTimer(timer, 120)
     local curTime = 10
@@ -111,7 +112,7 @@ end
 
 function testReadRunTime60s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 120)
@@ -134,7 +135,7 @@ end
 
 function testReadRunTime90s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 120)
@@ -154,7 +155,7 @@ end
 
 function testReadRemainTime91s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 95)
@@ -175,7 +176,7 @@ end
 
 function testReadRemainTime90s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 95)
@@ -195,7 +196,7 @@ end
 
 function testReadRemainTime60s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 95)
@@ -215,7 +216,7 @@ end
 
 function testReadRemainTime30s()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 95)
@@ -235,7 +236,7 @@ end
 
 function testDowncount()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 95)
@@ -283,7 +284,7 @@ end
 
 function testForwardTimer()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 65)
@@ -329,7 +330,7 @@ end
 
 function testBackwardTimer()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 65)
@@ -366,7 +367,7 @@ end
 
 function testGetDuration()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer_new()
     Timer_resetTimer(timer, 65)
@@ -397,7 +398,7 @@ end
 
 function testForwardAnnounce()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
 
     local haveDoneCallback = false
 
@@ -427,7 +428,7 @@ end
 
 function testBackwardAnnounce()
     dofile(HOME_DIR .. "LAOZHU/utils.lua")
-    dofile(HOME_DIR .. "LAOZHU/Timer.lua")
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
 
     local haveDoneCallback = false
 
