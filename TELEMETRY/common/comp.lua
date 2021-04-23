@@ -30,7 +30,6 @@ local compileFiles = {
     "TELEMETRY/3k/FlightStaticPage.lua",
     "TELEMETRY/3k/RoundSetupPage.lua",
     "TELEMETRY/3k/SetupPage.lua",
-    --"TELEMETRY/3k/LargeFontFlightListPage.lua",
     "TELEMETRY/3k/SmallFontFlightListPage.lua",
     "TELEMETRY/3k/TaskSelector.lua",
 
