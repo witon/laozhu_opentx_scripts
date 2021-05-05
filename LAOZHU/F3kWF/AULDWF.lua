@@ -1,9 +1,9 @@
-local flightTime = 183
+local flightTime = 180
 local state = 1
 local curFlight = 1
 local flightCount = 3
 local noflyTime = 60
-local workTime = 183 * 3 + 30 * 3 + 120
+local workTime = 180 * 3 + 30 * 3 + 120
 local isTimerMuted = false
 --1: no fly
 --2: flight
