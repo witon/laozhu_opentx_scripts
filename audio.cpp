@@ -25,9 +25,12 @@
 #include "audioQueue.h"
 #include <stdio.h>
 
-#define ROOT_PATH           "c:/opentxsdcard1/"
-#define SOUNDS_PATH         ROOT_PATH "SOUNDS/en"
-#define SOUNDS_PATH_LNG_OFS (sizeof(SOUNDS_PATH)-3)
+//#define ROOT_PATH           "c:/opentxsdcard1/"
+//#define ROOT_PATH     "/home/witon/code/"
+char soundPath[MAX_SOUND_PATH_LEN + 1] = {0};
+int soundPathLngOfs = 0;
+//#define SOUNDS_PATH         ROOT_PATH "SOUNDS/en"
+//#define SOUNDS_PATH_LNG_OFS (sizeof(SOUNDS_PATH)-3)
 
 #if !defined(DIM)
   #define DIM(__arr) (sizeof((__arr)) / sizeof((__arr)[0]))
@@ -137,26 +140,31 @@ const char * const audioFilenames[] = {
   "timovr3"
 };
 
+//TODO: 文件路径过长有越界风险。
 char * getAudioPath(char * path)
 {
-  strcpy(path, SOUNDS_PATH "/");
-  strncpy(path+SOUNDS_PATH_LNG_OFS, currentLanguagePack->id, 2);
-  return path + sizeof(SOUNDS_PATH);
+  strncpy(path, soundPath, MAX_SOUND_PATH_LEN-1);
+  strncpy(path+soundPathLngOfs, currentLanguagePack->id, 3);
+  strncat(path, "/", MAX_SOUND_PATH_LEN-strlen(path));
+  return path + strlen(path);
 }
 
 char * strAppendSystemAudioPath(char * path)
 {
   char * str = getAudioPath(path);
-  strcpy(str, SYSTEM_SUBDIR "/");
+  strncpy(str, SYSTEM_SUBDIR "/", MAX_SOUND_PATH_LEN - strlen(path));
   return str + sizeof(SYSTEM_SUBDIR);
 }
 
+/*
 void getSystemAudioFile(char * filename, int index)
 {
+  printf("get SystemAudioFile input filename:%s\n", filename);
   char * str = strAppendSystemAudioPath(filename);
   strcpy(str, audioFilenames[index]);
   strcat(str, SOUNDS_EXT);
 }
+*/
 
 
 

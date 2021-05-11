@@ -14,6 +14,15 @@ using namespace std;
 pthread_mutex_t AudioQueue::mtx = PTHREAD_MUTEX_INITIALIZER;
 queue<string> AudioQueue::playFileQueue;
 
+#ifdef __linux__
+#include "playsound.h"
+int PlaySound(string fileName)
+{
+    class PlaySound playSound;
+    return playSound.playFile(fileName);
+}
+#endif
+
 AudioQueue::AudioQueue()
 {
 }
@@ -51,7 +60,7 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
             playQueue.pop();
         }
         //printf("%s\n", s.c_str());
-        Sleep(0);
+        SLEEP(0);
      //   i ++;
     }
  

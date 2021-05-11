@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 extern "C" {
     #define LUA_COMPAT_APIINTCASTS
     #include <lualib.h>
@@ -11,10 +12,10 @@ extern "C" {
 }
 
 #include "luaApi.h"
-extern "C" __declspec(dllexport) int luaopen_sound(lua_State *L)
+
+extern "C" int luaopen_sound(lua_State* L)
 {
     printf("test\n");
     initLua(L);
-    return 1;
+    return 0;
 }
-

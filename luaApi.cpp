@@ -3,8 +3,8 @@
 #include "audio.h"
 #include <string.h>
 #include <stdlib.h>
-
-
+extern char soundPath[];
+extern int soundPathLngOfs;
 extern AudioQueue audioQueue;
 extern "C" {
     #define LUA_COMPAT_APIINTCASTS
@@ -12,6 +12,14 @@ extern "C" {
     #include <lauxlib.h>
     #include <lua.h>
 
+
+    static int luaSetSoundPath(lua_State *L)
+    {
+        const char * path = luaL_checkstring(L, 1);
+        strncpy(soundPath, path, MAX_SOUND_PATH_LEN);
+        soundPathLngOfs = strlen(soundPath);
+        return 0;
+    }
     static int luaPlayNumber(lua_State *L)
     {
         int number = luaL_checkinteger(L, 1);
@@ -49,6 +57,8 @@ int initLua(lua_State * L)
     lua_register(L, "playNumber", luaPlayNumber);
     lua_register(L, "playDuration", luaPlayDuration);
     lua_register(L, "playFile", luaPlayFile);
+    lua_register(L, "setSoundPath", luaSetSoundPath);
+ 
     lua_setglobal(L, "sound");
     audioQueue.start();
     return 0;

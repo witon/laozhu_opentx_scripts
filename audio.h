@@ -126,9 +126,10 @@ char * getAudioPath(char * path);
 #define LEN_MODEL_NAME               10
 #define LEN_FLIGHT_MODE_NAME         6
 
-constexpr uint8_t AUDIO_MODEL_FILENAME_MAXLEN = (sizeof("/SOUNDS/fr/") - 1) + LEN_MODEL_NAME + 1 + LEN_FLIGHT_MODE_NAME + (sizeof("-off.wav") - 1);
-constexpr uint8_t AUDIO_LUA_FILENAME_MAXLEN = 128; // Some scripts use long audio paths, even on 128x64 boards
-constexpr uint8_t AUDIO_FILENAME_MAXLEN = (AUDIO_LUA_FILENAME_MAXLEN > AUDIO_MODEL_FILENAME_MAXLEN ? AUDIO_LUA_FILENAME_MAXLEN : AUDIO_MODEL_FILENAME_MAXLEN);
+#define MAX_SOUND_PATH_LEN 256
+
+constexpr uint16_t AUDIO_LUA_FILENAME_MAXLEN = MAX_SOUND_PATH_LEN; // Some scripts use long audio paths, even on 128x64 boards
+constexpr uint16_t AUDIO_FILENAME_MAXLEN = MAX_SOUND_PATH_LEN; //(AUDIO_LUA_FILENAME_MAXLEN > AUDIO_MODEL_FILENAME_MAXLEN ? AUDIO_LUA_FILENAME_MAXLEN : AUDIO_MODEL_FILENAME_MAXLEN);
 
 #define I18N_PLAY_FUNCTION(lng, x, ...) void lng ## _ ## x(__VA_ARGS__, uint8_t id)
 #define PLAY_FUNCTION(x, ...)    void x(__VA_ARGS__, uint8_t id)
