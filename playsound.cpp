@@ -28,6 +28,8 @@ THE SOFTWARE.*/
 
 
 using namespace std;
+snd_pcm_t * PlaySound::handle = NULL;
+ 
 
 PlaySound::PlaySound()
 {
@@ -39,12 +41,14 @@ bool PlaySound::play(WaveFile & waveFile)
 	const char * buffer = waveFile.GetData();
     int err;
     unsigned int i;
-    snd_pcm_t *handle;
     snd_pcm_sframes_t frames;
-    if ((err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
-        printf("Playback open error: %s\n", snd_strerror(err));
-		return false;
-    }
+	if(handle == NULL)
+	{
+		if ((err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
+			printf("Playback open error: %s\n", snd_strerror(err));
+			return false;
+		}
+	}
 	snd_pcm_format_t snd_format = SND_PCM_FORMAT_S8;
 	switch(waveFile.GetBitsPerSample())
 	{
@@ -91,7 +95,7 @@ bool PlaySound::play(WaveFile & waveFile)
 	err = snd_pcm_drain(handle);
 	if (err < 0)
 		printf("snd_pcm_drain failed: %s\n", snd_strerror(err));
-	snd_pcm_close(handle);
+	//snd_pcm_close(handle);
     return true;
 }
 void PlaySound::printWAVInfo(WaveFile & wavFile)

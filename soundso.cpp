@@ -15,7 +15,6 @@ extern "C" {
 
 extern "C" int luaopen_sound(lua_State* L)
 {
-    printf("test\n");
     initLua(L);
     return 0;
 }

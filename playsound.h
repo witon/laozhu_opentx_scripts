@@ -11,7 +11,7 @@ class PlaySound
     const char * device = "default";            /* playback device */
     int err;
     unsigned int i;
-    snd_pcm_t *handle;
+    static snd_pcm_t *handle;
     snd_pcm_sframes_t frames;
     bool play(WaveFile & waveFile);
 public:

@@ -38,13 +38,13 @@ extern "C" {
     static int luaPlayFile(lua_State * L)
     {
         const char * filename = luaL_checkstring(L, 1);
-        printf("lua play filename:%s\n", filename);
+        //printf("lua play filename:%s\n", filename);
         // relative sound file path - use current language dir for absolute path
         char file[AUDIO_FILENAME_MAXLEN + 1];
         char *str = getAudioPath(file);
         strncpy(str, filename, AUDIO_FILENAME_MAXLEN - (str - file));
         file[AUDIO_FILENAME_MAXLEN] = 0;
-        printf("lua play file name:%s\n", file);
+        //printf("lua play file name:%s\n", file);
         audioQueue.playFile(file, 0, 0);
         return 0;
     }

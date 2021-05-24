@@ -16,7 +16,6 @@ extern "C" {
 #include "luaApi.h"
 extern "C" __declspec(dllexport) int luaopen_sound(lua_State *L)
 {
-    printf("test\n");
     initLua(L);
     return 1;
 }

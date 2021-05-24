@@ -1,5 +1,5 @@
 require("sound")
-setSoundPath("/home/witon/code/SOUNDS/")
+setSoundPath("d:\\code\\SOUNDS\\")
 for i=1, 1000000, 1 do
     for j=1, 100000000, 1 do
     end

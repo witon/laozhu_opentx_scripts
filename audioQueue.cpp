@@ -78,5 +78,4 @@ void AudioQueue::start()
 {
     pthread_t thread;
     pthread_create(&thread, NULL, threadPlaySoundFunc, NULL);
-    printf("init called\n");
 }
