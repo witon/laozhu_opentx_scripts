@@ -1,4 +1,3 @@
-dofile(gScriptDir .. "LAOZHU/utils.lua")
 
 function SRLnewSinkRateLog()
     return {startTime = -1,

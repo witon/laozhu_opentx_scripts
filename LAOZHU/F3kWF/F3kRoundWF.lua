@@ -5,8 +5,13 @@ local task = nil
 local timer = nil
 local roundState = 1 --1: begin; 2: preparationTime; 3: testTime; 4: taskTime; 5: end; 6: task nofly; 7: task flight; 8: task land;
 local isTimerMuted = false
+local preparationCallback = nil
 
-local function setTask(taskName, noflyTime)
+local function setPreparationCallback(callback)
+    preparationCallback = callback
+end
+
+local function setTask(taskName, noflyTime, p1, p2)
     if task ~= nil then
 		LZ_clearTable(task)
 		task = nil
@@ -119,6 +124,7 @@ end
 
 local function change2StateOperationTime()
     if preparationTime > 0 then
+        LZ_playTime(preparationTime)
         LZ_playFile("LAOZHU/prep.wav")
         roundState = 2
         Timer_resetTimer(timer, preparationTime)
@@ -126,6 +132,9 @@ local function change2StateOperationTime()
         timer.mute = isTimerMuted
         setAnnounceCallback()
         Timer_start(timer)
+        if preparationCallback then
+            preparationCallback()
+        end
     else
         change2StateTestTime()
     end

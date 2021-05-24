@@ -83,19 +83,19 @@ local function changeState2Landing(timer)
 end
 
 local function doNoFly(timer)
-    if Timer_getRemainTime(timer) == 0 then
+    if Timer_getRemainTime(timer) <= 0 then
         changeState2Flight(timer)
     end
 end
 
 local function doFlight(timer)
-    if Timer_getRemainTime(timer) == 0 then
+    if Timer_getRemainTime(timer) <= 0 then
         changeState2Landing(timer)
     end
 end
 
 local function doLanding(timer)
-    if Timer_getRemainTime(timer) == 0 then
+    if Timer_getRemainTime(timer) <= 0 then
         curFlight = curFlight + 1
         if curFlight > flightCount then
             return true
