@@ -44,6 +44,9 @@ jobs:
         run: luarocks install lua-mock        
       - name: install asoundlib
         run: sudo apt-get install libasound2-dev
+      - name: install liblua5.2
+        run: sudo apt-get install liblua5.2-dev
+
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
