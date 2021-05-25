@@ -42,6 +42,8 @@ jobs:
         run: luarocks install luaunit
       - name: install a module
         run: luarocks install lua-mock        
+      - name: install asoundlib
+        run: apt-get install libasound2-dev
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
