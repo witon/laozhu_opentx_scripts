@@ -24,7 +24,7 @@ THE SOFTWARE.*/
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "playSound.h"
+#include "playsound.h"
 
 
 using namespace std;
