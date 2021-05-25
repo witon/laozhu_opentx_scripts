@@ -15,7 +15,9 @@ local curPage = nil
 local lastEvent = 0
 
 local function init()
-	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	LZ_runModule(gScriptDir .. "LAOZHU/LuaUtils.lua")
+	LZ_runModule(gScriptDir .. "LAOZHU/OTUtils.lua")
+	
 	LZ_runModule(gScriptDir .. "LAOZHU/comm/OTSound.lua")
 
 	if LZ_isNeedCompile() then

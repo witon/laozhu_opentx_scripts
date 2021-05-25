@@ -13,7 +13,9 @@ local compileFiles = {
     "LAOZHU/SinkRateState.lua",
     "LAOZHU/SwitchTrigeDetector.lua",
     "LAOZHU/comm/Timer.lua",
-    "LAOZHU/utils.lua",
+    "LAOZHU/OTUtils.lua",
+    "LAOZHU/LuaUtils.lua",
+
 	"LAOZHU/comm/OTSound.lua",
 	
     "LAOZHU/F3k/F3kFlightRecord.lua",

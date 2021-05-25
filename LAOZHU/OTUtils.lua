@@ -33,18 +33,6 @@ function getTelemetryId(name)
 	end
 end
 
-function LZ_clearTable(t)
-    if type(t) == "table" then
-        for i, v in pairs(t) do
-            if type(v) == "table" then
-                LZ_clearTable(v)
-            end
-            t[i] = nil
-        end
-    end
-    return t
-end
-
 function LZ_getOutputName(index)
     local output = model.getOutput(index)
     if not output then
@@ -143,4 +131,3 @@ function LZ_setGVValue(index, mode, value)
         model.setGlobalVariable(index, mode, value)
     end
 end
-

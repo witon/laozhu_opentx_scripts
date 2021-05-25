@@ -21,6 +21,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - name: Setup C++ environment
+        uses: kurocha/setup-cpp@v1
       - uses: leafo/gh-actions-lua@v8.0.0
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
@@ -40,6 +42,11 @@ jobs:
         run: luarocks install luaunit
       - name: install a module
         run: luarocks install lua-mock        
+      - name: install asoundlib
+        run: sudo apt-get install libasound2-dev
+      - name: install liblua5.2
+        run: sudo apt-get install liblua5.2-dev
+
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
@@ -51,4 +58,5 @@ jobs:
           pwd
           echo Add other actions to build,
           echo test, and deploy your project.
+          bash ./build_lua_glider_competition_sound_lib_for_linux.sh
           lua test/test.lua

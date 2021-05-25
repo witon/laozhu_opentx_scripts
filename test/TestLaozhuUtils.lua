@@ -3,7 +3,7 @@ gScriptDir = HOME_DIR
 
 
 function testLZ_formatTimeHMS()
-    dofile(gScriptDir .. "/LAOZHU/utils.lua")
+    dofile(gScriptDir .. "/LAOZHU/OTUtils.lua")
     local time = 1613744918
     luaunit.assertEquals(LZ_formatTimeStamp(time), "14:28:38")
 end
