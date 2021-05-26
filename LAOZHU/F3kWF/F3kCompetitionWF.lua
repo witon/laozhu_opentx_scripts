@@ -70,7 +70,7 @@ end
 
 local function broadcastCurUnitInfo()
     local task = tasks[curRound]
-    --print("Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    print("Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
     LZ_playFile("LAOZHU/round.wav")
     LZ_playNumber(curRound, 0)
     if not isSingleGroup then
@@ -104,7 +104,30 @@ local function broadcastCurUnitInfo()
 
 end
 
+local function startPreUnit(curTime)
+    roundWorkflow.stop()
+    if curGroup == 1 and curRound == 1 then
+        broadcastCurUnitInfo()
+        roundWorkflow.start(curTime)
+        return true
+    end
+
+    curGroup = curGroup - 1
+    if curGroup < 1 then
+        curRound = curRound - 1
+        curGroup = groupNum
+    end
+    broadcastCurUnitInfo()
+    local task = tasks[curRound]
+    local unit = competitionUnits[curRound][curGroup]
+    local taskName = taskNameMap(task.id)
+	roundWorkflow.setRoundParam(preparationTime, testTime, taskName, noflyTime, false)
+    roundWorkflow.start(curTime)
+    return true
+end
+
 local function startNextUnit(curTime)
+    roundWorkflow.stop()
     curGroup = curGroup + 1
     if curGroup > groupNum then
         curRound = curRound + 1
@@ -118,8 +141,8 @@ local function startNextUnit(curTime)
 
     local task = tasks[curRound]
     local unit = competitionUnits[curRound][curGroup]
-	roundWorkflow.stop()
     local taskName = taskNameMap(task.id)
+
 	roundWorkflow.setRoundParam(preparationTime, testTime, taskName, noflyTime, false)
     roundWorkflow.start(curTime)
     return true
@@ -176,5 +199,7 @@ return {run = run,
         clearTasks = clearTasks,
         setCompetitionParam = setCompetitionParam,
         getCurStep = getCurStep,
-        setGroups = setGroups
+        setGroups = setGroups,
+        startNextUnit = startNextUnit,
+        startPreUnit = startPreUnit
     }

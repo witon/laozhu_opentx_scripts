@@ -71,7 +71,7 @@ function testCompetitionWFNormalFlow()
 
     time = time + 1
     wf.run(time)
-    luaunit.assertEquals(roundWF.getState(), 5) --end
+    luaunit.assertEquals(roundWF.getState(), 1) --competition complete
     competitionState, round, group, roundWF = wf.getCurStep()
     luaunit.assertEquals(competitionState, 3)
 end

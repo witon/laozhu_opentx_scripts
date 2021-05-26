@@ -67,12 +67,13 @@ local function changeState2Flight(timer)
     state = 2
     Timer_resetTimer(timer, flightTime)
     Timer_setDowncount(timer, 0)
-    timer.mute = true
+    timer.mute = isTimerMuted
     Timer_start(timer)
 end
 
 local function changeState2Landing(timer)
     state = 3
+    playTone(1000, 3000, 0, PLAY_BACKGROUND)
     LZ_playFile("LAOZHU/land.wav", true)
     Timer_resetTimer(timer, 30)
     Timer_setDowncount(timer, 10)
