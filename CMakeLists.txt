@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(lua_glider_competition_sound_lib)
 if(WIN32)
-    SET(LIB_SRC audio.cpp audioQueue.cpp luaApi.cpp sounddll.cpp strhelpers.cpp tts_en.cpp)
+    SET(LIB_SRC audio.cpp audioQueue.cpp luaApi.cpp sounddll.cpp strhelpers.cpp tts_en.cpp keyReceiver.cpp)
     set(CMAKE_CXX_COMPILER "g++")
     LINK_LIBRARIES(winmm stdc++)
     FIND_PACKAGE(Lua REQUIRED)

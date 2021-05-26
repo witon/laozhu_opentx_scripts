@@ -74,6 +74,15 @@ void AudioQueue::playFile(const char *filename, uint8_t flags, uint8_t id)
     pthread_mutex_unlock(&mtx);
 }
 
+void AudioQueue::clean()
+{
+    pthread_mutex_lock(&mtx);
+    while(playFileQueue.size() > 0)
+        playFileQueue.pop();
+    pthread_mutex_unlock(&mtx);
+}
+
+
 void AudioQueue::start()
 {
     pthread_t thread;
