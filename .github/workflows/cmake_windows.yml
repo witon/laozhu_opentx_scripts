@@ -19,16 +19,14 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Install PowerShell Module
-      shell: powershell
-      run: Install-Module winget
-    - name: Install lua53
-      run: winget lua53
-    #- name: Setup Lua/LuaJIT
-    #  run: choco install Lua53
+    - uses: actions/checkout@v2
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
-    - uses: actions/checkout@v2
+    - name: build lua
+      run: build_lualib.bat
+    #- name: Setup Lua/LuaJIT
+    #  run: choco install Lua53
+
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
