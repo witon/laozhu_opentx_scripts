@@ -21,6 +21,9 @@ jobs:
     steps:
     - name: Install PowerShell Module
       shell: powershell
+      run: Find-Module -Name Lua
+    - name: Install PowerShell Module
+      shell: powershell
       run: Install-Module Lua -Force -Verbose
     #- name: Setup Lua/LuaJIT
     #  run: choco install Lua53
