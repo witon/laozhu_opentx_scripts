@@ -21,6 +21,7 @@ public:
     AudioQueue();
     void playFile(const char *filename, uint8_t flags = 0, uint8_t id = 0);
     void start();
+    void clean();
 
 private:
     static queue<string> playFileQueue;

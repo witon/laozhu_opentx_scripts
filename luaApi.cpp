@@ -3,9 +3,11 @@
 #include "audio.h"
 #include <string.h>
 #include <stdlib.h>
+#include "keyReceiver.h"
 extern char soundPath[];
 extern int soundPathLngOfs;
 extern AudioQueue audioQueue;
+KeyReceiver keyReceiver;
 extern "C" {
     #define LUA_COMPAT_APIINTCASTS
     #include <lualib.h>
@@ -48,6 +50,18 @@ extern "C" {
         audioQueue.playFile(file, 0, 0);
         return 0;
     }
+    static int luaGetEvent(lua_State * L)
+    {
+        int event = keyReceiver.getEvent();
+        lua_pushnumber(L, event);
+        return 1; //作为返回值传递给Lua,返回1个
+    }
+    static int luaCleanAudioQueue(lua_State * L)
+    {
+        audioQueue.clean();
+        return 0;
+    }
+
 }
 
 int initLua(lua_State * L)
@@ -58,8 +72,11 @@ int initLua(lua_State * L)
     lua_register(L, "playDuration", luaPlayDuration);
     lua_register(L, "playFile", luaPlayFile);
     lua_register(L, "setSoundPath", luaSetSoundPath);
+    lua_register(L, "getEvent", luaGetEvent);
+    lua_register(L, "cleanAudioQueue", luaCleanAudioQueue);
  
     lua_setglobal(L, "sound");
     audioQueue.start();
+    keyReceiver.start();
     return 0;
 }
