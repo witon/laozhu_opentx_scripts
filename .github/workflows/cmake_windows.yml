@@ -21,7 +21,7 @@ jobs:
     steps:
 
     - name: Setup Lua/LuaJIT
-      run: choco install Lua
+      run: choco install Lua5.3
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
     - uses: actions/checkout@v2
