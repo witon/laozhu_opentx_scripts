@@ -21,7 +21,7 @@ jobs:
     steps:
 
     - name: Setup Lua/LuaJIT
-      run: choco install Lua5.3
+      run: choco install Lua 5.3
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
     - uses: actions/checkout@v2
@@ -30,22 +30,6 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "MinGW Makefiles" . 
-    - name: Start SSH via Ngrok
-      if: ${{ failure() }}
-      run: curl -sL https://gist.githubusercontent.com/retyui/7115bb6acf151351a143ec8f96a7c561/raw/7099b9db76729dc5761da72aa8525f632d8875c9/debug-github-actions.sh | bash
-      env:
-        # After sign up on the https://ngrok.com/
-        # You can find this token here: https://dashboard.ngrok.com/get-started/setup
-        # NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
-        NGROK_TOKEN: 1cu2nQXxljrX4mNGxz4z9N1QSfm_3JDS7Ek4Rti6oTwov43Sx
-
-        # This password you will use when authorizing via SSH 
-        # USER_PASS: ${{ secrets.USER_PASS }}
-        USER_PASS: murAmur
-
-    - name: Don't kill instace
-      if: ${{ failure() }}
-      run: sleep 1h # Prevent to killing instance after failure
 
     - name: Build
       # Build your program with the given configuration
