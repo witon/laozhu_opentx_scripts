@@ -23,7 +23,8 @@ jobs:
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
     - name: build lua
-      run: cmd build_lualib.bat
+      shell: cmd
+      run: build_lualib.bat
     #- name: Setup Lua/LuaJIT
     #  run: choco install Lua53
 
