@@ -22,8 +22,7 @@ jobs:
     - name: Install PowerShell Module
       shell: powershell
       run: Install-Module winget
-    - name: Install PowerShell Module
-      shell: powershell
+    - name: Install lua53
       run: winget lua53
     #- name: Setup Lua/LuaJIT
     #  run: choco install Lua53
