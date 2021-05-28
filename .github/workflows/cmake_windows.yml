@@ -24,7 +24,7 @@ jobs:
       run: Install-Module winget
     - name: Install PowerShell Module
       shell: powershell
-      run: Install-Module Lua -Force -Verbose
+      run: winget lua53
     #- name: Setup Lua/LuaJIT
     #  run: choco install Lua53
     - name: Setup MSYS2
