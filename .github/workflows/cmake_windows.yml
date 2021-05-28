@@ -19,9 +19,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-
-    - name: Setup Lua/LuaJIT
-      run: choco install Lua53
+    - name: Install PowerShell Module
+      shell: powershell
+      run: Install-Module Lua -Force -Verbose
+    #- name: Setup Lua/LuaJIT
+    #  run: choco install Lua53
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
     - uses: actions/checkout@v2
