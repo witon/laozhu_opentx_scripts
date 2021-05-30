@@ -1,7 +1,7 @@
 include(GoogleTest)
 cmake_minimum_required(VERSION 3.13)
 
-project(lua_glider_competition_sound_lib_test)
+#project(lua_glider_competition_sound_lib_test)
 if(WIN32)
     find_package(GTest REQUIRED)
     SET(TEST_SRC test.cpp ../win_com.cpp test_win_com.cpp ../pandora_wrap.cpp test_pandora_wrap.cpp)
