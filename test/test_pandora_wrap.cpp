@@ -12,6 +12,6 @@ TEST(P1andoraWrapTest, Open)
     if(ret)
         printf("open pandora port success.\r\n");
     else
-        printf("open 1pandora port failed.\r\n");
+        printf("open pandora port failed.\r\n");
     pandora_wrap.Close();
 }
