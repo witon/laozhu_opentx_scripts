@@ -4,10 +4,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include "keyReceiver.h"
+#include "pandora_wrap.h"
+
 extern char soundPath[];
 extern int soundPathLngOfs;
 extern AudioQueue audioQueue;
 KeyReceiver keyReceiver;
+PandoraWrap pandoraWrap;
+
 extern "C" {
     #define LUA_COMPAT_APIINTCASTS
     #include <lualib.h>
@@ -53,7 +57,7 @@ extern "C" {
     static int luaGetEvent(lua_State * L)
     {
         int event = keyReceiver.getEvent();
-        lua_pushnumber(L, event);
+        lua_pushinteger(L, event);
         return 1; //作为返回值传递给Lua,返回1个
     }
     static int luaCleanAudioQueue(lua_State * L)
@@ -61,6 +65,27 @@ extern "C" {
         audioQueue.clean();
         return 0;
     }
+    static int luaSend2Pandora(lua_State *L)
+    {
+        const char * packet = luaL_checkstring(L, 1);
+        int ret = pandoraWrap.SendOnePacket(packet, strlen(packet));
+        lua_pushinteger(L, ret);
+        return 1;
+    }
+    static int luaInitPandoraPort(lua_State *L)
+    {
+        const char * portName = luaL_checkstring(L, 1);
+        bool ret = pandoraWrap.Open(portName);
+        lua_pushboolean(L, ret);
+        return 1;
+    }
+    static int luaClosePandoraPort(lua_State *L)
+    {
+        pandoraWrap.Close();
+        return 0;
+    }
+
+
 
 }
 
@@ -74,8 +99,14 @@ int initLua(lua_State * L)
     lua_register(L, "setSoundPath", luaSetSoundPath);
     lua_register(L, "getEvent", luaGetEvent);
     lua_register(L, "cleanAudioQueue", luaCleanAudioQueue);
+    lua_register(L, "send2Pandora", luaSend2Pandora);
+    lua_register(L, "initPandoraPort", luaInitPandoraPort);
+    lua_register(L, "closePandoraPort", luaClosePandoraPort);
+
+
  
     lua_setglobal(L, "sound");
+
     audioQueue.start();
     keyReceiver.start();
     return 0;
