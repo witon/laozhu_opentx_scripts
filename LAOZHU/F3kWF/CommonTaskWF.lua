@@ -1,3 +1,5 @@
+--TODO: play a short tone at the beginning of the normal tasks except AULD.
+
 local workTime = 600
 local state = 1
 local taskName = "Comm"
