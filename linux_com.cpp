@@ -1,3 +1,4 @@
+//TODO: Enum Serial Ports
 #include <stdio.h>
 #include <string.h>
 #include "linux_com.h"

@@ -1,3 +1,4 @@
+//TODO: noblock getch make thread can close.
 #include "keyReceiver.h"
 #include <iostream>
 #include <pthread.h>

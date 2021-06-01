@@ -86,18 +86,11 @@ bool Com::Open(string port_name, DWORD baud_rate, BYTE byte_size, BYTE parity, B
 	SetCommTimeouts(com_handle, &timeouts); //设置超时
 	DCB dcb;
 	GetCommState(com_handle, &dcb);
-	dcb.BaudRate = baud_rate;	//9600; //波特率为9600
-	dcb.ByteSize = byte_size;	//8; //每个字节有8位
-	dcb.Parity = parity;	//NOPARITY; //无奇偶校验位
-	dcb.StopBits = stop_bits;	//ONESTOPBIT; //1个停止位
+	dcb.BaudRate = baud_rate;
+	dcb.ByteSize = byte_size;
+	dcb.Parity = parity;
+	dcb.StopBits = stop_bits;
 	SetCommState(com_handle, &dcb);
-	//ClearCommError(com_handle)
-	//COMSTAT ComStat;
-	//DWORD dwErrorFlags;
-	//ClearCommError(com_handle, &dwErrorFlags, &ComStat);
-	//PurgeComm(com_handle, PURGE_TXCLEAR|PURGE_RXCLEAR|PURGE_TXABORT|PURGE_RXABORT|PURGE_TXCLEAR|PURGE_RXCLEAR);
-	//SetCommMask(com_handle, EV_RXCHAR);
-
 
 	return true;
 }
