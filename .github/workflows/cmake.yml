@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install gtest
-      run: sudo apt-get install libgtest-dev; cd /usr/src/gtest; sudo cmake . -B build; cd build; sudo make; sudo make install;
+      run: git clone https://github.com/google/googletest; cd googletest; cmake . -B build; cd build; make; sudo make install; cd ../../
     - name: install liblua5.3-dev
       run: sudo apt-get install liblua5.3-dev
     - name: install libasound2-dev
