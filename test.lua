@@ -11,24 +11,24 @@ while true do
     end
     --playDuration(i)
     collectgarbage("collect")
-    print("mem:", collectgarbage("count")*1024)
+    --print("mem:", collectgarbage("count")*1024)
     local event = getEvent()
---    if event > 0 then
-    if not isPortOpen then
-        isPortOpen = initPandoraPort("COM6")
-        print("open:", isPortOpen)
+    if event > 0 then
+	    print("event:", event)
+	    if not isPortOpen then
+		    isPortOpen = initPandoraPort("/dev/ttyUSB0")
+		    print("open:", isPortOpen)
+	    end
+	    local ret = 0
+	    if isPortOpen then
+		    print("start send");
+		    ret = send2Pandora("P|02|01|0|A(2) - L1 5 max in 7m\rR02G01T0201ST\r\n")
+		    print("i:", i, "send ret:", ret)
+	    end
+	    if ret == -1 then
+		    closePandoraPort()
+		    isPortOpen = false
+	    end
+	    --collectgarbage("collect")
     end
-    local ret = 0
-    if isPortOpen then
-        print("start send");
-        ret = send2Pandora("P|02|01|0|A(2) - L1 5 max in 7m\rR02G01T0201ST\r\n")
-        print("i:", i, "send ret:", ret)
-    end
-    if ret == -1 then
-        closePandoraPort()
-        isPortOpen = false
-    end
-    --collectgarbage("collect")
- --       print("event:", event)
---    end
 end

@@ -1,7 +1,18 @@
 #include <string>
-#include "win_com.h"
 #include <pthread.h>
 #include <queue>
+#include <string.h>
+
+#ifdef _WIN32
+#include "win_com.h"
+#define SLEEP(x)    Sleep(x)
+#endif
+
+#ifdef __linux__
+#include <unistd.h>
+#include "linux_com.h"
+#define SLEEP(x)    sleep(x)
+#endif
 
 using namespace std;
 enum ThreadState

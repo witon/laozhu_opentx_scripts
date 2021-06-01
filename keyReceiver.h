@@ -4,6 +4,10 @@
 #include <string>
 using namespace std;
 
+#ifdef __linux__
+char _getch();
+#endif
+
 enum THREAD_FLAG
 {
     THREAD_FLAG_STOP = 0,

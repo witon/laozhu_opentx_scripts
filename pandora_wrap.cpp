@@ -13,8 +13,6 @@ void * PandoraWrap::ThreadRecvFunc(void *param)
     pandora_wrap->thread_state = THREAD_STATE_RUNNING;
     while(pandora_wrap->thread_state == THREAD_STATE_RUNNING)
     {
-        Sleep(0);
-        continue;
         int ret = pandora_wrap->com.Recv(buf, sizeof(buf) - len);
 
         if(ret < 0)
@@ -31,7 +29,7 @@ void * PandoraWrap::ThreadRecvFunc(void *param)
         }
         memcpy(buf, buf + ret, len - ret);
         len = len - ret;
-        Sleep(0);
+        SLEEP(0);
     }
     pandora_wrap->thread_state = THREAD_STATE_IDLE;
     return NULL;

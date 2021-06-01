@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <mmsystem.h>
 #endif
-
+#include "os_adapt.h"
 #include <pthread.h>
 #include <string>
 #include "audioQueue.h"
