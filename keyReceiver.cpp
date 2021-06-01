@@ -18,9 +18,10 @@
 pthread_mutex_t KeyReceiver::mtx = PTHREAD_MUTEX_INITIALIZER;
 queue<int> KeyReceiver::eventQueue;
 int KeyReceiver::threadFlag = THREAD_FLAG_STOP;
-static struct termios old, current;
 
 #ifdef __linux__
+
+static struct termios old, current;
 /* Initialize new terminal i/o settings */
 void initTermios(int echo) 
 {
