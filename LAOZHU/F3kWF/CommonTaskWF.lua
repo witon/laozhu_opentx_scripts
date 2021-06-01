@@ -1,3 +1,5 @@
+--TODO: play a short tone at the beginning of the normal tasks except AULD.
+
 local workTime = 600
 local state = 1
 local taskName = "Comm"
@@ -38,15 +40,17 @@ local function getStateDisc()
     return ""
 end
 local function changeState2Flight(timer)
+    playTone(1000, 3000, 0, PLAY_BACKGROUND)
     LZ_playFile("LAOZHU/work.wav", true)
     state = 2
     Timer_resetTimer(timer, workTime)
     Timer_setDowncount(timer, 0)
-    timer.mute = true
+    timer.mute = isTimerMuted
     Timer_start(timer)
 end
 
 local function changeState2Landing(timer)
+    playTone(1000, 3000, 0, PLAY_BACKGROUND)
     LZ_playFile("LAOZHU/land.wav", true)
     state = 3
     Timer_resetTimer(timer, 30)

@@ -49,12 +49,33 @@ time = os.time()*100
 f3kCompetitionWF.start(time)
  
 while true do
-    time = os.time()*10000
+    time = os.time()*500
     f3kCompetitionWF.run(time)
+    local event = getEvent()
+    if event == 77 then
+        print("Forward")
+        cleanAudioQueue()
+        if not f3kCompetitionWF.startNextUnit(time) then
+            print("Competition complete.")
+            break
+        end
+    elseif event == 75 then
+        print("Backward")
+        cleanAudioQueue()
+        f3kCompetitionWF.startPreUnit(time)
+    elseif event == 17 then
+        print("Quit")
+        cleanAudioQueue()
+        return
+    end
+    
     local competitionWFState = f3kCompetitionWF.getCurStep()
     if competitionWFState == 3 then
+        print("Competition complete.")
+        local i = 0
+        while i < 50000 do
+            i = i + 1
+        end
         break
     end
-end
-while true do
 end

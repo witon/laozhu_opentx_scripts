@@ -34,3 +34,7 @@ function LZ_playTime(time, withoutUnit)
 		end
 	end
 end
+
+function playTone()
+	LZ_playFile("LAOZHU/horn.wav", true)
+end
