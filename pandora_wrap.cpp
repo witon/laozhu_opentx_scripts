@@ -27,7 +27,7 @@ void * PandoraWrap::ThreadRecvFunc(void *param)
             pandora_wrap->Close();
             break;
         }
-        memcpy(buf, buf + ret, len - ret);
+        memmove(buf, buf + ret, len - ret);
         len = len - ret;
         SLEEP(0);
     }
