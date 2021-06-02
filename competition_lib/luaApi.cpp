@@ -84,8 +84,13 @@ extern "C" {
         pandoraWrap.Close();
         return 0;
     }
-
-
+    static int luaSleep(lua_State *L)
+    {
+        int ms = luaL_checkinteger(L, 1);
+        SLEEP(ms);
+        return 0;
+    }
+ 
 
 }
 
@@ -102,6 +107,8 @@ int initLua(lua_State * L)
     lua_register(L, "send2Pandora", luaSend2Pandora);
     lua_register(L, "initPandoraPort", luaInitPandoraPort);
     lua_register(L, "closePandoraPort", luaClosePandoraPort);
+    lua_register(L, "sleep", luaSleep);
+
 
 
  

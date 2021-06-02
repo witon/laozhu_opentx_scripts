@@ -53,7 +53,6 @@ for roundIndex, task in pairs(tasks) do
     f3kCompetitionWF.addTask(task)
 end
 
-
 time = os.time()*100
 f3kCompetitionWF.start(time)
  
@@ -77,14 +76,10 @@ while true do
         cleanAudioQueue()
         return
     end
-    
     local competitionWFState = f3kCompetitionWF.getCurStep()
     if competitionWFState == 3 then
         print("Competition complete.")
-        local i = 0
-        while i < 50000 do
-            i = i + 1
-        end
+        sleep(5000)
         break
     end
 end
