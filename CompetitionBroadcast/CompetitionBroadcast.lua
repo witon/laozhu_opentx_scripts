@@ -4,11 +4,10 @@ dofile("LAOZHU/comm/PCIO.lua")
 dofile("LAOZHU/Cfg.lua")
 local cfg = CFGnewCfg()
 CFGreadFromFile(cfg, ".CompetitionBroadcast")
-cfg['sound_path'] = "../SOUNDS/"
-cfg['test_window'] = 45
-cfg['prepare_window'] = 60
-cfg['nofly_window'] = 60
-CFGwriteToFile(cfg, ".CompetitionBroadcast")
+local soundPath = CFGgetStrField(cfg, 'sound_path', "./SOUND/")
+local testWindow = CFGgetNumberField(cfg, 'test_window', 45)
+local prepareWindow = CFGgetNumberField(cfg, 'prepare_window', 120)
+local noflyWindow = CFGgetNumberField(cfg, 'nofly_window', 60)
 local optParse = dofile("CompetitionBroadcast/ParseInputOpt.lua")
 local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName = optParse.parse(arg)
 if not ret then
@@ -22,7 +21,7 @@ function LZ_runModule(file)
 end
 dofile("LAOZHU/F3k/F3kFlightRecord.lua")
 dofile("LAOZHU/comm/TestSound.lua")
-setSoundPath(CFGgetStrField(cfg, 'sound_path', "../SOUNDS/"))
+setSoundPath(soundPath)
 
 local f3kCompetitionWF = dofile("LAOZHU/F3kWF/F3kCompetitionWF.lua")
 local time = 0
@@ -48,7 +47,7 @@ if isSingleGroup then
 end
 
 f3kCompetitionWF.setGroups(groups)
-f3kCompetitionWF.setCompetitionParam(cfg['nofly_window'], cfg['prepare_window'], cfg['test_window'], groupNum, isSingleGroup, roundNum, isReadPilotName)
+f3kCompetitionWF.setCompetitionParam(noflyWindow, prepareWindow, testWindow, groupNum, isSingleGroup, roundNum, isReadPilotName)
 
 for roundIndex, task in pairs(tasks) do
     f3kCompetitionWF.addTask(task)
