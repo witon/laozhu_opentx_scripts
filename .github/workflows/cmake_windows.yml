@@ -29,7 +29,7 @@ jobs:
     #  run: choco install Lua53
     - name: Install gtest
       shell: cmd
-      run: test\buildgtest.bat
+      run: cd competition_lib; buildgtest.bat; cd ..
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
