@@ -4,6 +4,7 @@ local function parse(args)
     local pilotsNameVoiceDir = ""
     local isReadPilotName = false
     local isSingleGroup = false
+    local isTestRun = false
     for i, arg in pairs(args) do
         local fields = splitStr(arg, "=")
         if fields[1] == "tasksfile" then
@@ -16,6 +17,8 @@ local function parse(args)
             isSingleGroup = true
         elseif arg=="readname" then
             isReadPilotName = true
+        elseif arg=="test" then
+            isTestRun = true
         end
     end
     if tasksFilePath == "" then
@@ -24,7 +27,7 @@ local function parse(args)
     if gropusFilePath == "" then
         return false
     end
-    return true, tasksFilePath, gropusFilePath, isSingleGroup, isReadPilotName
+    return true, tasksFilePath, gropusFilePath, isSingleGroup, isReadPilotName, isTestRun
 end
 
 local function printHelp(args)

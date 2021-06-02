@@ -9,7 +9,7 @@ local testWindow = CFGgetNumberField(cfg, 'test_window', 45)
 local prepareWindow = CFGgetNumberField(cfg, 'prepare_window', 120)
 local noflyWindow = CFGgetNumberField(cfg, 'nofly_window', 60)
 local optParse = dofile("CompetitionBroadcast/ParseInputOpt.lua")
-local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName = optParse.parse(arg)
+local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName, isTestRun = optParse.parse(arg)
 if not ret then
     optParse.printHelp(arg)
     return
@@ -22,7 +22,7 @@ end
 dofile("LAOZHU/F3k/F3kFlightRecord.lua")
 dofile("LAOZHU/comm/TestSound.lua")
 setSoundPath(soundPath)
-
+setTestRun(isTestRun)
 local f3kCompetitionWF = dofile("LAOZHU/F3kWF/F3kCompetitionWF.lua")
 local time = 0
 
@@ -53,11 +53,22 @@ for roundIndex, task in pairs(tasks) do
     f3kCompetitionWF.addTask(task)
 end
 
-time = os.time()*100
+local emuTime = 1
+if isTestRun then
+    time = emuTime * 100
+else
+    time = os.time()*100
+end
+
 f3kCompetitionWF.start(time)
  
 while true do
-    time = os.time()*100
+    if isTestRun then
+        emuTime = emuTime + 1
+        time = emuTime * 100
+    else
+        time = os.time()*100
+    end
     f3kCompetitionWF.run(time)
     local event = getEvent()
     if event == 77 or event == 68 then

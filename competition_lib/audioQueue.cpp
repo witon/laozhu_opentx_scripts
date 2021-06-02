@@ -13,6 +13,7 @@ using namespace std;
 
 pthread_mutex_t AudioQueue::mtx = PTHREAD_MUTEX_INITIALIZER;
 queue<string> AudioQueue::playFileQueue;
+bool AudioQueue::isTestRun = false;
 
 #ifdef __linux__
 #include "playsound.h"
@@ -27,10 +28,14 @@ AudioQueue::AudioQueue()
 {
 }
 
+void AudioQueue::setTestRun(bool isTest)
+{
+    isTestRun = isTest;
+}
+
 
 void * AudioQueue::threadPlaySoundFunc(void *param)
 {
-    //long i = 0;
     queue<string> playQueue;
     while(true)
     {
@@ -42,11 +47,6 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
             continue;
         }
         
-        /*if(i%10000==0)
-        {
-            printf("i:%d queue size:%d\n", i, playFileQueue.size());
-        }
-        */
         s = playFileQueue.front();
         playQueue.push(s);
         playFileQueue.pop();
@@ -55,13 +55,13 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
         while(playQueue.size()>0)
         {
             s = playQueue.front();
-            PLAY_SOUND(s.c_str());
-            //PlaySound(s.c_str(), NULL, SND_FILENAME | SND_SYNC |SND_NOSTOP |SND_NOWAIT );//SND_SYNC);
+            if(isTestRun)
+                printf("%s\r\n", s.c_str());
+            else
+                PLAY_SOUND(s.c_str());
             playQueue.pop();
         }
-        //printf("%s\n", s.c_str());
         SLEEP(0);
-     //   i ++;
     }
  
     return NULL;  // Never returns

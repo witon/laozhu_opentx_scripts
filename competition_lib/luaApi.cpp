@@ -90,6 +90,11 @@ extern "C" {
         SLEEP(ms);
         return 0;
     }
+    static int luaSetTestRun(lua_State *L)
+    {
+        audioQueue.setTestRun(lua_toboolean(L, 1));
+        return 0;
+    }
  
 
 }
@@ -108,6 +113,7 @@ int initLua(lua_State * L)
     lua_register(L, "initPandoraPort", luaInitPandoraPort);
     lua_register(L, "closePandoraPort", luaClosePandoraPort);
     lua_register(L, "sleep", luaSleep);
+    lua_register(L, "setTestRun", luaSetTestRun);
 
 
 
