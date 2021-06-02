@@ -24,7 +24,7 @@ jobs:
       uses: msys2/setup-msys2@v2
     - name: build lua
       shell: cmd
-      run: build_lualib.bat
+      run: cd competition_lib; build_lualib.bat; cd ..
     #- name: Setup Lua/LuaJIT
     #  run: choco install Lua53
     - name: Install gtest
