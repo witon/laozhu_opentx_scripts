@@ -21,7 +21,6 @@ function CFGgetStrField(cfg, fieldName, default)
     return v
 end
 
-
 function CFGreadFromFile(cfg, fileName)
     local cfgFilePath = gScriptDir .. fileName
     local cfgFile = io.open(cfgFilePath, 'r')

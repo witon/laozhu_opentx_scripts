@@ -2,7 +2,6 @@ gScriptDir = "/SCRIPTS/"
 gConfigFileName = "3k.cfg"
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
-
 gF3kCore = nil
 
 f3kCfg = nil
@@ -57,7 +56,6 @@ local function unloadCurPage()
 	curPage = nil
 	collectgarbage()
 end
-
 local function run(event)
 	lcd.clear()
 	local curTime = getTime()

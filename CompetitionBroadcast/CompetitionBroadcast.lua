@@ -1,4 +1,14 @@
+gScriptDir = "./"
 dofile("LAOZHU/LuaUtils.lua")
+dofile("LAOZHU/comm/PCIO.lua")
+dofile("LAOZHU/Cfg.lua")
+local cfg = CFGnewCfg()
+CFGreadFromFile(cfg, ".CompetitionBroadcast")
+cfg['sound_path'] = "../SOUNDS/"
+cfg['test_window'] = 45
+cfg['prepare_window'] = 60
+cfg['nofly_window'] = 60
+CFGwriteToFile(cfg, ".CompetitionBroadcast")
 local optParse = dofile("CompetitionBroadcast/ParseInputOpt.lua")
 local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName = optParse.parse(arg)
 if not ret then
@@ -7,13 +17,13 @@ if not ret then
 end
 dofile("LAOZHU/comm/Timer.lua")
 dofile("LAOZHU/LuaUtils.lua")
-gScriptDir = "./"
 function LZ_runModule(file)
     return dofile(file)
 end
 dofile("LAOZHU/F3k/F3kFlightRecord.lua")
 dofile("LAOZHU/comm/TestSound.lua")
-setSoundPath("C:\\opentxsdcard1\\SOUNDS\\")
+setSoundPath(CFGgetStrField(cfg, 'sound_path', "../SOUNDS/"))
+
 local f3kCompetitionWF = dofile("LAOZHU/F3kWF/F3kCompetitionWF.lua")
 local time = 0
 
@@ -38,7 +48,7 @@ if isSingleGroup then
 end
 
 f3kCompetitionWF.setGroups(groups)
-f3kCompetitionWF.setCompetitionParam(60, 60, 45, groupNum, isSingleGroup, roundNum, isReadPilotName)
+f3kCompetitionWF.setCompetitionParam(cfg['nofly_window'], cfg['prepare_window'], cfg['test_window'], groupNum, isSingleGroup, roundNum, isReadPilotName)
 
 for roundIndex, task in pairs(tasks) do
     f3kCompetitionWF.addTask(task)
@@ -49,17 +59,17 @@ time = os.time()*100
 f3kCompetitionWF.start(time)
  
 while true do
-    time = os.time()*500
+    time = os.time()*100
     f3kCompetitionWF.run(time)
     local event = getEvent()
-    if event == 77 then
+    if event == 77 or event == 68 then
         print("Forward")
         cleanAudioQueue()
         if not f3kCompetitionWF.startNextUnit(time) then
             print("Competition complete.")
             break
         end
-    elseif event == 75 then
+    elseif event == 75 or event == 67 then
         print("Backward")
         cleanAudioQueue()
         f3kCompetitionWF.startPreUnit(time)
