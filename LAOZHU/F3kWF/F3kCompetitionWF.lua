@@ -20,6 +20,7 @@ roundWorkflow.init()
 --unit.groupIndex
 --unit.competitors
 
+
 local function setGroups(g)
     groups = g
 end
@@ -70,7 +71,12 @@ end
 
 local function broadcastCurUnitInfo()
     local task = tasks[curRound]
-    print("Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    if gIsEmulate or gIsTestRun then
+        print("Time: ", LZ_formatTimeStamp(gEmuTime), "Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    else
+        print("Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    end
+ 
     LZ_playFile("LAOZHU/round.wav")
     LZ_playNumber(curRound, 0)
     if not isSingleGroup then
@@ -94,7 +100,7 @@ local function broadcastCurUnitInfo()
         if isSingleGroup then
             local group = groups[curRound][2]
             if #group > 0 then
-                LZ_playFile("LAOZHU/assis")
+                LZ_playFile("LAOZHU/assis.wav")
                 for i, pilotName in pairs(group) do
                     LZ_playFile("pilot/".. pilotName .. ".wav")
                 end
