@@ -71,7 +71,12 @@ end
 
 local function broadcastCurUnitInfo()
     local task = tasks[curRound]
-    print("Time: ", LZ_formatTimeStamp(gEmuTime), "Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    if gIsEmulate or gIsTestRun then
+        print("Time: ", LZ_formatTimeStamp(gEmuTime), "Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    else
+        print("Round: " .. curRound, "Group: " .. curGroup, "Task: " .. task.id)
+    end
+ 
     LZ_playFile("LAOZHU/round.wav")
     LZ_playNumber(curRound, 0)
     if not isSingleGroup then
