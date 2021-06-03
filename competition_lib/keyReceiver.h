@@ -8,11 +8,6 @@ using namespace std;
 char _getch();
 #endif
 
-enum THREAD_FLAG
-{
-    THREAD_FLAG_STOP = 0,
-    THREAD_FLAG_RUNNING
-};
 class KeyReceiver
 {
 private:
@@ -20,11 +15,11 @@ private:
     static void * threadDetectKeyFunc(void *param);
     static pthread_mutex_t mtx;
     static int detectKey();
-    static int threadFlag;
+    static int threadState;
     pthread_t thread;
 public:
     KeyReceiver();
     int getEvent();
-    void start();
+    bool start();
     void stop();
 };

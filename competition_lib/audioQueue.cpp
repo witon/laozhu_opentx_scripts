@@ -1,6 +1,10 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <mmsystem.h>
+#include <io.h>
+#endif
+#ifdef __linux__
+#include <fcntl.h>
 #endif
 #include "os_adapt.h"
 #include <pthread.h>
@@ -8,12 +12,15 @@
 #include "audioQueue.h"
 #include <stdlib.h>
 #include <iostream>
+#include "comm.h"
 using namespace std;
 
 
 pthread_mutex_t AudioQueue::mtx = PTHREAD_MUTEX_INITIALIZER;
 queue<string> AudioQueue::playFileQueue;
 bool AudioQueue::isTestRun = false;
+int AudioQueue::threadState = THREAD_STATE_IDLE;
+
 
 #ifdef __linux__
 #include "playsound.h"
@@ -33,11 +40,23 @@ void AudioQueue::setTestRun(bool isTest)
     isTestRun = isTest;
 }
 
+bool AudioQueue::checkWaveFile(const char * filepath)
+{
+
+    int ret = -1;
+#ifdef _WIN32
+    ret = _access(filepath, 4);
+#endif
+#ifdef __linux__
+    ret = access(filepath, R_OK);
+#endif
+    return ret == 0;
+}
+
 
 void * AudioQueue::threadPlaySoundFunc(void *param)
 {
-    queue<string> playQueue;
-    while(true)
+    while(threadState == THREAD_STATE_RUNNING)
     {
         string s = "";
         pthread_mutex_lock(&mtx);
@@ -48,27 +67,28 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
         }
         
         s = playFileQueue.front();
-        playQueue.push(s);
         playFileQueue.pop();
         pthread_mutex_unlock(&mtx);
 
-        while(playQueue.size()>0)
+        if (isTestRun)
         {
-            s = playQueue.front();
-            if(isTestRun)
+            if (!checkWaveFile(s.c_str()))
+            {
                 printf("%s\r\n", s.c_str());
-            else
-                PLAY_SOUND(s.c_str());
-            playQueue.pop();
+            }
         }
+        else
+            PLAY_SOUND(s.c_str());
         SLEEP(0);
     }
+    threadState = THREAD_STATE_IDLE;
  
-    return NULL;  // Never returns
+    return NULL;
 }
 
 void AudioQueue::playFile(const char *filename, uint8_t flags, uint8_t id)
 {
+    //printf("%s\r\n", filename);
     pthread_mutex_lock(&mtx);
     playFileQueue.push(string(filename));
     pthread_mutex_unlock(&mtx);
@@ -82,9 +102,20 @@ void AudioQueue::clean()
     pthread_mutex_unlock(&mtx);
 }
 
-
-void AudioQueue::start()
+void AudioQueue::stop()
 {
+    threadState = THREAD_STATE_STOPPING;
+    while(threadState != THREAD_STATE_IDLE)
+        SLEEP(1);
+    return;
+}
+
+bool AudioQueue::start()
+{
+    if(threadState != THREAD_STATE_IDLE)
+        return false;
     pthread_t thread;
+    threadState = THREAD_STATE_RUNNING;
     pthread_create(&thread, NULL, threadPlaySoundFunc, NULL);
+    return true;
 }

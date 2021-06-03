@@ -95,6 +95,11 @@ extern "C" {
         audioQueue.setTestRun(lua_toboolean(L, 1));
         return 0;
     }
+    static int luaUnInit(lua_State *L)
+    {
+        audioQueue.stop();
+        keyReceiver.stop();
+    }
  
 
 }
@@ -114,6 +119,8 @@ int initLua(lua_State * L)
     lua_register(L, "closePandoraPort", luaClosePandoraPort);
     lua_register(L, "sleep", luaSleep);
     lua_register(L, "setTestRun", luaSetTestRun);
+    lua_register(L, "unInit", luaUnInit);
+
 
 
 

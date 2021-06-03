@@ -5,17 +5,26 @@ TEST_SOUND_DIR = "SOUNDS\\cz\\"
 require("sound")
 
 function LZ_playNumber(value, flag)
+	if gIsEmulate then
+		return
+	end
 	TEST_lastPlayNumber = value
 	playNumber(value, flag)
 end
 
 
 function LZ_playFile(path, force)
+	if gIsEmulate then
+		return
+	end
 	TEST_lastPlayFile = path
 	playFile(path)
 end
 
 function LZ_playTime(time, withoutUnit)
+	if gIsEmulate then
+		return
+	end
 	TEST_lastPlayNumber = time
 	local minute = math.floor(time / 60)
 	if minute ~= 0 then
@@ -36,5 +45,8 @@ function LZ_playTime(time, withoutUnit)
 end
 
 function playTone()
+	if gIsEmulate then
+		return
+	end
 	LZ_playFile("LAOZHU/horn.wav", true)
 end

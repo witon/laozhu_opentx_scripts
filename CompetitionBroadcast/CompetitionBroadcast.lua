@@ -1,39 +1,46 @@
 gScriptDir = "./"
-dofile("LAOZHU/LuaUtils.lua")
-dofile("LAOZHU/comm/PCIO.lua")
-dofile("LAOZHU/Cfg.lua")
+function LZ_runModule(file)
+    return dofile(file)
+end
+
+gEmuTime = 1
+gIsTestRun = false
+LZ_runModule("LAOZHU/LuaUtils.lua")
+LZ_runModule("LAOZHU/comm/PCIO.lua")
+LZ_runModule("LAOZHU/Cfg.lua")
+
 local cfg = CFGnewCfg()
 CFGreadFromFile(cfg, ".CompetitionBroadcast")
 local soundPath = CFGgetStrField(cfg, 'sound_path', "./SOUND/")
 local testWindow = CFGgetNumberField(cfg, 'test_window', 45)
 local prepareWindow = CFGgetNumberField(cfg, 'prepare_window', 120)
 local noflyWindow = CFGgetNumberField(cfg, 'nofly_window', 60)
-local optParse = dofile("CompetitionBroadcast/ParseInputOpt.lua")
-local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName, isTestRun = optParse.parse(arg)
+local optParse = LZ_runModule("CompetitionBroadcast/ParseInputOpt.lua")
+local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName, isTestRun, isEmulate = optParse.parse(arg)
+gIsTestRun = isTestRun
+gIsEmulate = isEmulate
 if not ret then
     optParse.printHelp(arg)
     return
 end
-dofile("LAOZHU/comm/Timer.lua")
-dofile("LAOZHU/LuaUtils.lua")
-function LZ_runModule(file)
-    return dofile(file)
-end
-dofile("LAOZHU/F3k/F3kFlightRecord.lua")
-dofile("LAOZHU/comm/TestSound.lua")
+LZ_runModule("LAOZHU/comm/Timer.lua")
+LZ_runModule("LAOZHU/LuaUtils.lua")
+LZ_runModule(gScriptDir .. "LAOZHU/OTUtils.lua")
+LZ_runModule("LAOZHU/F3k/F3kFlightRecord.lua")
+LZ_runModule("LAOZHU/comm/TestSound.lua")
 setSoundPath(soundPath)
 setTestRun(isTestRun)
-local f3kCompetitionWF = dofile("LAOZHU/F3kWF/F3kCompetitionWF.lua")
+local f3kCompetitionWF = LZ_runModule("LAOZHU/F3kWF/F3kCompetitionWF.lua")
 local time = 0
 
-local taskFileParser = dofile("CompetitionBroadcast/TaskFileParser.lua")
+local taskFileParser = LZ_runModule("CompetitionBroadcast/TaskFileParser.lua")
 local tasks = taskFileParser.parse(tasksFilePath)
 if not tasks then
     print("parse tasks file " .. tasksFilePath .. " failed.")
     return
 end
 
-local groupFileParser = dofile("CompetitionBroadcast/GroupFileParser.lua")
+local groupFileParser = LZ_runModule("CompetitionBroadcast/GroupFileParser.lua")
 local groups = groupFileParser.parse(groupsFilePath)
 if not groups then
     print("parse groups file " .. groupsFilePath .. " failed.")
@@ -53,9 +60,8 @@ for roundIndex, task in pairs(tasks) do
     f3kCompetitionWF.addTask(task)
 end
 
-local emuTime = 1
-if isTestRun then
-    time = emuTime * 100
+if isEmulate or isTestRun then
+    time = gEmuTime * 100
 else
     time = os.time()*100
 end
@@ -63,9 +69,9 @@ end
 f3kCompetitionWF.start(time)
  
 while true do
-    if isTestRun then
-        emuTime = emuTime + 1
-        time = emuTime * 100
+    if isEmulate or isTestRun then
+        gEmuTime = gEmuTime + 1
+        time = gEmuTime * 100
     else
         time = os.time()*100
     end
@@ -89,8 +95,11 @@ while true do
     end
     local competitionWFState = f3kCompetitionWF.getCurStep()
     if competitionWFState == 3 then
-        print("Competition complete.")
-        sleep(5000)
-        break
+        print("Time: ", LZ_formatTimeStamp(gEmuTime), "Competition completed")
+        if (not isEmulate) and (not isTestRun) then
+            sleep(5000)
+        end
+        unInit();
+        break;
     end
 end

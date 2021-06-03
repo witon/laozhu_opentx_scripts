@@ -14,10 +14,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #endif
+#include "comm.h"
 
 pthread_mutex_t KeyReceiver::mtx = PTHREAD_MUTEX_INITIALIZER;
 queue<int> KeyReceiver::eventQueue;
-int KeyReceiver::threadFlag = THREAD_FLAG_STOP;
+int KeyReceiver::threadState = THREAD_STATE_IDLE;
 
 #ifdef __linux__
 
@@ -69,7 +70,7 @@ int KeyReceiver::detectKey()
 
 void * KeyReceiver::threadDetectKeyFunc(void *param)
 {
-    while(threadFlag == THREAD_FLAG_RUNNING)
+    while(threadState == THREAD_STATE_RUNNING)
     {
         int key = detectKey();
         pthread_mutex_lock(&mtx);
@@ -78,6 +79,7 @@ void * KeyReceiver::threadDetectKeyFunc(void *param)
         SLEEP(0);
 
     }
+    threadState = THREAD_STATE_IDLE;
     return NULL;
 }
 
@@ -94,13 +96,18 @@ int KeyReceiver::getEvent()
     return ret;
 }
 
-void KeyReceiver::start()
+bool KeyReceiver::start()
 {
-    threadFlag = THREAD_FLAG_RUNNING;
+    if(threadState != THREAD_STATE_IDLE)
+        return false;
+    threadState = THREAD_STATE_RUNNING;
     pthread_create(&thread, NULL, threadDetectKeyFunc, NULL);
+    return true;
 }
 
 void KeyReceiver::stop()
 {
-    threadFlag = THREAD_FLAG_STOP;
+    threadState = THREAD_STATE_STOPPING;
+    while(threadState != THREAD_STATE_IDLE)
+        SLEEP(1);
 }

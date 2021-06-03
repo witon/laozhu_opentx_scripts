@@ -13,14 +13,9 @@
 #include "linux_com.h"
 #define SLEEP(x)    sleep(x)
 #endif
+#include "comm.h"
 
 using namespace std;
-enum ThreadState
-{
-    THREAD_STATE_IDLE = 0,
-    THREAD_STATE_RUNNING,
-    THREAD_STATE_STOPPING
-};
 
 //P|02|01|0|A(2) - L1 5 max in 7m
 //R02G01T0201ST

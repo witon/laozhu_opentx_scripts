@@ -5,20 +5,21 @@ local function parse(args)
     local isReadPilotName = false
     local isSingleGroup = false
     local isTestRun = false
+    local isEmulate = false
     for i, arg in pairs(args) do
         local fields = splitStr(arg, "=")
-        if fields[1] == "tasksfile" then
+        if fields[1] == "t" then
             tasksFilePath = fields[2]
-        elseif fields[1] == "groupsfile" then
+        elseif fields[1] == "g" then
             gropusFilePath = fields[2]
-        elseif fields[1] == "groupnumber" then
-            groupNum = fields[2]
         elseif arg == "singlegroup" then
             isSingleGroup = true
         elseif arg=="readname" then
             isReadPilotName = true
         elseif arg=="test" then
             isTestRun = true
+        elseif arg=="emulate" then
+            isEmulate = true
         end
     end
     if tasksFilePath == "" then
@@ -27,11 +28,11 @@ local function parse(args)
     if gropusFilePath == "" then
         return false
     end
-    return true, tasksFilePath, gropusFilePath, isSingleGroup, isReadPilotName, isTestRun
+    return true, tasksFilePath, gropusFilePath, isSingleGroup, isReadPilotName, isTestRun, isEmulate
 end
 
 local function printHelp(args)
-    print("usage: \r\nlua " .. args[0] .. " tasksfile=<tasks file path> groupsfile=<groups file path> <singlegroup> <readname>")
+    print("usage: \r\nlua " .. args[0] .. " t=<tasks file path> g=<groups file path> <singlegroup> <readname> <test> <emulate>")
 end
 
 return {parse=parse, printHelp=printHelp}
