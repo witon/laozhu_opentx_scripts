@@ -53,50 +53,50 @@ end
 local function changeState2NoFly(timer)
     state = 1
     LZ_playFile("LAOZHU/nofly.wav", true)
-    Timer_resetTimer(timer, getNoFlyTime())
-    Timer_setDowncount(timer, 5)
+    timer:resetTimer(getNoFlyTime())
+    timer:setDowncount(5)
     timer.announceTime = 10
     timer.announceCallback = announceCallback
     timer.mute = isTimerMuted
-    Timer_start(timer)
+    timer:start()
 end
 
 
 local function changeState2Flight(timer)
     playTone(1000, 3000, 0, PLAY_BACKGROUND)
     state = 2
-    Timer_resetTimer(timer, flightTime)
-    Timer_setDowncount(timer, 0)
+    timer:resetTimer(flightTime)
+    timer:setDowncount(0)
     timer.mute = isTimerMuted
-    Timer_start(timer)
+    timer:start()
 end
 
 local function changeState2Landing(timer)
     state = 3
     playTone(1000, 3000, 0, PLAY_BACKGROUND)
     LZ_playFile("LAOZHU/land.wav", true)
-    Timer_resetTimer(timer, 30)
-    Timer_setDowncount(timer, 10)
+    timer:resetTimer(30)
+    timer:setDowncount(10)
     timer.announceTime = 15
     timer.announceCallback = announceCallback
     timer.mute = isTimerMuted
-    Timer_start(timer)
+    timer:start()
 end
 
 local function doNoFly(timer)
-    if Timer_getRemainTime(timer) <= 0 then
+    if timer:getRemainTime() <= 0 then
         changeState2Flight(timer)
     end
 end
 
 local function doFlight(timer)
-    if Timer_getRemainTime(timer) <= 0 then
+    if timer:getRemainTime() <= 0 then
         changeState2Landing(timer)
     end
 end
 
 local function doLanding(timer)
-    if Timer_getRemainTime(timer) <= 0 then
+    if timer:getRemainTime() <= 0 then
         curFlight = curFlight + 1
         if curFlight > flightCount then
             return true

@@ -10,7 +10,7 @@ local flightStateStartTime = 0
 local f3kFlightRecord = F3KFRnewFlightRecord()
 f3kFlightRecord.maxNum = 25
 local destFlightTime = 0
-local flightTimer = Timer_new()
+local flightTimer = Timer:new()
 local landedCallback = nil
 
 
@@ -33,7 +33,7 @@ end
 
 local function setDestFlightTime(time)
     destFlightTime = time
-    Timer_setDuration(flightTimer, time)
+    flightTimer:setDuration(time)
 end
 
 local function getDestFlightTime()
@@ -62,14 +62,14 @@ local function getFlightState()
 end
 
 local function getFlightTime()
-    return Timer_getRunTime(flightTimer)
+    return flightTimer:getRunTime()
 end
 
 local function newFlight(curTime, curRtcTime)
     flightState = 0
-    Timer_resetTimer(flightTimer, destFlightTime)
-    Timer_setDowncount(flightTimer, 15)
-    Timer_start(flightTimer)
+    flightTimer:resetTimer(destFlightTime)
+    flightTimer:setDowncount(15)
+    flightTimer:start()
     launchAlt = 0
     launchTime = 0
     launchRtcTime = curRtcTime
@@ -95,11 +95,11 @@ end
 
 local function doStateLaunched(curTime, flightModeName)
     if flightModeName == "preset" then
-        Timer_stop(flightTimer)
+        flightTimer:stop()
         flightState = 3
-        F3KFRaddFlight(f3kFlightRecord, Timer_getRunTime(flightTimer), launchAlt, launchRtcTime)
+        F3KFRaddFlight(f3kFlightRecord, flightTimer:getRunTime(), launchAlt, launchRtcTime)
         if landedCallback then
-            landedCallback(Timer_getRunTime(flightTimer), launchAlt, launchRtcTime)
+            landedCallback(flightTimer:getRunTime(), launchAlt, launchRtcTime)
         end
     end
     if curTime - flightStateStartTime < 150 then --still update launch alt in 1.5's after zoom
@@ -132,8 +132,8 @@ end
 
 local function doFlightState(curTime, flightModeName, curRtcTime)
 
-    Timer_setCurTime(flightTimer, curTime)
-    Timer_run(flightTimer)
+    flightTimer:setCurTime(curTime)
+    flightTimer:run()
  
     if flightState == 0 then
         doStatePreset(curTime, flightModeName, curRtcTime)

@@ -1,4 +1,5 @@
 function testCompetitionWFNormalFlow()
+    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     local wf = dofile(HOME_DIR .. "LAOZHU/F3kWF/F3kCompetitionWF.lua")
     dofile(HOME_DIR .. "LAOZHU/comm/TestSound.lua")
     wf.setCompetitionParam(0, 0, 0, 2, false, 2, false)

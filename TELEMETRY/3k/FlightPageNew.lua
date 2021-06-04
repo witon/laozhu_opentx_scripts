@@ -62,7 +62,7 @@ local function drawFlightInfo()
 		lcd.drawText(0, 18, "END", smlsize)
 	end
 	if roundState ~= 1 then
-		lcd.drawText(24, 11, LZ_formatTime(Timer_getRemainTime(gF3kCore.getRound().getTimer())), LEFT + DBLSIZE)
+		lcd.drawText(24, 11, LZ_formatTime(gF3kCore.getRound().getTimer():getRemainTime()), LEFT + DBLSIZE)
 	end
 
 	local invers = math.floor(getTime() / 100) % 2 == 0
