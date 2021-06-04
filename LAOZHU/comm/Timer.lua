@@ -1,189 +1,173 @@
-function Timer_new()
-    return {startTime=0,
-            stopTime = 0,
-            duration = -1,
-            lastReadTime = -1,
-            downcountSeconds = -1,
-            isForward = true,
-            curTime = 0,
-            mute = false,
-            announceTime = 0,
-            announceCallback = nil
-        }
+Timer = {startTime = 0,
+        stopTime = 0,
+        duration = -1,
+        lastReadTime = -1,
+        downcountSeconds = -1,
+        isForward = true,
+        curTime = 0,
+        mute = false,
+        announceTime = 0,
+        announceCallback = nil
+}
+
+function Timer:new()
+    local o = {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
 end
 
-function Timer_setDuration(timer, d)
-    timer.duration = d
+function Timer:setDuration(d)
+    self.duration = d
 end
 
-function Timer_resetTimer(timer, d)
-    timer.startTime = 0
-    timer.stopTime = 0
-    timer.duration = d
-    timer.lastReadTime = -1
-    timer.announceTime = 0
-    timer.announceCallback = nil
+function Timer:resetTimer(d)
+    self.startTime = 0
+    self.stopTime = 0
+    self.duration = d
+    self.lastReadTime = -1
+    self.announceTime = 0
+    self.announceCallback = nil
 end
 
-function Timer_setCurTime(timer, t)
-    timer.curTime = t
+function Timer:setCurTime(t)
+    self.curTime = t
 end
 
-function Timer_setForward(timer, forward)
-    timer.isForward = forward
+function Timer:setForward(forward)
+    self.isForward = forward
 end
 
-function Timer_setDowncount(timer, seconds)
-    timer.downcountSeconds = seconds
+function Timer:setDowncount(seconds)
+    self.downcountSeconds = seconds
 end
 
-function Timer_start(timer)
-    timer.startTime = timer.curTime
+function Timer:start()
+    self.startTime = self.curTime
 end
 
-function Timer_isstart(timer)
-    if timer.startTime > 0 and timer.stopTime == 0 then
+function Timer:isstart()
+    if self.startTime > 0 and self.stopTime == 0 then
         return true
     else
         return false
     end
 end
 
-function Timer_stop(timer)
-    timer.stopTime = timer.curTime
+function Timer:stop()
+    self.stopTime = self.curTime
 end
 
-function Timer_getRemainTime(timer)
-    if timer.startTime == 0 then
-        return timer.duration
+function Timer:getRemainTime()
+    if self.startTime == 0 then
+        return self.duration
     end
-    if timer.duration < 0 then
-        return timer.duration
+    if self.duration < 0 then
+        return self.duration
     end
 
-    if timer.stopTime > 0 then
-        return timer.duration - math.floor((timer.stopTime- timer.startTime) / 100)
+    if self.stopTime > 0 then
+        return self.duration - math.floor((self.stopTime- self.startTime) / 100)
     else
-        return timer.duration - math.floor((timer.curTime - timer.startTime) / 100)
+        return self.duration - math.floor((self.curTime - self.startTime) / 100)
     end
 end
 
-function Timer_getRunTime(timer)
-    if timer.startTime == 0 then
+function Timer:getRunTime()
+    if self.startTime == 0 then
         return 0
     end
-    if timer.stopTime > 0 then
-        return math.floor((timer.stopTime- timer.startTime) / 100)
+    if self.stopTime > 0 then
+        return math.floor((self.stopTime- self.startTime) / 100)
     else
-        return math.floor((timer.curTime - timer.startTime) / 100)
+        return math.floor((self.curTime - self.startTime) / 100)
     end
 end
 
-function Timer_getDuration(timer)
-    if timer.stopTime <= 0 then
-        return Timer_getRunTime(timer)
+function Timer:getDuration()
+    if self.stopTime <= 0 then
+        return self:getRunTime(self)
     end
-    return math.floor((timer.stopTime - timer.startTime) / 100)
+    return math.floor((self.stopTime - self.startTime) / 100)
 end
 
-local function readDowncount(timer, time)
-    if timer.downcountSeconds > 0 and time <= timer.downcountSeconds then
-        timer.lastReadTime = time
+function Timer:readDowncount(time)
+    if self.downcountSeconds > 0 and time <= self.downcountSeconds then
+        self.lastReadTime = time
         LZ_playNumber(time, 0)
         return
     end
 end
 
-local function readIntegralTime(timer, time)
-    if timer.downcountSeconds ~= -1 and time == 0 then
+function Timer:readIntegralTime(time)
+    if self.downcountSeconds ~= -1 and time == 0 then
         return
     end
 
     if time % 30 == 0 then
-        timer.lastReadTime = time
+        self.lastReadTime = time
         LZ_playTime(time)
     end
 end
 
 
-function Timer_readRemainTime(timer)
-    if timer.duration <= 0 then
+function Timer:readRemainTime()
+    if self.duration <= 0 then
         return
     end
-    local remainSeconds = Timer_getRemainTime(timer)
-    if remainSeconds == timer.lastReadTime then
+    local remainSeconds = self:getRemainTime(self)
+    if remainSeconds == self.lastReadTime then
         return
     end
     if remainSeconds < 0 then
         return
     end
 
-    if remainSeconds == timer.duration then
+    if remainSeconds == self.duration then
         return
     end
     
-    readDowncount(timer, remainSeconds)
-    readIntegralTime(timer, remainSeconds)
+    self:readDowncount(remainSeconds)
+    self:readIntegralTime(remainSeconds)
 end
 
-function Timer_readRunTime(timer)
-    local remainSeconds = Timer_getRemainTime(timer)
-    if remainSeconds < timer.downcountSeconds and remainSeconds >= 0 then
-        if timer.duration <= 0 then
+function Timer:readRunTime()
+    local remainSeconds = self:getRemainTime()
+    if remainSeconds < self.downcountSeconds and remainSeconds >= 0 then
+        if self.duration <= 0 then
             return
         end
-        if remainSeconds == timer.lastReadTime then
+        if remainSeconds == self.lastReadTime then
             return
         end
-        readDowncount(timer, remainSeconds)
+        self:readDowncount(remainSeconds)
         return
     end
-    local runSeconds = Timer_getRunTime(timer)
-    if runSeconds == 0 or runSeconds == timer.lastReadTime then
+    local runSeconds = self:getRunTime()
+    if runSeconds == 0 or runSeconds == self.lastReadTime then
         return
     end
-    readIntegralTime(timer, runSeconds)
+    self:readIntegralTime(runSeconds)
 end
 
-function Timer_run(timer)
-    if timer.startTime == 0 then
+function Timer:run()
+    if self.startTime == 0 then
         return
     end
-    if timer.announceTime ~= 0 and timer.announceCallback then
-        if (timer.isForward and timer.announceTime == Timer_getRunTime(timer)) or
-            ((not timer.isForward) and timer.announceTime == Timer_getRemainTime(timer)) then
-            timer.announceCallback(timer)
-            timer.announceTime = 0
+    if self.announceTime ~= 0 and self.announceCallback then
+        if (self.isForward and self.announceTime == self:getRunTime()) or
+            ((not self.isForward) and self.announceTime == self:getRemainTime()) then
+            self.announceCallback()
+            self.announceTime = 0
         end
     end
 
-    if timer.mute then
+    if self.mute then
         return
     end
-    if timer.isForward then
-        Timer_readRunTime(timer)
+    if self.isForward then
+        self:readRunTime()
     else
-        Timer_readRemainTime(timer)
+        self:readRemainTime()
     end
-
-end
-
-function Timer_unload()
-    Timer_new = nil
-    Timer_setDuration = nil
-    Timer_resetTimer = nil
-    Timer_setCurTime = nil
-    Timer_setForward = nil
-    Timer_setDowncount = nil
-    Timer_start = nil
-    Timer_isstart = nil
-    Timer_stop = nil
-    Timer_getRemainTime = nil
-    Timer_getRunTime = nil
-    Timer_getDuration = nil
-    readDowncount = nil
-    readIntegralTime = nil
-    Timer_readRemainTime = nil
-    Timer_readRunTime = nil
-    Timer_run = nil
 end

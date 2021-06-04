@@ -16,9 +16,9 @@ local flightSwitch = 0
 
 dofile(gScriptDir .. "LAOZHU/comm/Timer.lua")
 
-local worktimeTimer = Timer_new()
-Timer_resetTimer(worktimeTimer, 600)
-local stateTimer = Timer_new()
+local worktimeTimer = Timer:new()
+worktimeTimer:resetTimer(600)
+local stateTimer = Timer:new()
 
 
 local function getCurFlightStateName()
@@ -51,9 +51,9 @@ local function setAlt(alt)
 end
 
 local function resetWorktimeTimer()
-	worktimeTimer.resetTimer(600)
-	worktimeTimer.setForward(true)
-	worktimeTimer.setDowncount(20)
+	worktimeTimer:resetTimer(600)
+	worktimeTimer:setForward(true)
+	worktimeTimer:setDowncount(20)
 end
 
 local function getWorktimeTimer()
@@ -83,23 +83,23 @@ local function resetFlight()
 	launchAlt = 0
 	launchTime = 0
     powerOnAgain = false
-    Timer_stop(worktimeTimer)
-    Timer_resetTimer(worktimeTimer, 600)
-    Timer_stop(stateTimer)
+    worktimeTimer:stop()
+    worktimeTimer:resetTimer(600)
+    stateTimer:stop()
 end
 
 local function startPoweronTimer()
-    Timer_resetTimer(stateTimer, 30)
-    Timer_setForward(stateTimer, true)
-    Timer_setDowncount(stateTimer, 10)
-    Timer_start(stateTimer, curTime)
+    stateTimer:resetTimer(30)
+    stateTimer:setForward(true)
+    stateTimer:setDowncount(10)
+    stateTimer:start(curTime)
 end
 
 local function startWorktimeTimer()
-    Timer_resetTimer(worktimeTimer, 600)
-    Timer_setForward(worktimeTimer, false)
-    Timer_setDowncount(worktimeTimer, 20)
-    Timer_start(worktimeTimer, curTime)
+    worktimeTimer:resetTimer(600)
+    worktimeTimer:setForward(false)
+    worktimeTimer:setDowncount(20)
+    worktimeTimer:start(curTime)
 end
 
 local function doStatePrepare()
@@ -119,7 +119,7 @@ local function doState10sAfterPowerOff()
     end
     
     if flightSwitch < 0 then
-        Timer_stop(stateTimer)
+        stateTimer:stop()
         flightState = 4
         return
         --addFlightResult()
@@ -127,17 +127,17 @@ local function doState10sAfterPowerOff()
 
     updateLaunchAlt()
 
-    if Timer_getRemainTime(stateTimer) <= 0 then
+    if stateTimer:getRemainTime() <= 0 then
         flightState = 3
     end
 
 end
 
 local function startPoweroffTimer()
-    Timer_resetTimer(stateTimer, 10)
-    Timer_setForward(stateTimer, false)
-    Timer_setDowncount(stateTimer, 9)
-    Timer_start(stateTimer, curTime)
+    stateTimer:resetTimer(10)
+    stateTimer:setForward(false)
+    stateTimer:setDowncount(9)
+    stateTimer:start(curTime)
 end
 
 local function changeSateFromPowerOnToPowerOff()
@@ -161,7 +161,7 @@ local function doStatePowerOn()
         return
     end
 
-    if Timer_getRemainTime(stateTimer) <= 0 then
+    if stateTimer:getRemainTime() <= 0 then
         changeSateFromPowerOnToPowerOff()
     end
 end
@@ -187,10 +187,10 @@ local function doFlightState(time, resetSwitchValue, throttleValue, flightSwitch
     throttle = throttleValue
     flightSwitch = flightSwitchValue
 
-    Timer_setCurTime(worktimeTimer, time)
-    Timer_run(worktimeTimer)
-    Timer_setCurTime(stateTimer, time)
-    Timer_run(stateTimer)
+    worktimeTimer:setCurTime(time)
+    worktimeTimer:run()
+    stateTimer:setCurTime(time)
+    stateTimer:run()
 
     if flightState == 0 then
         doStatePrepare()

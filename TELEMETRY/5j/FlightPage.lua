@@ -9,7 +9,8 @@ local function drawFlightInfo()
 	lcd.drawChannel(90, 1, "RxBt", RIGHT + SMLSIZE)
 
 	lcd.drawText(1, 18, "WT", SMLSIZE)
-	local workTimeRemain = Timer_getRemainTime(gFlightState.getWorktimeTimer())
+	local workTimeRemain = gFlightState.getWorktimeTimer():getRemainTime()
+
 	lcd.drawText(22, 11, LZ_formatTime(workTimeRemain), LEFT + DBLSIZE)
 
 	lcd.drawText(67, 18, "ST", SMLSIZE)
@@ -17,7 +18,9 @@ local function drawFlightInfo()
 
 	if gFlightState.getFlightState() == 1 or gFlightState.getFlightState() == 2 then
 		lcd.drawText(1, 36, "PT", SMLSIZE)
-		local powerOnTimeRemain = Timer_getRemainTime(gFlightState.getStateTimer())
+
+		local powerOnTimeRemain = gFlightState.getStateTimer():getRemainTime()
+
 		lcd.drawText(22, 29, LZ_formatTime(powerOnTimeRemain), LEFT + DBLSIZE)
 	else
 		lcd.drawText(1, 36, "RSSI", SMLSIZE)

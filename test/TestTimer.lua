@@ -3,27 +3,32 @@ function testTimerNormal()
     dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
     dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
  
+    collectgarbage("collect")
+    local m1 = collectgarbage("count")
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 100)
+    local timer = Timer:new()
+    local m2 = collectgarbage("count")
+    print("o mem usage", (m2 - m1) * 1024)
+ 
+    timer:resetTimer(100)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
-    luaunit.assertEquals(Timer_getRemainTime(timer), 100)
-    luaunit.assertEquals(Timer_getRunTime(timer), 0)
+    timer:setCurTime(curTime)
+    timer:start()
+    luaunit.assertEquals(timer:getRemainTime(), 100)
+    luaunit.assertEquals(timer:getRunTime(), 0)
 
     curTime = 200
-    Timer_setCurTime(timer, curTime)
-    luaunit.assertEquals(Timer_getRemainTime(timer), 99)
-    luaunit.assertEquals(Timer_getRunTime(timer), 1)
+    timer:setCurTime(curTime)
+    luaunit.assertEquals(timer:getRemainTime(), 99)
+    luaunit.assertEquals(timer:getRunTime(), 1)
  
     curTime = 210
-    Timer_setCurTime(timer, curTime)
-    luaunit.assertEquals(Timer_getRemainTime(timer), 98)
-    luaunit.assertEquals(Timer_getRunTime(timer), 2)
-    Timer_resetTimer(timer, 100)
-    luaunit.assertEquals(Timer_getRemainTime(timer), 100)
-    luaunit.assertEquals(Timer_getRunTime(timer), 0)
+    timer:setCurTime(curTime)
+    luaunit.assertEquals(timer:getRemainTime(), 98)
+    luaunit.assertEquals(timer:getRunTime(), 2)
+    timer:resetTimer(100)
+    luaunit.assertEquals(timer:getRemainTime(), 100)
+    luaunit.assertEquals(timer:getRunTime(), 0)
 
 end
 
@@ -32,31 +37,31 @@ function testStop()
     dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 100)
+    local timer = Timer:new()
+    timer:resetTimer(100)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
-    luaunit.assertEquals(Timer_getRemainTime(timer), 100)
-    luaunit.assertEquals(Timer_getRunTime(timer), 0)
+    luaunit.assertEquals(timer:getRemainTime(), 100)
+    luaunit.assertEquals(timer:getRunTime(), 0)
 
     curTime = 200
-    Timer_setCurTime(timer, curTime)
+    timer:setCurTime(curTime)
 
-    luaunit.assertEquals(Timer_getRemainTime(timer), 99)
-    luaunit.assertEquals(Timer_getRunTime(timer), 1)
+    luaunit.assertEquals(timer:getRemainTime(), 99)
+    luaunit.assertEquals(timer:getRunTime(), 1)
  
     curTime = 210
-    Timer_setCurTime(timer, curTime)
-    luaunit.assertEquals(Timer_getRemainTime(timer), 98)
-    luaunit.assertEquals(Timer_getRunTime(timer), 2)
+    timer:setCurTime(curTime)
+    luaunit.assertEquals(timer:getRemainTime(), 98)
+    luaunit.assertEquals(timer:getRunTime(), 2)
 
-    Timer_stop(timer)
+    timer:stop()
     curTime = 510
-    Timer_setCurTime(timer, curTime)
-    luaunit.assertEquals(Timer_getRemainTime(timer), 98)
-    luaunit.assertEquals(Timer_getRunTime(timer), 2)
+    timer:setCurTime(curTime)
+    luaunit.assertEquals(timer:getRemainTime(), 98)
+    luaunit.assertEquals(timer:getRunTime(), 2)
 
 end
 
@@ -66,21 +71,21 @@ function testReadRunTime30s()
     dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 120)
+    local timer = Timer:new()
+    timer:resetTimer(120)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playTime = Mock()
     LZ_playTime:whenCalled{with={30}, thenReturn = {}}
     
-    Timer_readRunTime(timer)
+    timer:readRunTime()
     LZ_playTime:assertCallCount(0)
 
     curTime = 3010
-    Timer_setCurTime(timer, curTime)
-    Timer_readRunTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRunTime()
     LZ_playTime:assertAnyCallMatches{arguments={30}}
     LZ_playTime:assertCallCount(1)
 end
@@ -91,29 +96,29 @@ function testReadRunTimeMultiIn1s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/OTSound.lua")
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 120)
+    local timer = Timer:new()
+    timer:resetTimer(120)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     playNumber = Mock()
     playNumber:whenCalled{with={30, 37}, thenReturn = {}}
     
-    Timer_readRunTime(timer)
+    timer:readRunTime()
     playNumber:assertCallCount(0)
 
     getTime = Mock()
     getTime:whenCalled{thenReturn={3010}}
     curTime = 3010
-    Timer_setCurTime(timer, curTime)
-    Timer_readRunTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRunTime()
     playNumber:assertAnyCallMatches{arguments={30, 37}}
     playNumber:assertCallCount(1)
     curTime = 3030
     getTime:whenCalled{thenReturn={3030}}
-    Timer_setCurTime(timer, curTime)
-    Timer_readRunTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRunTime()
     playNumber:assertCallCount(1)
 
 end
@@ -124,21 +129,21 @@ function testReadRunTime60s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 120)
+    local timer = Timer:new()
+    timer:resetTimer(120)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playTime = Mock()
     LZ_playTime:whenCalled{with={60}, thenReturn = {}}
     
-    Timer_readRunTime(timer)
+    timer:readRunTime()
     LZ_playTime:assertCallCount(0)
 
     curTime = 6010
-    Timer_setCurTime(timer, curTime)
-    Timer_readRunTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRunTime()
     LZ_playTime:assertAnyCallMatches{arguments={60}}
     LZ_playTime:assertCallCount(1)
 end
@@ -149,18 +154,18 @@ function testReadRunTime90s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 120)
+    local timer = Timer:new()
+    timer:resetTimer(120)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playTime = Mock()
     LZ_playTime:whenCalled{with={90}, thenReturn = {}}
     
     curTime = 9010
-    Timer_setCurTime(timer, curTime)
-    Timer_readRunTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRunTime()
     LZ_playTime:assertAnyCallMatches{arguments={90}}
     LZ_playTime:assertCallCount(1)
 end
@@ -171,19 +176,19 @@ function testReadRemainTime91s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 95)
+    local timer = Timer:new()
+    timer:resetTimer(95)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={1, 36}, thenReturn = {}}
     LZ_playNumber:whenCalled{with={30, 37}, thenReturn = {}}
     
     curTime = 410 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playNumber:assertCallCount(0)
 end
 
@@ -194,18 +199,18 @@ function testReadRemainTime90s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 95)
+    local timer = Timer:new()
+    timer:resetTimer(95)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playTime = Mock()
     LZ_playTime:whenCalled{with={90}, thenReturn = {}}
     
     curTime = 510 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playTime:assertAnyCallMatches{arguments={90}}
     LZ_playTime:assertCallCount(1)
 end
@@ -216,18 +221,18 @@ function testReadRemainTime60s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 95)
+    local timer = Timer:new()
+    timer:resetTimer(95)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playTime = Mock()
     LZ_playTime:whenCalled{with={60}, thenReturn = {}}
     
     curTime = 3510 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playTime:assertAnyCallMatches{arguments={60}}
     LZ_playTime:assertCallCount(1)
 end
@@ -238,18 +243,18 @@ function testReadRemainTime30s()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 95)
+    local timer = Timer:new()
+    timer:resetTimer(95)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
     LZ_playTime = Mock()
     LZ_playTime:whenCalled{with={30}, thenReturn = {}}
     
     curTime = 6510 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playTime:assertAnyCallMatches{arguments={30}}
     LZ_playTime:assertCallCount(1)
 end
@@ -260,13 +265,13 @@ function testDowncount()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 95)
+    local timer = Timer:new()
+    timer:resetTimer(95)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
-    Timer_setDowncount(timer, 21)
+    timer:setDowncount(21)
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 0}, thenReturn = {}}
@@ -276,30 +281,30 @@ function testDowncount()
     
 
     curTime = 7410 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playNumber:assertAnyCallMatches{arguments={21, 0}}
     LZ_playNumber:assertCallCount(1)
 
     curTime = 7610 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     curTime = 7620
 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playNumber:assertAnyCallMatches{arguments={19, 0}}
     LZ_playNumber:assertCallCount(2)
 
     curTime = 9510 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playNumber:assertCallCount(3)
 
 
     curTime = 9610 
-    Timer_setCurTime(timer, curTime)
-    Timer_readRemainTime(timer)
+    timer:setCurTime(curTime)
+    timer:readRemainTime()
     LZ_playNumber:assertCallCount(3)
 
 end
@@ -310,13 +315,13 @@ function testForwardTimer()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 65)
+    local timer = Timer:new()
+    timer:resetTimer(65)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:start()
 
-    Timer_setDowncount(timer, 10)
+    timer:setDowncount(10)
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 37}, thenReturn = {}}
@@ -329,25 +334,25 @@ function testForwardTimer()
    
 
     curTime = 3010 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playTime:assertAnyCallMatches{argumets={30}}
     LZ_playTime:assertCallCount(1)
 
     curTime = 6010 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playNumber:assertAnyCallMatches{arguments={5, 0}}
     LZ_playNumber:assertCallCount(1)
 
     curTime = 6110 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playNumber:assertAnyCallMatches{arguments={4, 0}}
     LZ_playNumber:assertCallCount(2)
     curTime = 6610 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playNumber:assertCallCount(2)
 
 end
@@ -358,14 +363,14 @@ function testBackwardTimer()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 65)
+    local timer = Timer:new()
+    timer:resetTimer(65)
     local curTime = 10
-    Timer_setCurTime(timer, curTime)
-    Timer_setForward(timer, false)
-    Timer_start(timer)
+    timer:setCurTime(curTime)
+    timer:setForward(false)
+    timer:start()
 
-    Timer_setDowncount(timer, 10)
+    timer:setDowncount(10)
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 0}, thenReturn = {}}
@@ -374,19 +379,19 @@ function testBackwardTimer()
     
 
     curTime = 3510 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playTime:assertAnyCallMatches{arguments={30}}
     LZ_playTime:assertCallCount(1)
 
     curTime = 6110 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playNumber:assertAnyCallMatches{arguments={4, 0}}
     LZ_playNumber:assertCallCount(1)
     curTime = 6610 
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     LZ_playNumber:assertCallCount(1)
 
 end
@@ -397,30 +402,30 @@ function testGetDuration()
  
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 65)
+    local timer = Timer:new()
+    timer:resetTimer(65)
     local curTime = 10
-    Timer_setForward(timer, false)
-    Timer_setCurTime(timer, curTime)
-    Timer_setDowncount(timer, 10)
+    timer:setForward(false)
+    timer:setCurTime(curTime)
+    timer:setDowncount(10)
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 37}, thenReturn = {}}
     LZ_playNumber:whenCalled{with={any, 36}, thenReturn = {}}
 
-    local duration = Timer_getDuration(timer)
+    local duration = timer:getDuration()
     luaunit.assertEquals(duration, 0)
 
-    Timer_start(timer)
+    timer:start()
     curTime = 1010
-    Timer_setCurTime(timer, curTime)
-    duration = Timer_getDuration(timer)
+    timer:setCurTime(curTime)
+    duration = timer:getDuration()
     luaunit.assertEquals(duration, 10)
 
     curTime = 3510 
-    Timer_setCurTime(timer, curTime)
-    Timer_stop(timer)
-    duration = Timer_getDuration(timer)
+    timer:setCurTime(curTime)
+    timer:stop()
+    duration = timer:getDuration()
     luaunit.assertEquals(duration, 35)
 end
 
@@ -436,23 +441,23 @@ function testForwardAnnounce()
         haveDoneCallback = true
     end
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 0)
+    local timer = Timer:new()
+    timer:resetTimer(0)
     local curTime = 10
-    Timer_setForward(timer, true)
-    Timer_setCurTime(timer, curTime)
+    timer:setForward(true)
+    timer:setCurTime(curTime)
     timer.announceTime = 10
     timer.announceCallback = announceCallback
-    Timer_start(timer)
+    timer:start()
 
     curTime = 910
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     luaunit.assertFalse(haveDoneCallback)
 
     curTime = 1010
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     luaunit.assertTrue(haveDoneCallback)
 end
 
@@ -468,23 +473,23 @@ function testBackwardAnnounce()
         haveDoneCallback = true
     end
  
-    local timer = Timer_new()
-    Timer_resetTimer(timer, 10)
+    local timer = Timer:new()
+    timer:resetTimer(10)
     local curTime = 10
-    Timer_setForward(timer, false)
-    Timer_setCurTime(timer, curTime)
+    timer:setForward(false)
+    timer:setCurTime(curTime)
     timer.announceTime = 3
     timer.announceCallback = announceCallback
-    Timer_start(timer)
+    timer:start()
 
     curTime = 110
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     luaunit.assertFalse(haveDoneCallback)
 
     curTime = 710
-    Timer_setCurTime(timer, curTime)
-    Timer_run(timer)
+    timer:setCurTime(curTime)
+    timer:run()
     luaunit.assertTrue(haveDoneCallback)
 end
 

@@ -41,9 +41,9 @@ end
 
 local function stop()
     startTime = 0
-    Timer_setDowncount(timer, 0)
+    timer:setDowncount(0)
     timer.mute = true
-    Timer_stop(timer)
+    timer:stop()
     roundState = 1
 end
 
@@ -101,7 +101,7 @@ local function setAnnounceCallback()
 end
 
 local function change2StateTaskTime()
-    Timer_stop(timer)
+    timer:stop()
     roundState = 4
     task.start(timer)
 end
@@ -111,12 +111,12 @@ local function change2StateTestTime()
     if testTime > 0 then
         LZ_playFile("LAOZHU/test.wav", true)
         roundState = 3
-        Timer_stop(timer)
-        Timer_resetTimer(timer, testTime)
-        Timer_setDowncount(timer, 15)
+        timer:stop()
+        timer:resetTimer(testTime)
+        timer:setDowncount(15)
         setAnnounceCallback()
         timer.mute = isTimerMuted
-        Timer_start(timer)
+        timer:start()
     else
         change2StateTaskTime()
     end
@@ -127,11 +127,11 @@ local function change2StateOperationTime()
         LZ_playTime(preparationTime)
         LZ_playFile("LAOZHU/prep.wav")
         roundState = 2
-        Timer_resetTimer(timer, preparationTime)
-        Timer_setDowncount(timer, 5)
+        timer:resetTimer(preparationTime)
+        timer:setDowncount(5)
         timer.mute = isTimerMuted
         setAnnounceCallback()
-        Timer_start(timer)
+        timer:start()
         if preparationCallback then
             preparationCallback()
         end
@@ -142,31 +142,31 @@ end
 
 local function change2StateEnd()
     roundState = 5
-    Timer_stop(timer)
-    Timer_setDowncount(timer, 0)
+    timer:stop()
+    timer:setDowncount(0)
     timer.mute = true
 end
 
 local function init()
-	timer = Timer_new()
+	timer = Timer:new()
 	timer.mute = isTimerMuted
-	Timer_setForward(timer, false)
-    Timer_setDuration(timer, preparationTime)
+	timer:setForward(false)
+    timer:setDuration(preparationTime)
 end
 
 local function run(time)
-	Timer_setCurTime(timer, time)
-	Timer_run(timer)
+	timer:setCurTime(time)
+	timer:run()
     if roundState == 1 then --doBegin()
         if startTime > 0 then
             change2StateOperationTime()
         end
     elseif roundState == 2 then --doPreparationTime()
-        if Timer_getRemainTime(timer) <= 0 then
+        if timer:getRemainTime() <= 0 then
             change2StateTestTime()
         end
     elseif roundState == 3 then --doTestTime()
-        if Timer_getRemainTime(timer) <= 0 then
+        if timer:getRemainTime() <= 0 then
             change2StateTaskTime()
         end
     elseif roundState == 4 then --doTaskTime()
