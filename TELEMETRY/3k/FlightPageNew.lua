@@ -38,7 +38,7 @@ local function drawFlightInfo()
 
 	lcd.drawText(1, 0, model.getInfo().name, 0)
 
-	local taskName = CFGgetStrField(f3kCfg, "task", "-")
+	local taskName = f3kCfg:getStrField("task", "-")
 	
 	lcd.drawText(64, 0, taskName, RIGHT)
 	lcd.drawLine(0, 9, 64, 9, SOLID, 0)
@@ -78,7 +78,7 @@ local function init()
 	destFlightTimeEdit = TIMEEnewTimeEdit()
 	destFlightTimeEdit.num = gF3kCore.getFlightState().getDestFlightTime()
 	NEsetRange(destFlightTimeEdit, 0, 900)
-	destFlightTimeEdit.step = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
+	destFlightTimeEdit.step = f3kCfg:getNumberField("DestTimeStep", 15)
 	NEsetOnChange(destFlightTimeEdit, onDestFlightTimeChange)
 	local row = VMaddRow(viewMatrix)
 	row[1] = destFlightTimeEdit
