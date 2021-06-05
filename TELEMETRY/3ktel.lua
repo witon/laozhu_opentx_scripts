@@ -30,9 +30,9 @@ end
 
 local function loadPage()
 	if gF3kCore == nil then
-		LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
-		f3kCfg = CFGnewCfg()
-		CFGreadFromFile(f3kCfg, gConfigFileName)
+		LZ_runModule(gScriptDir .. "LAOZHU/CfgO.lua")
+		f3kCfg = CFGC:new()
+		f3kCfg:readFromFile(gConfigFileName)
 		gF3kCore = LZ_runModule(gScriptDir .. "TELEMETRY/3k/f3kCore.lua")
 		gF3kCore.init()
 	end

@@ -18,30 +18,31 @@ LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
 LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
 
 local function onTaskSelectorChange(taskSelector)
-    f3kCfg["task"] = SgetSelectedText(taskSelector)
-    CFGwriteToFile(f3kCfg, gConfigFileName)
+    f3kCfg.kvs["task"] = SgetSelectedText(taskSelector)
+    f3kCfg:writeToFile(gConfigFileName)
     gF3kCore.resetRound()
 end
 
 local function setCfgValue()
-    f3kCfg["DestTimeStep"] = destTimeSettingStepNumEdit.num
-    f3kCfg["PrepTime"] = prepTimeEdit.num
-    f3kCfg["TestTime"] = testTimeEdit.num
-    f3kCfg["NFlyTime"] = noflyTimeEdit.num
+    local kvs = f3kCfg.kvs
+    kvs["DestTimeStep"] = destTimeSettingStepNumEdit.num
+    kvs["PrepTime"] = prepTimeEdit.num
+    kvs["TestTime"] = testTimeEdit.num
+    kvs["NFlyTime"] = noflyTimeEdit.num
     if muteCheckbox.checked then
-        f3kCfg["MuteRndTimer"] = 1
+        kvs["MuteRndTimer"] = 1
     else
-        f3kCfg["MuteRndTimer"] = 0
+        kvs["MuteRndTimer"] = 0
     end
 end
 
 local function getCfgValue()
-    destTimeSettingStepNumEdit.num = CFGgetNumberField(f3kCfg, "DestTimeStep", 15)
-    prepTimeEdit.num = CFGgetNumberField(f3kCfg, "PrepTime", 120)
-    testTimeEdit.num = CFGgetNumberField(f3kCfg, "TestTime", 40)
-    noflyTimeEdit.num = CFGgetNumberField(f3kCfg, "NFlyTime", 60)
-    TSsetTask(taskSelector, CFGgetStrField(f3kCfg, "task", "Train"))
-    if CFGgetNumberField(f3kCfg, "MuteRndTimer", 0) == 0 then
+    destTimeSettingStepNumEdit.num = f3kCfg:getNumberField("DestTimeStep", 15)
+    prepTimeEdit.num = f3kCfg:getNumberField("PrepTime", 120)
+    testTimeEdit.num = f3kCfg:getNumberField("TestTime", 40)
+    noflyTimeEdit.num = f3kCfg:getNumberField("NFlyTime", 60)
+    TSsetTask(taskSelector, f3kCfg:getStrField("task", "Train"))
+    if f3kCfg:getNumberField("MuteRndTimer", 0) == 0 then
         muteCheckbox.checked = false
     else
         muteCheckbox.checked = true
@@ -50,7 +51,7 @@ end
 
 local function onNumEditChange(numEdit)
     setCfgValue()
-    CFGwriteToFile(f3kCfg, gConfigFileName)
+    f3kCfg:writeToFile(gConfigFileName)
 end
 
 local function destroy()
@@ -70,7 +71,7 @@ end
 
 local function onMuteCheckBoxChanged(checkbox)
     setCfgValue()
-    CFGwriteToFile(f3kCfg, gConfigFileName)
+    f3kCfg:writeToFile(gConfigFileName)
 end
 
 local function init()

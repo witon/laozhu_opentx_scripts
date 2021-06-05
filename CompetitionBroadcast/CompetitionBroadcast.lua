@@ -7,14 +7,14 @@ gEmuTime = 1
 gIsTestRun = false
 LZ_runModule("LAOZHU/LuaUtils.lua")
 LZ_runModule("LAOZHU/comm/PCIO.lua")
-LZ_runModule("LAOZHU/Cfg.lua")
+LZ_runModule("LAOZHU/CfgO.lua")
 
-local cfg = CFGnewCfg()
-CFGreadFromFile(cfg, ".CompetitionBroadcast")
-local soundPath = CFGgetStrField(cfg, 'sound_path', "./SOUND/")
-local testWindow = CFGgetNumberField(cfg, 'test_window', 45)
-local prepareWindow = CFGgetNumberField(cfg, 'prepare_window', 120)
-local noflyWindow = CFGgetNumberField(cfg, 'nofly_window', 60)
+local cfg = CFGC:new()
+cfg:readFromFile(".CompetitionBroadcast")
+local soundPath = cfg:getStrField('sound_path', "./SOUND/")
+local testWindow = cfg:getNumberField('test_window', 45)
+local prepareWindow = cfg:getNumberField('prepare_window', 120)
+local noflyWindow = cfg:getNumberField('nofly_window', 60)
 local optParse = LZ_runModule("CompetitionBroadcast/ParseInputOpt.lua")
 local ret, tasksFilePath, groupsFilePath, isSingleGroup, isReadPilotName, isTestRun, isEmulate = optParse.parse(arg)
 gIsTestRun = isTestRun

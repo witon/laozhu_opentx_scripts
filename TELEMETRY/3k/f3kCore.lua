@@ -18,13 +18,13 @@ end
 local function resetRound()
 	f3kRound.stop()
 	local isRoundTimerMuted = false
-	if CFGgetNumberField(f3kCfg, "MuteRndTimer", 0) == 1 then
+	if f3kCfg:getNumberField("MuteRndTimer", 0) == 1 then
 		isRoundTimerMuted = true
 	end
-	f3kRound.setRoundParam(CFGgetNumberField(f3kCfg, "PrepTime", 120),
-							CFGgetNumberField(f3kCfg, "TestTime", 40),
-							CFGgetStrField(f3kCfg, 'task', "-"),
-							CFGgetNumberField(f3kCfg, "NFlyTime", 60),
+	f3kRound.setRoundParam(f3kCfg:getNumberField("PrepTime", 120),
+							f3kCfg:getNumberField("TestTime", 40),
+							f3kCfg:getStrField('task', "-"),
+							f3kCfg:getNumberField("NFlyTime", 60),
 							isRoundTimerMuted
 						)
 end
@@ -37,7 +37,7 @@ local function init()
 	f3kRound.init()
 	resetRound()
 	flightState.setLandedCallback(landedCallBack)
-	LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	--LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
 	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
@@ -50,7 +50,7 @@ local function init()
 
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
-	roundResetSwitchTrigeDetector = STD_new(getValue(CFGgetNumberField(f3kCfg, 'RdResetSw')))
+	roundResetSwitchTrigeDetector = STD_new(getValue(f3kCfg:getNumberField('RdResetSw')))
 end
 
 local function run(event)
@@ -66,19 +66,19 @@ local function run(event)
 	flightState.doFlightState(curTime, flightModeName, rtcTime)
 
 
-	local roundStartSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'RdSw'))
+	local roundStartSwitchValue = getValue(f3kCfg:getNumberField('RdSw'))
 	if roundStartSwitchValue > 0 and not f3kRound.isStart() then
 		f3kRound.start(curTime)
 	end
 	
-	local roundResetSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'RdResetSw'))
+	local roundResetSwitchValue = getValue(f3kCfg:getNumberField('RdResetSw'))
 	if STD_run(roundResetSwitchTrigeDetector, roundResetSwitchValue) then
 		resetRound()
 	end
 
 
-	local varSelectorSliderValue = getValue(CFGgetNumberField(f3kCfg, 'SelSlider'))
-	local varReadSwitchValue = getValue(CFGgetNumberField(f3kCfg, 'ReadSw'))
+	local varSelectorSliderValue = getValue(f3kCfg:getNumberField('SelSlider'))
+	local varReadSwitchValue = getValue(f3kCfg:getNumberField('ReadSw'))
 	
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 end

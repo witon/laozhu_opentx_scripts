@@ -17,6 +17,8 @@ local viewMatrix = nil
 
 local testFiles = {
     "/SCRIPTS/emutest/testCfg.lua",
+    "/SCRIPTS/emutest/testCfgO.lua",
+ 
     "/SCRIPTS/emutest/testLoadModule.lua",
     "/SCRIPTS/emutest/testManagerOutput.lua",
     "/SCRIPTS/emutest/testDataFileDecode.lua",
@@ -134,7 +136,7 @@ local function init()
     curCases = LZ_runModule(testFiles[curFileIndex])
     curCaseIndex = 1
     LZ_runModule(gScriptDir .. "LAOZHU/EmuTestUtils.lua")
-    LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+    LZ_runModule(gScriptDir .. "LAOZHU/OTUtils.lua")
 
 end
 

@@ -10,22 +10,24 @@ LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
 
  
 local function setCfgValue()
-    f3kCfg["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
-    f3kCfg["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
-    f3kCfg["RdSw"] = ISgetSelectedItemId(roundSwitchSelector)
-    f3kCfg["RdResetSw"] = ISgetSelectedItemId(roundResetSwitchSelector)
+    local kvs = f3kCfg.kvs
+    kvs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
+    kvs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
+    kvs["RdSw"] = ISgetSelectedItemId(roundSwitchSelector)
+    kvs["RdResetSw"] = ISgetSelectedItemId(roundResetSwitchSelector)
 end
 
 local function getCfgValue()
-    ISsetSelectedItemById(readSwitchSelector, f3kCfg["ReadSw"])
-    ISsetSelectedItemById(varSliderSelector, f3kCfg["SelSlider"])
-    ISsetSelectedItemById(roundSwitchSelector, f3kCfg["RdSw"])
-    ISsetSelectedItemById(roundResetSwitchSelector, f3kCfg["RdResetSw"])
+    local kvs = f3kCfg.kvs
+    ISsetSelectedItemById(readSwitchSelector, kvs["ReadSw"])
+    ISsetSelectedItemById(varSliderSelector, kvs["SelSlider"])
+    ISsetSelectedItemById(roundSwitchSelector, kvs["RdSw"])
+    ISsetSelectedItemById(roundResetSwitchSelector, kvs["RdResetSw"])
 end
 
 local function onInputSelectorChange(selector)
     setCfgValue()
-    CFGwriteToFile(f3kCfg, gConfigFileName)
+    f3kCfg:writeToFile(gConfigFileName)
 end
 
 

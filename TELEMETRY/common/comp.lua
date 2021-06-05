@@ -1,5 +1,6 @@
 local compileFiles = {
     "LAOZHU/Cfg.lua",
+    "LAOZHU/CfgO.lua",
     "LAOZHU/DataFileDecode.lua",
     "LAOZHU/EmuTestUtils.lua",
     "LAOZHU/f5jReadVarMap.lua",
