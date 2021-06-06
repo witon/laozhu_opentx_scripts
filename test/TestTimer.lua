@@ -3,12 +3,8 @@ function testTimerNormal()
     dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
     dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
  
-    collectgarbage("collect")
-    local m1 = collectgarbage("count")
     dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
     local timer = Timer:new()
-    local m2 = collectgarbage("count")
-    print("o mem usage", (m2 - m1) * 1024)
  
     timer:resetTimer(100)
     local curTime = 10
