@@ -26,7 +26,6 @@ end
 function CheckBox:new()
     self.__index = self
     local o = self.super:new()
-    self.modiIndex = 1
     self.checked = true
     setmetatable(o, self)
     return o

@@ -31,6 +31,5 @@ function CurveSelector:new()
     self.__index = self
     local o = self.super:new()
     setmetatable(o, self)
-    self.selectedIndex = -1
     return o 
 end

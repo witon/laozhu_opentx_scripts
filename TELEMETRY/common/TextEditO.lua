@@ -19,7 +19,6 @@ end
 
 
 function TextEdit:setFocusState(state)
-
     self.super.setFocusState(self, state)
     if state == 2 then
         self:preProcess()

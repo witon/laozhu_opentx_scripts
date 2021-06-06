@@ -1,9 +1,6 @@
 InputView = {focusState = 0}
 function InputView:setFocusState(state)
     self.focusState = state
---    if self.setFocusState then
---        self.setFocusState(state)
---    end
 end
 
 function InputView:getTextOption(invers, option)

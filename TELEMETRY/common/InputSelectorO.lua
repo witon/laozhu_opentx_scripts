@@ -42,7 +42,7 @@ function InputSelector:setSelectedItemById(id)
             return
         end
     end
-    self.selectedIndex = 1
+    self.selectedIndex = 0
 end
 
 function InputSelector:setFieldType(type)
@@ -73,8 +73,6 @@ function InputSelector:getText(index)
 end
 
 function InputSelector:draw(x, y, invers, option)
---    option = self:getTextOption(invers, option)
---    lcd.drawText(x, y, self.fieldTable.nameArray[self.selectedIndex], option)
     self.super.draw(self, x, y, invers, option)
     if self.focusState == 2 then
         self:detectField()

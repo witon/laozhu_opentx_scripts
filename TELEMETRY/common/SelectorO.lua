@@ -15,15 +15,6 @@ function Selector:dec()
     return true
 end
 
-
---function Selector:getSelectedText()
---    if self.textFun then
---        return self.textFun(self.selectedIndex)
---    else
---        return self.selectedIndex --return string.tostring(self.selectedIndex)
---    end
---end
-
 function Selector:doKey(event)
     if event == 35 or event == 67 then
         local changed = self:inc(self)
@@ -51,7 +42,6 @@ function Selector:new()
     self.__index = self
     local o = self.super:new()
     self.selectedIndex = -1
-    self.textFun = nil
     setmetatable(o, self)
     return o 
 end

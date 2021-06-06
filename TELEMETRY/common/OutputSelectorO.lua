@@ -17,14 +17,6 @@ function OutputSelector:dec()
     end
     self.selectedIndex = self.selectedIndex - 1
     return true
-
---    self.selectedIndex = self.selectedIndex - 1
---    local outputName = LZ_getOutputName(self.selectedIndex)
---    if not outputName then
---        self.selectedIndex = self.selectedIndex + 1
---        return false
---    end
---    return true
 end
 
 function OutputSelector:getText(index)
@@ -34,10 +26,6 @@ function OutputSelector:getText(index)
     end
     return outputName
 end
-
---function OutputSelector:draw(x, y, invers, option)
---    lcd.drawText(x, y, self.selectedName, option)
---end
 
 function OutputSelector:new()
     self.__index = self
