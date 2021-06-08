@@ -8,17 +8,17 @@ local muteCheckbox = nil
 local viewMatrix = nil
 local lineArray = nil
 
-LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelector.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrixO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/InputViewO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/ButtonO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEditO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEditO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/SelectorO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelectorO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBoxO.lua")
 
 local function onTaskSelectorChange(taskSelector)
-    f3kCfg.kvs["task"] = SgetSelectedText(taskSelector)
+    f3kCfg.kvs["task"] = taskSelector:getText(taskSelector.selectedIndex)
     f3kCfg:writeToFile(gConfigFileName)
     gF3kCore.resetRound()
 end
@@ -41,7 +41,7 @@ local function getCfgValue()
     prepTimeEdit.num = f3kCfg:getNumberField("PrepTime", 120)
     testTimeEdit.num = f3kCfg:getNumberField("TestTime", 40)
     noflyTimeEdit.num = f3kCfg:getNumberField("NFlyTime", 60)
-    TSsetTask(taskSelector, f3kCfg:getStrField("task", "Train"))
+    taskSelector:setTask(f3kCfg:getStrField("task", "Train"))
     if f3kCfg:getNumberField("MuteRndTimer", 0) == 0 then
         muteCheckbox.checked = false
     else
@@ -55,14 +55,14 @@ local function onNumEditChange(numEdit)
 end
 
 local function destroy()
-    VMunload()
-    IVunload()
-    NEunload()
-    TIMEEunload()
-    BTunload()
-    Sunload()
-    TSunload()
-    CBunload()
+    ViewMatrix = nil
+    InputView = nil
+    NumEdit = nil
+    TimeEdit = nil
+    Button = nil
+    Selector = nil
+    TaskSelector = nil
+    CheckBox = nil
 end
 
 local function onResetRoundButtonClicked()
@@ -75,53 +75,53 @@ local function onMuteCheckBoxChanged(checkbox)
 end
 
 local function init()
-    resetButton = BTnewButton()
+    resetButton = Button:new()
     resetButton.text = "Reset Round"
-    BTsetOnClick(resetButton, onResetRoundButtonClicked)
+    resetButton:setOnClick(onResetRoundButtonClicked)
 
-    taskSelector = TSnewTaskSelector()
-    SsetOnChange(taskSelector, onTaskSelectorChange)
+    taskSelector = TaskSelector:new()
+    taskSelector:setOnChange(onTaskSelectorChange)
 
-    destTimeSettingStepNumEdit = NEnewNumEdit()
+    destTimeSettingStepNumEdit = NumEdit:new()
     destTimeSettingStepNumEdit.step = 5
-    NEsetRange(destTimeSettingStepNumEdit, 1, 60)
-    NEsetOnChange(destTimeSettingStepNumEdit, onNumEditChange)
+    destTimeSettingStepNumEdit:setRange(1, 60)
+    destTimeSettingStepNumEdit:setOnChange(onNumEditChange)
 
-    prepTimeEdit = TIMEEnewTimeEdit()
-    NEsetRange(prepTimeEdit, 0, 600)
+    prepTimeEdit = TimeEdit:new()
+    prepTimeEdit:setRange(0, 600)
     prepTimeEdit.step = 5
-    NEsetOnChange(prepTimeEdit, onNumEditChange)
+    prepTimeEdit:setOnChange(onNumEditChange)
 
-    testTimeEdit = TIMEEnewTimeEdit()
-    NEsetRange(testTimeEdit, 0, 600)
+    testTimeEdit = TimeEdit:new()
+    testTimeEdit:setRange(0, 600)
     testTimeEdit.step = 5
-    NEsetOnChange(testTimeEdit, onNumEditChange)
+    testTimeEdit:setOnChange(onNumEditChange)
 
-    noflyTimeEdit = TIMEEnewTimeEdit()
-    NEsetRange(noflyTimeEdit, 0, 600)
+    noflyTimeEdit = TimeEdit:new()
+    noflyTimeEdit:setRange(0, 600)
     noflyTimeEdit.step = 5
-    NEsetOnChange(noflyTimeEdit, onNumEditChange)
+    noflyTimeEdit:setOnChange(onNumEditChange)
 
-    muteCheckbox = CBnewCheckBox()
-    CBsetOnChange(muteCheckbox, onMuteCheckBoxChanged)
+    muteCheckbox = CheckBox:new()
+    muteCheckbox:setOnChange(onMuteCheckBoxChanged)
     muteCheckbox.checked = false
 
-    viewMatrix = VMnewViewMatrix()
-    local row = VMaddRow(viewMatrix)
+    viewMatrix = ViewMatrix:new()
+    local row = viewMatrix:addRow()
     row[1] = resetButton
-    row = VMaddRow(viewMatrix)
+    row = viewMatrix:addRow()
     row[1] = taskSelector
-    row = VMaddRow(viewMatrix)
+    row = viewMatrix:addRow()
     row[1] = destTimeSettingStepNumEdit
-    row = VMaddRow(viewMatrix)
+    row = viewMatrix:addRow()
     row[1] = prepTimeEdit
-    row = VMaddRow(viewMatrix)
+    row = viewMatrix:addRow()
     row[1] = testTimeEdit
-    row = VMaddRow(viewMatrix)
+    row = viewMatrix:addRow()
     row[1] = noflyTimeEdit
-    row = VMaddRow(viewMatrix)
+    row = viewMatrix:addRow()
     row[1] = muteCheckbox
-    VMupdateCurIVFocus(viewMatrix)
+    viewMatrix:updateCurIVFocus()
     lineArray = {{"", resetButton},
         {"Task", taskSelector},
         {"Flight Time Step", destTimeSettingStepNumEdit},
@@ -134,7 +134,7 @@ local function init()
 end
 
 local function doKey(event)
-    local eventProcessed = VMdoKey(viewMatrix, event)
+    local eventProcessed = viewMatrix:doKey(event)
     return eventProcessed
 end
 
@@ -153,7 +153,7 @@ local function run(event, time)
     local y = 10
     for i=viewMatrix.scrollLine + 1, 7, 1 do
         lcd.drawText(0, y, lineArray[i][1], SMLSIZE + LEFT)
-        IVdraw(lineArray[i][2], 128, y, invers, SMLSIZE + RIGHT)
+        lineArray[i][2]:draw(128, y, invers, SMLSIZE + RIGHT)
         y = y + 9
     end
     return doKey(event)

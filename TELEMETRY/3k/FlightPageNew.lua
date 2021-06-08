@@ -1,10 +1,10 @@
 local viewMatrix = nil
 local destFlightTimeEdit = nil
 
-LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEdit.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrixO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/InputViewO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEditO.lua")
+LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEditO.lua")
 
 
 local function drawFlightList()
@@ -69,35 +69,34 @@ local function drawFlightInfo()
 
 	lcd.drawText(0, 30, "FT", SMLSIZE)
 	lcd.drawText(24, 29, LZ_formatTime(flightState.getFlightTime()), LEFT + DBLSIZE)
-	IVdraw(destFlightTimeEdit, 0, 38, invers, LEFT + SMLSIZE)
+	destFlightTimeEdit:draw(0, 38, invers, LEFT + SMLSIZE)
 
 end
 
 local function init()
-	viewMatrix = VMnewViewMatrix()
-	destFlightTimeEdit = TIMEEnewTimeEdit()
+	viewMatrix = ViewMatrix:new()
+	destFlightTimeEdit = TimeEdit:new()
 	destFlightTimeEdit.num = gF3kCore.getFlightState().getDestFlightTime()
-	NEsetRange(destFlightTimeEdit, 0, 900)
+	destFlightTimeEdit:setRange(0, 900)
 	destFlightTimeEdit.step = f3kCfg:getNumberField("DestTimeStep", 15)
-	NEsetOnChange(destFlightTimeEdit, onDestFlightTimeChange)
-	local row = VMaddRow(viewMatrix)
+	destFlightTimeEdit:setOnChange(onDestFlightTimeChange)
+	local row = viewMatrix:addRow()
 	row[1] = destFlightTimeEdit
-    VMupdateCurIVFocus(viewMatrix)
+	viewMatrix:updateCurIVFocus()
 end
 
 
 local function run(event, time)
 	drawFlightInfo()
 	drawFlightList()
-	VMdoKey(viewMatrix, event)
-	
+	viewMatrix:doKey(event)
 end
 
 local function destroy()
-	VMunload()
-	IVunload()
-	NEunload()
-	TIMEEunload()
+	ViewMatrix = nil
+	InputView = nil
+	NumEdit = nil
+	TimeEdit = nil
 end
 
 return {run = run, init=init, destroy=destroy}
