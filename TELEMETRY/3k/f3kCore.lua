@@ -1,6 +1,6 @@
 gConfigFileName = "3k.cfg"
-LZ_runModule(gScriptDir .. "LAOZHU/comm/Timer.lua")
-LZ_runModule(gScriptDir .. "LAOZHU/SwitchTrigeDetector.lua")
+LZ_runModule("LAOZHU/comm/Timer.lua")
+LZ_runModule("LAOZHU/SwitchTrigeDetector.lua")
 local flightState = nil
 local curAlt = 0
 local altID = 0
@@ -31,21 +31,21 @@ end
 
 local function init()
 
-	flightState = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kState.lua")
-	LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
-	f3kRound = LZ_runModule(gScriptDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
+	flightState = LZ_runModule("LAOZHU/F3k/F3kState.lua")
+	LZ_runModule("LAOZHU/F3k/F3kFlightRecord.lua")
+	f3kRound = LZ_runModule("LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
 	resetRound()
 	flightState.setLandedCallback(landedCallBack)
-	--LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	--LZ_runModule("/LAOZHU/Cfg.lua")
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
-	readVar = LZ_runModule(gScriptDir .. "LAOZHU/readVar.lua")
-	local f3kReadVarMap = LZ_runModule(gScriptDir .. "LAOZHU/F3k/f3kReadVarMap.lua")
+	readVar = LZ_runModule("LAOZHU/readVar.lua")
+	local f3kReadVarMap = LZ_runModule("LAOZHU/F3k/f3kReadVarMap.lua")
 
-	--LZ_runModule(gScriptDir .. "LAOZHU/Sensor.lua")
-	--LZ_runModule(gScriptDir .. "LAOZHU/Queue.lua")
-	--monitor = LZ_runModule(gScriptDir .. "LAOZHU/Monitor.lua")
+	--LZ_runModule("LAOZHU/Sensor.lua")
+	--LZ_runModule("LAOZHU/Queue.lua")
+	--monitor = LZ_runModule("LAOZHU/Monitor.lua")
 	--monitor.init()
 
 	f3kReadVarMap.setF3kState(flightState)

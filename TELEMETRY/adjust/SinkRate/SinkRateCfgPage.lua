@@ -10,10 +10,10 @@ local cfgFileName = nil
 local sinkRateCfg = nil
 
 local function loadModule()
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/Selector.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/ModeSelector.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+    LZ_runModule("TELEMETRY/common/Selector.lua")
+    LZ_runModule("TELEMETRY/common/ModeSelector.lua")
+    LZ_runModule("TELEMETRY/common/InputSelector.lua")
+    LZ_runModule("TELEMETRY/common/Fields.lua")
     initFieldsInfo()
 end
 

@@ -11,11 +11,11 @@ local configFileName = "output.cfg"
 local outputCfg = nil
 
 local function loadModule()
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/TextEdit.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-    LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
+    LZ_runModule("TELEMETRY/common/InputView.lua")
+    LZ_runModule("TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule("TELEMETRY/common/TextEdit.lua")
+    LZ_runModule("TELEMETRY/common/NumEdit.lua")
+    LZ_runModule("LAOZHU/Cfg.lua")
 end
 
 local function unloadModule()

@@ -1,8 +1,8 @@
 local f3kRecordListView = nil
 
 local function init()
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/3k/F3kRecordListView.lua")
+	LZ_runModule("TELEMETRY/common/InputView.lua")
+	LZ_runModule("TELEMETRY/3k/F3kRecordListView.lua")
 	f3kRecordListView = F3KRLVnewRecordListView()
 	f3kRecordListView.records = F3KFRgetFlightArray(gF3kCore.getRound().getTask().getFlightRecord())
 	IVsetFocusState(f3kRecordListView, 2)

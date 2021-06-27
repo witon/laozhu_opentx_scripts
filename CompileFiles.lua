@@ -1,8 +1,4 @@
 local files = {
-	"CompetitionBroadcast/CompetitionBroadcast.lua",
-	"CompetitionBroadcast/GroupFileParser.lua",
-	"CompetitionBroadcast/ParseInputOpt.lua",
-	"CompetitionBroadcast/TaskFileParser.lua",
 	"emutest/luaForTestLoadModule.lua",
 	"emutest/testCfg.lua",
 	"emutest/testCfgO.lua",
@@ -100,8 +96,6 @@ local files = {
 	"TELEMETRY/ut.lua",
 	"TELEMETRY/utO.lua",
 	"test/test.lua",
-	"test/TestCompetitionBroadcast/TestGroupFileParser.lua",
-	"test/TestCompetitionBroadcast/TestTaskFileParser.lua",
 	"test/TestF3kCompetitionWF.lua",
 	"test/TestF3kFlightRecord.lua",
 	"test/TestF3kRound.lua",

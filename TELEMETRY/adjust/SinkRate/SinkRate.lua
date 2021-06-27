@@ -13,15 +13,15 @@ local sinkRateRecord = nil
 local recordListView = nil
 local playingTone = false
 local function loadModule()
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-    LZ_runModule(gScriptDir .. "LAOZHU/DataFileDecode.lua")
-    LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
-    LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateRecord.lua")
-    LZ_runModule(gScriptDir .. "/LAOZHU/SinkRateState.lua")
-    LZ_runModule(gScriptDir .. "/TELEMETRY/adjust/SinkRate/RecordListView.lua")
+    LZ_runModule("TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule("TELEMETRY/common/Button.lua")
+    LZ_runModule("TELEMETRY/common/NumEdit.lua")
+    LZ_runModule("TELEMETRY/common/InputView.lua")
+    LZ_runModule("LAOZHU/DataFileDecode.lua")
+    LZ_runModule("LAOZHU/Cfg.lua")
+    LZ_runModule("/LAOZHU/SinkRateRecord.lua")
+    LZ_runModule("/LAOZHU/SinkRateState.lua")
+    LZ_runModule("/TELEMETRY/adjust/SinkRate/RecordListView.lua")
 end
 
 local function unloadModule()
@@ -61,7 +61,7 @@ local function loadCfgPage()
     if sinkRateCfgPage ~= nil then
         return
     end
-    sinkRateCfgPage = LZ_runModule(gScriptDir .. "TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua")
+    sinkRateCfgPage = LZ_runModule("TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua")
     sinkRateCfgPage.setCfgFileName(sinkRateCfgFileName)
     sinkRateCfgPage.init()
 end

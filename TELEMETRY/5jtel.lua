@@ -13,27 +13,27 @@ local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt
 fun()
 
 local function loadPage()
-	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[displayIndex]
+	local pagePath = "TELEMETRY/" .. pages[displayIndex]
 	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end
 
 local function init()
-	LZ_runModule(gScriptDir .. "LAOZHU/LuaUtils.lua")
-	LZ_runModule(gScriptDir .. "LAOZHU/OTUtils.lua")
+	LZ_runModule("LAOZHU/LuaUtils.lua")
+	LZ_runModule("LAOZHU/OTUtils.lua")
 	
-	LZ_runModule(gScriptDir .. "LAOZHU/comm/OTSound.lua")
+	LZ_runModule("LAOZHU/comm/OTSound.lua")
 	
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+	LZ_runModule("TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
 
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelector.lua")
-	LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
+	LZ_runModule("TELEMETRY/common/InputView.lua")
+	LZ_runModule("TELEMETRY/common/InputSelector.lua")
+	LZ_runModule("TELEMETRY/common/NumEdit.lua")
 
-	gFlightState = LZ_runModule(gScriptDir .. "LAOZHU/F5jState.lua")
+	gFlightState = LZ_runModule("LAOZHU/F5jState.lua")
 
-	LZ_runModule(gScriptDir .. "/LAOZHU/Cfg.lua")
+	LZ_runModule("/LAOZHU/Cfg.lua")
 	f5jCfg = CFGnewCfg()
 
 	CFGreadFromFile(f5jCfg, gConfigFileName)

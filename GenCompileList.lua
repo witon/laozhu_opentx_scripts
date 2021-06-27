@@ -10,6 +10,7 @@ local blackList = {
     "TELEMETRY\\pando.lua",
 	"TELEMETRY\\testf.lua",
 	"TELEMETRY\\testo.lua",
+	"CompetitionBroadcast",
 }
 -- get filename
 local function checkBlackList(file)

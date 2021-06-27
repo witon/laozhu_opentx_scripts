@@ -3,11 +3,11 @@ local readSwitchSelector = nil
 local roundSwitchSelector = nil
 local roundResetSwitchSelector = nil
 local viewMatrix = nil
-LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrixO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputViewO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/SelectorO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputSelectorO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/Fields.lua")
+LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
+LZ_runModule("TELEMETRY/common/InputViewO.lua")
+LZ_runModule("TELEMETRY/common/SelectorO.lua")
+LZ_runModule("TELEMETRY/common/InputSelectorO.lua")
+LZ_runModule("TELEMETRY/common/Fields.lua")
 
  
 local function setCfgValue()
