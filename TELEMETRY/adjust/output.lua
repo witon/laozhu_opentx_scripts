@@ -12,11 +12,11 @@ local curvesPage = nil
 local this = nil
 
 local function loadModule()
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrix.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/Button.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBox.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEdit.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/common/InputView.lua")
+    LZ_runModule("TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule("TELEMETRY/common/Button.lua")
+    LZ_runModule("TELEMETRY/common/CheckBox.lua")
+    LZ_runModule("TELEMETRY/common/NumEdit.lua")
+    LZ_runModule("TELEMETRY/common/InputView.lua")
 end
 
 local function unloadModule()
@@ -113,7 +113,7 @@ local function onSelectChannelsButtonClick(button)
         return
     end
     if not selectChannelPage then
-        selectChannelPage = LZ_runModule(gScriptDir .. "TELEMETRY/adjust/SelectChannel.lua")
+        selectChannelPage = LZ_runModule("TELEMETRY/adjust/SelectChannel.lua")
         selectChannelPage.init()
         selectChannelPage.setSelectedChannels(adjustChannels)
     end
@@ -124,7 +124,7 @@ local function onCurvesButtonClick()
         return
     end
     if not curvesPage then
-        curvesPage = LZ_runModule(gScriptDir .. "TELEMETRY/adjust/OutputCurve.lua")
+        curvesPage = LZ_runModule("TELEMETRY/adjust/OutputCurve.lua")
         curvesPage.init()
         local revertArray = {}
         for i=1, #adjustChannels, 1 do
@@ -137,8 +137,8 @@ end
 local function init()
     loadModule()
 
-    LZ_runModule(gScriptDir .. "TELEMETRY/adjust/ReplaceMix.lua")
-    LZ_runModule(gScriptDir .. "TELEMETRY/adjust/OutputCurveManager.lua")
+    LZ_runModule("TELEMETRY/adjust/ReplaceMix.lua")
+    LZ_runModule("TELEMETRY/adjust/OutputCurveManager.lua")
     selectChannelsButton = BTnewButton()
     curvesButton = BTnewButton()
     curvesButton.text = "curves"

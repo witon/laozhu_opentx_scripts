@@ -8,14 +8,14 @@ local muteCheckbox = nil
 local viewMatrix = nil
 local lineArray = nil
 
-LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrixO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputViewO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/ButtonO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEditO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEditO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/SelectorO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/3k/TaskSelectorO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/CheckBoxO.lua")
+LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
+LZ_runModule("TELEMETRY/common/InputViewO.lua")
+LZ_runModule("TELEMETRY/common/ButtonO.lua")
+LZ_runModule("TELEMETRY/common/NumEditO.lua")
+LZ_runModule("TELEMETRY/common/TimeEditO.lua")
+LZ_runModule("TELEMETRY/common/SelectorO.lua")
+LZ_runModule("TELEMETRY/3k/TaskSelectorO.lua")
+LZ_runModule("TELEMETRY/common/CheckBoxO.lua")
 
 local function onTaskSelectorChange(taskSelector)
     f3kCfg.kvs["task"] = taskSelector:getText(taskSelector.selectedIndex)

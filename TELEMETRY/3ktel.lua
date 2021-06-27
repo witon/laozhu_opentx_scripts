@@ -14,13 +14,13 @@ local curPage = nil
 local lastEvent = 0
 
 local function init()
-	LZ_runModule(gScriptDir .. "LAOZHU/LuaUtils.lua")
-	LZ_runModule(gScriptDir .. "LAOZHU/OTUtils.lua")
+	LZ_runModule("LAOZHU/LuaUtils.lua")
+	LZ_runModule("LAOZHU/OTUtils.lua")
 	
-	LZ_runModule(gScriptDir .. "LAOZHU/comm/OTSound.lua")
+	LZ_runModule("LAOZHU/comm/OTSound.lua")
 
 	if LZ_isNeedCompile() then
-		local pagePath = gScriptDir .. "TELEMETRY/common/comp.lua"
+		local pagePath = "TELEMETRY/common/comp.lua"
 		curPage = LZ_runModule(pagePath)
 		curPage.init()
 		return
@@ -30,13 +30,13 @@ end
 
 local function loadPage()
 	if gF3kCore == nil then
-		LZ_runModule(gScriptDir .. "LAOZHU/CfgO.lua")
+		LZ_runModule("LAOZHU/CfgO.lua")
 		f3kCfg = CFGC:new()
 		f3kCfg:readFromFile(gConfigFileName)
-		gF3kCore = LZ_runModule(gScriptDir .. "TELEMETRY/3k/f3kCore.lua")
+		gF3kCore = LZ_runModule("TELEMETRY/3k/f3kCore.lua")
 		gF3kCore.init()
 	end
-	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[displayIndex]
+	local pagePath = "TELEMETRY/" .. pages[displayIndex]
 	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end

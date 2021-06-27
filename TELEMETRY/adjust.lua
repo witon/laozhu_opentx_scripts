@@ -11,17 +11,17 @@ local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/Sin
 local curPage = nil
 
 local function loadPage(index)
-	local pagePath = gScriptDir .. "TELEMETRY/" .. pages[index]
+	local pagePath = "TELEMETRY/" .. pages[index]
 	curPage = LZ_runModule(pagePath)
 	curPage.init()
 end
 
 
 local function init()
-	LZ_runModule(gScriptDir .. "LAOZHU/utils.lua")
+	LZ_runModule("LAOZHU/utils.lua")
 
 	if LZ_isNeedCompile() then
-		local pagePath = gScriptDir .. "TELEMETRY/common/comp.lua"
+		local pagePath = "TELEMETRY/common/comp.lua"
 		curPage = LZ_runModule(pagePath)
 		curPage.init()
 		return

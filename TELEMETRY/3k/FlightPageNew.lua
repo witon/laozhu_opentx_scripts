@@ -1,10 +1,10 @@
 local viewMatrix = nil
 local destFlightTimeEdit = nil
 
-LZ_runModule(gScriptDir .. "TELEMETRY/common/ViewMatrixO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/InputViewO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/NumEditO.lua")
-LZ_runModule(gScriptDir .. "TELEMETRY/common/TimeEditO.lua")
+LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
+LZ_runModule("TELEMETRY/common/InputViewO.lua")
+LZ_runModule("TELEMETRY/common/NumEditO.lua")
+LZ_runModule("TELEMETRY/common/TimeEditO.lua")
 
 
 local function drawFlightList()

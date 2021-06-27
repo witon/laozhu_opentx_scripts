@@ -1,6 +1,6 @@
 gScriptDir = "./"
 function LZ_runModule(file)
-    return dofile(file)
+    return dofile(gScriptDir .. file)
 end
 
 gEmuTime = 1
@@ -25,7 +25,7 @@ if not ret then
 end
 LZ_runModule("LAOZHU/comm/Timer.lua")
 LZ_runModule("LAOZHU/LuaUtils.lua")
-LZ_runModule(gScriptDir .. "LAOZHU/OTUtils.lua")
+LZ_runModule("LAOZHU/OTUtils.lua")
 LZ_runModule("LAOZHU/F3k/F3kFlightRecord.lua")
 LZ_runModule("LAOZHU/comm/TestSound.lua")
 setSoundPath(soundPath)

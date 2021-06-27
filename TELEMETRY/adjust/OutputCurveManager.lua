@@ -1,5 +1,5 @@
 function OCMdisableCurve(channels)
---    local cfg = LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
+--    local cfg = LZ_runModule("LAOZHU/Cfg.lua")
 --    for i=1, #channels, 1 do
 --        local output = model.getOutput(channels[i]-1)
 --        if output.curve then
@@ -12,7 +12,7 @@ function OCMdisableCurve(channels)
 end
 
 function OCMrecoverCurve(channels)
---    local cfg = LZ_runModule(gScriptDir .. "LAOZHU/Cfg.lua")
+--    local cfg = LZ_runModule("LAOZHU/Cfg.lua")
 --    cfg.readFromFile("OCM_tmp.cfg")
 --    for i=1, #channels, 1 do
 --        local output = model.getOutput(channels[i]-1)

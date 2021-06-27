@@ -4,7 +4,7 @@ local compileFiles = nil
 local function init()
     local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
     fun()
-    compileFiles = LZ_runModule(gScriptDir .. "CompileFiles.lua")
+    compileFiles = LZ_runModule("CompileFiles.lua")
 end
 
 local function bg()
