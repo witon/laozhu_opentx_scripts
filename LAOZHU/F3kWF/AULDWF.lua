@@ -10,7 +10,7 @@ local isTimerMuted = false
 --3: landing
 
 local flightRecord = F3KFRnewFlightRecord()
-flightRecord.maxNum = 8
+flightRecord.maxNum = 15
 
 local function getNoFlyTime()
     return noflyTime

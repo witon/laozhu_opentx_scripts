@@ -10,7 +10,7 @@ local isTimerMuted = false
 --3: landing
 
 local flightRecord = F3KFRnewFlightRecord()
-flightRecord.maxNum = 8
+flightRecord.maxNum = 15
 
 local function addFlight(flightTime, launchAlt, flightStartTime)
     if state == 2 or state == 3 then

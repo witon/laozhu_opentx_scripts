@@ -1,5 +1,4 @@
 
-LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
 
 local flightState = 0 --0:preset 1:zoom 2:launched 3:landed
 local launchTime = 0
@@ -7,20 +6,12 @@ local launchAlt = 0
 local curAlt = 0
 local launchRtcTime = 0
 local flightStateStartTime = 0
-local f3kFlightRecord = F3KFRnewFlightRecord()
-f3kFlightRecord.maxNum = 25
 local destFlightTime = 0
 local flightTimer = Timer:new()
 local landedCallback = nil
 
-
-
 local function setLandedCallback(callback)
     landedCallback = callback
-end
-
-local function getFlightRecord()
-    return f3kFlightRecord
 end
 
 local function setAlt(alt)
@@ -97,7 +88,6 @@ local function doStateLaunched(curTime, flightModeName)
     if flightModeName == "preset" then
         flightTimer:stop()
         flightState = 3
-        F3KFRaddFlight(f3kFlightRecord, flightTimer:getRunTime(), launchAlt, launchRtcTime)
         if landedCallback then
             landedCallback(flightTimer:getRunTime(), launchAlt, launchRtcTime)
         end
@@ -157,7 +147,6 @@ return {newFlight = newFlight,
     setAlt = setAlt,
     getCurAlt = getCurAlt,
     getLaunchAlt = getLaunchAlt,
-    getFlightRecord = getFlightRecord,
     setDestFlightTime = setDestFlightTime,
     getDestFlightTime = getDestFlightTime,
     setLandedCallback = setLandedCallback
