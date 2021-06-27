@@ -32,7 +32,7 @@ end
 local function init()
 
 	flightState = LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kState.lua")
-
+	LZ_runModule(gScriptDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
 	f3kRound = LZ_runModule(gScriptDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
 	resetRound()

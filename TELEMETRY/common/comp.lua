@@ -1,90 +1,14 @@
-local compileFiles = {
-    "LAOZHU/Cfg.lua",
-    "LAOZHU/CfgO.lua",
-    "LAOZHU/DataFileDecode.lua",
-    "LAOZHU/EmuTestUtils.lua",
-    "LAOZHU/f5jReadVarMap.lua",
-    "LAOZHU/F5jState.lua",
-    "LAOZHU/Monitor.lua",
-    "LAOZHU/Queue.lua",
-    "LAOZHU/readVar.lua",
-    "LAOZHU/Sensor.lua",
-    "LAOZHU/SinkRateLog.lua",
-    "LAOZHU/SinkRateRecord.lua",
-    "LAOZHU/SinkRateState.lua",
-    "LAOZHU/SwitchTrigeDetector.lua",
-    "LAOZHU/comm/Timer.lua",
-    "LAOZHU/OTUtils.lua",
-    "LAOZHU/LuaUtils.lua",
-
-	"LAOZHU/comm/OTSound.lua",
-	
-    "LAOZHU/F3k/F3kFlightRecord.lua",
-    "LAOZHU/F3k/f3kReadVarMap.lua",
-    "LAOZHU/F3k/F3kState.lua",
-    "LAOZHU/F3kWF/F3kRoundWF.lua",
-    "LAOZHU/F3kWF/AULDWF.lua",
-    "LAOZHU/F3kWF/CommonTaskWF.lua",
- 
-    "TELEMETRY/3k/f3kCore.lua",
-    "TELEMETRY/3k/F3kRecordListView.lua",
-    "TELEMETRY/3k/FlightPage.lua",
-    "TELEMETRY/3k/FlightPageNew.lua",
-    "TELEMETRY/3k/FlightStaticPage.lua",
-    "TELEMETRY/3k/RoundSetupPage.lua",
-    "TELEMETRY/3k/SetupPage.lua",
-    "TELEMETRY/3k/SmallFontFlightListPage.lua",
-    "TELEMETRY/3k/TaskSelector.lua",
-
-    "TELEMETRY/5j/FlightPage.lua",
-    "TELEMETRY/5j/LargeFontFlightListPage.lua",
-    "TELEMETRY/5j/SetupPage.lua",
-    "TELEMETRY/5j/SmallFontFlightListPage.lua",
-
-    "TELEMETRY/adjust/SinkRate/RecordListView.lua",
-    "TELEMETRY/adjust/SinkRate/SinkRate.lua",
-    "TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua",
-
-    "TELEMETRY/adjust/BackupOutput.lua",
-    "TELEMETRY/adjust/GlobalVar.lua",
-    "TELEMETRY/adjust/ManagerOutput.lua",
-    "TELEMETRY/adjust/output.lua",
-    "TELEMETRY/adjust/OutputCurve.lua",
-    "TELEMETRY/adjust/OutputCurveManager.lua",
-    "TELEMETRY/adjust/ReplaceMix.lua",
-    "TELEMETRY/adjust/SaveAndRestoreParam.lua",
-    "TELEMETRY/adjust/SelectChannel.lua",
-
-    "TELEMETRY/common/button.lua",
-    "TELEMETRY/common/CheckBox.lua",
-    "TELEMETRY/common/CurveSelector.lua",
-    "TELEMETRY/common/Fields.lua",
-    "TELEMETRY/common/InputSelector.lua",
-    "TELEMETRY/common/InputView.lua",
-    "TELEMETRY/common/ModeSelector.lua",
-    "TELEMETRY/common/NumEdit.lua",
-    "TELEMETRY/common/OutputSelector.lua",
-    "TELEMETRY/common/Selector.lua",
-    "TELEMETRY/common/TextEdit.lua",
-    "TELEMETRY/common/TimeEdit.lua",
-    "TELEMETRY/common/ViewMatrix.lua",
-    "TELEMETRY/3ktel.lua",
-    "TELEMETRY/5jtel.lua",
-    "TELEMETRY/adjust.lua",
-    "TELEMETRY/ut.lua"
-}
-
 local curFileIndex = 1
 local this = nil
-
+local compileFiles = nil
 local function init()
     local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
     fun()
+    compileFiles = LZ_runModule(gScriptDir .. "CompileFiles.lua")
 end
 
 local function bg()
 end
-
 
 local function run(event, time)
     lcd.clear()
