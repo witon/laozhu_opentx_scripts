@@ -27,6 +27,10 @@ local function getFlightRecord()
     return flightRecord
 end
 
+local function getState()
+    return state, curFlight
+end
+
 
 local function getStateDisc()
     if state == 1 then
@@ -138,6 +142,7 @@ return {run=run,
         getTaskName = getTaskName,
         start=changeState2NoFly,
         setTaskParam = setTaskParam,
+        getState = getState,
         getStateDisc=getStateDisc,
         addFlight=addFlight,
         getFlightRecord=getFlightRecord,

@@ -99,6 +99,7 @@ extern "C" {
     {
         audioQueue.stop();
         keyReceiver.stop();
+        return 0;
     }
  
 
@@ -120,10 +121,6 @@ int initLua(lua_State * L)
     lua_register(L, "sleep", luaSleep);
     lua_register(L, "setTestRun", luaSetTestRun);
     lua_register(L, "unInit", luaUnInit);
-
-
-
-
  
     lua_setglobal(L, "sound");
 

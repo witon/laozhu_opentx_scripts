@@ -41,7 +41,7 @@ bool PandoraWrap::Open(string port_name)
         return false;
 
     Lock();
-    if(!com.Open(port_name, 115200, 8, NOPARITY, ONESTOPBIT))
+    if(!com.Open(port_name, 19200, 8, NOPARITY, ONESTOPBIT))
     {
         UnLock();
         return false;

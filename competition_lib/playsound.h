@@ -16,6 +16,6 @@ class PlaySound
     bool play(WaveFile & waveFile);
 public:
     PlaySound();
-    int playFile(string fileName);
+    bool playFile(string fileName);
     void printWAVInfo(WaveFile & wavFile);
 };
