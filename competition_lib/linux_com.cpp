@@ -68,6 +68,11 @@ bool Com::SetOpt(DWORD baud_rate, BYTE byte_size, BYTE parity, BYTE stop_bits)
 		cfsetispeed(&newtio, B9600);
 		cfsetospeed(&newtio, B9600);
 		break;
+	case 19200:
+		cfsetispeed(&newtio, B19200);
+		cfsetospeed(&newtio, B19200);
+		break;
+	
 	case 115200:
 		cfsetispeed(&newtio, B115200);
 		cfsetospeed(&newtio, B115200);

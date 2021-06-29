@@ -110,11 +110,11 @@ void PlaySound::printWAVInfo(WaveFile & wavFile)
 			" - Sample size  : " << wavFile.GetBitsPerSample() << " bits" << std::endl;
 	}
 }
-int PlaySound::playFile(const string fileName)
+bool PlaySound::playFile(const string fileName)
 {
 	WaveFile wavFile(fileName);
 	//printWAVInfo(wavFile);
-	play(wavFile);
+	return play(wavFile);
 }
 
 /*

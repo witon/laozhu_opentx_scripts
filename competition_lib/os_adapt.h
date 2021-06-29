@@ -5,6 +5,6 @@
 
 #ifdef __linux__
 #define PLAY_SOUND(F) PlaySound(F)
-#define SLEEP(x)    sleep(x)
+#define SLEEP(x)    usleep(x)
 #endif
 

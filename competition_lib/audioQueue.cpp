@@ -76,7 +76,6 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
         while(!threadPlayQueue.empty())
         {
             s = threadPlayQueue.front();
-            threadPlayQueue.pop();
             if (isTestRun)
             {
                 if (!checkWaveFile(s.c_str()))
@@ -88,6 +87,7 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
             {
                 PLAY_SOUND(s.c_str());
             }
+            threadPlayQueue.pop();
         }
         SLEEP(0);
     }

@@ -1,4 +1,3 @@
-local port = "com6"
 local isPortOpen = false
 --P
 --Round
@@ -11,13 +10,11 @@ local isPortOpen = false
 --G02
 --TMMSS
 --WindowType P --ST;PT;TT;NF;WT;LT
---ret = send2Pandora("P|02|01|0|A(2) - L1 5 max in 7m\r\n")
---print("i:", i, "send ret:", ret)
---ret = send2Pandora("R02G01T0201WT\r")
+--\r
 
 local function open(port)
-    port = port
-    isPortOpen = initPandoraPort("com6")
+    isPortOpen = initPandoraPort(port)
+    return isPortOpen
 end
 
 
