@@ -150,6 +150,7 @@ end
 local function init()
 	timer = Timer:new()
 	timer.mute = isTimerMuted
+    timer.isReadZero = false
 	timer:setForward(false)
     timer:setDuration(preparationTime)
 end

@@ -3,15 +3,19 @@ function LZ_runModule(file)
     return dofile(gScriptDir .. file)
 end
 
+LZ_runModule("LAOZHU/comm/TestSound.lua")
 gEmuTime = 1
 gIsTestRun = false
 LZ_runModule("LAOZHU/LuaUtils.lua")
 LZ_runModule("LAOZHU/comm/PCIO.lua")
 LZ_runModule("LAOZHU/CfgO.lua")
+local pandora = LZ_runModule("CompetitionBroadcast/Pandora.lua")
+pandora.open()
 
 local cfg = CFGC:new()
 cfg:readFromFile(".CompetitionBroadcast")
 local soundPath = cfg:getStrField('sound_path', "./SOUND/")
+print(soundPath)
 local testWindow = cfg:getNumberField('test_window', 45)
 local prepareWindow = cfg:getNumberField('prepare_window', 120)
 local noflyWindow = cfg:getNumberField('nofly_window', 60)
@@ -27,7 +31,6 @@ LZ_runModule("LAOZHU/comm/Timer.lua")
 LZ_runModule("LAOZHU/LuaUtils.lua")
 LZ_runModule("LAOZHU/OTUtils.lua")
 LZ_runModule("LAOZHU/F3k/F3kFlightRecord.lua")
-LZ_runModule("LAOZHU/comm/TestSound.lua")
 setSoundPath(soundPath)
 setTestRun(isTestRun)
 local f3kCompetitionWF = LZ_runModule("LAOZHU/F3kWF/F3kCompetitionWF.lua")
@@ -68,6 +71,7 @@ end
 
 f3kCompetitionWF.start(time)
  
+local lastPandoraSentTime = 0
 while true do
     if isEmulate or isTestRun then
         gEmuTime = gEmuTime + 1
@@ -76,6 +80,16 @@ while true do
         time = os.time()*100
     end
     f3kCompetitionWF.run(time)
+
+    local competitionState, curRound, curGroup, roundWorkflow = f3kCompetitionWF.getCurStep()
+
+    local remainTime = roundWorkflow.getTimer():getRemainTime()
+    if lastPandoraSentTime ~= remainTime then
+        pandora.send(curRound, curGroup, roundWorkflow)
+        lastPandoraSentTime = remainTime
+    end
+
+
     local event = getEvent()
     if event == 77 or event == 68 then
         print("Forward")

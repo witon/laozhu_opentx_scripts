@@ -56,6 +56,7 @@ bool AudioQueue::checkWaveFile(const char * filepath)
 
 void * AudioQueue::threadPlaySoundFunc(void *param)
 {
+    queue<string> threadPlayQueue;
     while(threadState == THREAD_STATE_RUNNING)
     {
         string s = "";
@@ -65,20 +66,29 @@ void * AudioQueue::threadPlaySoundFunc(void *param)
             pthread_mutex_unlock(&mtx);
             continue;
         }
-        
-        s = playFileQueue.front();
-        playFileQueue.pop();
-        pthread_mutex_unlock(&mtx);
-
-        if (isTestRun)
+        while(!playFileQueue.empty())
         {
-            if (!checkWaveFile(s.c_str()))
+            s = playFileQueue.front();
+            playFileQueue.pop();
+            threadPlayQueue.push(s);
+        }
+        pthread_mutex_unlock(&mtx);
+        while(!threadPlayQueue.empty())
+        {
+            s = threadPlayQueue.front();
+            threadPlayQueue.pop();
+            if (isTestRun)
             {
-                printf("%s\r\n", s.c_str());
+                if (!checkWaveFile(s.c_str()))
+                {
+                    printf("%s\r\n", s.c_str());
+                }
+            }
+            else
+            {
+                PLAY_SOUND(s.c_str());
             }
         }
-        else
-            PLAY_SOUND(s.c_str());
         SLEEP(0);
     }
     threadState = THREAD_STATE_IDLE;

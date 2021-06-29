@@ -7,7 +7,8 @@ Timer = {startTime = 0,
         curTime = 0,
         mute = false,
         announceTime = 0,
-        announceCallback = nil
+        announceCallback = nil,
+        isReadZero = true
 }
 
 function Timer:new()
@@ -119,6 +120,11 @@ function Timer:readRemainTime()
     if remainSeconds == self.lastReadTime then
         return
     end
+
+    if remainSeconds == 0 and not self.isReadZero then
+        return
+    end
+
     if remainSeconds < 0 then
         return
     end
@@ -133,8 +139,9 @@ end
 
 function Timer:readRunTime()
     local remainSeconds = self:getRemainTime()
+
     if remainSeconds < self.downcountSeconds and remainSeconds >= 0 then
-        if self.duration <= 0 then
+       if self.duration <= 0 then
             return
         end
         if remainSeconds == self.lastReadTime then
