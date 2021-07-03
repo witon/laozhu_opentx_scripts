@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 #include "WaveFile.h"
-#include "asoundlib.h"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -29,11 +28,34 @@ THE SOFTWARE.*/
 
 using namespace std;
 snd_pcm_t * PlaySound::handle = NULL;
+const char * PlaySound::device = "default";            /* playback device */
+ 
  
 
 PlaySound::PlaySound()
 {
 
+}
+bool PlaySound::openPcm()
+{
+	if(handle == NULL)
+	{
+    	int err = 0;
+		if ((err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
+			printf("Playback open error: %s\n", snd_strerror(err));
+			return false;
+		}
+	}
+	return true;
+}
+
+void PlaySound::closePcm()
+{
+	if(handle == NULL)
+		return;
+	snd_pcm_drop(handle);
+	snd_pcm_close(handle);
+	handle = NULL;
 }
 
 bool PlaySound::play(WaveFile & waveFile)
@@ -42,13 +64,6 @@ bool PlaySound::play(WaveFile & waveFile)
     int err;
     unsigned int i;
     snd_pcm_sframes_t frames;
-	if(handle == NULL)
-	{
-		if ((err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
-			printf("Playback open error: %s\n", snd_strerror(err));
-			return false;
-		}
-	}
 	snd_pcm_format_t snd_format = SND_PCM_FORMAT_S8;
 	switch(waveFile.GetBitsPerSample())
 	{
@@ -76,12 +91,13 @@ bool PlaySound::play(WaveFile & waveFile)
         printf("Playback open error: %s\n", snd_strerror(err));
 		return false;
     }
-	int totalFrames = waveFile.GetDataSize()*8/waveFile.GetBitsPerSample()/waveFile.GetNumChannels();
-	
+
+	int frameSize = waveFile.GetBitsPerSample() * waveFile.GetNumChannels() / 8;
+	int totalFrames = waveFile.GetDataSize() / frameSize;
 	int wroteFrames = 0;
 	while(wroteFrames < totalFrames)
 	{
-		int ret = snd_pcm_writei(handle, buffer, totalFrames - wroteFrames);
+		int ret = snd_pcm_writei(handle, buffer + wroteFrames * frameSize, totalFrames - wroteFrames);
 		if (ret < 0)
 		{
 			printf("snd_pcm_writei failed: %s\n", snd_strerror(ret));
@@ -91,11 +107,11 @@ bool PlaySound::play(WaveFile & waveFile)
 			return false;
 		}
 		wroteFrames += ret;
+		err = snd_pcm_drain(handle);
+		if (err < 0)
+			printf("snd_pcm_drain failed: %s\n", snd_strerror(err));
 	}
-	err = snd_pcm_drain(handle);
-	if (err < 0)
-		printf("snd_pcm_drain failed: %s\n", snd_strerror(err));
-	//snd_pcm_close(handle);
+	snd_pcm_drop(handle);
     return true;
 }
 void PlaySound::printWAVInfo(WaveFile & wavFile)
@@ -113,24 +129,5 @@ void PlaySound::printWAVInfo(WaveFile & wavFile)
 bool PlaySound::playFile(const string fileName)
 {
 	WaveFile wavFile(fileName);
-	//printWAVInfo(wavFile);
 	return play(wavFile);
 }
-
-/*
-int main(int argc, char *argv[])
-{
-	if (argc < 2)
-	{
-		return 0;
-	}
-
-	for (int i = 1; i < argc; ++i)
-	{
-		PlaySound playSound;
-		std::string fileName = argv[i];
-		playSound.playFile(fileName);
-	}
-	return 0;
-}
-*/

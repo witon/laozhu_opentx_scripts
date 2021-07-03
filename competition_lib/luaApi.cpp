@@ -12,6 +12,11 @@ extern AudioQueue audioQueue;
 KeyReceiver keyReceiver;
 PandoraWrap pandoraWrap;
 
+#ifdef __linux__
+    bool OpenPcm();
+    void ClosePcm();
+#endif
+
 extern "C" {
     #define LUA_COMPAT_APIINTCASTS
     #include <lualib.h>
@@ -95,10 +100,39 @@ extern "C" {
         audioQueue.setTestRun(lua_toboolean(L, 1));
         return 0;
     }
-    static int luaUnInit(lua_State *L)
+    static int luaStartKeyReceiver(lua_State *L)
+    {
+        keyReceiver.start();
+        return 0;
+    }
+    static int luaStopKeyReceiver(lua_State *L)
+    {
+        keyReceiver.stop();
+        return 0;
+    }
+
+    static int luaStartAudio(lua_State *L)
+    {
+        bool ret = false;
+#ifdef __linux__
+        ret = OpenPcm();
+        if(!ret)
+        {
+            lua_pushboolean(L, ret);
+            return 1;
+        }
+#endif
+        audioQueue.start();
+        lua_pushboolean(L, ret);
+        return 1;
+    }
+ 
+    static int luaStopAudio(lua_State *L)
     {
         audioQueue.stop();
-        keyReceiver.stop();
+#ifdef __linux__
+        ClosePcm();
+#endif
         return 0;
     }
  
@@ -120,11 +154,12 @@ int initLua(lua_State * L)
     lua_register(L, "closePandoraPort", luaClosePandoraPort);
     lua_register(L, "sleep", luaSleep);
     lua_register(L, "setTestRun", luaSetTestRun);
-    lua_register(L, "unInit", luaUnInit);
+    lua_register(L, "stopAudio", luaStopAudio);
+    lua_register(L, "startAudio", luaStartAudio);
+    lua_register(L, "stopKeyReceiver", luaStopKeyReceiver);
+    lua_register(L, "startKeyReceiver", luaStartKeyReceiver);
  
     lua_setglobal(L, "sound");
 
-    audioQueue.start();
-    keyReceiver.start();
     return 0;
 }

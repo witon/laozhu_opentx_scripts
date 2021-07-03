@@ -24,9 +24,19 @@ int AudioQueue::threadState = THREAD_STATE_IDLE;
 
 #ifdef __linux__
 #include "playsound.h"
+bool OpenPcm()
+{
+    return PlaySound::openPcm();
+}
+
+void ClosePcm()
+{
+    return PlaySound::closePcm();
+}
+
+PlaySound playSound;
 int PlaySound(string fileName)
 {
-    class PlaySound playSound;
     return playSound.playFile(fileName);
 }
 #endif
