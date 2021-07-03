@@ -1,4 +1,3 @@
-gScriptDir = "./"
 gEmuTime = 1
 gIsTestRun = false
 gIsEmulate = false
@@ -11,12 +10,23 @@ local groupNum = 1
 local roundNum = 0
 local pandora = nil
 local lastPandoraSentTime = 0
+
 function LZ_runModule(file)
     return dofile(gScriptDir .. file)
 end
 
+local function updateTime()
+    if isEmulate or isTestRun then
+        gEmuTime = gEmuTime + 1
+        time = gEmuTime * 100
+    else
+        time = os.time()*100
+    end
+end
+
 local function init()
     LZ_runModule("LAOZHU/comm/TestSound.lua")
+    startAudio()
     LZ_runModule("LAOZHU/LuaUtils.lua")
     LZ_runModule("LAOZHU/comm/PCIO.lua")
     LZ_runModule("LAOZHU/CfgO.lua")
@@ -71,12 +81,69 @@ local function init()
     for roundIndex, task in pairs(tasks) do
         f3kCompetitionWF.addTask(task)
     end
+    updateTime()
+    f3kCompetitionWF.start(time)
     return true
-
-
 end
 
-local function run(time)
+local function exit()
+    cleanAudioQueue()
+    stopAudio()
+end
+
+
+local function forward()
+    cleanAudioQueue()
+    if not f3kCompetitionWF.startNextUnit(time) then
+        print("Competition complete.")
+        f3kCompetitionWF.resetCompetition()
+        return false
+    end
+    return true
+end
+
+local function backward()
+    cleanAudioQueue()
+    f3kCompetitionWF.startPreUnit(time)
+    return true
+end
+
+local function getStateDesc(roundState, taskState)
+    local stateStr = ""
+    if roundState == 2 then
+        stateStr = "Preparation Time"
+    elseif roundState == 3 then
+        stateStr = "Test Window"
+    elseif roundState == 4 then
+        if taskState == 1 then
+            stateStr = "No Fly Window"
+        elseif taskState == 2 then
+            stateStr = "Working Window"
+        elseif taskState == 3 then
+            stateStr = "Landing Window"
+        else
+            stateStr = "ST"
+        end
+    else
+        stateStr = "ST"
+    end
+    return stateStr
+end
+
+
+local function getRoundInfo()
+    local competitionState, curRound, curGroup, roundWorkflow = f3kCompetitionWF.getCurStep()
+    local remainTime = roundWorkflow.getTimer():getRemainTime()
+    local roundState = roundWorkflow.getState()
+    local task = roundWorkflow.getTask()
+    local taskState = task.getState()
+    local stateDesc = getStateDesc(roundState, taskState)
+    return competitionState, curRound, curGroup, remainTime, stateDesc, task.getTaskName()
+end
+
+
+local function run()
+    updateTime()
     f3kCompetitionWF.run(time)
     local competitionState, curRound, curGroup, roundWorkflow = f3kCompetitionWF.getCurStep()
     local remainTime = roundWorkflow.getTimer():getRemainTime()
@@ -84,59 +151,18 @@ local function run(time)
         pandora.send(curRound, curGroup, roundWorkflow)
         lastPandoraSentTime = remainTime
     end
-    local event = getEvent()
-    if event == 77 or event == 67 then
-        print("Forward")
-        cleanAudioQueue()
-        if not f3kCompetitionWF.startNextUnit(time) then
-            print("Competition complete.")
-            return false
-        end
-    elseif event == 75 or event == 68 then
-        print("Backward")
-        cleanAudioQueue()
-        f3kCompetitionWF.startPreUnit(time)
-    elseif event == 17 or event == 113 then
-        print("Quit")
-        cleanAudioQueue()
-        unInit()
-        return false
-    end
     local competitionWFState = f3kCompetitionWF.getCurStep()
     if competitionWFState == 3 then
-        print("Time: ", LZ_formatTimeStamp(gEmuTime), "Competition completed")
-        if (not isEmulate) and (not isTestRun) then
-            sleep(5000)
-        end
-        unInit();
         return false
     end
     return true
 end
 
-
-
-if not init() then
-    print("init failed")
-    return
-end
-
-if gIsEmulate or gIsTestRun then
-    time = gEmuTime * 100
-else
-    time = os.time()*100
-end
-
-f3kCompetitionWF.start(time)
- 
-while true do
-    if isEmulate or isTestRun then
-        gEmuTime = gEmuTime + 1
-        time = gEmuTime * 100
-    else
-        time = os.time()*100
-    end
-    if not run(time) then
-        break
-    end
-end
+return {
+    init=init,
+    run=run,
+    exit=exit,
+    forward=forward,
+    backward=backward,
+    getRoundInfo=getRoundInfo
+}

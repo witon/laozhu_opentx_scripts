@@ -189,7 +189,7 @@ local function start(time)
     startNextUnit(time)
 end
 
-local function resetCompetion()
+local function resetCompetition()
     competitionState = 1
     curRound = 1
     curGroup = 1
@@ -207,5 +207,6 @@ return {run = run,
         getCurStep = getCurStep,
         setGroups = setGroups,
         startNextUnit = startNextUnit,
-        startPreUnit = startPreUnit
+        startPreUnit = startPreUnit,
+        resetCompetition = resetCompetition
     }
