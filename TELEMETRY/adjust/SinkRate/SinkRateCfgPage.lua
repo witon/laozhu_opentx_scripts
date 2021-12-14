@@ -29,12 +29,13 @@ local function setCfgFileName(fileName)
 end
 
 local function saveCfg()
-    sinkRateCfg['elegv'] = eleNumedit.num
-    sinkRateCfg['flap1gv'] = flap1Numedit.num
-    sinkRateCfg['flap2gv'] = flap2Numedit.num
-    sinkRateCfg['mode'] = modeSelector.selectedIndex
-    sinkRateCfg['testsw'] = ISgetSelectedItemId(testSwitchSelector)
-    CFGwriteToFile(sinkRateCfg, cfgFileName)
+    local kvs = sinkRateCfg.kvs
+    kvs['elegv'] = eleNumedit.num
+    kvs['flap1gv'] = flap1Numedit.num
+    kvs['flap2gv'] = flap2Numedit.num
+    kvs['mode'] = modeSelector.selectedIndex
+    kvs['testsw'] = ISgetSelectedItemId(testSwitchSelector)
+    sinkRateCfg:writeToFile(cfgFileName)
 end
 
 local function newGVInput()
@@ -47,19 +48,19 @@ end
 
 local function init()
     loadModule()
-    sinkRateCfg = CFGnewCfg()
-    CFGreadFromFile(sinkRateCfg, cfgFileName)
+    sinkRateCfg = CFGC:new()
+    sinkRateCfg:readFromFile(cfgFileName)
     
     viewMatrix = VMnewViewMatrix()
 
     modeSelector = MSnewModeSelector()
-    modeSelector.selectedIndex = CFGgetNumberField(sinkRateCfg, "mode", -1)
+    modeSelector.selectedIndex = sinkRateCfg:getNumberField("mode", -1)
     eleNumedit = newGVInput()
-    eleNumedit.num = CFGgetNumberField(sinkRateCfg, "elegv", -1)
+    eleNumedit.num = sinkRateCfg:getNumberField("elegv", -1)
     flap1Numedit = newGVInput()
-    flap1Numedit.num = CFGgetNumberField(sinkRateCfg, "flap1gv", -1)
+    flap1Numedit.num = sinkRateCfg:getNumberField("flap1gv", -1)
     flap2Numedit = newGVInput()
-    flap2Numedit.num = CFGgetNumberField(sinkRateCfg, "flap2gv", -1)
+    flap2Numedit.num = sinkRateCfg:getNumberField("flap2gv", -1)
 
     local vmRow = VMaddRow(viewMatrix)
     vmRow[1] = modeSelector
@@ -75,7 +76,7 @@ local function init()
 
     testSwitchSelector = ISnewInputSelector()
     ISsetFieldType(testSwitchSelector, FIELDS_SWITCH)
-    ISsetSelectedItemById(testSwitchSelector, CFGgetNumberField(sinkRateCfg, "testsw", -1))
+    ISsetSelectedItemById(testSwitchSelector, sinkRateCfg:getNumberField("testsw", -1))
  
     vmRow = VMaddRow(viewMatrix)
     vmRow[1] = testSwitchSelector
