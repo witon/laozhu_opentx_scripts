@@ -18,7 +18,8 @@ end
 
 
 local function init()
-	LZ_runModule("LAOZHU/utils.lua")
+	LZ_runModule("LAOZHU/LuaUtils.lua")
+	LZ_runModule("LAOZHU/OTUtils.lua")
 
 	if LZ_isNeedCompile() then
 		local pagePath = "TELEMETRY/common/comp.lua"
