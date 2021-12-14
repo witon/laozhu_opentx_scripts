@@ -18,7 +18,7 @@ local function loadModule()
     LZ_runModule("TELEMETRY/common/NumEdit.lua")
     LZ_runModule("TELEMETRY/common/InputView.lua")
     LZ_runModule("LAOZHU/DataFileDecode.lua")
-    LZ_runModule("LAOZHU/Cfg.lua")
+    LZ_runModule("LAOZHU/CfgO.lua")
     LZ_runModule("/LAOZHU/SinkRateRecord.lua")
     LZ_runModule("/LAOZHU/SinkRateState.lua")
     LZ_runModule("/TELEMETRY/adjust/SinkRate/RecordListView.lua")
@@ -29,15 +29,15 @@ local function unloadModule()
     BTunload()
     NEunload()
     IVunload()
-    CFGunload()
     DFDunload()
     SRRunload()
     SRSunload()
     RLVunload()
+    CFGC = nil
 end
 
 local function onNumEditChange(numEdit)
-    local modeIndex = CFGgetNumberField(sinkRateCfg, "mode", -1)
+    local modeIndex = sinkRateCfg:getNumberField("mode", -1)
     if modeIndex == -1 then
         return
     end
@@ -45,7 +45,7 @@ local function onNumEditChange(numEdit)
 end
 
 local function getGVValue()
-    local modeIndex = CFGgetNumberField(sinkRateCfg, "mode", -1)
+    local modeIndex = sinkRateCfg:getNumberField("mode", -1)
     if eleGvNumEdit then
         eleGvNumEdit.num = LZ_getGVValue(eleGvNumEdit.gvIndex, modeIndex)
     end
@@ -90,10 +90,10 @@ local function updateGvNumEdit()
     end
     VMclearRow(viewMatrix, 1)
     row = viewMatrix.matrix[1]
-    local eleGvIndex = CFGgetNumberField(sinkRateCfg, "elegv", -1)
-    local flap1GvIndex = CFGgetNumberField(sinkRateCfg, "flap1gv", -1)
-    local flap2GvIndex = CFGgetNumberField(sinkRateCfg, "flap2gv", -1)
-    local modeIndex = CFGgetNumberField(sinkRateCfg, "mode", -1)
+    local eleGvIndex = sinkRateCfg:getNumberField("elegv", -1)
+    local flap1GvIndex = sinkRateCfg:getNumberField("flap1gv", -1)
+    local flap2GvIndex = sinkRateCfg:getNumberField("flap2gv", -1)
+    local modeIndex = sinkRateCfg:getNumberField("mode", -1)
 
     if eleGvIndex ~= -1 and modeIndex ~= -1 then
         eleGvNumEdit = NEnewNumEdit()
@@ -161,8 +161,6 @@ local function init()
     sinkRateRecord = SRRnewSinkRateRecord()
     SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
 
-    sinkRateCfg = CFGnewCfg()
-    CFGreadFromFile(sinkRateCfg, sinkRateCfgFileName)
 
     viewMatrix = VMnewViewMatrix()
     cfgButton = BTnewButton()
@@ -171,6 +169,10 @@ local function init()
 
     recordListView = RLVnewRecordListView()
     recordListView.records = sinkRateRecord.records
+
+    sinkRateCfg = CFGC:new()
+    sinkRateCfg:readFromFile(sinkRateCfgFileName)
+
     updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
@@ -190,7 +192,6 @@ local function run(event, time)
     if sinkRateCfgPage then
         if sinkRateCfgPage.pageState == 1 then
             unloadCfgPage()
-            CFGreadFromFile(sinkRateCfg, sinkRateCfgFileName)
             updateGvNumEdit()
             getGVValue()
             return true
@@ -220,7 +221,7 @@ local function run(event, time)
 
     IVdraw(cfgButton, 127, 0, invers, RIGHT)
 
-    local testSwIndex = CFGgetNumberField(sinkRateCfg, "testsw", -1)
+    local testSwIndex = sinkRateCfg:getNumberField("testsw", -1)
     if testSwIndex ~= -1 then
         local time = getRtcTime()
         local alt = getValue(altID)
