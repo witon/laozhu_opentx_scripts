@@ -15,7 +15,7 @@ local function loadModule()
     LZ_runModule("TELEMETRY/common/ViewMatrix.lua")
     LZ_runModule("TELEMETRY/common/TextEdit.lua")
     LZ_runModule("TELEMETRY/common/NumEdit.lua")
-    LZ_runModule("LAOZHU/Cfg.lua")
+    LZ_runModule("LAOZHU/CfgO.lua")
 end
 
 local function unloadModule()
@@ -23,7 +23,7 @@ local function unloadModule()
     VMunload()
     TEunload()
     NEunload()
-    CFGunload()
+    CFGC = nil
 end
 
 local function startGetAllGVValue()
@@ -32,7 +32,7 @@ end
 
 local function getGVName()
     for i=1, 6, 1 do
-        gvNameEditArray[i].str = CFGgetStrField(outputCfg, "gvname" .. i)
+        gvNameEditArray[i].str = outputCfg:getStrField("gvname" .. i)
         if gvNameEditArray[i].str == "" then
             gvNameEditArray[i].str = tostring(i)
         end
@@ -55,13 +55,13 @@ local function onTextEditChange(textEdit)
     for i=1, #gvNameEditArray, 1 do
         outputCfg["gvname" .. i] = gvNameEditArray[i].str
     end
-    CFGwriteToFile(outputCfg, configFileName)
+    outputCfg:writeToFile(configFileName)
 end
 
 local function init()
     loadModule()
-    outputCfg = CFGnewCfg()
-	CFGreadFromFile(outputCfg, configFileName)
+    outputCfg = CFGC:new()
+	outputCfg:readFromFile(configFileName)
 
     viewMatrix = VMnewViewMatrix()
     viewMatrix.matrix[1] = {}
