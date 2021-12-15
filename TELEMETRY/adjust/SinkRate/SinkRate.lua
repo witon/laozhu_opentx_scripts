@@ -12,6 +12,7 @@ local altID = 0
 local sinkRateRecord = nil
 local recordListView = nil
 local playingTone = false
+local readVar = nil
 local function loadModule()
     LZ_runModule("TELEMETRY/common/ViewMatrix.lua")
     LZ_runModule("TELEMETRY/common/Button.lua")
@@ -176,6 +177,12 @@ local function init()
     updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
+	readVar = LZ_runModule("LAOZHU/readVar.lua")
+	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
+	sinkRateReadVarMap.sinkRateState = sinkRateState
+	readVar.setVarMap(sinkRateReadVarMap)
+
+
 	
 end
 
@@ -188,7 +195,7 @@ local function doKey(event)
     return ret
 end
 
-local function run(event, time)
+local function run(event, curTime)
     if sinkRateCfgPage then
         if sinkRateCfgPage.pageState == 1 then
             unloadCfgPage()
@@ -236,12 +243,19 @@ local function run(event, time)
         end
 
         lcd.drawText(0, 10, "dur:", SMLSIZE + LEFT)
-        lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState, time)), SMLSIZE + RIGHT)
+        lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState)), SMLSIZE + RIGHT)
         lcd.drawText(44, 10, "sink:", SMLSIZE + LEFT)
-        lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState, alt)), SMLSIZE + RIGHT)
+        lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState)), SMLSIZE + RIGHT)
         lcd.drawText(80, 10, "srate:", SMLSIZE + LEFT)
-        lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState, time, alt)*100, SMLSIZE + RIGHT)
+        lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState)*100, SMLSIZE + RIGHT)
+
+        local varSelectorSliderValue = getValue(sinkRateCfg:getNumberField('SelSlider'))
+        local varReadSwitchValue = getValue(sinkRateCfg:getNumberField('ReadSw'))
+        readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
+ 
     end
+
+
 
     IVdraw(recordListView, 0, 19, invers, 0)
     return doKey(event)

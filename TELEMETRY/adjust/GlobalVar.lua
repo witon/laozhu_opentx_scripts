@@ -53,7 +53,7 @@ end
 
 local function onTextEditChange(textEdit)
     for i=1, #gvNameEditArray, 1 do
-        outputCfg["gvname" .. i] = gvNameEditArray[i].str
+        outputCfg.kvs["gvname" .. i] = gvNameEditArray[i].str
     end
     outputCfg:writeToFile(configFileName)
 end

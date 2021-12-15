@@ -3,6 +3,8 @@ function SRSnewSinkRateState()
             startAlt = -1000,
             stopTime = -1,
             stopAlt = -1000,
+            curTime = -1,
+            curAlt = -1
         }
 end
 
@@ -11,6 +13,8 @@ function SRSreset(sinkRateState)
     sinkRateState.startAlt = -1000
     sinkRateState.stopTime = -1
     sinkRateState.stopAlt = -1000
+    sinkRateState.curTime = -1
+    sinkRateState.curAlt = -1
 end
 
 function SRSisStart(sinkRateState)
@@ -24,26 +28,26 @@ function SRSgetDuration(sinkRateState)
     return (sinkRateState.stopTime - sinkRateState.startTime)
 end
 
-function SRSgetCurDuration(sinkRateState, time)
+function SRSgetCurDuration(sinkRateState)
     if not SRSisStart(sinkRateState) then
         return 0
     end
-    return time - sinkRateState.startTime
+    return sinkRateState.curTime - sinkRateState.startTime
 end
 
-function SRSgetCurSinkAlt(sinkRateState, alt)
+function SRSgetCurSinkAlt(sinkRateState)
     if not SRSisStart(sinkRateState) then
         return 0
     end
-    return sinkRateState.startAlt - alt
+    return sinkRateState.startAlt - sinkRateState.curAlt
 end
 
-function SRSgetCurSinkRate(sinkRateState, time, alt)
-    local dur = time - sinkRateState.startTime
+function SRSgetCurSinkRate(sinkRateState)
+    local dur = sinkRateState.curTime - sinkRateState.startTime
     if dur == 0 then
         return 0
     end
-    local sinkAlt = sinkRateState.startAlt - alt
+    local sinkAlt = sinkRateState.startAlt - sinkRateState.curAlt
     return sinkAlt / dur
 end
 
@@ -68,6 +72,8 @@ end
 
 
 function SRSrun(sinkRateState, time, alt, testSwitchValue)
+    sinkRateState.curTime = time
+    sinkRateState.curAlt = alt
     if SRSisStart(sinkRateState) then
         if testSwitchValue < 100 then
             sinkRateState.stopTime = time

@@ -5,6 +5,8 @@ local eleNumedit = nil
 local flap1Numedit = nil
 local flap2Numedit = nil
 local testSwitchSelector = nil
+local readSwitchSelector = nil
+local varSliderSelector = nil
 
 local cfgFileName = nil
 local sinkRateCfg = nil
@@ -35,6 +37,8 @@ local function saveCfg()
     kvs['flap2gv'] = flap2Numedit.num
     kvs['mode'] = modeSelector.selectedIndex
     kvs['testsw'] = ISgetSelectedItemId(testSwitchSelector)
+    kvs["ReadSw"] = ISgetSelectedItemId(readSwitchSelector)
+    kvs["SelSlider"] = ISgetSelectedItemId(varSliderSelector)
     sinkRateCfg:writeToFile(cfgFileName)
 end
 
@@ -77,9 +81,20 @@ local function init()
     testSwitchSelector = ISnewInputSelector()
     ISsetFieldType(testSwitchSelector, FIELDS_SWITCH)
     ISsetSelectedItemById(testSwitchSelector, sinkRateCfg:getNumberField("testsw", -1))
- 
     vmRow = VMaddRow(viewMatrix)
     vmRow[1] = testSwitchSelector
+
+    readSwitchSelector = ISnewInputSelector()
+    ISsetFieldType(readSwitchSelector, FIELDS_SWITCH)
+    ISsetSelectedItemById(readSwitchSelector, sinkRateCfg:getNumberField("ReadSw", -1))
+    vmRow = VMaddRow(viewMatrix)
+    vmRow[1] = readSwitchSelector
+
+    varSliderSelector = ISnewInputSelector()
+    ISsetFieldType(varSliderSelector, FIELDS_INPUT)
+    ISsetSelectedItemById(varSliderSelector, sinkRateCfg:getNumberField("SelSlider", -1))
+    vmRow = VMaddRow(viewMatrix)
+    vmRow[1] = varSliderSelector
 
     viewMatrix.selectedRow = 1
     viewMatrix.selectedCol = 1
@@ -96,7 +111,6 @@ local function doKey(event)
     end
     return true
 end
-
 local function run(event, time)
     local invers = false
     if getRtcTime() % 2 == 1 then
@@ -105,19 +119,25 @@ local function run(event, time)
 
     lcd.drawText(0, 0, "mode:", SMLSIZE + LEFT)
     IVdraw(modeSelector, 64, 0, invers, SMLSIZE + LEFT)
-    
-    lcd.drawText(0, 10, "ele gv:", SMLSIZE + LEFT)
-    IVdraw(eleNumedit, 64, 10, invers, SMLSIZE + LEFT)
- 
-    lcd.drawText(0, 20, "flap1 gv:", SMLSIZE + LEFT)
-    IVdraw(flap1Numedit, 64, 20, invers, SMLSIZE + LEFT)
- 
-    lcd.drawText(0, 30, "flap2 gv:", SMLSIZE + LEFT)
-    IVdraw(flap2Numedit, 64, 30, invers, SMLSIZE + LEFT)
 
-    lcd.drawText(0, 40, "test switch:", SMLSIZE + LEFT)
-    IVdraw(testSwitchSelector, 64, 40, invers, SMLSIZE + LEFT)
-   return doKey(event)
+    lcd.drawText(0, 9, "ele gv:", SMLSIZE + LEFT)
+    IVdraw(eleNumedit, 64, 9, invers, SMLSIZE + LEFT)
+
+    lcd.drawText(0, 18, "flap1 gv:", SMLSIZE + LEFT)
+    IVdraw(flap1Numedit, 64, 18, invers, SMLSIZE + LEFT)
+
+    lcd.drawText(0, 27, "flap2 gv:", SMLSIZE + LEFT)
+    IVdraw(flap2Numedit, 64, 27, invers, SMLSIZE + LEFT)
+
+    lcd.drawText(0, 36, "test switch:", SMLSIZE + LEFT)
+    IVdraw(testSwitchSelector, 64, 36, invers, SMLSIZE + LEFT)
+
+    lcd.drawText(0, 45, "read switch:", SMLSIZE + LEFT)
+    IVdraw(readSwitchSelector, 64, 45, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 54, "select slider:", SMLSIZE + LEFT)
+    IVdraw(varSliderSelector, 64, 54, invers, SMLSIZE + LEFT)
+ 
+    return doKey(event)
 end
 
 local function bg()
