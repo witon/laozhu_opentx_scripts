@@ -24,8 +24,8 @@ end
 function Button:new()
     self.__index = self
     local o = self.super:new()
-    self.noEdit = true
-    self.text = ""
     setmetatable(o, self)
+    o.noEdit = true
+    o.text = ""
     return o 
 end

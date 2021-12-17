@@ -10,7 +10,7 @@ function TimeEdit:new()
     self.__index = self
     local o = self.super:new()
     setmetatable(o, self)
-    self.num = 0
-    self.step = 1
+    o.num = 0
+    o.step = 1
     return o 
 end

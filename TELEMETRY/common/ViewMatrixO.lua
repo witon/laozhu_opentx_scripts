@@ -1,4 +1,5 @@
-ViewMatrix = {editingIV = nil, selectedRow = 1, selectedCol = 1, matrix={},  visibleRows = 5, scrollLine = 0}
+ViewMatrix = setmetatable({}, InputView)
+ViewMatrix.super = InputView
 
 function ViewMatrix:addRow()
     self.matrix[(#self.matrix) + 1] = {}
@@ -155,6 +156,12 @@ function ViewMatrix:new()
     local o = {}
     setmetatable(o, self)
     self.__index = self
+    o.editingIv = nil
+    o.selectedRow = 1
+    o.selectedCol = 1
+    o.matrix = {}
+    o.visibleRows = 5
+    o.scrollLine = 0
     return o
 end
 

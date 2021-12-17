@@ -41,7 +41,7 @@ end
 function Selector:new()
     self.__index = self
     local o = self.super:new()
-    self.selectedIndex = -1
+    o.selectedIndex = -1
     setmetatable(o, self)
     return o 
 end
