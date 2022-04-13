@@ -1,7 +1,7 @@
 require "iuplua"
 
 gScriptDir = "./"
-local fun = loadfile(gScriptDir .. "LAOZHU/comm/PCLoadModule.lua")
+    local fun = loadfile(gScriptDir .. "LAOZHU/comm/PCLoadModule.lua")
 fun()
 LZ_runModule("LAOZHU/Queue.lua")
 local logQueue = QUEnewQueue(20)
@@ -12,69 +12,77 @@ if not broadcast.init() then
 end
 
 
-text_location = iup.text{expand="HORIZONTAL", id="text_location"}
-label_round = iup.label{title="r"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"}
-label_group = iup.label{title="1"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"}
-label_task = iup.label{title="t"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"}
-label_state = iup.label{title="s"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"}
-label_time = iup.label{title="time"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"}
-btn_browse = iup.button{title="Browse", rastersize="x22",id="btn_browse"}
-btn_prev = iup.button{title="Previous", rastersize="x22",id="btn_prev", expand="HORIZONTAL"}
-btn_next = iup.button{title="Next", rastersize="x22",id="btn_next", expand="HORIZONTAL"}
-text_log = iup.multiline{text="log"; expand="HORIZONTAL"; readonly="YES"}
-timer = iup.timer{time=100}
+local labelRound = iup.label{title="r", expand="HORIZONTAL", ALIGNMENT="ALEFT", font="a, 18"}
+local labelGroup = iup.label{title="1", expand="HORIZONTAL", ALIGNMENT="ALEFT", font="a, 18"}
+local labelTask = iup.label{title="t", expand="HORIZONTAL", ALIGNMENT="ALEFT", font="a, 18"}
+local labelState = iup.label{title="s", expand="HORIZONTAL", ALIGNMENT="ARIGHT", font="a, 25"}
+local labelTime = iup.label{title="time", expand="HORIZONTAL", ALIGNMENT="ARIGHT", font="Arial, -100"}
+local btnPrev = iup.button{title="Previous", id="btnPrev", expand="HORIZONTAL", font="a, 15"}
+local btnNext = iup.button{title="Next", id="btnNext", expand="HORIZONTAL", font="a, 15"}
+local btnQuit = iup.button{title="Quit", id="btnQuit", expand="HORIZONTAL", font="a, 15"}
+local textLog = iup.multiline{text="log", expand="YES", size="x1", readonly="YES", multiline="YES"}
+local timer = iup.timer{time=100}
 dlg = iup.dialog
 {
+    MENUBOX=NO, MAXBOX=NO ,MINBOX=NO;
     iup.vbox
     {
-        iup.hbox
+        iup.backgroundbox
         {
-            iup.hbox
+            iup.vbox
             {
-                iup.label{title="Round:";expand="HORIZONTAL"; ALIGNMENT="ARIGHT"},
-                label_round;
-                expand="HORIZONTAL"
-            },
-            iup.hbox
-            {
-                iup.label{title="Group:"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"},
-                label_group;
-                expand="HORIZONTAL"
- 
-            },
-            iup.hbox
-            {
-                iup.label{title="Task:"; expand="HORIZONTAL"; ALIGNMENT="ARIGHT"},
-                label_task;
-                expand="HORIZONTAL"
+                iup.hbox
+                {
+                    iup.label{title="Round: ", ALIGNMENT="ALEFT", expand="HORIZONTAL", font="a, 18"},
+                        labelRound,
+                        iup.fill{},
+                        iup.fill{},
+                        iup.label{title="Group: ", ALIGNMENT="ALEFT", expand="HORIZONTAL", font="a, 18"},
+                        labelGroup;
+                        expand="HORIZONTAL"
+                },
+                iup.hbox
+                {
+                    iup.label{title="Task: ", ALIGNMENT="ALEFT", expand="NO", font="a, 18"},
+                    labelTask;
+                    expand="HORIZONTAL"
+                }
+
             };
-            expandchildren="YES";
-            expand="HORIZONTAL"
+            expand="HORIZONTAL",
+            border="YES"
         },
+
+        iup.backgroundbox
+        {
+            iup.vbox
+            {
+                labelState,
+                labelTime
+            };
+            bgcolor="255 255 255"
+
+        },
+
         iup.hbox
         {
-            label_state,
-            label_time;
+            btnPrev,
+            btnNext,
+            btnQuit;
             expand="HORIZONTAL"
         },
-        iup.hbox
-        {
-            btn_prev,
-            btn_next;
-            expand="HORIZONTAL"
-        },
-        iup.label{title="log:"},
-        text_log,
-        expandchildren="YES"
-    }
-    ;title="Glider Competiton Broadcast", size="200x200", margin="10x10"
+        textLog;
+        alignment="atop"
+    };
+    title="Glider Competiton Broadcast", clientsize="325x510", margin="10x10", CHILDOFFSET="0x25" , font="a, 15"
 }
 
-function btn_browse:action()
-    local dlg = iup.filedlg{dialogtype="DIR"}
-    dlg:popup()
-    if dlg.status == "0" then
-        text_location.value = dlg.value
+function btnQuit:action()
+    r = iup.Alarm("Confirm", "Quit broadcast now?", "Yes", "No")
+    if r == 1 then
+        return iup.CLOSE
+    else
+        return iup.IGNORE
     end
 end
 
@@ -92,33 +100,35 @@ function print(...)
     for i=QUEcount(logQueue), 1, -1 do
         str = str .. QUEget(logQueue, i) .. "\n"
     end
-    text_log.value = str
+    textLog.value = str
 end
+
 local function formatTime(time)
-	local minute = math.floor(time / 60)
-	local second= time % 60
-	local str = string.format("%02d:%02d", minute, second)
-	return str
+    local minute = math.floor(time / 60)
+    local second= time % 60
+    local str = string.format("%02d:%02d", minute, second)
+    return str
 end
+
 function timer:action_cb()
     local ret = broadcast.run()
     local competitionState, curRound, curGroup, remainTime, stateDesc, taskName = broadcast.getRoundInfo()
     local timeStr = formatTime(remainTime)
-    label_time.title = timeStr
-    label_group.title = curGroup
-    label_round.title = curRound
-    label_state.title = stateDesc
-    label_task.title = taskName
+    labelTime.title = timeStr
+    labelGroup.title = curGroup
+    labelRound.title = curRound
+    labelState.title = stateDesc
+    labelTask.title = taskName
 end
 
-function btn_prev:action ()
+function btnPrev:action ()
     local competitionState, curRound, curGroup, remainTime, stateDesc, taskName = broadcast.getRoundInfo()
     if competitionState == 2 then
         broadcast.backward()
     end
 end
 
-function btn_next:action ()
+function btnNext:action ()
     local competitionState, curRound, curGroup, remainTime, stateDesc, taskName = broadcast.getRoundInfo()
     if competitionState == 2 then
         broadcast.forward()
@@ -128,5 +138,4 @@ end
 
 timer.run = "YES"
 dlg:show()
-print("hahaha")
 iup.MainLoop()
