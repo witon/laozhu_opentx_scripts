@@ -84,6 +84,6 @@ function InputSelector:new()
     local o = self.super:new()
     self.fieldTable = FIELDS_CHANNEL
     setmetatable(o, self)
-    self.selectedIndex = 0
+    o.selectedIndex = 0
     return o 
 end

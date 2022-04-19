@@ -14,26 +14,26 @@ local recordListView = nil
 local playingTone = false
 local readVar = nil
 local function loadModule()
-    LZ_runModule("TELEMETRY/common/ViewMatrix.lua")
-    LZ_runModule("TELEMETRY/common/Button.lua")
-    LZ_runModule("TELEMETRY/common/NumEdit.lua")
-    LZ_runModule("TELEMETRY/common/InputView.lua")
+    LZ_runModule("TELEMETRY/common/InputViewO.lua")
+    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
+    LZ_runModule("TELEMETRY/common/ButtonO.lua")
+    LZ_runModule("TELEMETRY/common/NumEditO.lua")
     LZ_runModule("LAOZHU/DataFileDecode.lua")
     LZ_runModule("LAOZHU/CfgO.lua")
     LZ_runModule("/LAOZHU/SinkRateRecord.lua")
     LZ_runModule("/LAOZHU/SinkRateState.lua")
-    LZ_runModule("/TELEMETRY/adjust/SinkRate/RecordListView.lua")
+    LZ_runModule("/TELEMETRY/adjust/SinkRate/SRRecordListView.lua")
 end
 
 local function unloadModule()
-    VMunload()
-    BTunload()
-    NEunload()
-    IVunload()
+    ViewMatrix = nil
+    Button = nil
+    NumEdit = nil
+    InputView = nil
     DFDunload()
     SRRunload()
     SRSunload()
-    RLVunload()
+    SRRecordListView = nil
     CFGC = nil
 end
 
@@ -82,14 +82,14 @@ end
 
 
 local function updateGvNumEdit()
-    VMclearCurIVFocus(viewMatrix)
+    viewMatrix:clearCurIVFocus()
     local row = nil
-    if VMisEmpty(viewMatrix) then
-        VMaddRow(viewMatrix)
-        row = VMaddRow(viewMatrix)
+    if viewMatrix:isEmpty() then
+        viewMatrix:addRow()
+        row = viewMatrix:addRow()
         row[1] = recordListView
     end
-    VMclearRow(viewMatrix, 1)
+    viewMatrix:clearRow(1)
     row = viewMatrix.matrix[1]
     local eleGvIndex = sinkRateCfg:getNumberField("elegv", -1)
     local flap1GvIndex = sinkRateCfg:getNumberField("flap1gv", -1)
@@ -97,24 +97,24 @@ local function updateGvNumEdit()
     local modeIndex = sinkRateCfg:getNumberField("mode", -1)
 
     if eleGvIndex ~= -1 and modeIndex ~= -1 then
-        eleGvNumEdit = NEnewNumEdit()
-        NEsetOnChange(eleGvNumEdit, onNumEditChange)
+        eleGvNumEdit = NumEdit:new()
+        eleGvNumEdit:setOnChange(onNumEditChange)
         row[#row+1] = eleGvNumEdit
         eleGvNumEdit.gvIndex = eleGvIndex
     else
         eleGvNumEdit = nil
     end
     if flap1GvIndex ~= -1 and modeIndex ~= -1 then
-        flap1GvNumEdit = NEnewNumEdit()
-        NEsetOnChange(flap1GvNumEdit, onNumEditChange)
+        flap1GvNumEdit = NumEdit:new()
+        flap1GvNumEdit:setOnChange(onNumEditChange)
         row[#row+1] = flap1GvNumEdit
         flap1GvNumEdit.gvIndex = flap1GvIndex
     else
         flap1GvNumEdit = nil
     end
     if flap2GvIndex ~= -1 and modeIndex ~= -1 then
-        flap2GvNumEdit = NEnewNumEdit()
-        NEsetOnChange(flap2GvNumEdit, onNumEditChange)
+        flap2GvNumEdit = NumEdit:new()
+        flap2GvNumEdit.setOnChange(onNumEditChange)
         row[#row+1] = flap2GvNumEdit
         flap2GvNumEdit.gvIndex = flap2GvIndex
     else
@@ -123,7 +123,7 @@ local function updateGvNumEdit()
     row[#row+1] = cfgButton
     viewMatrix.selectedRow = 1
     viewMatrix.selectedCol = 1
-    VMupdateCurIVFocus(viewMatrix)
+    viewMatrix:updateCurIVFocus()
 
 end
 
@@ -163,12 +163,12 @@ local function init()
     SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
 
 
-    viewMatrix = VMnewViewMatrix()
-    cfgButton = BTnewButton()
+    viewMatrix = ViewMatrix:new()
+    cfgButton = Button:new()
     cfgButton.text = "*"
-    BTsetOnClick(cfgButton, onCfgButtonClick)
+    cfgButton:setOnClick(onCfgButtonClick)
 
-    recordListView = RLVnewRecordListView()
+    recordListView = SRRecordListView:new()
     recordListView.records = sinkRateRecord.records
 
     sinkRateCfg = CFGC:new()
@@ -187,7 +187,7 @@ local function init()
 end
 
 local function doKey(event)
-    local ret = viewMatrix.doKey(viewMatrix, event)
+    local ret = viewMatrix:doKey(event)
     if (not ret) and event == EVT_EXIT_BREAK then
         this.pageState = 1
         unloadModule()
@@ -215,18 +215,18 @@ local function run(event, curTime)
     end
     if eleGvNumEdit then
         lcd.drawText(0, 0, "e:", LEFT)
-        IVdraw(eleGvNumEdit, 10, 0, invers, LEFT)
+        eleGvNumEdit:draw(10, 0, invers, LEFT)
     end
     if flap1GvNumEdit then
         lcd.drawText(35, 0, "f1:", LEFT)
-        IVdraw(flap1GvNumEdit, 50, 0, invers, LEFT) --54
+        flap1GvNumEdit:draw(50, 0, invers, LEFT) --54
     end
     if flap2GvNumEdit then
         lcd.drawText(75, 0, "f2:", LEFT)
-        IVdraw(flap2GvNumEdit, 90, 0, invers, LEFT)
+        flap2GvNumEdit:draw(90, 0, invers, LEFT)
     end
 
-    IVdraw(cfgButton, 127, 0, invers, RIGHT)
+    cfgButton:draw(127, 0, invers, RIGHT)
 
     local testSwIndex = sinkRateCfg:getNumberField("testsw", -1)
     if testSwIndex ~= -1 then
@@ -257,7 +257,7 @@ local function run(event, curTime)
 
 
 
-    IVdraw(recordListView, 0, 19, invers, 0)
+    recordListView:draw(0, 19, invers, 0)
     return doKey(event)
 end
 

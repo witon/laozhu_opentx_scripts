@@ -104,8 +104,8 @@ end
 function TextEdit:new()
     self.__index = self
     local o = self.super:new()
-    self.modiIndex = 1
-    self.str = ""
+    o.modiIndex = 1
+    o.str = ""
     setmetatable(o, self)
     return o 
 end

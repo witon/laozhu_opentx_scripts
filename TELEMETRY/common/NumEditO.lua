@@ -55,7 +55,7 @@ function NumEdit:new()
     setmetatable(o, self)
     self.__index = self
     self.__super = InputView
-    self.num = 0
-    self.step = 1
+    o.num = 0
+    o.step = 1
     return o
 end

@@ -44,6 +44,6 @@ function TaskSelector:new()
     self.__index = self
     local o = self.super:new()
     setmetatable(o, self)
-    self.selectedIndex = 0
+    o.selectedIndex = 0
     return o 
 end
