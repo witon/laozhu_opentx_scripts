@@ -6,7 +6,7 @@ local launchCfg = nil
 local launchCfgFileName = "launch.cfg"
 local eleGvNumEdit = nil
 local flap1GvNumEdit = nil
-local flap2GvNumEdit = nil
+local rudGvNumEdit = nil
 local altID = 0
 local launchRecord = nil
 local recordListView = nil
@@ -54,8 +54,8 @@ local function getGVValue()
     if flap1GvNumEdit then
         flap1GvNumEdit.num = LZ_getGVValue(flap1GvNumEdit.gvIndex, modeIndex)
     end
-    if flap2GvNumEdit then
-        flap2GvNumEdit.num = LZ_getGVValue(flap2GvNumEdit.gvIndex, modeIndex)
+    if rudGvNumEdit then
+        rudGvNumEdit.num = LZ_getGVValue(rudGvNumEdit.gvIndex, modeIndex)
     end
 end
 
@@ -94,7 +94,7 @@ local function updateGvNumEdit()
     row = viewMatrix.matrix[1]
     local eleGvIndex = launchCfg:getNumberField("elegv", -1)
     local flap1GvIndex = launchCfg:getNumberField("flap1gv", -1)
-    local flap2GvIndex = launchCfg:getNumberField("flap2gv", -1)
+    local rudGvIndex = launchCfg:getNumberField("rudgv", -1)
     local modeIndex = launchCfg:getNumberField("mode", -1)
 
     if eleGvIndex ~= -1 and modeIndex ~= -1 then
@@ -113,13 +113,13 @@ local function updateGvNumEdit()
     else
         flap1GvNumEdit = nil
     end
-    if flap2GvIndex ~= -1 and modeIndex ~= -1 then
-        flap2GvNumEdit = NumEdit:new()
-        flap2GvNumEdit:setOnChange(onNumEditChange)
-        row[#row+1] = flap2GvNumEdit
-        flap2GvNumEdit.gvIndex = flap2GvIndex
+    if rudGvIndex ~= -1 and modeIndex ~= -1 then
+        rudGvNumEdit = NumEdit:new()
+        rudGvNumEdit:setOnChange(onNumEditChange)
+        row[#row+1] = rudGvNumEdit
+        rudGvNumEdit.gvIndex = rudGvIndex
     else
-        flap2GvNumEdit = nil
+        rudGvNumEdit = nil
     end
     row[#row+1] = cfgButton
     viewMatrix.selectedRow = 1
@@ -137,16 +137,16 @@ local function landedCallBack(flightTime, launchAlt, launchTime)
     if flap1GvNumEdit then
         flap1 = flap1GvNumEdit.num
     end
-    local flap2 = "-"
-    if flap2GvNumEdit then
-        flap2 = flap2GvNumEdit.num
+    local rud = "-"
+    if rudGvNumEdit then
+        rud = rudGvNumEdit.num
     end
     local record = LRaddOneRecord(launchRecord,
                     launchTime,
                     launchAlt,
                     ele,
                     flap1,
-                    flap2)
+                    rud)
     LRwriteOneRecordToFile(getDateTime(), record)
 end
 
@@ -230,9 +230,9 @@ local function run(event, curTime)
         lcd.drawText(35, 0, "f1:", LEFT)
         flap1GvNumEdit:draw(50, 0, invers, LEFT) --54
     end
-    if flap2GvNumEdit then
+    if rudGvNumEdit then
         lcd.drawText(75, 0, "r:", LEFT)
-        flap2GvNumEdit:draw(90, 0, invers, LEFT)
+        rudGvNumEdit:draw(90, 0, invers, LEFT)
     end
 
     cfgButton:draw(127, 0, invers, RIGHT)
