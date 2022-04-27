@@ -7,7 +7,7 @@ fun()
 
 
 local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua"}
+local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/Launch/Launch.lua"}
 local curPage = nil
 
 local function loadPage(index)

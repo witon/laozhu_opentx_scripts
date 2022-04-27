@@ -1,18 +1,18 @@
 local viewMatrix = nil
 local this = nil
 local cfgButton = nil
-local sinkRateCfgPage = nil
-local sinkRateCfg = nil
-local sinkRateCfgFileName = "sinkrate.cfg"
+local launchCfgPage = nil
+local launchCfg = nil
+local launchCfgFileName = "launch.cfg"
 local eleGvNumEdit = nil
 local flap1GvNumEdit = nil
 local flap2GvNumEdit = nil
-local sinkRateState = nil
 local altID = 0
-local sinkRateRecord = nil
+local launchRecord = nil
 local recordListView = nil
-local playingTone = false
 local readVar = nil
+local f3kState = nil
+local curAlt = 0
 local function loadModule()
     LZ_runModule("TELEMETRY/common/InputViewO.lua")
     LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
@@ -20,10 +20,10 @@ local function loadModule()
     LZ_runModule("TELEMETRY/common/NumEditO.lua")
     LZ_runModule("LAOZHU/DataFileDecode.lua")
     LZ_runModule("LAOZHU/CfgO.lua")
-    LZ_runModule("/LAOZHU/SinkRateRecord.lua")
-    LZ_runModule("/LAOZHU/SinkRateState.lua")
-    LZ_runModule("/TELEMETRY/adjust/SinkRate/SRRecordListView.lua")
-    LZ_runModule("/LAOZHU/comm/OTSound.lua")
+    LZ_runModule("/LAOZHU/launchRecord.lua")
+    LZ_runModule("LAOZHU/comm/Timer.lua")
+    LZ_runModule("/TELEMETRY/adjust/Launch/LRecordListView.lua")
+	LZ_runModule("LAOZHU/comm/OTSound.lua")
 end
 
 local function unloadModule()
@@ -32,14 +32,14 @@ local function unloadModule()
     NumEdit = nil
     InputView = nil
     DFDunload()
-    SRRunload()
-    SRSunload()
-    SRRecordListView = nil
+    LRunload()
+    LRecordListView = nil
     CFGC = nil
+    Timer = nil
 end
 
 local function onNumEditChange(numEdit)
-    local modeIndex = sinkRateCfg:getNumberField("mode", -1)
+    local modeIndex = launchCfg:getNumberField("mode", -1)
     if modeIndex == -1 then
         return
     end
@@ -47,7 +47,7 @@ local function onNumEditChange(numEdit)
 end
 
 local function getGVValue()
-    local modeIndex = sinkRateCfg:getNumberField("mode", -1)
+    local modeIndex = launchCfg:getNumberField("mode", -1)
     if eleGvNumEdit then
         eleGvNumEdit.num = LZ_getGVValue(eleGvNumEdit.gvIndex, modeIndex)
     end
@@ -60,20 +60,20 @@ local function getGVValue()
 end
 
 local function loadCfgPage()
-    if sinkRateCfgPage ~= nil then
+    if launchCfgPage ~= nil then
         return
     end
-    sinkRateCfgPage = LZ_runModule("TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua")
-    sinkRateCfgPage.setCfgFileName(sinkRateCfgFileName)
-    sinkRateCfgPage.init()
+    launchCfgPage = LZ_runModule("TELEMETRY/adjust/Launch/LaunchCfgPage.lua")
+    launchCfgPage.setCfgFileName(launchCfgFileName)
+    launchCfgPage.init()
 end
 
 local function unloadCfgPage()
-    if sinkRateCfgPage == nil then
+    if launchCfgPage == nil then
         return
     end
-    LZ_clearTable(sinkRateCfgPage)
-    sinkRateCfgPage = nil
+    LZ_clearTable(launchCfgPage)
+    launchCfgPage = nil
     collectgarbage()
 end
 
@@ -92,10 +92,10 @@ local function updateGvNumEdit()
     end
     viewMatrix:clearRow(1)
     row = viewMatrix.matrix[1]
-    local eleGvIndex = sinkRateCfg:getNumberField("elegv", -1)
-    local flap1GvIndex = sinkRateCfg:getNumberField("flap1gv", -1)
-    local flap2GvIndex = sinkRateCfg:getNumberField("flap2gv", -1)
-    local modeIndex = sinkRateCfg:getNumberField("mode", -1)
+    local eleGvIndex = launchCfg:getNumberField("elegv", -1)
+    local flap1GvIndex = launchCfg:getNumberField("flap1gv", -1)
+    local flap2GvIndex = launchCfg:getNumberField("flap2gv", -1)
+    local modeIndex = launchCfg:getNumberField("mode", -1)
 
     if eleGvIndex ~= -1 and modeIndex ~= -1 then
         eleGvNumEdit = NumEdit:new()
@@ -128,10 +128,7 @@ local function updateGvNumEdit()
 
 end
 
-local function onSinkRateStateChange(state, isStart)
-    if isStart then
-        return
-    end
+local function landedCallBack(flightTime, launchAlt, launchTime)
     local ele = "-"
     if eleGvNumEdit then
         ele = eleGvNumEdit.num
@@ -144,24 +141,28 @@ local function onSinkRateStateChange(state, isStart)
     if flap2GvNumEdit then
         flap2 = flap2GvNumEdit.num
     end
-    local record = SRRaddOneRecord(sinkRateRecord,
-                    state.startTime,
-                    state.startAlt,
-                    state.stopTime,
-                    state.stopAlt,
+    local record = LRaddOneRecord(launchRecord,
+                    launchTime,
+                    launchAlt,
                     ele,
                     flap1,
                     flap2)
-    SRRwriteOneRecordToFile(getDateTime(), record)
-    SRSreset(state)
+    LRwriteOneRecordToFile(getDateTime(), record)
 end
+
+local function launchedCallback(launchTime, launchAlt)
+    LZ_playNumber(f3kState.getLaunchAlt(), 9)
+end
+
 
 local function init()
     loadModule()
-    sinkRateState = SRSnewSinkRateState()
-    SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
-    sinkRateRecord = SRRnewSinkRateRecord()
-    SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
+    f3kState = LZ_runModule("/LAOZHU/F3k/F3kState.lua")
+	f3kState.setLandedCallback(landedCallBack)
+    f3kState.setLaunchedCallback(launchedCallback)
+	
+    launchRecord = LRnewLaunchRecord()
+    LRreadOneDayRecordsFromFile(launchRecord, getDateTime())
 
 
     viewMatrix = ViewMatrix:new()
@@ -169,19 +170,19 @@ local function init()
     cfgButton.text = "*"
     cfgButton:setOnClick(onCfgButtonClick)
 
-    recordListView = SRRecordListView:new()
-    recordListView.records = sinkRateRecord.records
+    recordListView = LRecordListView:new()
+    recordListView.records = launchRecord.records
 
-    sinkRateCfg = CFGC:new()
-    sinkRateCfg:readFromFile(sinkRateCfgFileName)
+    launchCfg = CFGC:new()
+    launchCfg:readFromFile(launchCfgFileName)
 
     updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
 	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
-	sinkRateReadVarMap.sinkRateState = sinkRateState
-	readVar.setVarMap(sinkRateReadVarMap)
+	local launchReadVarMap = LZ_runModule("LAOZHU/launchReadVarMap.lua")
+	launchReadVarMap.f3kState = f3kState
+	readVar.setVarMap(launchReadVarMap)
 
 
 	
@@ -197,21 +198,28 @@ local function doKey(event)
 end
 
 local function run(event, curTime)
-    if sinkRateCfgPage then
-        if sinkRateCfgPage.pageState == 1 then
+	local flightMode, flightModeName = getFlightMode()
+	curAlt = getValue(altID)
+	local rtcTime = getRtcTime()
+
+	f3kState.setAlt(curAlt)
+	f3kState.doFlightState(curTime, flightModeName, rtcTime)
+
+    if launchCfgPage then
+        if launchCfgPage.pageState == 1 then
             unloadCfgPage()
             updateGvNumEdit()
             getGVValue()
             return true
         end
-        local processed = sinkRateCfgPage.run(event, time)
+        local processed = launchCfgPage.run(event, time)
         if processed then
             return true
         end
     end
 
     local invers = false
-    if getRtcTime() % 2 == 1 then
+    if rtcTime % 2 == 1 then
         invers = true
     end
     if eleGvNumEdit then
@@ -223,45 +231,23 @@ local function run(event, curTime)
         flap1GvNumEdit:draw(50, 0, invers, LEFT) --54
     end
     if flap2GvNumEdit then
-        lcd.drawText(75, 0, "f2:", LEFT)
+        lcd.drawText(75, 0, "r:", LEFT)
         flap2GvNumEdit:draw(90, 0, invers, LEFT)
     end
 
     cfgButton:draw(127, 0, invers, RIGHT)
 
-    local testSwIndex = sinkRateCfg:getNumberField("testsw", -1)
-    local playTone = false
-    if getRtcTime() % 4 == 1 then
-        playTone = true
-    end
-    if testSwIndex ~= -1 then
-        local time = getRtcTime()
-        local alt = getValue(altID)
-        SRSrun(sinkRateState, time, alt, getValue(testSwIndex))
-
-        if SRSisStart(sinkRateState) and playTone and playingTone == false then
-            --playTone(1000, 100, 0, 0)
-            LZ_playNumber(SRSgetCurSinkRate(sinkRateState)*100, 0)
-            playingTone = true
-        end
-        if not invers and playingTone then
-            playingTone = false
-        end
-
-        lcd.drawText(0, 10, "dur:", SMLSIZE + LEFT)
-        lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState)), SMLSIZE + RIGHT)
-        lcd.drawText(44, 10, "sink:", SMLSIZE + LEFT)
-        lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState)), SMLSIZE + RIGHT)
-        lcd.drawText(80, 10, "srate:", SMLSIZE + LEFT)
-        lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState)*100, SMLSIZE + RIGHT)
-
-        local varSelectorSliderValue = getValue(sinkRateCfg:getNumberField('SelSlider'))
-        local varReadSwitchValue = getValue(sinkRateCfg:getNumberField('ReadSw'))
-        readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
- 
-    end
+    lcd.drawText(0, 10, "state:", SMLSIZE + LEFT)
+	lcd.drawText(30, 10, f3kState.getCurFlightStateName(), SMLSIZE + LEFT)
 
 
+
+    lcd.drawText(80, 10, "height:", SMLSIZE + LEFT)
+    lcd.drawNumber(128, 10, f3kState.getLaunchAlt(), SMLSIZE + RIGHT)
+
+    local varSelectorSliderValue = getValue(launchCfg:getNumberField('SelSlider'))
+    local varReadSwitchValue = getValue(launchCfg:getNumberField('ReadSw'))
+    readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 
     recordListView:draw(0, 19, invers, 0)
     return doKey(event)

@@ -9,10 +9,16 @@ local flightStateStartTime = 0
 local destFlightTime = 0
 local flightTimer = Timer:new()
 local landedCallback = nil
+local launchedCallback = nil
 
 local function setLandedCallback(callback)
     landedCallback = callback
 end
+
+local function setLaunchedCallback(callback)
+    launchedCallback = callback
+end
+
 
 local function setAlt(alt)
     curAlt = alt
@@ -80,6 +86,9 @@ local function doStateZoom(curTime, flightModeName)
     else
         flightState = 2
         flightStateStartTime = curTime
+        if launchedCallback then
+            launchedCallback(launchRtcTime, launchAlt)
+        end
     end
     getMaxLaunchAlt()
 end
@@ -149,5 +158,6 @@ return {newFlight = newFlight,
     getLaunchAlt = getLaunchAlt,
     setDestFlightTime = setDestFlightTime,
     getDestFlightTime = getDestFlightTime,
-    setLandedCallback = setLandedCallback
+    setLandedCallback = setLandedCallback,
+    setLaunchedCallback = setLaunchedCallback
 }
