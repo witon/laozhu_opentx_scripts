@@ -1,4 +1,5 @@
 
+local this = nil
 
 local flightState = 0 --0:preset 1:zoom 2:launched 3:landed
 local launchTime = 0
@@ -15,9 +16,9 @@ local function setLandedCallback(callback)
     landedCallback = callback
 end
 
-local function setLaunchedCallback(callback)
-    launchedCallback = callback
-end
+--local function setLaunchedCallback(callback)
+--    launchedCallback = callback
+--end
 
 
 local function setAlt(alt)
@@ -86,8 +87,8 @@ local function doStateZoom(curTime, flightModeName)
     else
         flightState = 2
         flightStateStartTime = curTime
-        if launchedCallback then
-            launchedCallback(launchRtcTime, launchAlt)
+        if this.launchedCallback then
+            this.launchedCallback(launchRtcTime, launchAlt)
         end
     end
     getMaxLaunchAlt()
@@ -145,8 +146,7 @@ local function doFlightState(curTime, flightModeName, curRtcTime)
     end
 end
 
-
-return {newFlight = newFlight,
+this = {newFlight = newFlight,
     doFlightState = doFlightState,
     getFlightState = getFlightState,
     getLaunchRtcTime = getLaunchRtcTime,
@@ -159,5 +159,7 @@ return {newFlight = newFlight,
     setDestFlightTime = setDestFlightTime,
     getDestFlightTime = getDestFlightTime,
     setLandedCallback = setLandedCallback,
-    setLaunchedCallback = setLaunchedCallback
+    launchedCallback = nil
+    --setLaunchedCallback = setLaunchedCallback
 }
+return this
