@@ -5,7 +5,6 @@ local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt
 fun()
 
 
-
 local focusIndex = 1
 local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/Launch/Launch.lua"}
 local curPage = nil
@@ -13,22 +12,7 @@ local curPage = nil
 local function loadPage(index)
 	local pagePath = "TELEMETRY/" .. pages[index]
 	curPage = LZ_runModule(pagePath)
-	curPage.init()
-end
-
-
-local function init()
-	LZ_runModule("LAOZHU/LuaUtils.lua")
-	LZ_runModule("LAOZHU/OTUtils.lua")
-
-	if LZ_isNeedCompile() then
-		local pagePath = "TELEMETRY/common/comp.lua"
-		curPage = LZ_runModule(pagePath)
-		curPage.init()
-		return
-	end
-
-
+	--curPage.init()
 end
 
 local function background()
@@ -48,6 +32,9 @@ local function background()
 end
 
 local function run(event)
+	collectgarbage("collect")
+	print("----------", collectgarbage("count")*1000)
+	
 	bgFlag = false
 	lcd.clear()
 	if curPage then
@@ -84,6 +71,23 @@ local function run(event)
 	end
 end
 
-return { run=run, init=init, background = background }
+--local function init()
+
+LZ_runModule("LAOZHU/LuaUtils.lua")
+LZ_runModule("LAOZHU/OTUtils.lua")
+
+if LZ_isNeedCompile() then
+	local pagePath = "TELEMETRY/common/comp.lua"
+	curPage = LZ_runModule(pagePath)
+	--curPage.init()
+else
+	LZ_isNeedCompile = nil
+	LZ_markCompiled = nil
+end
+--end
+
+--init()
+
+return { run=run, background=background }
 
 

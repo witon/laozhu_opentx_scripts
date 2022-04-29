@@ -3,7 +3,6 @@ local this = nil
 local cfgButton = nil
 local launchCfgPage = nil
 local launchCfg = nil
-local launchCfgFileName = "launch.cfg"
 local eleGvNumEdit = nil
 local flap1GvNumEdit = nil
 local rudGvNumEdit = nil
@@ -64,8 +63,6 @@ local function loadCfgPage()
         return
     end
     launchCfgPage = LZ_runModule("TELEMETRY/adjust/Launch/LaunchCfgPage.lua")
-    launchCfgPage.setCfgFileName(launchCfgFileName)
-    launchCfgPage.init()
 end
 
 local function unloadCfgPage()
@@ -155,39 +152,6 @@ local function launchedCallback(launchTime, launchAlt)
 end
 
 
-local function init()
-    loadModule()
-    f3kState = LZ_runModule("/LAOZHU/F3k/F3kState.lua")
-	f3kState.setLandedCallback(landedCallBack)
-    f3kState.setLaunchedCallback(launchedCallback)
-	
-    launchRecord = LRnewLaunchRecord()
-    LRreadOneDayRecordsFromFile(launchRecord, getDateTime())
-
-
-    viewMatrix = ViewMatrix:new()
-    cfgButton = Button:new()
-    cfgButton.text = "*"
-    cfgButton:setOnClick(onCfgButtonClick)
-
-    recordListView = LRecordListView:new()
-    recordListView.records = launchRecord.records
-
-    launchCfg = CFGC:new()
-    launchCfg:readFromFile(launchCfgFileName)
-
-    updateGvNumEdit()
-    getGVValue()
-	altID = getTelemetryId("Alt")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local launchReadVarMap = LZ_runModule("LAOZHU/launchReadVarMap.lua")
-	launchReadVarMap.f3kState = f3kState
-	readVar.setVarMap(launchReadVarMap)
-
-
-	
-end
-
 local function doKey(event)
     local ret = viewMatrix:doKey(event)
     if (not ret) and event == EVT_EXIT_BREAK then
@@ -257,6 +221,38 @@ local function bg()
 
 end
 
-this = {run=run, init=init, bg=bg, pageState=0}
+local function init()
+    loadModule()
+    f3kState = LZ_runModule("/LAOZHU/F3k/F3kState.lua")
+	f3kState.setLandedCallback(landedCallBack)
+    f3kState.launchedCallback = launchedCallback
+	
+    launchRecord = LRnewLaunchRecord()
+    LRreadOneDayRecordsFromFile(launchRecord, getDateTime())
+
+
+    viewMatrix = ViewMatrix:new()
+    cfgButton = Button:new()
+    cfgButton.text = "*"
+    cfgButton:setOnClick(onCfgButtonClick)
+
+    recordListView = LRecordListView:new()
+    recordListView.records = launchRecord.records
+
+    launchCfg = CFGC:new()
+    launchCfg:readFromFile("launch.cfg")
+
+    updateGvNumEdit()
+    getGVValue()
+	altID = getTelemetryId("Alt")
+	readVar = LZ_runModule("LAOZHU/readVar.lua")
+	local launchReadVarMap = LZ_runModule("LAOZHU/launchReadVarMap.lua")
+	launchReadVarMap.f3kState = f3kState
+	readVar.setVarMap(launchReadVarMap)
+end
+
+init()
+
+this = {run=run, bg=bg, pageState=0}
 
 return this

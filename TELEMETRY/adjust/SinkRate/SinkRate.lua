@@ -156,36 +156,6 @@ local function onSinkRateStateChange(state, isStart)
     SRSreset(state)
 end
 
-local function init()
-    loadModule()
-    sinkRateState = SRSnewSinkRateState()
-    SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
-    sinkRateRecord = SRRnewSinkRateRecord()
-    SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
-
-
-    viewMatrix = ViewMatrix:new()
-    cfgButton = Button:new()
-    cfgButton.text = "*"
-    cfgButton:setOnClick(onCfgButtonClick)
-
-    recordListView = SRRecordListView:new()
-    recordListView.records = sinkRateRecord.records
-
-    sinkRateCfg = CFGC:new()
-    sinkRateCfg:readFromFile(sinkRateCfgFileName)
-
-    updateGvNumEdit()
-    getGVValue()
-	altID = getTelemetryId("Alt")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
-	sinkRateReadVarMap.sinkRateState = sinkRateState
-	readVar.setVarMap(sinkRateReadVarMap)
-
-
-	
-end
 
 local function doKey(event)
     local ret = viewMatrix:doKey(event)
@@ -271,6 +241,36 @@ local function bg()
 
 end
 
-this = {run=run, init=init, bg=bg, pageState=0}
+local function init()
+    loadModule()
+    sinkRateState = SRSnewSinkRateState()
+    SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
+    sinkRateRecord = SRRnewSinkRateRecord()
+    SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
+
+
+    viewMatrix = ViewMatrix:new()
+    cfgButton = Button:new()
+    cfgButton.text = "*"
+    cfgButton:setOnClick(onCfgButtonClick)
+
+    recordListView = SRRecordListView:new()
+    recordListView.records = sinkRateRecord.records
+
+    sinkRateCfg = CFGC:new()
+    sinkRateCfg:readFromFile(sinkRateCfgFileName)
+
+    updateGvNumEdit()
+    getGVValue()
+	altID = getTelemetryId("Alt")
+	readVar = LZ_runModule("LAOZHU/readVar.lua")
+	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
+	sinkRateReadVarMap.sinkRateState = sinkRateState
+	readVar.setVarMap(sinkRateReadVarMap)
+end
+
+init()
+
+this = {run=run, bg=bg, pageState=0}
 
 return this

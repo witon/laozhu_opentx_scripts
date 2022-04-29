@@ -7,7 +7,7 @@ local rudNumedit = nil
 local readSwitchSelector = nil
 local varSliderSelector = nil
 
-local cfgFileName = nil
+local cfgFileName = "launch.cfg"
 local sinkRateCfg = nil
 
 local function loadModule()
@@ -23,10 +23,6 @@ local function unloadModule()
     ModeSelector = nil
     InputSelector = nil
     FieldsUnload()
-end
-
-local function setCfgFileName(fileName)
-    cfgFileName = fileName
 end
 
 local function saveCfg()
@@ -46,52 +42,6 @@ local function newGVInput()
     gvNumEdit.max = 8
     gvNumEdit.num = -1
     return gvNumEdit
-end
-
-local function init()
-    loadModule()
-    sinkRateCfg = CFGC:new()
-    sinkRateCfg:readFromFile(cfgFileName)
-    
-    viewMatrix = ViewMatrix:new()
-
-    modeSelector = ModeSelector:new()
-    modeSelector.selectedIndex = sinkRateCfg:getNumberField("mode", -1)
-    eleNumedit = newGVInput()
-    eleNumedit.num = sinkRateCfg:getNumberField("elegv", -1)
-    flap1Numedit = newGVInput()
-    flap1Numedit.num = sinkRateCfg:getNumberField("flap1gv", -1)
-    rudNumedit = newGVInput()
-    rudNumedit.num = sinkRateCfg:getNumberField("rudgv", -1)
-
-    local vmRow = viewMatrix:addRow()
-    vmRow[1] = modeSelector
-
-    vmRow = viewMatrix:addRow()
-    vmRow[1] = eleNumedit
-
-    vmRow = viewMatrix:addRow()
-    vmRow[1] = flap1Numedit
-
-    vmRow = viewMatrix:addRow()
-    vmRow[1] = rudNumedit
-
-    readSwitchSelector = InputSelector:new()
-    readSwitchSelector:setFieldType(FIELDS_SWITCH)
-    readSwitchSelector:setSelectedItemById(sinkRateCfg:getNumberField("ReadSw", -1))
-    vmRow = viewMatrix:addRow()
-    vmRow[1] = readSwitchSelector
-
-    varSliderSelector = InputSelector:new()
-    varSliderSelector:setFieldType(FIELDS_INPUT)
-    varSliderSelector:setSelectedItemById(sinkRateCfg:getNumberField("SelSlider", -1))
-    vmRow = viewMatrix:addRow()
-    vmRow[1] = varSliderSelector
-
-    viewMatrix.selectedRow = 1
-    viewMatrix.selectedCol = 1
-    viewMatrix:updateCurIVFocus()
- 
 end
 
 
@@ -134,6 +84,53 @@ local function bg()
 
 end
 
-this = {run=run, init=init, bg=bg, pageState=0, setCfgFileName=setCfgFileName}
+--local function init()
+    loadModule()
+    sinkRateCfg = CFGC:new()
+    sinkRateCfg:readFromFile(cfgFileName)
+    
+    viewMatrix = ViewMatrix:new()
+
+    modeSelector = ModeSelector:new()
+    modeSelector.selectedIndex = sinkRateCfg:getNumberField("mode", -1)
+    eleNumedit = newGVInput()
+    eleNumedit.num = sinkRateCfg:getNumberField("elegv", -1)
+    flap1Numedit = newGVInput()
+    flap1Numedit.num = sinkRateCfg:getNumberField("flap1gv", -1)
+    rudNumedit = newGVInput()
+    rudNumedit.num = sinkRateCfg:getNumberField("rudgv", -1)
+
+    local vmRow = viewMatrix:addRow()
+    vmRow[1] = modeSelector
+
+    vmRow = viewMatrix:addRow()
+    vmRow[1] = eleNumedit
+
+    vmRow = viewMatrix:addRow()
+    vmRow[1] = flap1Numedit
+
+    vmRow = viewMatrix:addRow()
+    vmRow[1] = rudNumedit
+
+    readSwitchSelector = InputSelector:new()
+    readSwitchSelector:setFieldType(FIELDS_SWITCH)
+    readSwitchSelector:setSelectedItemById(sinkRateCfg:getNumberField("ReadSw", -1))
+    vmRow = viewMatrix:addRow()
+    vmRow[1] = readSwitchSelector
+
+    varSliderSelector = InputSelector:new()
+    varSliderSelector:setFieldType(FIELDS_INPUT)
+    varSliderSelector:setSelectedItemById(sinkRateCfg:getNumberField("SelSlider", -1))
+    vmRow = viewMatrix:addRow()
+    vmRow[1] = varSliderSelector
+
+    viewMatrix.selectedRow = 1
+    viewMatrix.selectedCol = 1
+    viewMatrix:updateCurIVFocus()
+
+ 
+--end
+
+this = {run=run, bg=bg, pageState=0}
 
 return this

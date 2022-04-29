@@ -134,31 +134,6 @@ local function onCurvesButtonClick()
     end
 end
 
-local function init()
-    loadModule()
-
-    LZ_runModule("TELEMETRY/adjust/ReplaceMix.lua")
-    LZ_runModule("TELEMETRY/adjust/OutputCurveManager.lua")
-    selectChannelsButton = BTnewButton()
-    curvesButton = BTnewButton()
-    curvesButton.text = "curves"
-    BTsetOnClick(curvesButton, onCurvesButtonClick)
-    BTsetOnClick(selectChannelsButton, onSelectChannelsButtonClick)
-    selectChannelsButton.text = "channels"
-    enableAdjustCheckBox = CBnewCheckBox()
-    CBsetOnChange(enableAdjustCheckBox, onEnableAdjustCheckBoxChange)
-
-    viewMatrix = VMnewViewMatrix()
-    viewMatrix.matrix[1] = {}
-    viewMatrix.matrix[1][1] = selectChannelsButton
-    viewMatrix.matrix[1][2] = enableAdjustCheckBox 
-    viewMatrix.matrix[1][3] = curvesButton
- 
-    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
-    for i=0, 16, 1 do
-        recoverMix(i)
-    end
-end
 
 local function updateAdjustChannels()
     LZ_clearTable(outputNameArray)
@@ -276,5 +251,31 @@ local function bg()
     unloadModule()
 end
 
-this = {run = run, init=init, bg = bg, pageState=0}
+local function init()
+    loadModule()
+    LZ_runModule("TELEMETRY/adjust/ReplaceMix.lua")
+    LZ_runModule("TELEMETRY/adjust/OutputCurveManager.lua")
+    selectChannelsButton = BTnewButton()
+    curvesButton = BTnewButton()
+    curvesButton.text = "curves"
+    BTsetOnClick(curvesButton, onCurvesButtonClick)
+    BTsetOnClick(selectChannelsButton, onSelectChannelsButtonClick)
+    selectChannelsButton.text = "channels"
+    enableAdjustCheckBox = CBnewCheckBox()
+    CBsetOnChange(enableAdjustCheckBox, onEnableAdjustCheckBoxChange)
+
+    viewMatrix = VMnewViewMatrix()
+    viewMatrix.matrix[1] = {}
+    viewMatrix.matrix[1][1] = selectChannelsButton
+    viewMatrix.matrix[1][2] = enableAdjustCheckBox 
+    viewMatrix.matrix[1][3] = curvesButton
+ 
+    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
+    for i=0, 16, 1 do
+        recoverMix(i)
+    end
+end
+init()
+
+this = {run = run, bg = bg, pageState=0}
 return this
