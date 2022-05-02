@@ -1,7 +1,7 @@
 local this = {}
 
 local function readLaunchAlt()
-    playNumber(this.f3kState.getLaunchAlt(), 9)
+    playNumber(this.f3kState.launchAlt, 9)
 end
 
 this[1] = readLaunchAlt

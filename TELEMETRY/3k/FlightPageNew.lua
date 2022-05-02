@@ -76,7 +76,7 @@ end
 local function init()
 	viewMatrix = ViewMatrix:new()
 	destFlightTimeEdit = TimeEdit:new()
-	destFlightTimeEdit.num = gF3kCore.getFlightState().getDestFlightTime()
+	destFlightTimeEdit.num = gF3kCore.getFlightState().destFlightTime
 	destFlightTimeEdit:setRange(0, 900)
 	destFlightTimeEdit.step = f3kCfg:getNumberField("DestTimeStep", 15)
 	destFlightTimeEdit:setOnChange(onDestFlightTimeChange)

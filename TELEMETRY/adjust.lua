@@ -32,8 +32,8 @@ local function background()
 end
 
 local function run(event)
-	collectgarbage("collect")
-	print("----------", collectgarbage("count")*1000)
+	--collectgarbage("collect")
+	--print("----------", collectgarbage("count")*1000)
 	
 	bgFlag = false
 	lcd.clear()

@@ -148,7 +148,7 @@ local function landedCallBack(flightTime, launchAlt, launchTime)
 end
 
 local function launchedCallback(launchTime, launchAlt)
-    LZ_playNumber(f3kState.getLaunchAlt(), 9)
+    LZ_playNumber(f3kState.launchAlt, 9)
 end
 
 
@@ -162,11 +162,20 @@ local function doKey(event)
 end
 
 local function run(event, curTime)
+
+    if launchRecord == nil then
+        launchRecord = LRnewLaunchRecord()
+        LRreadOneDayRecordsFromFile(launchRecord, getDateTime())
+        recordListView.records = launchRecord.records
+        return
+    end
+
+
 	local flightMode, flightModeName = getFlightMode()
 	curAlt = getValue(altID)
 	local rtcTime = getRtcTime()
 
-	f3kState.setAlt(curAlt)
+	f3kState.curAlt = curAlt
 	f3kState.doFlightState(curTime, flightModeName, rtcTime)
 
     if launchCfgPage then
@@ -207,7 +216,7 @@ local function run(event, curTime)
 
 
     lcd.drawText(80, 10, "height:", SMLSIZE + LEFT)
-    lcd.drawNumber(128, 10, f3kState.getLaunchAlt(), SMLSIZE + RIGHT)
+    lcd.drawNumber(128, 10, f3kState.launchAlt, SMLSIZE + RIGHT)
 
     local varSelectorSliderValue = getValue(launchCfg:getNumberField('SelSlider'))
     local varReadSwitchValue = getValue(launchCfg:getNumberField('ReadSw'))
@@ -224,20 +233,15 @@ end
 local function init()
     loadModule()
     f3kState = LZ_runModule("/LAOZHU/F3k/F3kState.lua")
-	f3kState.setLandedCallback(landedCallBack)
+	f3kState.landedCallBack = landedCallBack
     f3kState.launchedCallback = launchedCallback
 	
-    launchRecord = LRnewLaunchRecord()
-    LRreadOneDayRecordsFromFile(launchRecord, getDateTime())
-
-
     viewMatrix = ViewMatrix:new()
     cfgButton = Button:new()
     cfgButton.text = "*"
     cfgButton:setOnClick(onCfgButtonClick)
 
     recordListView = LRecordListView:new()
-    recordListView.records = launchRecord.records
 
     launchCfg = CFGC:new()
     launchCfg:readFromFile("launch.cfg")

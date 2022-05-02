@@ -2,7 +2,7 @@ local this = {}
 local f3kState = nil
 
 local function readCurAlt()
-    playNumber(f3kState.getCurAlt(), 9)
+    playNumber(f3kState.curAlt, 9)
 end
 
 local function readFlightTime()
@@ -15,7 +15,7 @@ local function readRssi()
 end
 
 local function readLaunchAlt()
-    playNumber(f3kState.getLaunchAlt(), 9)
+    playNumber(f3kState.launchAlt, 9)
 end
 
 local function setF3kState(flightState)

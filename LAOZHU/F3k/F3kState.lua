@@ -2,46 +2,15 @@
 local this = nil
 
 local flightState = 0 --0:preset 1:zoom 2:launched 3:landed
-local launchTime = 0
-local launchAlt = 0
-local curAlt = 0
-local launchRtcTime = 0
 local flightStateStartTime = 0
-local destFlightTime = 0
 local flightTimer = Timer:new()
-local landedCallback = nil
-local launchedCallback = nil
-
-local function setLandedCallback(callback)
-    landedCallback = callback
-end
-
---local function setLaunchedCallback(callback)
---    launchedCallback = callback
---end
-
-
-local function setAlt(alt)
-    curAlt = alt
-end
-
-local function getCurAlt()
-    return curAlt
-end
 
 local function setDestFlightTime(time)
-    destFlightTime = time
+    this.destFlightTime = time
     flightTimer:setDuration(time)
 end
 
-local function getDestFlightTime()
-    return destFlightTime
-end
 
-
-local function getLaunchAlt()
-    return launchAlt
-end
 
 local function getCurFlightStateName()
     if flightState == 0 then
@@ -65,18 +34,17 @@ end
 
 local function newFlight(curTime, curRtcTime)
     flightState = 0
-    flightTimer:resetTimer(destFlightTime)
+    flightTimer:resetTimer(this.destFlightTime)
     flightTimer:setDowncount(15)
     flightTimer:start()
-    launchAlt = 0
-    launchTime = 0
-    launchRtcTime = curRtcTime
-    launchTime = curTime
+    this.launchAlt = 0
+    this.launchRtcTime = curRtcTime
+    this.launchTime = curTime
 end
 
 local function getMaxLaunchAlt()
-    if curAlt > launchAlt then
-        launchAlt = curAlt
+    if this.curAlt > this.launchAlt then
+        this.launchAlt = this.curAlt
     end
 end
 
@@ -88,7 +56,7 @@ local function doStateZoom(curTime, flightModeName)
         flightState = 2
         flightStateStartTime = curTime
         if this.launchedCallback then
-            this.launchedCallback(launchRtcTime, launchAlt)
+            this.launchedCallback(this.launchRtcTime, this.launchAlt)
         end
     end
     getMaxLaunchAlt()
@@ -98,8 +66,8 @@ local function doStateLaunched(curTime, flightModeName)
     if flightModeName == "preset" then
         flightTimer:stop()
         flightState = 3
-        if landedCallback then
-            landedCallback(flightTimer:getRunTime(), launchAlt, launchRtcTime)
+        if this.landedCallback then
+            this.landedCallback(flightTimer:getRunTime(), this.launchAlt, this.launchRtcTime)
         end
     end
     if curTime - flightStateStartTime < 150 then --still update launch alt in 1.5's after zoom
@@ -114,13 +82,7 @@ local function doStateLanded(curTime, flightModeName, curRtcTime)
     end
 end
 
-local function getLaunchRtcTime()
-    return launchRtcTime
-end
 
-local function getLaunchTime()
-    return launchTime
-end
 
 local function doStatePreset(curTime, flightModeName, curRtcTime)
     if flightModeName == "zoom" then
@@ -149,17 +111,15 @@ end
 this = {newFlight = newFlight,
     doFlightState = doFlightState,
     getFlightState = getFlightState,
-    getLaunchRtcTime = getLaunchRtcTime,
-    getLaunchTime = getLaunchTime,
     getFlightTime = getFlightTime,
     getCurFlightStateName = getCurFlightStateName,
-    setAlt = setAlt,
-    getCurAlt = getCurAlt,
-    getLaunchAlt = getLaunchAlt,
     setDestFlightTime = setDestFlightTime,
-    getDestFlightTime = getDestFlightTime,
-    setLandedCallback = setLandedCallback,
+    destFlightTime = 0,
+    launchAlt = 0,
+    launchRtcTime = 0,
+    launchTime = 0,
+    curAlt = 0,
+    landedCallback = nil,
     launchedCallback = nil
-    --setLaunchedCallback = setLaunchedCallback
 }
 return this
