@@ -18,8 +18,8 @@ function testNormalProcess()
     F3kState.doFlightState(curTime, "zoom", curRtcTime)
     state = F3kState.getFlightState()
     luaunit.assertEquals(state, 1)
-    luaunit.assertEquals(curTime, F3kState.getLaunchTime())
-    luaunit.assertEquals(F3kState.getLaunchRtcTime(), curRtcTime)
+    luaunit.assertEquals(curTime, F3kState.launchTime)
+    luaunit.assertEquals(F3kState.launchRtcTime, curRtcTime)
 
     curTime = 30000
     F3kState.doFlightState(curTime, "zoom", curRtcTime)
@@ -147,7 +147,7 @@ function testLaunchAlt() --launch alt
 
     local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
-    luaunit.assertEquals(0, F3kState.getLaunchAlt())
+    luaunit.assertEquals(0, F3kState.launchAlt)
 
     local curTime = 10000
     local curRtcTime = 100000
@@ -155,34 +155,33 @@ function testLaunchAlt() --launch alt
     luaunit.assertEquals(1, F3kState.getFlightState())
 
     curTime = 10010
-    F3kState.setAlt(10)
+    F3kState.curAlt = 10
     F3kState.doFlightState(curTime, "zoom", curRtcTime)
-    luaunit.assertEquals(10, F3kState.getLaunchAlt())
+    luaunit.assertEquals(10, F3kState.launchAlt)
 
     curTime = 10015
-    F3kState.setAlt(15)
+    F3kState.curAlt = 15
     F3kState.doFlightState(curTime, "curise", curRtcTime)
-    luaunit.assertEquals(15, F3kState.getLaunchAlt())
+    luaunit.assertEquals(15, F3kState.launchAlt)
 
     curTime = 10020
-    F3kState.setAlt(20)
+    F3kState.curAlt = 20
     F3kState.doFlightState(curTime, "curise", curRtcTime)
-    luaunit.assertEquals(20, F3kState.getLaunchAlt())
+    luaunit.assertEquals(20, F3kState.launchAlt)
 
     curTime = 11000
-    F3kState.setAlt(25)
+    F3kState.curAlt = 25
     F3kState.doFlightState(curTime, "curise", curRtcTime)
-    luaunit.assertEquals(20, F3kState.getLaunchAlt())
+    luaunit.assertEquals(20, F3kState.launchAlt)
 end
 
 function testSetAndGetDestFlightTime()
     local F3kState = dofile(HOME_DIR .. "LAOZHU/F3k/F3kState.lua")
     F3kState.newFlight()
     F3kState.setDestFlightTime(10)
-    local destFlightTime = F3kState.getDestFlightTime()
+    local destFlightTime = F3kState.destFlightTime
     luaunit.assertEquals(10, destFlightTime)
 end
-
 
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then

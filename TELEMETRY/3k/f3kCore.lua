@@ -36,17 +36,11 @@ local function init()
 	f3kRound = LZ_runModule("LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
 	resetRound()
-	flightState.setLandedCallback(landedCallBack)
-	--LZ_runModule("/LAOZHU/Cfg.lua")
+	flightState.landedCallback = landedCallBack
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
 	readVar = LZ_runModule("LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule("LAOZHU/F3k/f3kReadVarMap.lua")
-
-	--LZ_runModule("LAOZHU/Sensor.lua")
-	--LZ_runModule("LAOZHU/Queue.lua")
-	--monitor = LZ_runModule("LAOZHU/Monitor.lua")
-	--monitor.init()
 
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
@@ -62,7 +56,7 @@ local function run(event)
 	local rtcTime = getRtcTime()
 	--monitor.run(rtcTime, 0, getValue(rxbtID), 0)
 
-	flightState.setAlt(curAlt)
+	flightState.curAlt = curAlt
 	flightState.doFlightState(curTime, flightModeName, rtcTime)
 
 

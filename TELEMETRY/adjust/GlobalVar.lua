@@ -58,37 +58,6 @@ local function onTextEditChange(textEdit)
     outputCfg:writeToFile(configFileName)
 end
 
-local function init()
-    loadModule()
-    outputCfg = CFGC:new()
-	outputCfg:readFromFile(configFileName)
-
-    viewMatrix = VMnewViewMatrix()
-    viewMatrix.matrix[1] = {}
-    for j=1, 6, 1 do
-        gvNameEditArray[j] = TEnewTextEdit()
-        gvNameEditArray[j].str = tostring(j)
-        TEsetOnChange(gvNameEditArray[j], onTextEditChange)
-        viewMatrix.matrix[1][j] = gvNameEditArray[j]
-    end
-
-    for i=1, 9, 1 do 
-        gvNumEditArray[i] = {}
-        viewMatrix.matrix[i+1] = {}
-        for j=1, 6, 1 do
-            gvNumEditArray[i][j] = NEnewNumEdit()
-            NEsetOnChange(gvNumEditArray[i][j], onNumEditChange)
-            gvNumEditArray[i][j].num = 0
-            gvNumEditArray[i][j].mode = i - 1
-            gvNumEditArray[i][j].index = j - 1
-            viewMatrix.matrix[i+1][j] = gvNumEditArray[i][j]
-        end
-    end
-    viewMatrix.selectedRow = 2
-    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
-    getGVName()
-    startGetAllGVValue()
-end
 
 
 local function doKey(event)
@@ -177,6 +146,38 @@ local function bg()
 
 end
 
-this = {run=run, init=init, bg=bg, pageState=0}
+--local function init()
+    loadModule()
+    outputCfg = CFGC:new()
+	outputCfg:readFromFile(configFileName)
+
+    viewMatrix = VMnewViewMatrix()
+    viewMatrix.matrix[1] = {}
+    for j=1, 6, 1 do
+        gvNameEditArray[j] = TEnewTextEdit()
+        gvNameEditArray[j].str = tostring(j)
+        TEsetOnChange(gvNameEditArray[j], onTextEditChange)
+        viewMatrix.matrix[1][j] = gvNameEditArray[j]
+    end
+
+    for i=1, 9, 1 do 
+        gvNumEditArray[i] = {}
+        viewMatrix.matrix[i+1] = {}
+        for j=1, 6, 1 do
+            gvNumEditArray[i][j] = NEnewNumEdit()
+            NEsetOnChange(gvNumEditArray[i][j], onNumEditChange)
+            gvNumEditArray[i][j].num = 0
+            gvNumEditArray[i][j].mode = i - 1
+            gvNumEditArray[i][j].index = j - 1
+            viewMatrix.matrix[i+1][j] = gvNumEditArray[i][j]
+        end
+    end
+    viewMatrix.selectedRow = 2
+    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
+    getGVName()
+    startGetAllGVValue()
+--end
+
+this = {run=run, bg=bg, pageState=0}
 
 return this

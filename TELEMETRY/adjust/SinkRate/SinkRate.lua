@@ -23,6 +23,7 @@ local function loadModule()
     LZ_runModule("/LAOZHU/SinkRateRecord.lua")
     LZ_runModule("/LAOZHU/SinkRateState.lua")
     LZ_runModule("/TELEMETRY/adjust/SinkRate/SRRecordListView.lua")
+    LZ_runModule("/LAOZHU/comm/OTSound.lua")
 end
 
 local function unloadModule()
@@ -114,7 +115,7 @@ local function updateGvNumEdit()
     end
     if flap2GvIndex ~= -1 and modeIndex ~= -1 then
         flap2GvNumEdit = NumEdit:new()
-        flap2GvNumEdit.setOnChange(onNumEditChange)
+        flap2GvNumEdit:setOnChange(onNumEditChange)
         row[#row+1] = flap2GvNumEdit
         flap2GvNumEdit.gvIndex = flap2GvIndex
     else
@@ -155,36 +156,6 @@ local function onSinkRateStateChange(state, isStart)
     SRSreset(state)
 end
 
-local function init()
-    loadModule()
-    sinkRateState = SRSnewSinkRateState()
-    SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
-    sinkRateRecord = SRRnewSinkRateRecord()
-    SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
-
-
-    viewMatrix = ViewMatrix:new()
-    cfgButton = Button:new()
-    cfgButton.text = "*"
-    cfgButton:setOnClick(onCfgButtonClick)
-
-    recordListView = SRRecordListView:new()
-    recordListView.records = sinkRateRecord.records
-
-    sinkRateCfg = CFGC:new()
-    sinkRateCfg:readFromFile(sinkRateCfgFileName)
-
-    updateGvNumEdit()
-    getGVValue()
-	altID = getTelemetryId("Alt")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
-	sinkRateReadVarMap.sinkRateState = sinkRateState
-	readVar.setVarMap(sinkRateReadVarMap)
-
-
-	
-end
 
 local function doKey(event)
     local ret = viewMatrix:doKey(event)
@@ -229,13 +200,18 @@ local function run(event, curTime)
     cfgButton:draw(127, 0, invers, RIGHT)
 
     local testSwIndex = sinkRateCfg:getNumberField("testsw", -1)
+    local playTone = false
+    if getRtcTime() % 4 == 1 then
+        playTone = true
+    end
     if testSwIndex ~= -1 then
         local time = getRtcTime()
         local alt = getValue(altID)
         SRSrun(sinkRateState, time, alt, getValue(testSwIndex))
 
-        if SRSisStart(sinkRateState) and invers and playingTone == false then
-            playTone(1000, 100, 0, 0)
+        if SRSisStart(sinkRateState) and playTone and playingTone == false then
+            --playTone(1000, 100, 0, 0)
+            LZ_playNumber(SRSgetCurSinkRate(sinkRateState)*100, 0)
             playingTone = true
         end
         if not invers and playingTone then
@@ -265,6 +241,36 @@ local function bg()
 
 end
 
-this = {run=run, init=init, bg=bg, pageState=0}
+local function init()
+    loadModule()
+    sinkRateState = SRSnewSinkRateState()
+    SRSsetOnStateChange(sinkRateState, onSinkRateStateChange)
+    sinkRateRecord = SRRnewSinkRateRecord()
+    SRRreadOneDayRecordsFromFile(sinkRateRecord, getDateTime())
+
+
+    viewMatrix = ViewMatrix:new()
+    cfgButton = Button:new()
+    cfgButton.text = "*"
+    cfgButton:setOnClick(onCfgButtonClick)
+
+    recordListView = SRRecordListView:new()
+    recordListView.records = sinkRateRecord.records
+
+    sinkRateCfg = CFGC:new()
+    sinkRateCfg:readFromFile(sinkRateCfgFileName)
+
+    updateGvNumEdit()
+    getGVValue()
+	altID = getTelemetryId("Alt")
+	readVar = LZ_runModule("LAOZHU/readVar.lua")
+	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
+	sinkRateReadVarMap.sinkRateState = sinkRateState
+	readVar.setVarMap(sinkRateReadVarMap)
+end
+
+init()
+
+this = {run=run, bg=bg, pageState=0}
 
 return this

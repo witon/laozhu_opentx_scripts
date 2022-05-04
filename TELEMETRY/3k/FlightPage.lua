@@ -3,29 +3,29 @@ local flightState = nil
 
 
 local function destFlightTimeViewFocusDraw()
-	lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE + INVERS)
+	lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE + INVERS)
 end
 
 local function destFlightTimeViewUnfocusDraw()
-	lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE)
+	lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE)
 end
 
 local function destFlightTimeViewSelectingDraw(b)
 	if b then
-		lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE)
+		lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE)
 	else
-		lcd.drawText(65, 38, LZ_formatTime(flightState.getDestFlightTime()), LEFT + SMLSIZE + INVERS)
+		lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE + INVERS)
 	end
 end
 
 local function destFlightTimeViewDoEvent(event)
 	if(event==36 or event==68 or event==EVT_ROT_RIGHT) then
-		local destFlightTime = flightState.getDestFlightTime()
+		local destFlightTime = flightState.destFlightTime
 		destFlightTime = destFlightTime + f3kCfg:getNumberField("DestTimeStep", 15)
 		LZ_playTime(destFlightTime, true)
 		flightState.setDestFlightTime(destFlightTime)
 	elseif(event==35 or event==67 or event==EVT_ROT_LEFT) then
-		local destFlightTime = flightState.getDestFlightTime()
+		local destFlightTime = flightState.destFlightTime
 		destFlightTime = destFlightTime - f3kCfg:getNumberField("DestTimeStep", 15)
 		if destFlightTime < 0 then
 			destFlightTime = 0
@@ -94,10 +94,10 @@ local function drawFlightInfo()
 	lcd.drawText(87, 29, LZ_formatTime(flightState.getFlightTime()), LEFT + DBLSIZE)
 
 	lcd.drawText(1, 53, "ALT", SMLSIZE)
-	lcd.drawNumber(62, 47, flightState.getCurAlt(), RIGHT + DBLSIZE)
+	lcd.drawNumber(62, 47, flightState.curAlt, RIGHT + DBLSIZE)
 
 	lcd.drawText(65, 53, "LALT", SMLSIZE)
-	lcd.drawNumber(128, 47, flightState.getLaunchAlt(), RIGHT + DBLSIZE)
+	lcd.drawNumber(128, 47, flightState.launchAlt, RIGHT + DBLSIZE)
 
 end
 
@@ -118,4 +118,6 @@ local function run(event, time)
 	end
 end
 
-return {run = run, init=init}
+init()
+
+return {run = run}

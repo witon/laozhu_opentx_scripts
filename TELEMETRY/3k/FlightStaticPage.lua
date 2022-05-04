@@ -18,4 +18,6 @@ local function run(event, time)
 	lcd.drawNumber(128, 50, getValue(minRssiID), MIDSIZE + RIGHT)
 end
 
-return {run = run, init=init}
+init()
+
+return {run = run}

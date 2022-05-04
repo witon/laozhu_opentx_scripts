@@ -99,5 +99,6 @@ local function run(event, time)
     return doKey(event)
 end
 
+init()
 
-return {run = run, init=init, destroy=destroy}
+return {run = run, destroy=destroy}

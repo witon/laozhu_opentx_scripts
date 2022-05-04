@@ -50,6 +50,8 @@ local files = {
 
 	"LAOZHU/f5jReadVarMap.lua",
 
+	"LAOZHU/launchReadVarMap.lua",
+
 	"LAOZHU/F5jState.lua",
 
 	"LAOZHU/LuaUtils.lua",
@@ -129,6 +131,13 @@ local files = {
 	"TELEMETRY/adjust/SinkRate/SinkRate.lua",
 
 	"TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua",
+
+	"TELEMETRY/adjust/Launch/RecordListView.lua",
+
+	"TELEMETRY/adjust/Launch/Launch.lua",
+
+	"TELEMETRY/adjust/Launch/LaunchCfgPage.lua",
+
 
 	"TELEMETRY/adjust.lua",
 

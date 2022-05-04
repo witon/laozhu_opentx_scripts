@@ -1,11 +1,11 @@
 local curFileIndex = 1
 local this = nil
 local compileFiles = nil
-local function init()
+--local function init()
     local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
     fun()
     compileFiles = LZ_runModule("CompileFiles.lua")
-end
+--end
 
 local function bg()
 end
