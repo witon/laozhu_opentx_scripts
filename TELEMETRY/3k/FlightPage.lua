@@ -118,4 +118,6 @@ local function run(event, time)
 	end
 end
 
-return {run = run, init=init}
+init()
+
+return {run = run}

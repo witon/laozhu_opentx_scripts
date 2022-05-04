@@ -22,8 +22,11 @@ local function init()
 	if LZ_isNeedCompile() then
 		local pagePath = "TELEMETRY/common/comp.lua"
 		curPage = LZ_runModule(pagePath)
-		curPage.init()
+		--curPage.init()
 		return
+	else
+		LZ_isNeedCompile = nil
+		LZ_markCompiled = nil
 	end
 end
 
@@ -38,7 +41,7 @@ local function loadPage()
 	end
 	local pagePath = "TELEMETRY/" .. pages[displayIndex]
 	curPage = LZ_runModule(pagePath)
-	curPage.init()
+	--curPage.init()
 end
 
 local function background()

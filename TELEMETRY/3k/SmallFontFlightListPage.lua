@@ -23,4 +23,6 @@ local function unloadModule()
     F3KRLVunload()
 end
 
-return {run = run, init=init, destroy=unloadModule}
+init()
+
+return {run = run, destroy=unloadModule}

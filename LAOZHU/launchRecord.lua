@@ -19,7 +19,7 @@ function LRwriteOneRecordToFile(dateTime, record)
             record.launchAlt, " ", 
             record.ele, " ", 
             record.flap1, " ",
-            record.flap2, " ", "\n")
+            record.rudder, " ", "\n")
     io.close(recordFile)
     return true
 end
@@ -48,19 +48,19 @@ function LRgetOneRecord(lr)
     if record.flap1 ~= "-" then
         record.flap1 = tonumber(record.flap1)
     end
-    record.flap2 = DFDgetOneField(lr.dataFileDecode, " ")
-    if record.flap2 == nil then
+    record.rudder = DFDgetOneField(lr.dataFileDecode, " ")
+    if record.rudder == nil then
         return nil
     end
-    if record.flap2 ~= "-" then
-        record.flap2 = tonumber(record.flap2)
+    if record.rudder ~= "-" then
+        record.rudder = tonumber(record.rudder)
     end
     local flag = DFDgetOneField(lr.dataFileDecode, "\n")
     return record
 end
 
 function LRclearOneDayRecordsFromFile(dateTime)
-	local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
+    local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
     local recordFilePath = gScriptDir .. relativePath
     local recordFile = io.open(recordFilePath, 'w')
     io.close(recordFile)
@@ -68,7 +68,7 @@ end
 
 function LRreadOneDayRecordsFromFile(lr, dateTime)
     lr.records = {}
-	local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
+    local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
     local recordFilePath = gScriptDir .. relativePath
     local recordFile = io.open(recordFilePath, 'r')
     if recordFile == nil then
@@ -90,13 +90,13 @@ function LRreadOneDayRecordsFromFile(lr, dateTime)
     return true
 end
 
-function LRaddOneRecord(launchRecord, startTime, launchAlt, ele, flap1, flap2)
+function LRaddOneRecord(launchRecord, startTime, launchAlt, ele, flap1, rudder)
     local record = {}
     record.startTime = startTime
     record.launchAlt = launchAlt
     record.ele = ele
     record.flap1 = flap1
-    record.flap2 = flap2
+    record.rudder = rudder
 
     launchRecord.recordPoint = launchRecord.recordPoint + 1
     if launchRecord.recordPoint > launchRecord.maxRecordCount then

@@ -99,4 +99,6 @@ local function destroy()
 	TimeEdit = nil
 end
 
-return {run = run, init=init, destroy=destroy}
+init()
+
+return {run = run, destroy=destroy}
