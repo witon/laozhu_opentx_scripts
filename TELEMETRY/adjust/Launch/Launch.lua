@@ -125,7 +125,7 @@ local function updateGvNumEdit()
 
 end
 
-local function landedCallBack(flightTime, launchAlt, launchTime)
+local function landedCallback(flightTime, launchAlt, launchTime)
     local ele = "-"
     if eleGvNumEdit then
         ele = eleGvNumEdit.num
@@ -166,7 +166,8 @@ local function run(event, curTime)
     if launchRecord == nil then
         launchRecord = LRnewLaunchRecord()
         LRreadOneDayRecordsFromFile(launchRecord, getDateTime())
-        recordListView.records = launchRecord.records
+        --recordListView.records = launchRecord.records
+        recordListView.lr = launchRecord
         return
     end
 
@@ -233,7 +234,7 @@ end
 local function init()
     loadModule()
     f3kState = LZ_runModule("/LAOZHU/F3k/F3kState.lua")
-	f3kState.landedCallBack = landedCallBack
+	f3kState.landedCallback = landedCallback
     f3kState.launchedCallback = launchedCallback
 	
     viewMatrix = ViewMatrix:new()

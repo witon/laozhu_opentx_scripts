@@ -2,8 +2,9 @@ LRecordListView = setmetatable({}, InputView)
 LRecordListView.super = InputView
 
 function LRecordListView:doKey(event)
+    local records = self.lr.records
     if event ==  EVT_ENTER_BREAK then
-        local record = self.records[#self.records - self.selectedRow + 1]
+        local record = records[#records - self.selectedRow + 1]
         if record == nil then
             return true
         end
@@ -14,7 +15,7 @@ function LRecordListView:doKey(event)
         end
         return true
     elseif event == 35 or event == 67 then
-        if self.selectedRow < #self.records then
+        if self.selectedRow < #records then
             self.selectedRow = self.selectedRow + 1
         end
         if self.selectedRow - self.scrollRow > 3 then
@@ -41,11 +42,18 @@ function LRecordListView:draw(x, y, invers, option)
     lcd.drawText(103, 20, "rud", SMLSIZE + RIGHT + INVERS)
     lcd.drawText(128, 20, "h", SMLSIZE + RIGHT + INVERS)
 
-    local records = self.records
+    local records = self.lr.records
     if records ~= nil then
         local scrollRow = self.scrollRow
         for i=scrollRow+1, #records, 1 do
-            local record = records[#records - i + 1]
+            local index = #records - i + 1
+            if #records > self.lr.recordPoint then
+                index =  self.lr.recordPoint - i + 1
+            end
+            if index < 1 then
+                index = index + self.lr.maxRecordCount
+            end
+            local record = records[index]
             local y = 30 + (i-scrollRow-1) * 10
             local op = 0
             if i==self.selectedRow and self.focusState == 2 then
@@ -75,5 +83,6 @@ function LRecordListView:new()
     o.scrollRow = 0
     o.selectedRow = 1
     o.records = nil
+    o.lr = nil
     return o 
 end
