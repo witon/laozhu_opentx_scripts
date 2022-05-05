@@ -63,7 +63,7 @@ function LRecordListView:draw(x, y, invers, option)
             lcd.drawText(0, y, LZ_formatTimeStamp(record.startTime), SMLSIZE + LEFT + op)
             lcd.drawText(57, y, record.ele, SMLSIZE + RIGHT + op)
             lcd.drawText(80, y, record.flap1, SMLSIZE + RIGHT + op)
-            lcd.drawText(103, y, record.flap2, SMLSIZE + RIGHT + op)
+            lcd.drawText(103, y, record.rudder, SMLSIZE + RIGHT + op)
             lcd.drawNumber(128, y, LRgetRecordLaunchAlt(record), SMLSIZE + RIGHT + op)
             if record.invalid then
                 if op == INVERS then
