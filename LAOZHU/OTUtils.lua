@@ -1,3 +1,16 @@
+function LZ_preProcEvent(event)
+ 	if event == EVT_VIRTUAL_PREV then
+		event = 36
+	elseif event == EVT_VIRTUAL_NEXT then
+		event = 35
+	elseif event - 96 == EVT_VIRTUAL_NEXT_PAGE - 32 then
+		event = 37
+	elseif event - 96 == EVT_VIRTUAL_PREV_PAGE - 32 then
+		event = 38
+	end
+    return event
+end
+
 function LZ_formatTime(time)
 	local minute = time / 60
 	local second= time % 60

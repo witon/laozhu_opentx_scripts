@@ -60,6 +60,7 @@ local function unloadCurPage()
 	collectgarbage()
 end
 local function run(event)
+	event = LZ_preProcEvent(event)
 	lcd.clear()
 	local curTime = getTime()
 	if curPage == nil then
@@ -81,11 +82,15 @@ local function run(event)
 	end
 
 	if event==38 then 
-		displayIndex = displayIndex - 1
-		if displayIndex < 1 then
-			displayIndex = #pages
+		if lastEvent == 70 then	--because system will trigger event 37 once after event 69
+			lastEvent = event
+		else
+			displayIndex = displayIndex - 1
+			if displayIndex < 1 then
+				displayIndex = #pages
+			end
+			unloadCurPage()
 		end
-		unloadCurPage()
 	elseif event == 37 then
 		if lastEvent == 69 then	--because system will trigger event 37 once after event 69
 			lastEvent = event
@@ -98,8 +103,8 @@ local function run(event)
 		end
 	end
 
-	if event == 69 then
-		lastEvent = 69
+	if event == 69 or event == 70 then
+		lastEvent = event
 		if pages == flightPagePages then
 			unloadCurPage()
 			pages = setupPages
