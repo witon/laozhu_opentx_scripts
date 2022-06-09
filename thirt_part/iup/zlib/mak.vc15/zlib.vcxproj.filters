@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="inc">
+      <UniqueIdentifier>{cee90e78-a9e0-4879-b581-777ff747eccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{78efb974-cd68-4bd5-9203-16b6790e76df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{89949ea5-e59a-45e0-932a-2578202ab264}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\crc32.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\deflate.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gzguts.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\inffast.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\inffixed.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\inflate.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\inftrees.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\trees.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\zutil.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\zconf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\zlib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\adler32.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compress.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\crc32.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deflate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gzclose.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gzlib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gzread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gzwrite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\infback.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\inffast.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\inflate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\inftrees.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\trees.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\uncompr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\zutil.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
