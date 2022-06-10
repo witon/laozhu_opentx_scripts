@@ -9,6 +9,7 @@ cd ..
 cd lua53
 make linux
 cp src/liblua.a src/liblua53.a
+cp src/lua src/lua53
 export LUA_LIB=`pwd`/src
 cd ..
 cd im
