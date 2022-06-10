@@ -58,5 +58,5 @@ jobs:
           pwd
           echo Add other actions to build,
           echo test, and deploy your project.
-          #bash ./build_lua_glider_competition_sound_lib_for_linux.sh
+          ./build_sound_so.sh
           lua test/test.lua
