@@ -38,14 +38,20 @@ local function newFlight(curTime, curRtcTime)
     flightTimer:setDowncount(15)
     flightTimer:start()
     this.launchAlt = 0
+    this.minAlt = 99
     this.launchRtcTime = curRtcTime
     this.launchTime = curTime
+    print("-----------", this.curAlt, this.minAlt, this.launchAlt)
 end
 
 local function getMaxLaunchAlt()
-    if this.curAlt > this.launchAlt then
-        this.launchAlt = this.curAlt
+    if this.curAlt < this.minAlt then
+        this.minAlt = this.curAlt
     end
+    if this.curAlt - this.minAlt > this.launchAlt then
+        this.launchAlt = this.curAlt - this.minAlt
+    end
+    print("-----------", this.curAlt, this.minAlt, this.launchAlt)
 end
 
 local function doStateZoom(curTime, flightModeName)
