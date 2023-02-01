@@ -32,6 +32,9 @@ local function setTask(taskName, noflyTime, p1, p2)
     elseif taskName == "TEST" then
         task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("TEST", 5, noflyTime, isTimerMuted)
+    elseif taskName == "Normal" then
+        task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
+        task.setTaskParam("Normal", 5999, noflyTime, isTimerMuted)
     end
 end
 

@@ -1,7 +1,7 @@
 TaskSelector = setmetatable({}, Selector)
 TaskSelector.super = Selector
 
-TASK_ARRAY = {"Train", "LastFl", "AULD", "OtherTask", "TEST"}
+TASK_ARRAY = {"Train", "LastFl", "AULD", "OtherTask", "TEST", "Normal"}
 
 function TaskSelector:getText(index)
     if index >= 1 and index <= #TASK_ARRAY then
