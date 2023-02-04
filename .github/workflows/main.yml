@@ -42,8 +42,6 @@ jobs:
         run: luarocks install luaunit
       - name: install a module
         run: luarocks install lua-mock        
-      - name: install asoundlib
-        run: sudo apt-get install libasound2-dev
       - name: install liblua5.2
         run: sudo apt-get install liblua5.2-dev
 
@@ -58,5 +56,4 @@ jobs:
           pwd
           echo Add other actions to build,
           echo test, and deploy your project.
-          bash build_sound_so.sh
           lua test/test.lua
