@@ -43,8 +43,11 @@ local function newFlight(curTime, curRtcTime)
 end
 
 local function getMaxLaunchAlt()
-    if this.curAlt > this.launchAlt then
-        this.launchAlt = this.curAlt
+    if this.curAlt < this.minAlt then
+        this.minAlt = this.curAlt
+    end
+    if this.curAlt - this.minAlt > this.launchAlt then
+        this.launchAlt = this.curAlt - this.minAlt
     end
 end
 
@@ -76,7 +79,8 @@ local function doStateLaunched(curTime, flightModeName)
 end
 
 local function doStateLanded(curTime, flightModeName, curRtcTime)
-    if flightModeName == "zoom" then
+    this.minAlt = 99
+   if flightModeName == "zoom" then
         flightState = 0
         newFlight(curTime, curRtcTime)
     end
@@ -89,7 +93,7 @@ local function doStatePreset(curTime, flightModeName, curRtcTime)
         newFlight(curTime, curRtcTime)
         flightState = 1
     end
-
+    getMaxLaunchAlt()
 end
 
 local function doFlightState(curTime, flightModeName, curRtcTime)
@@ -120,6 +124,7 @@ this = {newFlight = newFlight,
     launchTime = 0,
     curAlt = 0,
     landedCallback = nil,
-    launchedCallback = nil
+    launchedCallback = nil,
+    minAlt = 99
 }
 return this

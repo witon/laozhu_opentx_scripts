@@ -1,2 +1,0 @@
-$(OBJDIR)/cdcairoplus.o: cairo/cdcairoplus.c ../include/cd.h \
- ../include/cd_private.h ../include/cdcairo.h
