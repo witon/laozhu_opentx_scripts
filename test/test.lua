@@ -18,8 +18,6 @@ dofile(HOME_DIR .. "test/TestSensor.lua")
 dofile(HOME_DIR .. "test/TestF3kRound.lua")
 dofile(HOME_DIR .. "test/testF3kTask/TestCommonTask.lua")
 dofile(HOME_DIR .. "test/TestF3kCompetitionWF.lua")
-dofile(HOME_DIR .. "test/TestCompetitionBroadcast/TestTaskFileParser.lua")
-dofile(HOME_DIR .. "test/TestCompetitionBroadcast/TestGroupFileParser.lua")
 
 
 
