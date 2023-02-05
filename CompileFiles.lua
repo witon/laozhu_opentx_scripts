@@ -138,6 +138,7 @@ local files = {
 
 	"TELEMETRY/adjust/Launch/LaunchCfgPage.lua",
 
+	"TELEMETRY/adjust/Monitor.lua",
 
 	"TELEMETRY/adjust.lua",
 

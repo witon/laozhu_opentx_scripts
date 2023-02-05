@@ -1,20 +1,25 @@
-local transVoltSensor = nil
 local recvVoltSensor = nil
 local rssiSensor = nil
 
 local function recvVoltwarningCallback(sensor, rule, time, value)
-    --print("recv volt warning", "average volt", rule.averageValue, "value", value)
+    print("recv volt warning", "min value", sensor.value)
 end
+
+local function RSSIWarningCallback(sensor, rule, time, value)
+    print("rssi warning", "min value", sensor.value)
+end
+
 
 local function init()
-    transVoltSensor = SENSnewSensor("transmittor voltage", 30, false)
     recvVoltSensor = SENSnewSensor("receiver voltage", 30, false)
     rssiSensor = SENSnewSensor("rssi", 30, false)
-    SENSaddFluctuateRule(recvVoltSensor, 3.7, 10, 0.2, recvVoltwarningCallback)
+    SENSsetRule(recvVoltSensor, 4.2, 10, 3.7, false, recvVoltWarningCallback)
+    SENSsetRule(rssiSensor, 100, 10, 30, false, RSSIWarningCallback)
 end
 
-local function run(time, transVolt, recvVolt, rssi)
+local function run(time, recvVolt, rssi)
     SENSrun(recvVoltSensor, time, recvVolt)
+    SENSrun(rssiSensor, time, rssi)
 end
 
 return {run=run, init=init}
