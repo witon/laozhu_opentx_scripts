@@ -17,12 +17,12 @@ function SgetSelectedText(selector)
 end
 
 function SdoKey(selector, event)
-    if event == 35 or event == 67 then
+    if event == 35 or event == 67 or event == 4100 then
         local changed = selector.incFun(selector)
         if changed and selector.onChange then
             selector.onChange(selector)
         end
-    elseif event == 36 or event == 68 then
+    elseif event == 36 or event == 68 or event == 4099 then
         local changed = selector.decFun(selector)
         if changed and selector.onChange then
             selector.onChange(selector)

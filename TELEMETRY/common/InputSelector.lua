@@ -53,7 +53,7 @@ function ISsetFieldType(selector, type)
 end
 
 function ISdoKey(selector, event)
-    if event == 35 or event == 67 then
+    if event == 35 or event == 67 or event == 4100 then
         selector.selectedIndex = selector.selectedIndex + 1
         if selector.selectedIndex > #selector.fieldTable.nameArray then
             selector.selectedIndex = #selector.fieldTable.nameArray
@@ -62,7 +62,7 @@ function ISdoKey(selector, event)
                 selector.onChange(selector)
             end
         end
-    elseif event == 36 or event == 68 then
+    elseif event == 36 or event == 68 or event == 4099 then
         selector.selectedIndex = selector.selectedIndex - 1
         if selector.selectedIndex < 1 then
             selector.selectedIndex = 1

@@ -34,6 +34,7 @@ end
 local function run(event)
 	--collectgarbage("collect")
 	--print("----------", collectgarbage("count")*1000)
+	print(event)
 	
 	bgFlag = false
 	lcd.clear()

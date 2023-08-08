@@ -2,7 +2,7 @@ CheckBox = setmetatable({}, InputView)
 CheckBox.super = InputView
 
 function CheckBox:doKey(event)
-    if event == 35 or event == 67 or event == 36 or event == 68 then
+    if event == 35 or event == 67 or event == 36 or event == 68 or event == 4099 then
         self.checked = not self.checked
         if self.onChange then
             self.onChange(self)

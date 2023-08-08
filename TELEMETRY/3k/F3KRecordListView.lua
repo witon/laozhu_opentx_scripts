@@ -11,7 +11,7 @@ function F3KRLVdoKey(recordListView, event)
             record.invalid = true
         end
         return true
-    elseif event == 35 or event == 67 then
+    elseif event == 35 or event == 67 or event == 4100 then
         if recordListView.selectedRow < #recordListView.records then
             recordListView.selectedRow = recordListView.selectedRow + 1
         end
@@ -19,7 +19,7 @@ function F3KRLVdoKey(recordListView, event)
             recordListView.scrollRow = recordListView.scrollRow + 1
         end
         return true
-    elseif event == 36 or event == 68 then
+    elseif event == 36 or event == 68 or event == 4099 then
         if recordListView.selectedRow > 1 then
             recordListView.selectedRow = recordListView.selectedRow - 1
         end

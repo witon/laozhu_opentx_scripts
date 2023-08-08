@@ -95,7 +95,7 @@ function ViewMatrix:doKey(event)
         return true
     end
  
-    if event == 38 or event==70 then
+    if event == 38 or event==70 or event==98 then
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(0)
         self.selectedCol = self.selectedCol - 1
         local overflow = false
@@ -108,7 +108,7 @@ function ViewMatrix:doKey(event)
             return false
         end
         return true
-    elseif event==37 or event==69 then
+    elseif event==37 or event==69 or event==99 then
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(0)
         self.selectedCol = self.selectedCol + 1
         local overflow = false
@@ -121,7 +121,7 @@ function ViewMatrix:doKey(event)
             return false
         end
         return true
-    elseif event==36 or event==68 then
+    elseif event==36 or event==68 or event==4099 then
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(0)
         self.selectedRow = self.selectedRow - 1
         if self.selectedRow < 1 then
@@ -135,7 +135,7 @@ function ViewMatrix:doKey(event)
         end
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(1)
         return true
-    elseif event==35 or event==67 then
+    elseif event==35 or event==67 or event==4100 then
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(0)
         self.selectedRow = self.selectedRow + 1
         if self.selectedRow > #self.matrix then

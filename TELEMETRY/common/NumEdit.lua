@@ -4,7 +4,7 @@ function NEsetRange(numEdit, min, max)
 end
 
 function NEdoKey(numEdit, event)
-    if event == 35 then
+    if event == 35 or event == 4099 then
         numEdit.num = numEdit.num - numEdit.step
         if numEdit.min and numEdit.min > numEdit.num then
             numEdit.num = numEdit.min
@@ -20,7 +20,7 @@ function NEdoKey(numEdit, event)
         if numEdit.onChange then
             numEdit.onChange(numEdit)
         end
-    elseif event == 36 then
+    elseif event == 36 or event == 4100 then
         numEdit.num = numEdit.num + numEdit.step
         if numEdit.max and numEdit.max < numEdit.num then
             numEdit.num = numEdit.max

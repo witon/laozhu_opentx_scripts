@@ -156,11 +156,11 @@ end
 
 local function doKey(event)
     local ret = viewMatrix.doKey(viewMatrix, event)
-    if event==36 then
+    if event==36 or event==68 then
         if viewMatrix.selectedRow - scrollLine < 2 and scrollLine > 0 then
             scrollLine = scrollLine - 1
         end
-    elseif event==35 then
+    elseif event==35 or event==67 then
         if viewMatrix.selectedRow - scrollLine > 5 then
                 scrollLine = scrollLine + 1
         end

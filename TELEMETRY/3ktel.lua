@@ -61,6 +61,7 @@ local function unloadCurPage()
 end
 local function run(event)
 	lcd.clear()
+	print(event)
 	local curTime = getTime()
 	if curPage == nil then
 		loadPage()

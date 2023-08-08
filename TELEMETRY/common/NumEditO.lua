@@ -6,7 +6,7 @@ function NumEdit:setRange(min, max)
 end
 
 function NumEdit:doKey(event)
-    if event == 35 then
+    if event == 35 or event == 4099 then
         self.num = self.num - self.step
         if self.min and self.min > self.num then
             self.num = self.min
@@ -22,7 +22,7 @@ function NumEdit:doKey(event)
         if self.onChange then
             self.onChange(self)
         end
-    elseif event == 36 then
+    elseif event == 36 or event == 4100 then
         self.num = self.num + self.step
         if self.max and self.max < self.num then
             self.num = self.max
