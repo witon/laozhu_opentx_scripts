@@ -12,7 +12,7 @@ function NEdoKey(numEdit, event)
         if numEdit.onChange then
             numEdit.onChange(numEdit)
         end
-    elseif event == 67 or event == 70then
+    elseif event == 67 or event == 70 then
         numEdit.num = numEdit.num - 10 * numEdit.step
         if numEdit.min and numEdit.min > numEdit.num then
             numEdit.num = numEdit.min
