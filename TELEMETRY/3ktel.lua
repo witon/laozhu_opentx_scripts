@@ -13,22 +13,10 @@ local pages = flightPagePages
 local curPage = nil
 local lastEvent = 0
 
-local ver, radio = getVersion();
 
-local upEvent = 0
-local downEvent = 0
-local leftEvent = 0
-local rightEvent = 0
-local retEvent = 0
-local enterEvent = 0
-
-if string.sub(radio, 1, 5) == "zorro" then
-	upEvent = 37
-	downEvent = 38
-	leftEvent = 4099
-	rightEvent = 4100
-end
-
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
 
 
 local function init()
@@ -46,6 +34,7 @@ local function init()
 		LZ_isNeedCompile = nil
 		LZ_markCompiled = nil
 	end
+	collectgarbage();
 end
 
 
@@ -79,17 +68,13 @@ local function unloadCurPage()
 end
 local function run(event)
 	lcd.clear()
+
 	if event ~= 0 then
-		print("before:", event)
+		print("before:", event, EVT_EXIT_BREAK, EVT_PAGE_LONG, EVT_ENTER_LONG)
 	end
-	if event == leftEvent then
-		event = 38
-	elseif event == rightEvent then
-		event = 37
-	elseif event == downEvent then
-		event = 35
-	elseif event == upEvent then
-		event = 36
+	e = keyMap[event];
+	if e ~= nil then
+		event = e;
 	end
 	if event ~= 0 then
 		print("after:", event)
@@ -105,7 +90,7 @@ local function run(event)
 	if eventProcessed then
 		return
 	end
-	if event == EVT_EXIT_BREAK then
+	if event == EVT_EXIT_BREAK then --退出设置界面
 		if pages == setupPages then
 			pages = flightPagePages
 			displayIndex = 1
@@ -123,7 +108,7 @@ local function run(event)
 		end
 		unloadCurPage()
 	elseif event == 37 then
-		if lastEvent == 69 then	--because system will trigger event 37 once after event 69
+		if lastEvent == 133 then	--because system will trigger event 37 once after event 133
 			lastEvent = event
 		else
 			displayIndex = displayIndex + 1
@@ -134,14 +119,17 @@ local function run(event)
 		end
 	end
 
-	if event == 69 then
-		lastEvent = 69
+	if event == 133 then --进入设置界面
+		lastEvent = 133
 		if pages == flightPagePages then
 			unloadCurPage()
 			pages = setupPages
 			displayIndex = 1
 		end
 	end
+	lcd.drawText(128, 58, getAvailableMemory(), SMLSIZE + RIGHT)
+	return true;
+
 
 end
 

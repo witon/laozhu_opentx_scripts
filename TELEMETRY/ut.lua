@@ -14,15 +14,28 @@ local timeEdit = nil
 
 local viewMatrix = nil
 
+local ver, radio = getVersion();
+local upEvent = 0
+local downEvent = 0
+local leftEvent = 0
+local rightEvent = 0
+if string.sub(radio, 1, 5) == "zorro" then
+	upEvent = 37
+	downEvent = 38
+	leftEvent = 4099
+	rightEvent = 4100
+end
+
+
 
 local testFiles = {
-    "/SCRIPTS/emutest/testCfg.lua",
-    "/SCRIPTS/emutest/testCfgO.lua",
+    "/emutest/testCfg.lua",
+    "/emutest/testCfgO.lua",
  
-    "/SCRIPTS/emutest/testLoadModule.lua",
-    "/SCRIPTS/emutest/testManagerOutput.lua",
-    "/SCRIPTS/emutest/testDataFileDecode.lua",
-    "/SCRIPTS/emutest/testSinkRateRecord.lua"
+    "/emutest/testLoadModule.lua",
+    "/emutest/testManagerOutput.lua",
+    "/emutest/testDataFileDecode.lua",
+    "/emutest/testSinkRateRecord.lua"
  
     --"/SCRIPTS/emutest/testOutputCurveManager.lua",
 }
@@ -172,6 +185,23 @@ local function run(event)
     end
  
     lcd.clear()
+	if event ~= 0 then
+		print("before:", event)
+	end
+	if event == leftEvent then
+		event = 38
+	elseif event == rightEvent then
+		event = 37
+	elseif event == downEvent then
+		event = 35
+	elseif event == upEvent then
+		event = 36
+	end
+	if event ~= 0 then
+		print("after:", event)
+	end
+
+
     viewMatrix.doKey(viewMatrix, event)
     lcd.drawText(1, 1, "CheckBox:", SMLSIZE + LEFT)
     IVdraw(checkBox, 54, 1, invers, SMLSIZE + RIGHT)
