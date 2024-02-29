@@ -2,12 +2,14 @@ CheckBox = setmetatable({}, InputView)
 CheckBox.super = InputView
 
 function CheckBox:doKey(event)
-    if event == 35 or event == 67 or event == 36 or event == 68 then
+    if event ==  EVT_ENTER_BREAK then
         self.checked = not self.checked
         if self.onChange then
             self.onChange(self)
         end
+        return true;
     end
+    return false
 end
 
 function CheckBox:draw(x, y, invers, option)
@@ -28,5 +30,6 @@ function CheckBox:new()
     local o = self.super:new()
     setmetatable(o, self)
     o.checked = true
+    o.noEdit = true
     return o
 end

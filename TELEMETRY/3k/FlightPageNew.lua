@@ -89,7 +89,7 @@ end
 local function run(event, time)
 	drawFlightInfo()
 	drawFlightList()
-	viewMatrix:doKey(event)
+	return viewMatrix:doKey(event)
 end
 
 local function destroy()

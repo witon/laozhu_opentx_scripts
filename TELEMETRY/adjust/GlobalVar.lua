@@ -70,11 +70,11 @@ local function doKey(event)
         if viewMatrix.selectedRow - scrollLine > 6 then
             scrollLine = scrollLine + 1
         end
-    elseif (event==37) then
+    elseif (event==37 or event==99) then
         if viewMatrix.selectedCol - scrollCol > 4 then
             scrollCol = scrollCol + 1
         end
-    elseif (event==38) then
+    elseif (event==38 or event==98) then
         if viewMatrix.selectedCol - scrollCol < 1  then
             scrollCol = scrollCol - 1
         end

@@ -9,11 +9,17 @@ local focusIndex = 1
 local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/Launch/Launch.lua"}
 local curPage = nil
 
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
+
+
 local function loadPage(index)
 	local pagePath = "TELEMETRY/" .. pages[index]
 	curPage = LZ_runModule(pagePath)
 	--curPage.init()
 end
+
 
 local function background()
     if curPage and curPage.pageState == 1 then
@@ -32,11 +38,14 @@ local function background()
 end
 
 local function run(event)
-	--collectgarbage("collect")
-	--print("----------", collectgarbage("count")*1000)
-	
+
 	bgFlag = false
 	lcd.clear()
+	e = keyMap[event];
+	if e ~= nil then
+		event = e;
+	end
+
 	if curPage then
 		local eventProcessed = curPage.run(event, getTime())
 		if eventProcessed then
@@ -58,12 +67,12 @@ local function run(event)
 	end
 	if event == EVT_ENTER_BREAK then
 		loadPage(focusIndex)
-	elseif event == EVT_PLUS_BREAK or event == EVT_VIRTUAL_NEXT then
+	elseif event == 37 or event == 35 then --EVT_VIRTUAL_NEXT then
 		focusIndex = focusIndex + 1
 		if focusIndex > #pages then
 			focusIndex = 1
 		end
-	elseif event == EVT_MINUS_BREAK or event == EVT_VIRTUAL_PREV then
+	elseif event == 38 or event == 36 then --EVT_VIRTUAL_PREV then
 		focusIndex = focusIndex - 1
 		if focusIndex < 1 then
 			focusIndex = #pages
@@ -84,6 +93,7 @@ else
 	LZ_isNeedCompile = nil
 	LZ_markCompiled = nil
 end
+collectgarbage();
 --end
 
 --init()

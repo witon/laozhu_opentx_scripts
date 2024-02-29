@@ -1,14 +1,13 @@
-
-
 function CBdoKey(checkBox, event)
-    if event == 35 or event == 67 or event == 36 or event == 68 then
+    if event ==  EVT_ENTER_BREAK then
         checkBox.checked = not checkBox.checked
         if checkBox.onChange then
             checkBox.onChange(checkBox)
         end
+        return true;
     end
+    return false
 end
-
 
 function CBdraw(checkBox, x, y, invers, option)
     if checkBox.checked then
@@ -23,7 +22,7 @@ function CBsetOnChange(checkBox, onChange)
 end
 
 function CBnewCheckBox()
-    return {checked = false, focusState = 0, doKey = CBdoKey, draw = CBdraw}
+    return {checked = false, noEdit= true, focusState = 0, doKey = CBdoKey, draw = CBdraw}
 end
 
 function CBunload()

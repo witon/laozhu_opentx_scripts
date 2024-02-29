@@ -33,7 +33,7 @@ function TextEdit:setFocusState(state)
 end
 
 function TextEdit:doKey(event)
-    if event == 35 or event == 67 then
+    if event == 35 or event == 67 or event == 37 then
         self.modiChar = self.modiChar + 1
         if self.modiChar == 33 then
             self.modiChar = 48
@@ -44,7 +44,7 @@ function TextEdit:doKey(event)
         elseif self.modiChar > 122 then
             self.modiChar = 122
         end
-    elseif event == 36 or event == 68 then
+    elseif event == 36 or event == 68 or event == 38 then
         self.modiChar = self.modiChar - 1
         if self.modiChar < 32 then
             self.modiChar = 32 

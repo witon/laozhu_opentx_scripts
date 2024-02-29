@@ -13,6 +13,12 @@ local pages = flightPagePages
 local curPage = nil
 local lastEvent = 0
 
+
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
+
+
 local function init()
 	LZ_runModule("LAOZHU/LuaUtils.lua")
 	LZ_runModule("LAOZHU/OTUtils.lua")
@@ -28,6 +34,7 @@ local function init()
 		LZ_isNeedCompile = nil
 		LZ_markCompiled = nil
 	end
+	collectgarbage();
 end
 
 
@@ -61,15 +68,23 @@ local function unloadCurPage()
 end
 local function run(event)
 	lcd.clear()
+
+	e = keyMap[event];
+	if e ~= nil then
+		event = e;
+	end
+
 	local curTime = getTime()
 	if curPage == nil then
 		loadPage()
 	end
+	
+	
 	local eventProcessed = curPage.run(event, curTime)
 	if eventProcessed then
 		return
 	end
-	if event == EVT_EXIT_BREAK then
+	if event == EVT_EXIT_BREAK then --退出设置界面
 		if pages == setupPages then
 			pages = flightPagePages
 			displayIndex = 1
@@ -87,7 +102,7 @@ local function run(event)
 		end
 		unloadCurPage()
 	elseif event == 37 then
-		if lastEvent == 69 then	--because system will trigger event 37 once after event 69
+		if lastEvent == 133 then	--because system will trigger event 37 once after event 133
 			lastEvent = event
 		else
 			displayIndex = displayIndex + 1
@@ -98,14 +113,17 @@ local function run(event)
 		end
 	end
 
-	if event == 69 then
-		lastEvent = 69
+	if event == 133 then --进入设置界面
+		lastEvent = 133
 		if pages == flightPagePages then
 			unloadCurPage()
 			pages = setupPages
 			displayIndex = 1
 		end
 	end
+	lcd.drawText(128, 58, getAvailableMemory(), SMLSIZE + RIGHT)
+	return true;
+
 
 end
 

@@ -14,15 +14,18 @@ local timeEdit = nil
 
 local viewMatrix = nil
 
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
 
 local testFiles = {
-    "/SCRIPTS/emutest/testCfg.lua",
-    "/SCRIPTS/emutest/testCfgO.lua",
+    "/emutest/testCfg.lua",
+    "/emutest/testCfgO.lua",
  
-    "/SCRIPTS/emutest/testLoadModule.lua",
-    "/SCRIPTS/emutest/testManagerOutput.lua",
-    "/SCRIPTS/emutest/testDataFileDecode.lua",
-    "/SCRIPTS/emutest/testSinkRateRecord.lua"
+    "/emutest/testLoadModule.lua",
+    "/emutest/testManagerOutput.lua",
+    "/emutest/testDataFileDecode.lua",
+    "/emutest/testSinkRateRecord.lua"
  
     --"/SCRIPTS/emutest/testOutputCurveManager.lua",
 }
@@ -120,7 +123,9 @@ local function init()
     local c2 = collectgarbage("count")
     local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
     fun()
+    print("begin load")
     curCases = LZ_runModule(testFiles[curFileIndex])
+    print("loaded")
     curCaseIndex = 1
     LZ_runModule("LAOZHU/EmuTestUtils.lua")
     LZ_runModule("LAOZHU/OTUtils.lua")
@@ -159,6 +164,21 @@ local function run(event)
     end
  
     lcd.clear()
+
+
+	if event ~= 0 then
+		print("before:", event)
+	end
+	e = keyMap[event];
+	if e ~= nil then
+		event = e;
+	end
+	if event ~= 0 then
+		print("after:", event)
+	end
+
+
+
     viewMatrix:doKey(event)
     lcd.drawText(1, 1, "CheckBox:", SMLSIZE + LEFT)
     checkBox:draw(54, 1, invers, SMLSIZE + RIGHT)
