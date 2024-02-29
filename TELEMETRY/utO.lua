@@ -14,18 +14,9 @@ local timeEdit = nil
 
 local viewMatrix = nil
 
-local ver, radio = getVersion();
-local upEvent = 0
-local downEvent = 0
-local leftEvent = 0
-local rightEvent = 0
-if string.sub(radio, 1, 5) == "zorro" then
-	upEvent = 37
-	downEvent = 38
-	leftEvent = 4099
-	rightEvent = 4100
-end
-
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
 
 local testFiles = {
     "/emutest/testCfg.lua",
@@ -174,17 +165,13 @@ local function run(event)
  
     lcd.clear()
 
+
 	if event ~= 0 then
 		print("before:", event)
 	end
-	if event == leftEvent then
-		event = 38
-	elseif event == rightEvent then
-		event = 37
-	elseif event == downEvent then
-		event = 35
-	elseif event == upEvent then
-		event = 36
+	e = keyMap[event];
+	if e ~= nil then
+		event = e;
 	end
 	if event ~= 0 then
 		print("after:", event)
