@@ -38,10 +38,7 @@ local function background()
 end
 
 local function run(event)
-	if event ~= 0 then
-		print("before:", event)
-	end
-	
+
 	bgFlag = false
 	lcd.clear()
 	e = keyMap[event];
@@ -49,10 +46,6 @@ local function run(event)
 		event = e;
 	end
 
-	if event ~= 0 then
-		print("after:", event)
-	end
-	
 	if curPage then
 		local eventProcessed = curPage.run(event, getTime())
 		if eventProcessed then

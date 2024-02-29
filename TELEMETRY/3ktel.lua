@@ -69,15 +69,9 @@ end
 local function run(event)
 	lcd.clear()
 
-	if event ~= 0 then
-		print("before:", event, EVT_EXIT_BREAK, EVT_PAGE_LONG, EVT_ENTER_LONG)
-	end
 	e = keyMap[event];
 	if e ~= nil then
 		event = e;
-	end
-	if event ~= 0 then
-		print("after:", event)
 	end
 
 	local curTime = getTime()
