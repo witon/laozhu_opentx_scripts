@@ -8,7 +8,7 @@ local function init()
 end
 
 local function doKey(event)
-    if event==36 or event==4099 then
+    if event==36 then
         selectedRow = selectedRow - 1
         if selectedRow < 1 then
             selectedRow = 1
@@ -16,7 +16,7 @@ local function doKey(event)
         if selectedRow - scrollLine < 1 then
             scrollLine = scrollLine - 1
         end
-    elseif event==35 or event==4100 then
+    elseif event==35 then
         selectedRow = selectedRow + 1
         if selectedRow > 16 then
             selectedRow = 16

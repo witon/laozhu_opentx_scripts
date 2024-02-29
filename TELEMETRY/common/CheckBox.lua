@@ -1,7 +1,7 @@
 
 
 function CBdoKey(checkBox, event)
-    if event == 35 or event == 67 or event == 36 or event == 68 or event == 4099 then
+    if event == 35 or event == 67 or event == 36 or event == 68 then
         checkBox.checked = not checkBox.checked
         if checkBox.onChange then
             checkBox.onChange(checkBox)

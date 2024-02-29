@@ -29,7 +29,7 @@ function TEsetFocusState(textEdit, state)
 end
 
 function TEdoKey(textEdit, event)
-    if event == 35 or event == 67 or event == 4100 then
+    if event == 35 or event == 67 or event == 37 then
         textEdit.modiChar = textEdit.modiChar + 1
         if textEdit.modiChar == 33 then
             textEdit.modiChar = 48
@@ -40,7 +40,7 @@ function TEdoKey(textEdit, event)
         elseif textEdit.modiChar > 122 then
             textEdit.modiChar = 122
         end
-    elseif event == 36 or event == 68 or event == 4099 then
+    elseif event == 36 or event == 68 or event == 38 then
         textEdit.modiChar = textEdit.modiChar - 1
         if textEdit.modiChar < 32 then
             textEdit.modiChar = 32 

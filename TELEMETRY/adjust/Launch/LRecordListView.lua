@@ -14,7 +14,7 @@ function LRecordListView:doKey(event)
             record.invalid = true
         end
         return true
-    elseif event == 35 or event == 67 or event == 4100 then
+    elseif event == 35 or event == 67 then
         if self.selectedRow < #records then
             self.selectedRow = self.selectedRow + 1
         end
@@ -22,7 +22,7 @@ function LRecordListView:doKey(event)
             self.scrollRow = self.scrollRow + 1
         end
         return true
-    elseif event == 36 or event == 68 or event == 4099 then
+    elseif event == 36 or event == 68 then
         if self.selectedRow > 1 then
             self.selectedRow = self.selectedRow - 1
         end

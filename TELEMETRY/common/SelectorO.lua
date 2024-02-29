@@ -16,12 +16,12 @@ function Selector:dec()
 end
 
 function Selector:doKey(event)
-    if event == 35 or event == 67 or event == 4100 then
+    if event == 35 or event == 67 or event == 38 then
         local changed = self:inc(self)
         if changed and self.onChange then
             self.onChange(self)
         end
-    elseif event == 36 or event == 68 or event == 4099 then
+    elseif event == 36 or event == 68 or event == 37 then
         local changed = self:dec(self)
         if changed and self.onChange then
             self.onChange(self)

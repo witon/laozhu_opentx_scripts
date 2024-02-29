@@ -118,7 +118,7 @@ function VMdoKey(vm, event)
             return false
         end
         return true
-    elseif event==36 or event==68 or event==4099 then
+    elseif event==36 or event==68 then
         IVsetFocusState(vm.matrix[vm.selectedRow][vm.selectedCol], 0)
         vm.selectedRow = vm.selectedRow - 1
         if vm.selectedRow < 1 then
@@ -132,7 +132,7 @@ function VMdoKey(vm, event)
         end
         IVsetFocusState(vm.matrix[vm.selectedRow][vm.selectedCol], 1)
         return true
-    elseif event==35 or event==67 or event==4100 then
+    elseif event==35 or event==67 then
         IVsetFocusState(vm.matrix[vm.selectedRow][vm.selectedCol], 0)
         vm.selectedRow = vm.selectedRow + 1
         if vm.selectedRow > #vm.matrix then

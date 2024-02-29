@@ -1,7 +1,7 @@
 
 
 function CSdoKey(selector, event)
-    if event == 35 or event == 67 or event == 4100 then
+    if event == 35 or event == 67 then
         selector.selectedIndex = selector.selectedIndex + 1
         local curveName = LZ_getCurveName(selector.selectedIndex)
         if not curveName then
@@ -12,7 +12,7 @@ function CSdoKey(selector, event)
         if selector.onChange then
             selector.onChange(selector)
         end
-    elseif event == 36 or event == 68 or event == 4099 then
+    elseif event == 36 or event == 68 then
         selector.selectedIndex = selector.selectedIndex - 1
         local curveName = LZ_getCurveName(selector.selectedIndex)
         if not curveName then

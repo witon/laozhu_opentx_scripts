@@ -121,7 +121,7 @@ function ViewMatrix:doKey(event)
             return false
         end
         return true
-    elseif event==36 or event==68 or event==4099 then
+    elseif event==36 or event==68 then
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(0)
         self.selectedRow = self.selectedRow - 1
         if self.selectedRow < 1 then
@@ -135,7 +135,7 @@ function ViewMatrix:doKey(event)
         end
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(1)
         return true
-    elseif event==35 or event==67 or event==4100 then
+    elseif event==35 or event==67 then
         self.matrix[self.selectedRow][self.selectedCol]:setFocusState(0)
         self.selectedRow = self.selectedRow + 1
         if self.selectedRow > #self.matrix then

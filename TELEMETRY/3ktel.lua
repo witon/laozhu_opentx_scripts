@@ -13,6 +13,24 @@ local pages = flightPagePages
 local curPage = nil
 local lastEvent = 0
 
+local ver, radio = getVersion();
+
+local upEvent = 0
+local downEvent = 0
+local leftEvent = 0
+local rightEvent = 0
+local retEvent = 0
+local enterEvent = 0
+
+if string.sub(radio, 1, 5) == "zorro" then
+	upEvent = 37
+	downEvent = 38
+	leftEvent = 4099
+	rightEvent = 4100
+end
+
+
+
 local function init()
 	LZ_runModule("LAOZHU/LuaUtils.lua")
 	LZ_runModule("LAOZHU/OTUtils.lua")
@@ -61,11 +79,28 @@ local function unloadCurPage()
 end
 local function run(event)
 	lcd.clear()
-	print(event)
+	if event ~= 0 then
+		print("before:", event)
+	end
+	if event == leftEvent then
+		event = 38
+	elseif event == rightEvent then
+		event = 37
+	elseif event == downEvent then
+		event = 35
+	elseif event == upEvent then
+		event = 36
+	end
+	if event ~= 0 then
+		print("after:", event)
+	end
+
 	local curTime = getTime()
 	if curPage == nil then
 		loadPage()
 	end
+	
+	
 	local eventProcessed = curPage.run(event, curTime)
 	if eventProcessed then
 		return

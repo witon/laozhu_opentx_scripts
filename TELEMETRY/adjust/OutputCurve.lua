@@ -143,11 +143,11 @@ local function doKey(event)
     if VMisEmpty(viewMatrix) then
         return false
     end
-	if (event==36 or event==68 or event==4099) then
+	if (event==36 or event==68) then
         if VMgetCurIV(viewMatrix).row - scrollLine < 1 and scrollLine > 0 then
             scrollLine = scrollLine - 1
         end
-	elseif (event==35 or event==67 or event==4100) then
+	elseif (event==35 or event==67) then
         if VMgetCurIV(viewMatrix).row - scrollLine > 3 then
             scrollLine = scrollLine + 1
         end
