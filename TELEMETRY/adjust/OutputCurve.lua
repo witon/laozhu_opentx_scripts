@@ -29,11 +29,13 @@ local function updateOneRowNumEditValue(curveRow)
         if not curveData then
             return
         end
-        for i=1, curveData.points, 1 do
-            curveRow.yNumEditArray[i].num = curveData.y[i-1]
+        local i = 1
+        for index, value in pairs(curveData.y) do
+            curveRow.yNumEditArray[i].num = value -- curveData.y[i-1]
             if curveData.type == 1 then
-                curveRow.xNumEditArray[i].num = curveData.x[i-1]
+                curveRow.xNumEditArray[i].num = curveData.x[index]
             end
+            i = i + 1
         end
     end
 end
@@ -82,12 +84,13 @@ local function getChannelCurve(curveRow, row)
                 vmRowX = VMaddRow(viewMatrix)
                 curveRow.xNumEditArray = {}
             end
-            for i=1, curveData.points, 1 do
+            local i = 1
+            for index,value in pairs(curveData.y) do
                 local yNumEdit = NEnewNumEdit()
                 yNumEdit.min = -100
                 yNumEdit.max = 100
                 NEsetOnChange(yNumEdit, onNumEditChange)
-                yNumEdit.num = curveData.y[i-1]
+                yNumEdit.num = value --curveData.y[i-1]
                 curveRow.yNumEditArray[i] = yNumEdit
                 yNumEdit.row = row
                 vmRowY[i] = yNumEdit
@@ -96,11 +99,13 @@ local function getChannelCurve(curveRow, row)
                     xNumEdit.min = -100
                     xNumEdit.max = 100
                     NEsetOnChange(xNumEdit, onNumEditChange)
-                    xNumEdit.num = curveData.x[i-1]
+                    xNumEdit.num = curveData.x[index]
                     curveRow.xNumEditArray[i] = xNumEdit
                     vmRowX[i] = xNumEdit
                     xNumEdit.row = row
                 end
+                i = i + 1
+ 
             end
         end
     end
