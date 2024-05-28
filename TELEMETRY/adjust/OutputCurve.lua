@@ -31,7 +31,7 @@ local function updateOneRowNumEditValue(curveRow)
         end
         local i = 1
         for index, value in pairs(curveData.y) do
-            curveRow.yNumEditArray[i].num = value -- curveData.y[i-1]
+            curveRow.yNumEditArray[i].num = value
             if curveData.type == 1 then
                 curveRow.xNumEditArray[i].num = curveData.x[index]
             end
@@ -90,7 +90,7 @@ local function getChannelCurve(curveRow, row)
                 yNumEdit.min = -100
                 yNumEdit.max = 100
                 NEsetOnChange(yNumEdit, onNumEditChange)
-                yNumEdit.num = value --curveData.y[i-1]
+                yNumEdit.num = value
                 curveRow.yNumEditArray[i] = yNumEdit
                 yNumEdit.row = row
                 vmRowY[i] = yNumEdit
