@@ -10,7 +10,7 @@ function testNormalProcess()
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 36}, thenReturn = {}}
 
-    f5jState.setThrottleThreshold(-800)
+    f5jState.setThrottleThreshold(-80)
     local state = f5jState.getFlightState()
     luaunit.assertEquals(state, 0)
 
