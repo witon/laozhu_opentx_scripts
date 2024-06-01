@@ -121,7 +121,6 @@ local function run(event)
 			displayIndex = 1
 		end
 	end
-	lcd.drawText(128, 58, getAvailableMemory(), SMLSIZE + RIGHT)
 	return true;
 
 
