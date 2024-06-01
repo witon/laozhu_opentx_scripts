@@ -70,7 +70,7 @@ end
 
 
 local function setThrottleThreshold(threshold)
-    throttleThreshold = threshold
+    throttleThreshold = threshold * 1024 / 100
 end
 
 local function isPowerOn() 

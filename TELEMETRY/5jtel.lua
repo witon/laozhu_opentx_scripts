@@ -12,6 +12,13 @@ local curPage = nil
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 
+local lastEvent = 0
+
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
+
+
 local function loadPage()
 	local pagePath = "TELEMETRY/" .. pages[displayIndex]
 	curPage = LZ_runModule(pagePath)
@@ -38,7 +45,6 @@ local function init()
 
 	CFGreadFromFile(f5jCfg, gConfigFileName)
 	altID = getTelemetryId("Alt")
-	gFlightState.setThrottleThreshold(CFGgetNumberField(f5jCfg, "ThThreshold"))
 	loadPage()
 end
 
@@ -48,11 +54,17 @@ local function run(event)
 	local resetSwitchValue = getValue(CFGgetNumberField(f5jCfg, 'RsSw'))
 	local flightSwitchValue = getValue(CFGgetNumberField(f5jCfg, 'FlSw'))
 	local throttleValue = getValue(CFGgetNumberField(f5jCfg, 'ThCh'))
+	gFlightState.setThrottleThreshold(CFGgetNumberField(f5jCfg, "ThThreshold"))
 	gFlightState.setAlt(curAlt)
 	gFlightState.doFlightState(curTime, resetSwitchValue, throttleValue, flightSwitchValue)
 
 
 	lcd.clear()
+	e = keyMap[event];
+	if e ~= nil then
+		event = e;
+	end
+
 	if curTime - gcTime < 5 then
 		return
 	end
