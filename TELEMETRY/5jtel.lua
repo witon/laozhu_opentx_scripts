@@ -12,6 +12,7 @@ local setupPages = {"5j/SetupPage.lua"}
 local pages = flightPagePages
 local curPage = nil
 local lastEvent = 0
+local readVar = nil
 
 LZ_runModule("TELEMETRY/common/keyMap.lua")
 local keyMap = KMgetKeyMap();
@@ -24,6 +25,10 @@ local function loadPage()
 		f5jCfg = CFGnewCfg()
 		CFGreadFromFile(f5jCfg, gConfigFileName)
 		altID = getTelemetryId("Alt")
+		readVar = LZ_runModule("LAOZHU/readVar.lua")
+		local f5jReadVarMap = LZ_runModule("LAOZHU/f5jReadVarMap.lua")
+		f5jReadVarMap.setF5jState(gFlightState)
+		readVar.setVarMap(f5jReadVarMap)
 	end
 	local pagePath = "TELEMETRY/" .. pages[displayIndex]
 	curPage = LZ_runModule(pagePath)
@@ -71,6 +76,9 @@ local function stateRun(curTime)
 	gFlightState.setThrottleThreshold(CFGgetNumberField(f5jCfg, "ThThreshold"))
 	gFlightState.setAlt(curAlt)
 	gFlightState.doFlightState(curTime, resetSwitchValue, throttleValue, flightSwitchValue)
+	local varSelectorSliderValue = getValue(CFGgetNumberField(f5jCfg, 'SelSlider'))
+	local varReadSwitchValue = getValue(CFGgetNumberField(f5jCfg, 'ReadSw'))
+	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 end
 
 local function background()

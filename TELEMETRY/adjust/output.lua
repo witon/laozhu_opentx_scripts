@@ -215,10 +215,10 @@ local function run(event, time)
     IVdraw(enableAdjustCheckBox, 75, 0, invers, SMLSIZE + RIGHT)
     IVdraw(curvesButton, 125, 0, invers, SMLSIZE + RIGHT)
 
-    lcd.drawText(2, 9, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(22, 9, math.floor(getValue("thr") * 100 / 1024), SMLSIZE+LEFT)
+    lcd.drawText(2, 9, "s1:", SMLSIZE + LEFT)
+    lcd.drawText(22, 9, math.floor(getValue("s1") * 100 / 1024), SMLSIZE+LEFT)
     lcd.drawText(64, 9, "output:", SMLSIZE + LEFT)
-    lcd.drawText(98, 9, math.floor(getValue("thr") * 150/1024), SMLSIZE+LEFT)
+    lcd.drawText(98, 9, math.floor(getValue("s1") * 150/1024), SMLSIZE+LEFT)
  
 
     lcd.drawFilledRectangle(0, 17, 128, 9, FORCE)

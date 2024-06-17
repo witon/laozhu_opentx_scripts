@@ -90,6 +90,7 @@ end
 
 local function startPoweronTimer()
     stateTimer:resetTimer(30)
+    stateTimer:setIntegralInterval(5)
     stateTimer:setForward(true)
     stateTimer:setDowncount(10)
     stateTimer:start(curTime)
@@ -135,6 +136,7 @@ end
 
 local function startPoweroffTimer()
     stateTimer:resetTimer(10)
+    stateTimer:setIntegralInterval(30)
     stateTimer:setForward(false)
     stateTimer:setDowncount(9)
     stateTimer:start(curTime)

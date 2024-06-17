@@ -3,6 +3,7 @@ Timer = {startTime = 0,
         duration = -1,
         lastReadTime = -1,
         downcountSeconds = -1,
+        integralInterval = 30,
         isForward = true,
         curTime = 0,
         mute = false,
@@ -100,12 +101,16 @@ function Timer:readDowncount(time)
     end
 end
 
+function Timer:setIntegralInterval(interval)
+    self.integralInterval = interval
+end
+
 function Timer:readIntegralTime(time)
     if self.downcountSeconds ~= -1 and time == 0 then
         return
     end
 
-    if time % 30 == 0 then
+    if time % self.integralInterval == 0 then
         self.lastReadTime = time
         LZ_playTime(time)
     end
