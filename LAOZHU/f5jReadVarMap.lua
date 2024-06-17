@@ -1,10 +1,12 @@
+local this = {}
+local f5jState = nil
 
 local function readCurAlt()
-    playNumber(gCurAlt, 9)
+    playNumber(f5jState.getAlt(), 9)
 end
 
 local function readFlightTime()
-    playDuration(gFlightTime/100)
+    playDuration(f5jState.getFlightTime()/100)
 end
 
 local function readRssi()
@@ -13,8 +15,17 @@ local function readRssi()
 end
 
 local function readLaunchAlt()
-    playNumber(gLaunchALT, 9)
+    playNumber(f5jState.getLaunchAlt(), 9)
 end
 
-return {readFlightTime, readCurAlt, readRssi, readLaunchAlt}
+local function setF5jState(flightState)
+    f5jState = flightState
+end
+
+this[1] = readCurAlt
+this[2] = readCurAlt
+this[3] = readRssi
+this[4] = readRssi 
+this.setF5jState = setF5jState
+return this
 
