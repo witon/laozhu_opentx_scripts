@@ -208,9 +208,9 @@ local function run(event, time)
     end
 
     lcd.drawText(2, 0, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(22, 0, math.floor(getValue("thr") * 100 / 1024), SMLSIZE+LEFT)
+    lcd.drawText(22, 0, math.floor(getValue("s1") * 100 / 1024), SMLSIZE+LEFT)
     lcd.drawText(64, 0, "output:", SMLSIZE + LEFT)
-    lcd.drawText(98, 0, math.floor(getValue("thr") * 150/1024), SMLSIZE+LEFT)
+    lcd.drawText(98, 0, math.floor(getValue("s1") * 150/1024), SMLSIZE+LEFT)
  
     drawHeadLine()
     for i=1 + scrollLine, #curvePointNumEditArray, 1 do
