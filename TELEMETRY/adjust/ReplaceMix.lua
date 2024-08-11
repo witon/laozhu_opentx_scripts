@@ -8,7 +8,7 @@ function replaceMix(channel, reverse)
         mix.weight = 150
     end
     mix.name = "ad_tmp"
-    mix.source = getFieldInfo("thr").id
+    mix.source = getFieldInfo("s1").id
     mix.multiplex = 2
     mix.flightModes = 0
     model.insertMix(channel, mixesCount, mix)
