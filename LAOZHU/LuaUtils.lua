@@ -1,3 +1,4 @@
+-- 清空表
 function LZ_clearTable(t)
     if type(t) == "table" then
         for i, v in pairs(t) do
@@ -10,6 +11,7 @@ function LZ_clearTable(t)
     return t
 end
 
+-- 分割字符串  
 function splitStr(inputstr, sep)
     if sep == nil then
         sep = "%s"
