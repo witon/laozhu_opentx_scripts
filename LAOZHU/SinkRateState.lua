@@ -106,4 +106,5 @@ function SRSunload()
     SRSgetSinkRate = nil
     SRSrun = nil
     SRSunload = nil
+    SRSsetOnStateChange = nil
 end
