@@ -1,12 +1,14 @@
 gScriptDir = "/SCRIPTS/"
 local bgFlag = false
+--local k1 = 0
+--local k2 = 0
 
 local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 
 
 local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/Launch/Launch.lua"}
+local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua"}
 local curPage = nil
 
 LZ_runModule("TELEMETRY/common/keyMap.lua")
@@ -42,9 +44,22 @@ local function run(event)
 	bgFlag = false
 	lcd.clear()
 	e = keyMap[event];
+--	if event ~= 0 then
+--		print("event: " .. event)
+--		k2 = k1
+--		k1 = event
+--	end
+
 	if e ~= nil then
 		event = e;
 	end
+--	if event ~= 0 then
+--		print("event1: " .. event)
+--	end
+--	lcd.drawText(1, 1, "k1: " .. k1 .. " k2: " .. k2)
+	-- if 1 == 1 then
+	-- 	return
+	-- end
 
 	if curPage then
 		local eventProcessed = curPage.run(event, getTime())
