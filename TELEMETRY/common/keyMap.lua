@@ -11,6 +11,7 @@ function KMgetKeyMap()
         keyMap[38] = 35
         keyMap[70] = 67
         keyMap[69] = 68
+        keyMap[75] = 133 --长按MDL
     elseif string.sub(radio, 1, 4) == "gx12" then
         keyMap[4099] = 38
         keyMap[4100] = 37
