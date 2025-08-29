@@ -67,9 +67,23 @@ local function unloadCurPage()
 	collectgarbage()
 end
 local function run(event)
-	lcd.clear()
 
 	e = keyMap[event];
+	if false then
+		if event ~= 0 then
+			lcd.clear()
+			lcd.drawText(10, 10, "event:", SMLSIZE)
+			lcd.drawNumber(10, 20, event, SMLSIZE)
+			lcd.drawText(10, 30, "e:", SMLSIZE)
+			if e ~= nil then
+				lcd.drawNumber(10, 40, e, SMLSIZE)
+			end
+		end
+		return
+	else
+		lcd.clear()
+	end
+
 	if e ~= nil then
 		event = e;
 	end
