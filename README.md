@@ -1,81 +1,235 @@
-#最新更新
-====
-1. 全局变量调整界面。<br>
-2. 输出通道调整功能提升，输出通道曲线调整。<br>
-3. 下沉率调整<br>
-4. 发射高度调整
-<br>
-以上暂时没有更新相应使用说明。<br>
+# EdgeTX/OpenTX 滑翔机比赛辅助脚本
 
------------------------------------------------------------
+EdgeTX/OpenTX 遥控器脚本，专为 F3K（手抛滑翔机）和 F5J（电动滑翔机）比赛和训练设计。提供飞行数据记录、遥测显示和飞机调整工具，运行在搭载 EdgeTX 固件的遥控器上。
 
-#使用介绍
-====
-[3ktel：F3K比赛和训练飞行辅助](#f3k_usage)<br>
-[5jtel：F5J比赛和训练飞行辅助](#f5j_usage)<br>
-[adjust：调机小工具](#adjust_usage)，当前支持调整两个副翼或者两个襟翼舵机输出的行程和一致性。<br>
+## 主要功能脚本
 
+### 3ktel.lua - F3K 比赛和训练辅助
 
-#兼容性
-====
-本脚本在RM Zorro遥控器edgetx v2.9.4固件上测试通过。
+**功能说明：**
+- F3K（手抛滑翔机）比赛计时和记录系统
+- 支持多种 F3K 比赛任务类型（A组任务、B组任务等）
+- 实时飞行状态显示（起飞、飞行中、着陆等）
+- 单轮飞行时间记录和历史记录查看
+- **目标飞行时间设置**：可设置期望的飞行时间目标
+- **语音提示功能**：到达目标时间时进行语音提醒
+- 自动检测飞行状态切换
+- 遥测数据显示（电池电压、信号强度等）
 
+**界面功能：**
+- **飞行信息页**：显示当前任务、飞行状态、飞行时间、历史记录、目标飞行时间
+- **设置页**：配置重置开关、飞行开关、任务类型等参数
 
-#安装
-====
-1. 下载安装文件，进入安装文件目录，运行install.bat。<br>
-![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_cmd.png)
-2. 输入遥控器SD卡盘符，比如我的是f盘，则是f:<br>
-![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_click.png)
-3. 等待安装完成。<br>
-![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_copy.png)
-4. 另一种安装方法（不推荐）：将"LAOZHU"、"TELEMETRY"、"data"三个目录copy到遥控器SD卡"SCRIPTS"目录下。<br>
-5. 进入遥控器"DISPLAY"设置界面，选择"3ktel"(for F3K)或者"5jtel"(for F5J)或者"adjust"(for adjust)。<br>
-![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_3k_install.png)
-6. 安装完成后，第一次运行需要脚本编译，在遥控器主界面，长按摇杆"下"。这时会出现编译界面，等待编译完成，按退出键进入“飞行信息”界面<br>
-![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_compiling.png)<br>
-![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_finish_compile.png)<br>
-7. 进入"飞行信息"界面。<br>![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_flightpage.png)<br>(3k飞行信息截图)
-8. 连续按摇杆"右"，进入"设置"界面。<br>![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_3k_setting.png)<br>(3k设置界面截图)
-9. 在选中的设置项上按摇杆"确定"，设置相应开关，再次按摇杆"确定"完成该开关设置。
+### 5jtel.lua - F5J 比赛和训练辅助  
 
+**功能说明：**
+- F5J（电动滑翔机）比赛计时和记录系统
+- 工作时间（WT）和加电时间（PT）双重计时
+- 自动检测电机开启/关闭状态
+- 发射高度记录和显示
+- 飞行时间记录
+- 重复加电检测和提示
+- 高度遥测和发射高度保存
 
------------------------------------------------------------
+**界面功能：**
+- **飞行信息页**：显示工作时间、加电时间、飞行状态、高度信息、发射高度
+- **设置页**：配置重置开关、飞行开关、油门通道、油门阈值等参数
 
-#开发说明
+### adjust.lua - 调机小工具集
 
-##一、主要脚本目录
-====
-###1.LAOZHU：包含核心功能代码
-包含各种状态管理类（如LDState.lua, F5jState.lua）
-包含记录类（如LDRecord.lua, SinkRateRecord.lua）
-包含数据读取和处理类（如readVar.lua, LDReadVarMap.lua）
-包含工具类（如OTUtils.lua, LuaUtils.lua）
-包含F3K和F5J特定功能的子目录
+**功能说明：**
+调机小工具集合，提供多种飞机参数调整功能：
 
-###2.TELEMETRY：包含遥测界面相关代码
-包含主要界面入口（3ktel.lua, 5jtel.lua, adjust.lua）
-包含不同功能模块的子目录（3k, 5j, adjust, common）
-每个子目录包含该功能的界面实现（FlightPage.lua, SetupPage.lua等）
+1. **全局变量调整（GlobalVar.lua）**
+   - 调整遥控器全局变量值
+   - 实时修改和保存设置
 
-###3.data：存储飞行时记录的数据文件
-###4.各种.cfg文件：存储用户使用时的设置
+2. **输出通道调整（Output.lua）**  
+   - 舵机行程调整
+   - 两个副翼或襟翼舵机的输出一致性调整
+   - 输出通道曲线调整
+   - 实时预览调整效果
 
-##二、构建和安装
-====
-install.bat：Windows安装脚本
-build_sound_dll.bat/build_sound_so.sh：声音相关编译脚本
-CompileFiles.lua/GenCompileList.lua：编译相关脚本
+3. **下沉率调整（SinkRate/SinkRate.lua）**
+   - 下沉率测量和记录
+   - 不同配置下的下沉率对比
+   - 历史记录查看
 
+4. **升阻比调整（LD/LD.lua）**  
+   - 升阻比测量和计算
+   - 不同飞行配置的升阻比对比
+   - 优化飞机滑翔性能
 
-##三、功能模块
-====
-###1.F3K功能：用于F3K比赛和训练飞行辅助（手抛模型飞机比赛）
-###2.F5J功能：用于F5J比赛和训练飞行辅助（电动滑翔机比赛）
-###3.调整功能：用于调整舵机输出等参数
+5. **发射高度调整（Launch/Launch.lua）**
+   - 发射参数优化
+   - 发射高度记录和分析
+   - 发射效果评估
 
-##四、测试相关
-====
-###1.test/：在单元测试脚本
-###2.emutest/：在遥控器或者模拟器上执行自动化测试脚本
+## 安装步骤
 
+### 1. 自动安装（推荐）
+1. 下载安装包，解压到本地目录
+2. 进入安装目录，运行 `install.bat`
+   
+   ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_cmd.png)
+
+3. 输入遥控器 SD 卡盘符（如：`F:`）
+   
+   ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_click.png)
+
+4. 等待安装完成
+   
+   ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_copy.png)
+
+### 2. 手动安装
+将 `LAOZHU`、`TELEMETRY`、`data` 三个目录复制到遥控器 SD 卡的 `SCRIPTS` 目录下。
+
+### 3. 遥控器设置
+1. 进入遥控器 **DISPLAY** 设置界面
+2. 选择对应的脚本：
+   - **3ktel** - F3K 比赛辅助
+   - **5jtel** - F5J 比赛辅助  
+   - **adjust** - 调机工具
+
+   ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_3k_install.png)
+
+### 4. 首次运行编译
+1. 在遥控器主界面，长按摇杆 **"下"** 键
+2. 等待脚本编译完成
+   
+   ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_compiling.png)
+   
+   ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_finish_compile.png)
+
+3. 按退出键进入相应功能界面
+
+## 使用步骤
+
+### 3ktel.lua 使用步骤
+
+1. **基本设置**
+   - 摇杆 **"右"** 键进入设置界面
+   - 设置重置开关（用于重置计时器）
+   - 设置飞行开关（用于检测飞行状态）  
+   - 选择比赛任务类型
+
+2. **目标时间设置**
+   - 在飞行信息页面，选择目标飞行时间设置区域
+   - 使用摇杆调整目标飞行时间（分:秒格式）
+   - 设置完成后，系统会在到达目标时间时语音提醒
+   - 目标时间显示在飞行信息页面上
+
+3. **飞行操作**
+   - 准备飞行时，打开重置开关复位计时器
+   - 手抛起飞后，脚本自动开始计时
+   - 飞行过程中显示实时飞行时间
+   - 到达设定的目标时间时，系统自动语音提醒
+   - 着陆后自动停止计时并记录
+
+4. **查看记录**
+   - 摇杆 **"左/右"** 切换显示页面
+   - 查看本轮飞行历史记录
+   - 查看飞行时间统计
+
+**界面截图：**
+
+**飞行信息页面：**
+
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_flightpage.png)
+
+**设置页面：**
+
+![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_xlites_3k_setting.png)
+
+### 5jtel.lua 使用步骤
+
+1. **基本设置** 
+   - 摇杆进入设置界面
+   - 设置重置开关、飞行开关
+   - 设置油门通道和油门阈值
+   - 设置选择滑块和读取开关
+
+2. **飞行操作**
+   - 工作时间开始计时（通常为10分钟）
+   - 油门推高开始加电时间计时
+   - 发射后记录发射高度
+   - 关闭油门后继续飞行
+   - 着陆时自动记录飞行数据
+
+3. **数据查看**
+   - 实时显示工作时间余量
+   - 显示加电时间使用情况  
+   - 查看发射高度和当前高度
+   - 重复加电警告提示
+
+### adjust.lua 使用步骤
+
+1. **进入工具菜单**
+   - 运行 adjust.lua 显示工具列表
+   - 摇杆 **"上/下"** 选择工具
+   - 摇杆 **"确定"** 进入选中工具
+
+2. **各工具使用**
+   
+   **全局变量调整：**
+   - 选择要调整的全局变量
+   - 设置新的数值
+   - 保存设置
+
+   **输出通道调整：**
+   - 选择要调整的输出通道
+   - 调整行程和中位值
+   - 实时查看舵机动作
+   - 保存调整结果
+
+   **下沉率调整：**
+   - 设置测试参数
+   - 开始下沉率测试  
+   - 记录不同配置的下沉率数据
+   - 对比分析结果
+
+   **升阻比调整：**
+   - 进行升阻比测试飞行
+   - 记录飞行数据
+   - 计算升阻比数值
+   - 优化飞机配置
+
+   **发射调整：**
+   - 记录发射参数
+   - 分析发射效果
+   - 优化发射设置
+
+3. **退出工具**
+   - 按 **EXIT** 键返回工具菜单
+   - 再次按 **EXIT** 键退出 adjust.lua
+
+## 兼容性
+
+- **测试平台**：RM Zorro 遥控器 EdgeTX v2.9.4 固件
+- **支持固件**：EdgeTX v2.9+ / OpenTX v2.3+
+- **遥控器型号**：支持运行 Lua 脚本的 EdgeTX/OpenTX 遥控器
+
+## 注意事项
+
+- 首次使用需要等待脚本编译完成
+- 建议在实际比赛前充分测试和熟悉功能
+- 定期备份飞行数据和配置文件
+- 确保遥控器电池电量充足
+- 比赛时请遵守相关比赛规则
+
+## 文件结构
+
+- **LAOZHU/** - 核心功能模块
+- **TELEMETRY/** - 用户界面层  
+- **data/** - 飞行数据存储
+- **\*.cfg** - 用户配置文件
+
+## 开发和测试
+
+- `lua test/test.lua` - 运行单元测试
+- `install.bat` - Windows 安装脚本
+- CI 通过 GitHub Actions 自动测试
+
+---
+
+如有问题或建议，请通过项目 Issues 反馈。
