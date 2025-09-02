@@ -24,6 +24,8 @@ function KMgetKeyMap()
             keyMap[44] = 35 --TEL 下
             keyMap[76] = 67 --长按TEL
             keyMap[75] = 133 --长按MDL
+            keyMap[34] = 34 --return
+            keyMap[33] = 33 --exit
  
         elseif string.sub(ver, 1, 4) == "2.10" then
             keyMap[4099] = 38 --滚轮向左 --左
@@ -34,6 +36,8 @@ function KMgetKeyMap()
             keyMap[45] = 35 --TEL 下
             keyMap[77] = 67 --长按TEL
             keyMap[76] = 133 --长按MDL
+            keyMap[34] = 34 --return
+            keyMap[33] = 33 --exit
         else
             keyMap[4099] = 38
             keyMap[4100] = 37
@@ -41,6 +45,8 @@ function KMgetKeyMap()
             keyMap[38] = 35
             keyMap[70] = 67
             keyMap[69] = 68
+            keyMap[34] = 34 --return
+            keyMap[33] = 33 --exit
         end
     elseif string.sub(radio, 1, 4) == "gx12" then
         keyMap[4099] = 38
@@ -50,11 +56,15 @@ function KMgetKeyMap()
         keyMap[100] = 36
         keyMap[99] = 35
         keyMap[75] = 133 --长按MDL
+        keyMap[34] = 34 --return
+        keyMap[33] = 33 --exit
     else
         keyMap[38] = 38
         keyMap[37] = 37
         keyMap[36] = 36
         keyMap[35] = 35
+        keyMap[34] = 34 --return
+        keyMap[33] = 33 --exit
     end
     return keyMap;
 end
