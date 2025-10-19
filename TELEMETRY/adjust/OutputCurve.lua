@@ -181,7 +181,7 @@ local function drawHeadLine()
 end
 
 local function getX(pointNum, index)
-    return -100 + 200 / (pointNum-1) * (index - 1)
+    return math.floor(-100 + 200 / (pointNum-1) * (index - 1) + 0.5)
 end 
 
 local function drawOneRow(index, invers)
