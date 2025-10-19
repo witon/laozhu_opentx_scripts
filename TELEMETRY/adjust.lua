@@ -8,7 +8,7 @@ fun()
 
 
 local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua"}
+local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua", "adjust/CreateModal/CreateModal.lua"}
 local curPage = nil
 
 LZ_runModule("TELEMETRY/common/keyMap.lua")

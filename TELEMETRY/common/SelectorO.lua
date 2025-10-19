@@ -2,7 +2,20 @@ Selector = setmetatable({}, InputView)
 Selector.super = InputView
 
 function Selector:getText(index)
+    if self.textFun then
+        return self.textFun(index)
+    elseif self.texts then
+        return self.texts[index]
+    end
     return string.tostring(index)
+end
+
+function Selector:setTextFun(textFun)
+    self.textFun = textFun
+end
+
+function Selector:setTexts(texts)
+    self.texts = texts
 end
 
 function Selector:inc()
