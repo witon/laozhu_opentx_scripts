@@ -161,6 +161,25 @@ local function onSaveButtonClick(button)
     saveCfgToFile()
     -- 设置输出通道
     setupOutputChannels()
+
+    -- 设置全局变量（初始化为0）
+    -- 定义固定的GV索引（0-based，GV1对应index 0）
+    local gvIndexes = {0, 1, 2, 3, 4, 6, 8}  -- GV1, GV2, GV3, GV4, GV5, GV7, GV9
+
+    -- 如果有襟翼，添加GV6（index 5）
+    local fCount = flapCountSelector.selectedIndex - 1
+    if fCount > 0 then
+        table.insert(gvIndexes, 5, 5)  -- 插入到第6个位置，对应GV6
+    end
+
+    -- 为所有飞行模式初始化这些GV为0
+    for i = 1, #gvIndexes do
+        local gvIndex = gvIndexes[i]
+        for mode = 0, 8 do  -- FM0 到 FM8
+            model.setGlobalVariable(gvIndex, mode, 0)
+        end
+    end
+
     -- TODO: 创建混控的逻辑
     playTone(2000, 200, 0)
 end
