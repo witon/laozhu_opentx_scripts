@@ -3,9 +3,7 @@ local this = nil
 local scrollLine = 0
 local channelNumEdits = {}
 local channelNames = {}
-local planeType = 0
-local tailType = 0
-local flapCount = 0
+local channelNums = {}
 local createModalCfg = nil
 
 local function loadModule()
@@ -20,60 +18,25 @@ local function unloadModule()
     ViewMatrix = nil
 end
 
--- 根据配置构建通道列表
-local function buildChannelList()
-    channelNames = {}
-
-    -- 尾翼
-    if tailType == 0 then
-        -- V尾
-        channelNames[#channelNames+1] = "LVTail"
-        channelNames[#channelNames+1] = "RVTail"
-    else
-        -- 十字尾
-        channelNames[#channelNames+1] = "Ele"
-        channelNames[#channelNames+1] = "Rud"
-    end
-
-    -- 副翼（始终存在）
-    channelNames[#channelNames+1] = "LAil"
-    channelNames[#channelNames+1] = "RAil"
-
-    -- 襟翼
-    if flapCount == 1 then
-        channelNames[#channelNames+1] = "Flap"
-    elseif flapCount == 2 then
-        channelNames[#channelNames+1] = "LFlap"
-        channelNames[#channelNames+1] = "RFlap"
-    elseif flapCount == 3 then
-        channelNames[#channelNames+1] = "LFlap"
-        channelNames[#channelNames+1] = "MFlap"
-        channelNames[#channelNames+1] = "RFlap"
-    end
-
-    -- 油门（仅F5J）
-    if planeType == 1 then
-        channelNames[#channelNames+1] = "Thr"
-    end
-end
-
 -- 创建 NumEdit 用于输入通道号
 local function createChannelNumEdits()
     channelNumEdits = {}
     for i = 1, #channelNames do
         local numEdit = NumEdit:new()
         numEdit:setRange(1, 32)  -- 通道号范围 1-32
-        local channelName = channelNames[i]
-        local savedChannel = createModalCfg:getNumberField(channelName, -1)
-        if savedChannel >= 1 and savedChannel <= 32 then
-            numEdit.num = savedChannel
+
+        -- 使用传入的通道号配置
+        if channelNums[i] >= 1 and channelNums[i] <= 32 then
+            numEdit.num = channelNums[i]
         else
             numEdit.num = 1
         end
 
-        -- 设置 onChange 回调
+        -- 设置 onChange 回调，保存到配置文件
+        local channelName = channelNames[i]
         numEdit:setOnChange(function(ne)
             createModalCfg.kvs[channelName] = ne.num
+            channelNums[i] = ne.num
         end)
 
         channelNumEdits[i] = numEdit
@@ -133,15 +96,13 @@ end
 local function bg()
 end
 
-local function init(pType, tType, fCount, cfg)
-    planeType = pType
-    tailType = tType
-    flapCount = fCount
+local function init(chList, chNumList, cfg)
+    channelNames = chList
+    channelNums = chNumList
     createModalCfg = cfg
 
     loadModule()
 
-    buildChannelList()
     createChannelNumEdits()
 
     viewMatrix = ViewMatrix:new()

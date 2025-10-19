@@ -7,6 +7,8 @@ local channelSetButton = nil
 local saveButton = nil
 local channelSetPage = nil
 local createModalCfg = nil
+local channelList = {}        -- 通道名称列表
+local channelNumList = {}     -- 通道号配置列表
 
 local function loadModule()
     LZ_runModule("TELEMETRY/common/InputViewO.lua")
@@ -24,18 +26,73 @@ local function unloadModule()
     CFGC = nil
 end
 
+-- 根据飞机配置获取所有需要设置的通道名称（供其他模块复用）
+local function buildChannelList(pType, tType, fCount)
+    local names = {}
+
+    -- 尾翼
+    if tType == 0 then
+        -- V尾
+        names[#names+1] = "LVTail"
+        names[#names+1] = "RVTail"
+    else
+        -- 十字尾
+        names[#names+1] = "Ele"
+        names[#names+1] = "Rud"
+    end
+
+    -- 副翼（始终存在）
+    names[#names+1] = "LAil"
+    names[#names+1] = "RAil"
+
+    -- 襟翼
+    if fCount == 1 then
+        names[#names+1] = "Flap"
+    elseif fCount == 2 then
+        names[#names+1] = "LFlap"
+        names[#names+1] = "RFlap"
+    elseif fCount == 3 then
+        names[#names+1] = "LFlap"
+        names[#names+1] = "MFlap"
+        names[#names+1] = "RFlap"
+    end
+
+    -- 油门（仅F5J）
+    if pType == 1 then
+        names[#names+1] = "Thr"
+    end
+
+    return names
+end
+
+-- 更新 channelList 和 channelNumList
+local function updateChannelLists()
+    -- 根据当前配置生成通道列表
+    channelList = buildChannelList(
+        planeTypeSelector.selectedIndex - 1,
+        tailTypeSelector.selectedIndex - 1,
+        flapCountSelector.selectedIndex - 1
+    )
+
+    -- 从配置文件读取通道号配置
+    channelNumList = {}
+    for i = 1, #channelList do
+        local channelName = channelList[i]
+        local channelNum = createModalCfg:getNumberField(channelName, -1)
+        channelNumList[i] = channelNum
+    end
+end
+
 local function loadChannelSetPage()
     if channelSetPage ~= nil then
         return
     end
+    -- 更新通道列表
+    updateChannelLists()
+
     channelSetPage = LZ_runModule("TELEMETRY/adjust/CreateModal/ChannelSetPage.lua")
-    -- 传递 0-based 索引给 ChannelSetPage
-    channelSetPage.init(
-        planeTypeSelector.selectedIndex - 1,
-        tailTypeSelector.selectedIndex - 1,
-        flapCountSelector.selectedIndex - 1,
-        createModalCfg
-    )
+    -- 传递通道列表和通道号配置给 ChannelSetPage
+    channelSetPage.init(channelList, channelNumList, createModalCfg)
 end
 
 local function unloadChannelSetPage()
@@ -59,9 +116,35 @@ local function saveCfgToFile()
     createModalCfg:writeToFile("createmodal.cfg")
 end
 
+-- 设置输出通道
+local function setupOutputChannels()
+    -- 更新通道列表
+    updateChannelLists()
+
+    for i = 1, #channelList do
+        local channelName = channelList[i]
+        local channelNum = channelNumList[i]
+
+        -- 仅处理用户已配置的通道（>= 1）
+        if channelNum >= 1 and channelNum <= 32 then
+            -- 配置文件中是 1-based，API 使用 0-based
+            local outputIndex = channelNum - 1
+            local output = model.getOutput(outputIndex)
+
+            -- 设置通道名称
+            output.name = channelName
+
+            -- 应用配置到遥控器
+            model.setOutput(outputIndex, output)
+        end
+    end
+end
+
 local function onSaveButtonClick(button)
     saveCfgToFile()
-    -- TODO: 实现设置输出通道和创建混控的逻辑
+    -- 设置输出通道
+    setupOutputChannels()
+    -- TODO: 创建混控的逻辑
     playTone(2000, 200, 0)
 end
 
@@ -119,14 +202,23 @@ local function init()
     -- 飞机类型选择器
     planeTypeSelector = Selector:new()
     planeTypeSelector:setTexts({"F3K", "F5J"})
+    planeTypeSelector:setOnChange(function(selector)
+        updateChannelLists()
+    end)
 
     -- 尾类型选择器
     tailTypeSelector = Selector:new()
     tailTypeSelector:setTexts({"V-Tail", "Normal"})
+    tailTypeSelector:setOnChange(function(selector)
+        updateChannelLists()
+    end)
 
     -- 襟翼数量选择器
     flapCountSelector = Selector:new()
     flapCountSelector:setTexts({"None", "1Flap", "2Flap", "3Flap"})
+    flapCountSelector:setOnChange(function(selector)
+        updateChannelLists()
+    end)
 
     -- 通道设置按钮
     channelSetButton = Button:new()
@@ -169,6 +261,9 @@ local function init()
     viewMatrix.selectedRow = 1
     viewMatrix.selectedCol = 1
     viewMatrix:updateCurIVFocus()
+
+    -- 初始化通道列表
+    updateChannelLists()
 end
 
 init()
