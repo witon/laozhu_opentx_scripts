@@ -7,8 +7,8 @@ local channelSetButton = nil
 local saveButton = nil
 local channelSetPage = nil
 local createModalCfg = nil
-local channelList = {}        -- 通道名称列表
-local channelNumList = {}     -- 通道号配置列表
+local channelList = {}              -- 可用的舵面（Channel）列表
+local pinToChannelMap = {}          -- 针脚（Pin）到舵面（Channel）的映射 (索引1-8对应Pin1-8，值为Channel名称或nil)
 
 local function loadModule()
     LZ_runModule("TELEMETRY/common/InputViewO.lua")
@@ -26,60 +26,65 @@ local function unloadModule()
     CFGC = nil
 end
 
--- 根据飞机配置获取所有需要设置的通道名称（供其他模块复用）
+-- 根据飞机配置获取所有可用的舵面（Channel）列表
 local function buildChannelList(pType, tType, fCount)
-    local names = {}
+    local channels = {}
 
     -- 尾翼
     if tType == 0 then
         -- V尾
-        names[#names+1] = "LVTail"
-        names[#names+1] = "RVTail"
+        channels[#channels+1] = "LVTail"
+        channels[#channels+1] = "RVTail"
     else
         -- 十字尾
-        names[#names+1] = "Ele"
-        names[#names+1] = "Rud"
+        channels[#channels+1] = "Ele"
+        channels[#channels+1] = "Rud"
     end
 
     -- 副翼（始终存在）
-    names[#names+1] = "LAil"
-    names[#names+1] = "RAil"
+    channels[#channels+1] = "LAil"
+    channels[#channels+1] = "RAil"
 
     -- 襟翼
     if fCount == 1 then
-        names[#names+1] = "Flap"
+        channels[#channels+1] = "Flap"
     elseif fCount == 2 then
-        names[#names+1] = "LFlap"
-        names[#names+1] = "RFlap"
+        channels[#channels+1] = "LFlap"
+        channels[#channels+1] = "RFlap"
     elseif fCount == 3 then
-        names[#names+1] = "LFlap"
-        names[#names+1] = "MFlap"
-        names[#names+1] = "RFlap"
+        channels[#channels+1] = "LFlap"
+        channels[#channels+1] = "MFlap"
+        channels[#channels+1] = "RFlap"
     end
 
     -- 油门（仅F5J）
     if pType == 1 then
-        names[#names+1] = "Thr"
+        channels[#channels+1] = "Thr"
     end
 
-    return names
+    return channels
 end
 
--- 更新 channelList 和 channelNumList
-local function updateChannelLists()
-    -- 根据当前配置生成通道列表
+-- 更新舵面列表和针脚映射
+local function updatePinMapping()
+    -- 根据当前配置生成舵面列表
     channelList = buildChannelList(
         planeTypeSelector.selectedIndex - 1,
         tailTypeSelector.selectedIndex - 1,
         flapCountSelector.selectedIndex - 1
     )
 
-    -- 从配置文件读取通道号配置
-    channelNumList = {}
-    for i = 1, #channelList do
-        local channelName = channelList[i]
-        local channelNum = createModalCfg:getNumberField(channelName, -1)
-        channelNumList[i] = channelNum
+    -- 从配置文件读取针脚到舵面的映射
+    -- 配置文件格式: Pin1=RAil:s, Pin2=LAil:s, etc.
+    pinToChannelMap = {}
+    for pinNum = 1, 8 do
+        local cfgKey = "Pin" .. pinNum
+        local channelName = createModalCfg:getStrField(cfgKey, "")
+        if channelName ~= "" then
+            pinToChannelMap[pinNum] = channelName
+        else
+            pinToChannelMap[pinNum] = nil
+        end
     end
 end
 
@@ -87,12 +92,12 @@ local function loadChannelSetPage()
     if channelSetPage ~= nil then
         return
     end
-    -- 更新通道列表
-    updateChannelLists()
+    -- 更新针脚映射
+    updatePinMapping()
 
     channelSetPage = LZ_runModule("TELEMETRY/adjust/CreateModal/ChannelSetPage.lua")
-    -- 传递通道列表和通道号配置给 ChannelSetPage
-    channelSetPage.init(channelList, channelNumList, createModalCfg)
+    -- 传递舵面列表和针脚到舵面的映射给 ChannelSetPage
+    channelSetPage.init(channelList, pinToChannelMap)
 end
 
 local function unloadChannelSetPage()
@@ -113,30 +118,42 @@ local function saveCfgToFile()
     createModalCfg.kvs["plane_type"] = planeTypeSelector.selectedIndex - 1
     createModalCfg.kvs["tail_type"] = tailTypeSelector.selectedIndex - 1
     createModalCfg.kvs["flap_count"] = flapCountSelector.selectedIndex - 1
+
+    -- 保存针脚到舵面的映射
+    for pinNum = 1, 8 do
+        local cfgKey = "Pin" .. pinNum
+        local channelName = pinToChannelMap[pinNum]
+        if channelName and channelName ~= "" then
+            createModalCfg.kvs[cfgKey] = channelName
+        else
+            createModalCfg.kvs[cfgKey] = ""
+        end
+    end
+
     createModalCfg:writeToFile("createmodal.cfg")
 end
 
--- 设置输出通道
+-- 设置输出通道针脚
 local function setupOutputChannels()
-    -- 更新通道列表
-    updateChannelLists()
+    -- 更新针脚映射
+    updatePinMapping()
 
-    for i = 1, #channelList do
-        local channelName = channelList[i]
-        local channelNum = channelNumList[i]
+    for pinNum = 1, 8 do
+        local channelName = pinToChannelMap[pinNum]
 
-        -- 仅处理用户已配置的通道（>= 1）
-        if channelNum >= 1 and channelNum <= 32 then
-            -- 配置文件中是 1-based，API 使用 0-based
-            local outputIndex = channelNum - 1
-            local output = model.getOutput(outputIndex)
+        -- 针脚号是 1-based，API 使用 0-based
+        local outputIndex = pinNum - 1
+        local output = model.getOutput(outputIndex)
 
-            -- 设置通道名称
+        -- 如果已分配舵面，使用舵面名称；否则使用默认通道号
+        if channelName and channelName ~= "" then
             output.name = channelName
-
-            -- 应用配置到遥控器
-            model.setOutput(outputIndex, output)
+        else
+            output.name = "CH" .. pinNum
         end
+
+        -- 应用配置到遥控器
+        model.setOutput(outputIndex, output)
     end
 end
 
@@ -203,21 +220,21 @@ local function init()
     planeTypeSelector = Selector:new()
     planeTypeSelector:setTexts({"F3K", "F5J"})
     planeTypeSelector:setOnChange(function(selector)
-        updateChannelLists()
+        updatePinMapping()
     end)
 
     -- 尾类型选择器
     tailTypeSelector = Selector:new()
     tailTypeSelector:setTexts({"V-Tail", "Normal"})
     tailTypeSelector:setOnChange(function(selector)
-        updateChannelLists()
+        updatePinMapping()
     end)
 
     -- 襟翼数量选择器
     flapCountSelector = Selector:new()
     flapCountSelector:setTexts({"None", "1Flap", "2Flap", "3Flap"})
     flapCountSelector:setOnChange(function(selector)
-        updateChannelLists()
+        updatePinMapping()
     end)
 
     -- 通道设置按钮
@@ -262,8 +279,8 @@ local function init()
     viewMatrix.selectedCol = 1
     viewMatrix:updateCurIVFocus()
 
-    -- 初始化通道列表
-    updateChannelLists()
+    -- 初始化针脚映射
+    updatePinMapping()
 end
 
 init()
