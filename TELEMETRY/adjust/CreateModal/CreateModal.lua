@@ -111,48 +111,22 @@ end
 local function bg()
 end
 
--- 自定义 Selector 的 inc/dec 方法，添加边界检查
-local function createBoundedSelector(texts)
-    local selector = Selector:new()
-    selector:setTexts(texts)
-    selector.selectedIndex = 1
-
-    -- 重写 inc 方法
-    local originalInc = selector.inc
-    selector.inc = function(self)
-        if self.selectedIndex < #texts then
-            self.selectedIndex = self.selectedIndex + 1
-            return true
-        end
-        return false
-    end
-
-    -- 重写 dec 方法
-    local originalDec = selector.dec
-    selector.dec = function(self)
-        if self.selectedIndex > 1 then
-            self.selectedIndex = self.selectedIndex - 1
-            return true
-        end
-        return false
-    end
-
-    return selector
-end
-
 local function init()
     loadModule()
 
     viewMatrix = ViewMatrix:new()
 
     -- 飞机类型选择器
-    planeTypeSelector = createBoundedSelector({"F3K", "F5J"})
+    planeTypeSelector = Selector:new()
+    planeTypeSelector:setTexts({"F3K", "F5J"})
 
     -- 尾类型选择器
-    tailTypeSelector = createBoundedSelector({"V-Tail", "Normal"})
+    tailTypeSelector = Selector:new()
+    tailTypeSelector:setTexts({"V-Tail", "Normal"})
 
     -- 襟翼数量选择器
-    flapCountSelector = createBoundedSelector({"None", "1Flap", "2Flap", "3Flap"})
+    flapCountSelector = Selector:new()
+    flapCountSelector:setTexts({"None", "1Flap", "2Flap", "3Flap"})
 
     -- 通道设置按钮
     channelSetButton = Button:new()
