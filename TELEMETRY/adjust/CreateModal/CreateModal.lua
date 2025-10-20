@@ -1,14 +1,16 @@
 local viewMatrix = nil
 local this = nil
-local planeTypeSelector = nil
-local tailTypeSelector = nil
-local flapCountSelector = nil
 local channelSetButton = nil
 local saveButton = nil
 local channelSetPage = nil
 local createModalCfg = nil
 local channelList = {}              -- 可用的舵面（Channel）列表
 local pinToChannelMap = {}          -- 针脚（Pin）到舵面（Channel）的映射 (索引1-8对应Pin1-8，值为Channel名称或nil)
+
+-- 模板相关
+local template = nil                -- 当前使用的模板（ThermalGlider）
+local optionSelectors = {}          -- 动态生成的选择器数组
+local optionConfigs = {}            -- 选项配置数组（从模板的genOptions()返回）
 
 local function loadModule()
     LZ_runModule("TELEMETRY/common/InputViewO.lua")
@@ -26,53 +28,30 @@ local function unloadModule()
     CFGC = nil
 end
 
--- 根据飞机配置获取所有可用的舵面（Channel）列表
-local function buildChannelList(pType, tType, fCount)
-    local channels = {}
-
-    -- 尾翼
-    if tType == 0 then
-        -- V尾
-        channels[#channels+1] = "LVTail"
-        channels[#channels+1] = "RVTail"
-    else
-        -- 十字尾
-        channels[#channels+1] = "Ele"
-        channels[#channels+1] = "Rud"
+-- 从当前选择器获取配置参数（0-based索引）
+local function getCurrentConfig()
+    local config = {}
+    for i = 1, #optionSelectors do
+        config[i] = optionSelectors[i].selectedIndex - 1  -- 转换为0-based
     end
+    return config
+end
 
-    -- 副翼（始终存在）
-    channels[#channels+1] = "LAil"
-    channels[#channels+1] = "RAil"
-
-    -- 襟翼
-    if fCount == 1 then
-        channels[#channels+1] = "Flap"
-    elseif fCount == 2 then
-        channels[#channels+1] = "LFlap"
-        channels[#channels+1] = "RFlap"
-    elseif fCount == 3 then
-        channels[#channels+1] = "LFlap"
-        channels[#channels+1] = "MFlap"
-        channels[#channels+1] = "RFlap"
+-- 从当前选择器获取命名配置参数表
+local function getCurrentConfigTable()
+    local configTable = {}
+    for i = 1, #optionConfigs do
+        local key = optionConfigs[i].cfgKey
+        configTable[key] = optionSelectors[i].selectedIndex - 1  -- 转换为0-based
     end
-
-    -- 油门（仅F5J）
-    if pType == 1 then
-        channels[#channels+1] = "Thr"
-    end
-
-    return channels
+    return configTable
 end
 
 -- 更新舵面列表和针脚映射
 local function updatePinMapping()
-    -- 根据当前配置生成舵面列表
-    channelList = buildChannelList(
-        planeTypeSelector.selectedIndex - 1,
-        tailTypeSelector.selectedIndex - 1,
-        flapCountSelector.selectedIndex - 1
-    )
+    -- 根据当前配置生成舵面列表（使用模板的genChannelList）
+    local configTable = getCurrentConfigTable()
+    channelList = template.genChannelList(configTable)
 
     -- 从配置文件读取针脚到舵面的映射
     -- 配置文件格式: Pin1=RAil:s, Pin2=LAil:s, etc.
@@ -114,10 +93,12 @@ local function onChannelSetButtonClick(button)
 end
 
 local function saveCfgToFile()
-    -- 保存为 0-based 索引
-    createModalCfg.kvs["plane_type"] = planeTypeSelector.selectedIndex - 1
-    createModalCfg.kvs["tail_type"] = tailTypeSelector.selectedIndex - 1
-    createModalCfg.kvs["flap_count"] = flapCountSelector.selectedIndex - 1
+    -- 动态保存所有选项配置（保存为 0-based 索引）
+    for i = 1, #optionConfigs do
+        local cfgKey = optionConfigs[i].cfgKey
+        local value = optionSelectors[i].selectedIndex - 1  -- 转换为 0-based
+        createModalCfg.kvs[cfgKey] = value
+    end
 
     -- 保存针脚到舵面的映射
     for pinNum = 1, 8 do
@@ -133,52 +114,98 @@ local function saveCfgToFile()
     createModalCfg:writeToFile("createmodal.cfg")
 end
 
+-- 设置曲线
+local function setupCurves()
+    -- 更新针脚映射（确保 channelList 是最新的）
+    updatePinMapping()
+
+    -- 使用模板的 genCurves 生成曲线配置
+    local configTable = getCurrentConfigTable()
+    local curves = template.genCurves(configTable, channelList)
+
+    -- 应用生成的曲线配置到遥控器
+    for i = 1, #curves do
+        local curveCfg = curves[i]
+        local curveIndex = curveCfg.index  -- 模板应返回 0-based 索引
+
+        -- 读取当前曲线配置
+        local curve = model.getCurve(curveIndex)
+
+        -- 应用模板生成的配置
+        if curveCfg.name then
+            curve.name = curveCfg.name
+        end
+        if curveCfg.type then
+            curve.type = curveCfg.type  -- 0=Standard, 1=Custom
+        end
+        if curveCfg.smooth then
+            curve.smooth = curveCfg.smooth
+        end
+        if curveCfg.points then
+            -- 设置曲线点数
+            curve.points = #curveCfg.points
+            -- 设置曲线点的值
+            for j = 1, #curveCfg.points do
+                curve.y[j] = curveCfg.points[j]  -- EdgeTX API 使用 0-based 索引
+            end
+        end
+
+
+        -- 写入到遥控器
+        local ret = model.setCurve(curveIndex, curve)
+    end
+end
+
 -- 设置输出通道针脚
 local function setupOutputChannels()
     -- 更新针脚映射
     updatePinMapping()
 
-    for pinNum = 1, 8 do
-        local channelName = pinToChannelMap[pinNum]
+    -- 使用模板的 genOutputs 生成输出配置
+    local configTable = getCurrentConfigTable()
+    local outputs = template.genOutputs(configTable, channelList, pinToChannelMap)
 
-        -- 针脚号是 1-based，API 使用 0-based
-        local outputIndex = pinNum - 1
+    -- 应用生成的输出配置到遥控器
+    for i = 1, #outputs do
+        local outputCfg = outputs[i]
+        local outputIndex = outputCfg.index  -- 模板应返回 0-based 索引
+
+        -- 读取当前输出配置
         local output = model.getOutput(outputIndex)
 
-        -- 如果已分配舵面，使用舵面名称；否则使用默认通道号
-        if channelName and channelName ~= "" then
-            output.name = channelName
-        else
-            output.name = "CH" .. pinNum
+        -- 应用模板生成的配置
+        if outputCfg.name then
+            output.name = outputCfg.name
+        end
+        if outputCfg.min then
+            output.min = outputCfg.min
+        end
+        if outputCfg.max then
+            output.max = outputCfg.max
+        end
+        if outputCfg.offset then
+            output.offset = outputCfg.offset
+        end
+        if outputCfg.curve then
+            output.curve = outputCfg.curve
+        end
+        if outputCfg.revert then
+            output.revert = outputCfg.revert
         end
 
-        -- 应用配置到遥控器
+        -- 写入到遥控器
         model.setOutput(outputIndex, output)
     end
 end
 
 local function onSaveButtonClick(button)
     saveCfgToFile()
+
+    -- 设置曲线
+    setupCurves()
+
     -- 设置输出通道
     setupOutputChannels()
-
-    -- 设置全局变量（初始化为0）
-    -- 定义固定的GV索引（0-based，GV1对应index 0）
-    local gvIndexes = {0, 1, 2, 3, 4, 6, 8}  -- GV1, GV2, GV3, GV4, GV5, GV7, GV9
-
-    -- 如果有襟翼，添加GV6（index 5）
-    local fCount = flapCountSelector.selectedIndex - 1
-    if fCount > 0 then
-        table.insert(gvIndexes, 5, 5)  -- 插入到第6个位置，对应GV6
-    end
-
-    -- 为所有飞行模式初始化这些GV为0
-    for i = 1, #gvIndexes do
-        local gvIndex = gvIndexes[i]
-        for mode = 0, 8 do  -- FM0 到 FM8
-            model.setGlobalVariable(gvIndex, mode, 0)
-        end
-    end
 
     -- TODO: 创建混控的逻辑
     playTone(2000, 200, 0)
@@ -208,21 +235,21 @@ local function run(event, curTime)
         invers = true
     end
 
-    -- 绘制界面
-    lcd.drawText(2, 0, "Plane:", SMLSIZE + LEFT)
-    planeTypeSelector:draw(50, 0, invers, SMLSIZE + LEFT)
+    -- 动态绘制选项
+    local yPos = 0
+    for i = 1, #optionConfigs do
+        lcd.drawText(2, yPos, optionConfigs[i].label, SMLSIZE + LEFT)
+        optionSelectors[i]:draw(50, yPos, invers, SMLSIZE + LEFT)
+        yPos = yPos + 10
+    end
 
-    lcd.drawText(2, 10, "Tail:", SMLSIZE + LEFT)
-    tailTypeSelector:draw(50, 10, invers, SMLSIZE + LEFT)
+    -- 绘制固定按钮
+    lcd.drawText(2, yPos, "Ch Setup:", SMLSIZE + LEFT)
+    channelSetButton:draw(50, yPos, invers, SMLSIZE + LEFT)
+    yPos = yPos + 10
 
-    lcd.drawText(2, 20, "Flap:", SMLSIZE + LEFT)
-    flapCountSelector:draw(50, 20, invers, SMLSIZE + LEFT)
-
-    lcd.drawText(2, 30, "Ch Setup:", SMLSIZE + LEFT)
-    channelSetButton:draw(50, 30, invers, SMLSIZE + LEFT)
-
-    lcd.drawText(2, 40, "Save:", SMLSIZE + LEFT)
-    saveButton:draw(50, 40, invers, SMLSIZE + LEFT)
+    lcd.drawText(2, yPos, "Save:", SMLSIZE + LEFT)
+    saveButton:draw(50, yPos, invers, SMLSIZE + LEFT)
 
     return doKey(event)
 end
@@ -233,67 +260,56 @@ end
 local function init()
     loadModule()
 
-    viewMatrix = ViewMatrix:new()
+    -- 加载模板（ThermalGlider）
+    template = LZ_runModule("LAOZHU/ModelTPL/ThermalGlider.lua")
 
-    -- 飞机类型选择器
-    planeTypeSelector = Selector:new()
-    planeTypeSelector:setTexts({"F3K", "F5J"})
-    planeTypeSelector:setOnChange(function(selector)
-        updatePinMapping()
-    end)
-
-    -- 尾类型选择器
-    tailTypeSelector = Selector:new()
-    tailTypeSelector:setTexts({"V-Tail", "Normal"})
-    tailTypeSelector:setOnChange(function(selector)
-        updatePinMapping()
-    end)
-
-    -- 襟翼数量选择器
-    flapCountSelector = Selector:new()
-    flapCountSelector:setTexts({"None", "1Flap", "2Flap", "3Flap"})
-    flapCountSelector:setOnChange(function(selector)
-        updatePinMapping()
-    end)
-
-    -- 通道设置按钮
-    channelSetButton = Button:new()
-    channelSetButton.text = "Setup"
-    channelSetButton:setOnClick(onChannelSetButtonClick)
-
-    -- 保存按钮
-    saveButton = Button:new()
-    saveButton.text = "Save"
-    saveButton:setOnClick(onSaveButtonClick)
+    -- 获取选项配置
+    optionConfigs = template.genOptions()
 
     -- 配置文件
     createModalCfg = CFGC:new()
     createModalCfg:readFromFile("createmodal.cfg")
 
-    -- 从配置文件读取上次的选择（配置文件中是 0-based，需要转换为 1-based）
-    local savedPlaneType = createModalCfg:getNumberField("plane_type", 0)
-    local savedTailType = createModalCfg:getNumberField("tail_type", 0)
-    local savedFlapCount = createModalCfg:getNumberField("flap_count", 0)
-
-    if savedPlaneType >= 0 and savedPlaneType <= 1 then
-        planeTypeSelector.selectedIndex = savedPlaneType + 1
-    end
-    if savedTailType >= 0 and savedTailType <= 1 then
-        tailTypeSelector.selectedIndex = savedTailType + 1
-    end
-    if savedFlapCount >= 0 and savedFlapCount <= 3 then
-        flapCountSelector.selectedIndex = savedFlapCount + 1
-    end
-
-    -- 设置 ViewMatrix
+    -- 动态创建选择器
+    viewMatrix = ViewMatrix:new()
     viewMatrix:addRow()
     local row = viewMatrix.matrix[1]
-    row[1] = planeTypeSelector
-    row[2] = tailTypeSelector
-    row[3] = flapCountSelector
-    row[4] = channelSetButton
-    row[5] = saveButton
 
+    for i = 1, #optionConfigs do
+        local optCfg = optionConfigs[i]
+
+        -- 创建选择器
+        local selector = Selector:new()
+        selector:setTexts(optCfg.values)
+        selector:setOnChange(function(sel)
+            updatePinMapping()
+        end)
+
+        -- 从配置文件读取保存的值（0-based，需要转换为 1-based）
+        local savedValue = createModalCfg:getNumberField(optCfg.cfgKey, 0)
+        local maxIndex = #optCfg.values - 1
+        if savedValue >= 0 and savedValue <= maxIndex then
+            selector.selectedIndex = savedValue + 1
+        end
+
+        -- 保存到数组
+        optionSelectors[i] = selector
+        row[i] = selector
+    end
+
+    -- 通道设置按钮
+    channelSetButton = Button:new()
+    channelSetButton.text = "Setup"
+    channelSetButton:setOnClick(onChannelSetButtonClick)
+    row[#optionConfigs + 1] = channelSetButton
+
+    -- 保存按钮
+    saveButton = Button:new()
+    saveButton.text = "Save"
+    saveButton:setOnClick(onSaveButtonClick)
+    row[#optionConfigs + 2] = saveButton
+
+    -- 设置 ViewMatrix 焦点
     viewMatrix.selectedRow = 1
     viewMatrix.selectedCol = 1
     viewMatrix:updateCurIVFocus()

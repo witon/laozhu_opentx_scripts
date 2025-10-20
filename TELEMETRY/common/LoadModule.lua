@@ -1,6 +1,6 @@
 
 function LZ_loadModule(file)
-    local fun, err = loadScript(gScriptDir .. file, "d")
+    local fun, err = loadScript(gScriptDir .. file, "tx")
     if (fun ~= nil) then
         return fun
     else
