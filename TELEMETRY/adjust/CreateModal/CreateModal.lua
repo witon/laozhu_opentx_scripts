@@ -198,6 +198,72 @@ local function setupOutputChannels()
     end
 end
 
+-- 设置输入
+local function setupInputs()
+    -- 使用模板的 genInputs 生成输入配置
+    local configTable = getCurrentConfigTable()
+    local inputs = template.genInputs(configTable)
+
+    model.deleteInputs()
+
+    -- 应用生成的输入配置到遥控器
+    for i = 1, #inputs do
+        local inputCfg = inputs[i]
+        local inputIndex = inputCfg.index  -- 模板应返回 0-based 索引
+
+        -- 创建输入对象
+        local input = {}
+        input.name = inputCfg.name
+        input.inputName = inputCfg.name
+        input.source = inputCfg.source
+        input.weight = inputCfg.weight
+
+        -- 插入输入（清除后从 0 开始）
+        model.insertInput(inputIndex, 0, input)
+    end
+end
+
+-- 设置混控器
+local function setupMixers()
+    -- 更新针脚映射
+    updatePinMapping()
+
+    -- 使用模板的 genMixers 生成混控配置
+    local configTable = getCurrentConfigTable()
+    local mixers = template.genMixers(configTable, channelList, pinToChannelMap)
+
+    -- 清除所有输出通道的现有混控器（可选，取决于需求）
+    -- 注意：这里我们选择不清除，而是直接插入新的混控器
+    -- 如果需要清除，可以取消下面的注释
+    -- for channel = 0, 7 do
+    --     local mixesCount = model.getMixesCount(channel)
+    --     for i = mixesCount - 1, 0, -1 do
+    --         model.deleteMix(channel, i)
+    --     end
+    -- end
+
+    -- 应用生成的混控配置到遥控器
+    for i = 1, #mixers do
+        local mixCfg = mixers[i]
+        local channel = mixCfg.channel  -- 输出通道索引（0-based）
+
+        -- 创建混控器对象
+        local mix = {}
+        mix.source = mixCfg.source
+        mix.weight = mixCfg.weight
+        mix.offset = mixCfg.offset or 0
+        mix.multiplex = mixCfg.multiplex or 0
+        mix.flightModes = mixCfg.flightModes or 0
+        mix.name = mixCfg.name or ""
+
+        -- 获取当前通道的混控器数量，插入到末尾
+        local mixesCount = model.getMixesCount(channel)
+
+        -- 插入混控器
+        model.insertMix(channel, mixesCount, mix)
+    end
+end
+
 local function onSaveButtonClick(button)
     saveCfgToFile()
 
@@ -207,7 +273,12 @@ local function onSaveButtonClick(button)
     -- 设置输出通道
     setupOutputChannels()
 
-    -- TODO: 创建混控的逻辑
+    -- 设置输入
+    setupInputs()
+
+    -- 设置混控
+    setupMixers()
+
     playTone(2000, 200, 0)
 end
 

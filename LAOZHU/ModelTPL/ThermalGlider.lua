@@ -8,7 +8,22 @@ local GVs = {
   {name = "RUD", index = 6},
   {name = "ET", index = 7},
 }
+local function printTable(t, indent)
+    indent = indent or ""
+    if type(t) ~= "table" then
+        print(indent .. tostring(t))
+        return
+    end
 
+    for k, v in pairs(t) do
+        if type(v) == "table" then
+            print(indent .. k .. ":")
+            printTable(v, indent .. "  ")
+        else
+            print(indent .. k .. ": " .. tostring(v))
+        end
+    end
+end
 -- 辅助函数：检查通道是否存在
 local function hasChannel(channelList, channelName)
   for i = 1, #channelList do
@@ -122,12 +137,191 @@ local function genOutputs(cfg, channelList, pinToChannelMap)
   return outputs
 end
 
+-- 辅助函数：根据舵面名称查找对应的输出通道索引（0-based）
+local function getOutputIndex(channelName, pinToChannelMap)
+  for pinNum = 1, 8 do
+    if pinToChannelMap[pinNum] == channelName then
+      return pinNum - 1  -- 转换为 0-based 索引
+    end
+  end
+  return nil
+end
+
+-- 辅助函数：查找全局变量索引
+local function getGVIndex(gvName)
+  for i = 1, #GVs do
+    if GVs[i].name == gvName then
+      return GVs[i].index
+    end
+  end
+  return nil
+end
+
+-- 生成输入配置
+-- 返回：输入配置数组，每个元素包含 {index, name, source, weight}
+local function genInputs(cfg)
+  local inputs = {}
+
+  -- cfg.plane_type: 0=F3K, 1=F5J
+  local pType = cfg.plane_type
+
+  -- 基础输入索引（0-based）
+  local inputIndex = 0
+
+  -- 1. 副翼输入 (Aileron)
+  inputs[#inputs+1] = {
+    index = inputIndex,
+    name = "Ail",
+    source = getFieldInfo("ail").id,
+    weight = 100
+  }
+  inputIndex = inputIndex + 1
+
+  -- 2. 升降输入 (Elevator)
+  inputs[#inputs+1] = {
+    index = inputIndex,
+    name = "Ele",
+    source = getFieldInfo("ele").id,
+    weight = 100
+  }
+  inputIndex = inputIndex + 1
+
+  -- 3. 方向输入 (Rudder)
+  inputs[#inputs+1] = {
+    index = inputIndex,
+    name = "Rud",
+    source = getFieldInfo("rud").id,
+    weight = 100
+  }
+  inputIndex = inputIndex + 1
+
+  -- 4. 油门输入 (Throttle) - 仅 F5J
+  if pType == 1 then
+    inputs[#inputs+1] = {
+      index = inputIndex,
+      name = "Thr",
+      source = getFieldInfo("thr").id,
+      weight = 100
+    }
+    inputIndex = inputIndex + 1
+  end
+
+  -- 5. 刹车输入 (Brake) - 来自油门摇杆
+  inputs[#inputs+1] = {
+    index = inputIndex,
+    name = "Brk",
+    source = getFieldInfo("thr").id,
+    weight = 100
+  }
+
+  return inputs
+end
+
+-- 生成混控器配置
 local function genMixers(cfg, channelList, pinToChannelMap)
   local mixers = {}
-  --TODO: 根据模型类型和舵面数量，生成混控的逻辑
+
   -- cfg.plane_type: 0=F3K, 1=F5J
   -- cfg.tail_type: 0=V尾, 1=十字尾
   -- cfg.flap_count: 0=无襟翼, 1-3=襟翼数量
+
+  local pType = cfg.plane_type
+  local tType = cfg.tail_type
+  local fCount = cfg.flap_count
+
+  -- 获取全局变量索引
+  local aflGV = getGVIndex("AFL")  -- 副翼偏置
+  local eleGV = getGVIndex("ELE")  -- 升降大小舵
+  local adrGV = getGVIndex("ADR")  -- 副翼大小舵
+  local efGV = getGVIndex("E-F")   -- 升降混控襟翼/副翼
+  local fflGV = getGVIndex("FFL")  -- 襟翼偏置
+  local rudGV = getGVIndex("RUD")  -- 方向大小舵
+
+  -- 获取输入源ID
+  local ailInput = getFieldInfo("ail").id   -- 副翼输入
+  local eleInput = getFieldInfo("ele").id   -- 升降舵输入
+  local rudInput = getFieldInfo("rud").id   -- 方向输入
+  local thrInput = getFieldInfo("thr").id   -- 油门输入（刹车也使用此输入）
+
+  -- 获取开关ID
+  -- EdgeTX中三段开关上位通常表示为 "sb↑" 或 "sb2"
+  -- 这里使用 getFieldInfo 获取SB开关的ID，需要根据实际EdgeTX版本调整
+  local sbUpSwitch = getFieldInfo("sb").id  -- SB开关（注：可能需要调整为特定位置，如"sb↑"）
+  for switchIndex, switchName in switches() do
+    print("switch:" , switchIndex, "name:", switchName)
+    print("get switchName:", getSwitchName(switchIndex))
+  end
+  -- 飞行模式位掩码
+  -- EdgeTX中 flightModes 字段使用位掩码表示混控在哪些模式下禁用
+  -- 0 = 在所有模式下启用
+  -- 如果要在模式2-8中启用，需要禁用模式0和1
+  -- 位掩码：bit0 | bit1 = 0x03 (二进制 0000 0011)
+  local modes2to8 = 0x03  -- 禁用模式0,1，即在模式2-8中有效
+
+  local line = nil
+  for i=0, 3 do
+    line = model.getMix(0, i)
+    print("line:", i)
+    printTable(line)
+    
+  end 
+
+  -- 左副翼通道混控
+  local lAilOut = getOutputIndex("LAil", pinToChannelMap)
+  if lAilOut then
+    -- 1. 副翼基础混控 (la)
+    -- 名称"la"，source为副翼输入(Ail)，权重100，差动-5
+    mixers[#mixers+1] = {
+      channel = lAilOut,
+      name = "la",
+      source = ailInput,
+      weight = 100,
+      offset = 0,
+      differential = -5,  -- 差动 -5
+      multiplex = 0       -- 加法混控
+    }
+
+    -- 2. 刹车乘法混控 (brkm)
+    -- 名称"brkm"，source为刹车输入(Brk)，有效模式(2-8)，开启开关SB上，乘法混控，权重90，偏移90
+    mixers[#mixers+1] = {
+      channel = lAilOut,
+      name = "brkm",
+      source = thrInput,      -- 刹车输入（来自油门摇杆）
+      weight = 90,
+      offset = 90,
+      multiplex = 1,          -- 乘法混控
+      switch = sbUpSwitch,    -- SB开关上位
+      flightModes = modes2to8 -- 在模式2-8中有效
+    }
+
+    -- 3. 升降混控副翼 (ele)
+    -- 名称"ele"，source为升降舵输入(Ele)，权重为全局变量"E-F"，偏置为全局变量"AFL"
+    -- 注：EdgeTX中使用全局变量作为权重/偏置需要特殊处理
+    -- 这里使用 getFieldInfo("gvarX") 的方式获取全局变量source ID
+    local efGVSource = getFieldInfo("gvar" .. (efGV + 1)).id   -- GV索引+1得到名称，如GV0->gvar1
+    local aflGVSource = getFieldInfo("gvar" .. (aflGV + 1)).id
+    mixers[#mixers+1] = {
+      channel = lAilOut,
+      name = "ele",
+      source = eleInput,
+      weight = efGVSource,    -- 使用全局变量"E-F"作为权重
+      offset = aflGVSource,   -- 使用全局变量"AFL"作为偏置
+      multiplex = 0           -- 加法混控
+    }
+
+    -- 4. 刹车混控 (brk)
+    -- 名称"brk"，source为刹车输入(Brk)，权重-30，有效模式(2-8)
+    mixers[#mixers+1] = {
+      channel = lAilOut,
+      name = "brk",
+      source = thrInput,      -- 刹车输入
+      weight = -30,
+      offset = 0,
+      multiplex = 0,          -- 加法混控
+      flightModes = modes2to8 -- 在模式2-8中有效
+    }
+  end
+
   return mixers
 end
 
@@ -208,6 +402,7 @@ return {
   GVs = GVs,
   genCurves = genCurves,
   genOutputs = genOutputs,
+  genInputs = genInputs,
   genMixers = genMixers,
   genOptions = genOptions,
   genChannelList = genChannelList,
