@@ -1,5 +1,26 @@
 gScriptDir = "/SCRIPTS/"
 gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+
+--local function init()
+    local c2 = collectgarbage("count")
+    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+    fun()
+--    print("begin load")
+--    curCases = LZ_runModule(testFiles[curFileIndex])
+--    print("loaded")
+--    curCaseIndex = 1
+    LZ_runModule("LAOZHU/EmuTestUtils.lua")
+    LZ_runModule("LAOZHU/OTUtils.lua")
+    LZ_runModule("LAOZHU/LuaUtils.lua")
+    
+--end
+
+LZ_runModule("TELEMETRY/common/keyMap.lua")
+local keyMap = KMgetKeyMap();
+KMunload();
+
+
+
 local textEdit = nil
 local button = nil
 local checkBox = nil
@@ -10,23 +31,16 @@ local curveSelector = nil
 local modeSelector = nil
 local taskSelector = nil
 local timeEdit = nil
-
-
-local viewMatrix = nil
-
-LZ_runModule("TELEMETRY/common/keyMap.lua")
-local keyMap = KMgetKeyMap();
-KMunload();
-
+local switchPositionSelector = nil
 local testFiles = {
-    "/emutest/testCfg.lua",
-    "/emutest/testCfgO.lua",
- 
-    "/emutest/testLoadModule.lua",
-    "/emutest/testManagerOutput.lua",
-    "/emutest/testDataFileDecode.lua",
-    "/emutest/testSinkRateRecord.lua"
- 
+--    "/emutest/testCfg.lua",
+--    "/emutest/testCfgO.lua",
+-- 
+--    "/emutest/testLoadModule.lua",
+--    "/emutest/testManagerOutput.lua",
+--    "/emutest/testDataFileDecode.lua",
+--    "/emutest/testSinkRateRecord.lua"
+-- 
     --"/SCRIPTS/emutest/testOutputCurveManager.lua",
 }
 
@@ -35,6 +49,9 @@ local curCaseIndex = 1
 local curFileIndex = 1
 local curCases = nil
 
+
+
+local viewMatrix = nil
 local function testLoadAndUnload()
     LZ_runModule("TELEMETRY/common/InputViewO.lua")
     LZ_runModule("TELEMETRY/common/TextEditO.lua")
@@ -42,6 +59,7 @@ local function testLoadAndUnload()
     LZ_runModule("TELEMETRY/common/CheckBoxO.lua")
 	LZ_runModule("TELEMETRY/common/SelectorO.lua")
 	LZ_runModule("TELEMETRY/common/InputSelectorO.lua")
+	LZ_runModule("TELEMETRY/common/SwitchPositionSelectorO.lua")
 	LZ_runModule("TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
     FieldsUnload()
@@ -63,6 +81,7 @@ local function initUI()
     LZ_runModule("TELEMETRY/common/CheckBoxO.lua")
 	LZ_runModule("TELEMETRY/common/SelectorO.lua")
 	LZ_runModule("TELEMETRY/common/InputSelector.lua")
+	LZ_runModule("TELEMETRY/common/SwitchPositionSelectorO.lua")
 	LZ_runModule("TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
     LZ_runModule("TELEMETRY/common/NumEditO.lua")
@@ -74,9 +93,12 @@ local function initUI()
 	LZ_runModule("TELEMETRY/common/TimeEditO.lua")
  
     viewMatrix = ViewMatrix:new()
+    viewMatrix.visibleRows = 6  -- EdgeTX屏幕64像素高，每行10像素，可显示6行
 
     inputSelector = InputSelector:new()
     inputSelector:setFieldType(FIELDS_INPUT)
+    switchPositionSelector = SwitchPositionSelector:new()
+    switchPositionSelector:setFieldType(FIELDS_SWITCH_POSITION)
     checkBox = CheckBox:new()
     textEdit = TextEdit:new()
     textEdit.str = "abcd"
@@ -110,26 +132,15 @@ local function initUI()
     viewMatrix.matrix[4][1] = modeSelector
     viewMatrix.matrix[4][2] = curveSelector
     viewMatrix.matrix[5] = {}
-    viewMatrix.matrix[5][1] = taskSelector
+    viewMatrix.matrix[5][1] = taskSelector  -- 独占一行
     viewMatrix.matrix[6] = {}
-    viewMatrix.matrix[6][1] = timeEdit
+    viewMatrix.matrix[6][1] = switchPositionSelector  -- 独占一行
+    viewMatrix.matrix[7] = {}
+    viewMatrix.matrix[7][1] = timeEdit  -- 独占一行
  
 --    IVsetFocusState(viewMatrix.matrix[viewMatrix.selectedRow][viewMatrix.selectedCol], 1)
     viewMatrix:updateCurIVFocus()
  
-end
-
-local function init()
-    local c2 = collectgarbage("count")
-    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
-    fun()
-    print("begin load")
-    curCases = LZ_runModule(testFiles[curFileIndex])
-    print("loaded")
-    curCaseIndex = 1
-    LZ_runModule("LAOZHU/EmuTestUtils.lua")
-    LZ_runModule("LAOZHU/OTUtils.lua")
-
 end
 
 local function doOneCase()
@@ -148,11 +159,72 @@ local function doOneCase()
 
 end
 
+-- 定义所有行的绘制配置
+local rowDrawConfigs = {
+    -- 第1行: CheckBox 和 TextEdit
+    {
+        draw = function(y, invers)
+            lcd.drawText(1, y, "CheckBox:", SMLSIZE + LEFT)
+            checkBox:draw(54, y, invers, SMLSIZE + RIGHT)
+            lcd.drawText(60, y, "TextEdit:", SMLSIZE + LEFT)
+            textEdit:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    },
+    -- 第2行: Button 和 InputSelector
+    {
+        draw = function(y, invers)
+            lcd.drawText(1, y, "Button:", SMLSIZE + LEFT)
+            button:draw(54, y, invers, SMLSIZE + RIGHT)
+            lcd.drawText(60, y, "ipselect:", SMLSIZE + LEFT)
+            inputSelector:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    },
+    -- 第3行: NumEdit 和 OutputSelector
+    {
+        draw = function(y, invers)
+            lcd.drawText(1, y, "NumEdit:", SMLSIZE + LEFT)
+            numEdit:draw(54, y, invers, SMLSIZE + RIGHT)
+            lcd.drawText(60, y, "opselect:", SMLSIZE + LEFT)
+            outputSelector:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    },
+    -- 第4行: ModeSelector 和 CurveSelector
+    {
+        draw = function(y, invers)
+            lcd.drawText(0, y, "mdselect:", SMLSIZE + LEFT)
+            modeSelector:draw(58, y, invers, SMLSIZE + RIGHT)
+            lcd.drawText(60, y, "csselect:", SMLSIZE + LEFT)
+            curveSelector:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    },
+    -- 第5行: TaskSelector (独占一行)
+    {
+        draw = function(y, invers)
+            lcd.drawText(0, y, "tsselect:", SMLSIZE + LEFT)
+            taskSelector:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    },
+    -- 第6行: SwitchPositionSelector (独占一行)
+    {
+        draw = function(y, invers)
+            lcd.drawText(0, y, "swselect:", SMLSIZE + LEFT)
+            switchPositionSelector:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    },
+    -- 第7行: TimeEdit (独占一行)
+    {
+        draw = function(y, invers)
+            lcd.drawText(0, y, "timeedit:", SMLSIZE + LEFT)
+            timeEdit:draw(128, y, invers, SMLSIZE + RIGHT)
+        end
+    }
+}
+
 local function run(event)
-    if curFileIndex <= #testFiles then
-        doOneCase()
-        return
-    end
+--    if curFileIndex <= #testFiles then
+--        doOneCase()
+--        return
+--    end
 
     local invers = false
     if getRtcTime() % 2 == 1 then
@@ -162,9 +234,8 @@ local function run(event)
     if viewMatrix == nil then
         initUI()
     end
- 
-    lcd.clear()
 
+    lcd.clear()
 
 	if event ~= 0 then
 		print("before:", event)
@@ -177,38 +248,22 @@ local function run(event)
 		print("after:", event)
 	end
 
-
-
     viewMatrix:doKey(event)
-    lcd.drawText(1, 1, "CheckBox:", SMLSIZE + LEFT)
-    checkBox:draw(54, 1, invers, SMLSIZE + RIGHT)
-    lcd.drawText(60, 1, "TextEdit:", SMLSIZE + LEFT)
-    textEdit:draw(128, 1, invers, SMLSIZE + RIGHT)
+
+    -- 计算可见行范围
+    local startRow = viewMatrix.scrollLine + 1
+    local endRow = math.min(viewMatrix.scrollLine + viewMatrix.visibleRows, #rowDrawConfigs)
+
+    -- 绘制可见行
+    local y = 1
+    for i = startRow, endRow do
+        rowDrawConfigs[i].draw(y, invers)
+        y = y + 10  -- 每行间隔10像素
+    end
 
 
-    lcd.drawText(1, 10, "Button:", SMLSIZE + LEFT)
-    button:draw(54, 10, invers, SMLSIZE + RIGHT)
-
-    lcd.drawText(60, 10, "ipselect:", SMLSIZE + LEFT)
-    inputSelector:draw(128, 10, invers, SMLSIZE + RIGHT)
-
-    lcd.drawText(1, 20, "NumEdit:", SMLSIZE + LEFT)
-    numEdit:draw(54, 20, invers, SMLSIZE + RIGHT)
-
-    lcd.drawText(60, 20, "opselect:", SMLSIZE + LEFT)
-    outputSelector:draw(128, 20, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(60, 30, "csselect:", SMLSIZE + LEFT)
-    curveSelector:draw(128, 30, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(0, 30, "mdselect:", SMLSIZE + LEFT)
-    modeSelector:draw(58, 30, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(0, 40, "tsselect:", SMLSIZE + LEFT)
-    taskSelector:draw(84, 40, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(0, 50, "timeedit:", SMLSIZE + LEFT)
-    timeEdit:draw(84, 50, invers, SMLSIZE + RIGHT)
 end
 
-return {run=run, init=init }
+
+
+return {run=run}
