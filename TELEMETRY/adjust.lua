@@ -63,9 +63,9 @@ local function run(event)
 	end
 	for i=1, #pages, 1 do
 		if focusIndex == i then
-			lcd.drawText(2, i * 11, pages[i], INVERS)
+			lcd.drawText(2, (i-1) * 10 + 1, pages[i], INVERS)
 		else
-			lcd.drawText(2, i * 11, pages[i])
+			lcd.drawText(2, (i-1) * 10 + 1, pages[i])
 		end
 	end
 	if event == EVT_ENTER_BREAK then

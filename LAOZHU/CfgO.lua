@@ -31,7 +31,7 @@ function CFGC:readFromFile(fileName)
         return false
     end
 
-    local content = io.read(cfgFile, 200)
+    local content = io.read(cfgFile, 500)
     io.close(cfgFile)
 
     for line in string.gmatch(content, '([^\r\n]+)') do

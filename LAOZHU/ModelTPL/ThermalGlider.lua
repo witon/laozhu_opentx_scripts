@@ -8,6 +8,14 @@ local GVs = {
   {name = "RUD", index = 6},
   {name = "ET", index = 7},
 }
+
+local LogicalSwitches = {
+  {name = "SpeedMode", index = 0},
+  {name = "CruiseMode", index = 1},
+  {name = "ThermalMode", index = 2},
+  {name = "StayMode", index = 3},
+  {name = "AccelMode", index = 4},
+}
 local function printTable(t, indent)
     indent = indent or ""
     if type(t) ~= "table" then
@@ -24,6 +32,8 @@ local function printTable(t, indent)
         end
     end
 end
+
+
 -- 辅助函数：检查通道是否存在
 local function hasChannel(channelList, channelName)
   for i = 1, #channelList do
@@ -70,7 +80,7 @@ local function getCurveDefinitions(cfg, channelList)
   return defs
 end
 
-local function genCurves(cfg, channelList)
+local function getCurves(cfg, channelList)
   local curves = {}
   local curveDefs = getCurveDefinitions(cfg, channelList)
 
@@ -89,7 +99,7 @@ local function genCurves(cfg, channelList)
   return curves
 end
 
-local function genOutputs(cfg, channelList, pinToChannelMap)
+local function getOutputs(cfg, channelList, pinToChannelMap)
   local outputs = {}
 
   -- 使用共用函数获取曲线定义，构建通道名到曲线索引的映射
@@ -159,7 +169,7 @@ end
 
 -- 生成输入配置
 -- 返回：输入配置数组，每个元素包含 {index, name, source, weight}
-local function genInputs(cfg)
+local function getInputs(cfg)
   local inputs = {}
 
   -- cfg.plane_type: 0=F3K, 1=F5J
@@ -218,7 +228,7 @@ local function genInputs(cfg)
 end
 
 -- 生成混控器配置
-local function genMixers(cfg, channelList, pinToChannelMap)
+local function getMixers(cfg, channelList, pinToChannelMap)
   local mixers = {}
 
   -- cfg.plane_type: 0=F3K, 1=F5J
@@ -247,10 +257,6 @@ local function genMixers(cfg, channelList, pinToChannelMap)
   -- EdgeTX中三段开关上位通常表示为 "sb↑" 或 "sb2"
   -- 这里使用 getFieldInfo 获取SB开关的ID，需要根据实际EdgeTX版本调整
   local sbUpSwitch = getFieldInfo("sb").id  -- SB开关（注：可能需要调整为特定位置，如"sb↑"）
-  for switchIndex, switchName in switches() do
-    print("switch:" , switchIndex, "name:", switchName)
-    print("get switchName:", getSwitchName(switchIndex))
-  end
   -- 飞行模式位掩码
   -- EdgeTX中 flightModes 字段使用位掩码表示混控在哪些模式下禁用
   -- 0 = 在所有模式下启用
@@ -351,6 +357,75 @@ local function genOptions()
   return options
 end
 
+local function genSwitchPositionList(cfg)
+  local switchPositions = {}
+  local switchPosition = nil
+
+  -- 如果是F3K飞机（plane_type == 0），需要preset开关位置
+  if cfg.plane_type == 0 then
+    switchPosition = {
+      name = "preset_sw",
+      label = "Preset",
+      switchIndex = -1
+    }
+    switchPositions[#switchPositions+1] = switchPosition
+  end
+
+  -- 飞行模式开关（所有飞机类型都需要）
+
+  --爬升开关位置
+  switchPosition = {
+    name = "zoom_sw",
+    label = "Zoom",
+    switchIndex = -1
+  }
+  switchPositions[#switchPositions+1] = switchPosition
+
+
+  --刹车开关位置
+  switchPosition = {
+    name = "brk_sw",
+    label = "Brake",
+    switchIndex = -1
+  }
+  switchPositions[#switchPositions+1] = switchPosition
+
+  --速度模式开关位置
+  switchPosition = {
+    name = "speed_sw",
+    label = "Speed",
+    switchIndex = -1
+  }
+  switchPositions[#switchPositions+1] = switchPosition
+
+  --巡航模式开关位置
+  switchPosition = {
+    name = "cruise_sw",
+    label = "Cruise",
+    switchIndex = -1
+  }
+  switchPositions[#switchPositions+1] = switchPosition
+
+  --气流模式开关位置
+  switchPosition = {
+    name = "therm_sw",
+    label = "Thermal",
+    switchIndex = -1
+  }
+  switchPositions[#switchPositions+1] = switchPosition
+
+  --精细模式开关位置
+  switchPosition = {
+    name = "fine_sw",
+    label = "fine",
+    switchIndex = -1
+  }
+  switchPositions[#switchPositions+1] = switchPosition
+
+
+  return switchPositions
+end
+
 -- 根据飞机配置生成所有可用的舵面（Channel）列表
 -- 参数：cfg - 命名配置参数表
 --   cfg.plane_type: 0=F3K, 1=F5J
@@ -398,12 +473,97 @@ local function genChannelList(cfg)
   return channels
 end
 
+-- 生成逻辑开关配置
+-- 参数：cfg - 配置参数表，switchPositionMap - 开关名称到 switchIndex 的映射
+-- 返回：逻辑开关配置数组
+local function getLogicalSwitches(cfg, switchPositionMap)
+  local logicalSwitches = {}
+  
+  -- 获取开关索引
+  local speedModeSwitch = switchPositionMap["speed_sw"]
+  local cruiseModeSwitch = switchPositionMap["cruise_sw"]
+  local thermalModeSwitch = switchPositionMap["therm_sw"]
+  local fineModeSwitch = switchPositionMap["fine_sw"]
+  local zoomModeSwitch = switchPositionMap["zoom_sw"]
+  local ls = nil
+  
+  -- 1. SpeedMode 逻辑开关 (index 0)
+  if speedModeSwitch then
+    ls = {
+      index = 0,
+      name = "SpeedMode",
+      func = LS_FUNC_AND,
+      v1 = speedModeSwitch,
+      v2 = zoomModeSwitch * -1,
+    }
+    ls["and"] = fineModeSwitch
+    logicalSwitches[#logicalSwitches+1] = ls
+  end
+  
+  -- 2. CruiseMode 逻辑开关 (index 1)
+  if cruiseModeSwitch then
+    logicalSwitches[#logicalSwitches+1] = {
+      index = 1,
+      name = "CruiseMode",
+      func = LS_FUNC_AND,
+      v1 = cruiseModeSwitch,
+      v2 = zoomModeSwitch * -1
+    }
+  end
+  -- 3. ThermalMode 逻辑开关 (index 2)
+  if thermalModeSwitch and thermalModeSwitch ~= -1 then
+    local ls = {
+      index = 2,
+      name = "ThermalMode",
+      func = LS_FUNC_AND,
+      v1 = thermalModeSwitch,
+      v2 = zoomModeSwitch * -1,
+    }
+    ls["and"] = fineModeSwitch
+    logicalSwitches[#logicalSwitches+1] = ls
+  end
+
+  -- 4. StayMode 逻辑开关 (index 3)
+  if fineModeSwitch then
+    if thermalModeSwitch then
+      local ls = {
+        index = 3,
+        name = "StayMode",
+        func = LS_FUNC_AND,
+        v1 = thermalModeSwitch, 
+        v2 = zoomModeSwitch * -1,
+      }
+      ls["and"] = fineModeSwitch * -1
+      logicalSwitches[#logicalSwitches+1] = ls
+    end
+  end
+  -- 5. AccelMode 逻辑开关 (index 4)
+  if fineModeSwitch then
+    if speed_mode_sw then
+      ls = {
+        index = 4,
+        name = "AccelMode",
+        func = 7,  -- LS_FUNC_AND
+        v1 = speedModeSwitch,
+        v2 = zoomModeSwitch * -1
+      }
+      ls["and"] = fineModeSwitch * -1
+      logicalSwitches[#logicalSwitches+1] = ls
+    end
+  end
+  return logicalSwitches
+end
+
 return {
   GVs = GVs,
-  genCurves = genCurves,
-  genOutputs = genOutputs,
-  genInputs = genInputs,
-  genMixers = genMixers,
+  LogicalSwitches = LogicalSwitches,
+  getCurves = getCurves,
+  getOutputs = getOutputs,
+  getInputs = getInputs,
+  getMixers = getMixers,
+  getLogicalSwitches = getLogicalSwitches,
   genOptions = genOptions,
   genChannelList = genChannelList,
+  genSwitchPositionList = genSwitchPositionList,
+ 
 }

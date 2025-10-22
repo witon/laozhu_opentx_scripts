@@ -1,11 +1,15 @@
 local viewMatrix = nil
 local this = nil
 local channelSetButton = nil
+local switchSetButton = nil
 local saveButton = nil
 local channelSetPage = nil
+local switchSetPage = nil
 local createModalCfg = nil
 local channelList = {}              -- 可用的舵面（Channel）列表
 local pinToChannelMap = {}          -- 针脚（Pin）到舵面（Channel）的映射 (索引1-8对应Pin1-8，值为Channel名称或nil)
+local switchPositionList = {}       -- 开关位置列表（从模板获取）
+local switchPositionMap = {}        -- 开关名称到 switchIndex 的映射
 
 -- 模板相关
 local template = nil                -- 当前使用的模板（ThermalGlider）
@@ -88,8 +92,31 @@ local function unloadChannelSetPage()
     collectgarbage()
 end
 
+local function loadSwitchSetPage()
+    if switchSetPage ~= nil then
+        return
+    end
+
+    switchSetPage = LZ_runModule("TELEMETRY/adjust/CreateModal/SwitchSetPage.lua")
+    -- 传递开关位置列表和开关位置映射给 SwitchSetPage
+    switchSetPage.init(switchPositionList, switchPositionMap)
+end
+
+local function unloadSwitchSetPage()
+    if switchSetPage == nil then
+        return
+    end
+    LZ_clearTable(switchSetPage)
+    switchSetPage = nil
+    collectgarbage()
+end
+
 local function onChannelSetButtonClick(button)
     loadChannelSetPage()
+end
+
+local function onSwitchSetButtonClick(button)
+    loadSwitchSetPage()
 end
 
 local function saveCfgToFile()
@@ -111,6 +138,18 @@ local function saveCfgToFile()
         end
     end
 
+    -- 保存开关位置映射
+    for i = 1, #switchPositionList do
+        local switchCfg = switchPositionList[i]
+        local cfgKey = switchCfg.name
+        local switchIndex = switchPositionMap[switchCfg.name]
+        if switchIndex and switchIndex ~= -1 then
+            createModalCfg.kvs[cfgKey] = switchIndex
+        else
+            createModalCfg.kvs[cfgKey] = -1
+        end
+    end
+
     createModalCfg:writeToFile("createmodal.cfg")
 end
 
@@ -119,9 +158,9 @@ local function setupCurves()
     -- 更新针脚映射（确保 channelList 是最新的）
     updatePinMapping()
 
-    -- 使用模板的 genCurves 生成曲线配置
+    -- 使用模板的 getCurves 生成曲线配置
     local configTable = getCurrentConfigTable()
-    local curves = template.genCurves(configTable, channelList)
+    local curves = template.getCurves(configTable, channelList)
 
     -- 应用生成的曲线配置到遥控器
     for i = 1, #curves do
@@ -161,9 +200,9 @@ local function setupOutputChannels()
     -- 更新针脚映射
     updatePinMapping()
 
-    -- 使用模板的 genOutputs 生成输出配置
+    -- 使用模板的 getOutputs 生成输出配置
     local configTable = getCurrentConfigTable()
-    local outputs = template.genOutputs(configTable, channelList, pinToChannelMap)
+    local outputs = template.getOutputs(configTable, channelList, pinToChannelMap)
 
     -- 应用生成的输出配置到遥控器
     for i = 1, #outputs do
@@ -200,9 +239,9 @@ end
 
 -- 设置输入
 local function setupInputs()
-    -- 使用模板的 genInputs 生成输入配置
+    -- 使用模板的 getInputs 生成输入配置
     local configTable = getCurrentConfigTable()
-    local inputs = template.genInputs(configTable)
+    local inputs = template.getInputs(configTable)
 
     model.deleteInputs()
 
@@ -228,9 +267,9 @@ local function setupMixers()
     -- 更新针脚映射
     updatePinMapping()
 
-    -- 使用模板的 genMixers 生成混控配置
+    -- 使用模板的 getMixers 生成混控配置
     local configTable = getCurrentConfigTable()
-    local mixers = template.genMixers(configTable, channelList, pinToChannelMap)
+    local mixers = template.getMixers(configTable, channelList, pinToChannelMap)
 
     -- 清除所有输出通道的现有混控器（可选，取决于需求）
     -- 注意：这里我们选择不清除，而是直接插入新的混控器
@@ -259,9 +298,46 @@ local function setupMixers()
         -- 获取当前通道的混控器数量，插入到末尾
         local mixesCount = model.getMixesCount(channel)
 
-        -- 插入混控器
-        model.insertMix(channel, mixesCount, mix)
+    -- 插入混控器
+    model.insertMix(channel, mixesCount, mix)
+  end
+end
+
+-- 设置逻辑开关
+local function setupLogicalSwitches()
+  -- 使用模板的 getLogicalSwitches 生成逻辑开关配置
+  local configTable = getCurrentConfigTable()
+  local logicalSwitches = template.getLogicalSwitches(configTable, switchPositionMap)
+
+  -- 应用生成的逻辑开关配置到遥控器
+  for i = 1, #logicalSwitches do
+    local lsCfg = logicalSwitches[i]
+    local lsIndex = lsCfg.index  -- 模板应返回 0-based 索引
+
+    -- 读取当前逻辑开关配置
+    local logicalSwitch = model.getLogicalSwitch(lsIndex)
+
+    -- 应用模板生成的配置
+    if lsCfg.name then
+      logicalSwitch.name = lsCfg.name
     end
+    if lsCfg.func then
+      logicalSwitch.func = lsCfg.func
+    end
+    if lsCfg.v1 then
+      logicalSwitch.v1 = lsCfg.v1
+    end
+    if lsCfg.v2 then
+      logicalSwitch.v2 = lsCfg.v2
+    end
+
+    if lsCfg["and"] then
+        logicalSwitch["and"] = lsCfg["and"]
+    end
+
+    -- 写入到遥控器
+    model.setLogicalSwitch(lsIndex, logicalSwitch)
+  end
 end
 
 local function onSaveButtonClick(button)
@@ -278,6 +354,9 @@ local function onSaveButtonClick(button)
 
     -- 设置混控
     setupMixers()
+
+    -- 设置逻辑开关
+    setupLogicalSwitches()
 
     playTone(2000, 200, 0)
 end
@@ -301,6 +380,15 @@ local function run(event, curTime)
         return true
     end
 
+    if switchSetPage then
+        if switchSetPage.pageState == 1 then
+            unloadSwitchSetPage()
+            return true
+        end
+        switchSetPage.run(event, curTime)
+        return true
+    end
+
     local invers = false
     if getRtcTime() % 2 == 1 then
         invers = true
@@ -317,6 +405,10 @@ local function run(event, curTime)
     -- 绘制固定按钮
     lcd.drawText(2, yPos, "Ch Setup:", SMLSIZE + LEFT)
     channelSetButton:draw(50, yPos, invers, SMLSIZE + LEFT)
+    yPos = yPos + 10
+
+    lcd.drawText(2, yPos, "Sw Setup:", SMLSIZE + LEFT)
+    switchSetButton:draw(50, yPos, invers, SMLSIZE + LEFT)
     yPos = yPos + 10
 
     lcd.drawText(2, yPos, "Save:", SMLSIZE + LEFT)
@@ -374,11 +466,17 @@ local function init()
     channelSetButton:setOnClick(onChannelSetButtonClick)
     row[#optionConfigs + 1] = channelSetButton
 
+    -- 开关设置按钮
+    switchSetButton = Button:new()
+    switchSetButton.text = "Setup"
+    switchSetButton:setOnClick(onSwitchSetButtonClick)
+    row[#optionConfigs + 2] = switchSetButton
+
     -- 保存按钮
     saveButton = Button:new()
     saveButton.text = "Save"
     saveButton:setOnClick(onSaveButtonClick)
-    row[#optionConfigs + 2] = saveButton
+    row[#optionConfigs + 3] = saveButton
 
     -- 设置 ViewMatrix 焦点
     viewMatrix.selectedRow = 1
@@ -387,6 +485,17 @@ local function init()
 
     -- 初始化针脚映射
     updatePinMapping()
+
+    -- 初始化开关位置列表和映射
+    local configTable = getCurrentConfigTable()
+    switchPositionList = template.genSwitchPositionList(configTable)
+
+    -- 从配置文件读取已保存的开关位置
+    for i = 1, #switchPositionList do
+        local switchCfg = switchPositionList[i]
+        local savedSwitchIndex = createModalCfg:getNumberField(switchCfg.name, -1)
+        switchPositionMap[switchCfg.name] = savedSwitchIndex
+    end
 end
 
 init()
