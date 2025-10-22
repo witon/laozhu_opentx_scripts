@@ -10,11 +10,36 @@ local GVs = {
 }
 
 local LogicalSwitches = {
-  {name = "SpeedMode", index = 0},
-  {name = "CruiseMode", index = 1},
-  {name = "ThermalMode", index = 2},
-  {name = "StayMode", index = 3},
-  {name = "AccelMode", index = 4},
+  {key = "L01", index = 0, name = "SpeedMode"},
+  {key = "L02", index = 1, name= "CruiseMode"},
+  {key = "L03", index = 2, name= "ThermalMode"},
+  {key = "L04", index = 3, name= "StayMode"},
+  {key = "L05", index = 4, name= "AccelMode"},
+}
+
+local FlightModes = {
+  -- F3K: 7个飞行模式
+  -- trimsModes 数组格式：{ail, ele, thr, rud}，每个元素表示该微调使用哪个飞行模式的微调值，最后一位表示等于或者增加，从二位开始往前，作为模式索引。31表示禁用微调
+  F3K = {
+    {name = "Zoom", index = 0, switchName = nil, trimsModes = {0, 0, 31, 0}},
+    {name = "Preset", index = 1, switchName = "preset_sw", trimsModes = {1*2, 1*2, 31, 1*2}}, 
+    {name = "Accel", index = 2, lsName = "AccelMode", trimsModes = {2*2, 2*2, 31, 2*2}},     
+    {name = "Speed", index = 3, lsName = "SpeedMode", trimsModes = {3*2, 3*2, 31, 2*2}},     
+    {name = "Cruise", index = 4, lsName = "CruiseMode", trimsModes = {4*2, 4*2, 31, 2*2}},   
+    {name = "Thermal", index = 5, lsName = "ThermalMode", trimsModes = {5*2, 5*2, 31, 2*2}}, 
+    {name = "Stay", index = 6, lsName = "StayMode", trimsModes = {6*2, 6*2, 31, 2*2}}        
+  },
+  -- F5J: 8个飞行模式
+  F5J = {
+    {name = "Zoom1", index = 0, switchName = nil, trimsModes = {0, 0, 0, 0}},        
+    {name = "Zoom2", index = 1, switchName = "zoom2_sw", trimsModes = {1, 1, 1, 1}}, 
+    {name = "Zoom3", index = 2, switchName = "zoom3_sw", trimsModes = {2, 2, 2, 2}}, 
+    {name = "Accel", index = 3, lsName = "AccelMode", trimsModes = {3, 3, 3, 3}},    
+    {name = "Speed", index = 4, lsName = "SpeedMode", trimsModes = {4, 4, 4, 4}},    
+    {name = "Cruise", index = 5, lsName = "CruiseMode", trimsModes = {5, 5, 5, 5}},  
+    {name = "Thermal", index = 6, lsName = "ThermalMode", trimsModes = {6, 6, 6, 6}},
+    {name = "Stay", index = 7, lsName = "StayMode", trimsModes = {7, 7, 7, 7}}       
+  }
 }
 local function printTable(t, indent)
     indent = indent or ""
@@ -264,13 +289,6 @@ local function getMixers(cfg, channelList, pinToChannelMap)
   -- 位掩码：bit0 | bit1 = 0x03 (二进制 0000 0011)
   local modes2to8 = 0x03  -- 禁用模式0,1，即在模式2-8中有效
 
-  local line = nil
-  for i=0, 3 do
-    line = model.getMix(0, i)
-    print("line:", i)
-    printTable(line)
-    
-  end 
 
   -- 左副翼通道混控
   local lAilOut = getOutputIndex("LAil", pinToChannelMap)
@@ -366,6 +384,23 @@ local function genSwitchPositionList(cfg)
     switchPosition = {
       name = "preset_sw",
       label = "Preset",
+      switchIndex = -1
+    }
+    switchPositions[#switchPositions+1] = switchPosition
+  end
+
+  -- 如果是F5J飞机（plane_type == 1），需要zoom2和zoom3开关位置
+  if cfg.plane_type == 1 then
+    switchPosition = {
+      name = "zoom2_sw",
+      label = "Zoom2",
+      switchIndex = -1
+    }
+    switchPositions[#switchPositions+1] = switchPosition
+
+    switchPosition = {
+      name = "zoom3_sw",
+      label = "Zoom3",
       switchIndex = -1
     }
     switchPositions[#switchPositions+1] = switchPosition
@@ -554,16 +589,83 @@ local function getLogicalSwitches(cfg, switchPositionMap)
   return logicalSwitches
 end
 
+-- 辅助函数：查找逻辑开关索引
+local function getLogicalSwitchIndex(lsName)
+  for i = 1, #LogicalSwitches do
+    if LogicalSwitches[i].name == lsName then
+      return getSwitchIndex(LogicalSwitches[i].key)
+    end
+  end
+  return nil
+end
+
+-- 生成飞行模式配置
+-- 参数：cfg - 配置参数表，switchPositionMap - 开关名称到 switchIndex 的映射
+-- 返回：飞行模式配置数组
+local function getFlightModes(cfg, switchPositionMap)
+  local flightModes = {}
+
+  -- 根据飞机类型选择模式列表
+  local modeList = nil
+  if cfg.plane_type == 0 then
+    -- F3K
+    modeList = FlightModes.F3K
+  else
+    -- F5J
+    modeList = FlightModes.F5J
+  end
+
+  -- 生成飞行模式配置
+  for i = 1, #modeList do
+    local modeDef = modeList[i]
+    local fmCfg = {
+      index = modeDef.index,
+      name = modeDef.name
+    }
+
+    -- 设置微调模式（转换为零索引表）
+    if modeDef.trimsModes then
+      -- EdgeTX API 使用零索引表，例如 {[0]=0, [1]=0, [2]=0, [3]=0}
+      fmCfg.trimsModes = {}
+      for trimIdx = 1, #modeDef.trimsModes do
+        fmCfg.trimsModes[trimIdx] = modeDef.trimsModes[trimIdx]
+      end
+    end
+
+    -- 确定激活开关
+    if modeDef.switchName then
+      -- 使用物理开关
+      local switchIndex = switchPositionMap[modeDef.switchName]
+      if switchIndex and switchIndex ~= -1 then
+        fmCfg.switch = switchIndex
+      end
+    elseif modeDef.lsName then
+      -- 使用逻辑开关
+      local lsIndex = getLogicalSwitchIndex(modeDef.lsName)
+      if lsIndex then
+        fmCfg.switch = lsIndex
+      end
+    end
+    -- 如果没有指定开关（如默认模式），则不设置 switch 字段
+
+    flightModes[#flightModes+1] = fmCfg
+  end
+
+  return flightModes
+end
+
 return {
   GVs = GVs,
   LogicalSwitches = LogicalSwitches,
+  FlightModes = FlightModes,
   getCurves = getCurves,
   getOutputs = getOutputs,
   getInputs = getInputs,
   getMixers = getMixers,
   getLogicalSwitches = getLogicalSwitches,
+  getFlightModes = getFlightModes,
   genOptions = genOptions,
   genChannelList = genChannelList,
   genSwitchPositionList = genSwitchPositionList,
- 
+
 }

@@ -340,6 +340,36 @@ local function setupLogicalSwitches()
   end
 end
 
+-- 设置飞行模式
+local function setupFlightModes()
+  -- 使用模板的 getFlightModes 生成飞行模式配置
+  local configTable = getCurrentConfigTable()
+  local flightModes = template.getFlightModes(configTable, switchPositionMap)
+
+  -- 应用生成的飞行模式配置到遥控器
+  for i = 1, #flightModes do
+    local fmCfg = flightModes[i]
+    local fmIndex = fmCfg.index  -- 模板返回 0-based 索引
+
+    local flightMode = {}
+
+    -- 应用模板生成的配置
+    if fmCfg.name then
+      flightMode.name = fmCfg.name
+    end
+    if fmCfg.switch then
+      flightMode.switch = fmCfg.switch
+    end
+    if fmCfg.trimsModes then
+      flightMode.trimsModes = fmCfg.trimsModes
+      flightMode.trimsValues = {0, 0, 0, 0}
+    end
+
+    model.setFlightMode(fmIndex, flightMode)
+
+  end
+end
+
 local function onSaveButtonClick(button)
     saveCfgToFile()
 
@@ -357,6 +387,9 @@ local function onSaveButtonClick(button)
 
     -- 设置逻辑开关
     setupLogicalSwitches()
+
+    -- 设置飞行模式
+    setupFlightModes()
 
     playTone(2000, 200, 0)
 end
@@ -496,6 +529,13 @@ local function init()
         local savedSwitchIndex = createModalCfg:getNumberField(switchCfg.name, -1)
         switchPositionMap[switchCfg.name] = savedSwitchIndex
     end
+    for i = 0, 7 do
+        local flightMode = model.getFlightMode(i)
+        print("flightMode:--------------------------------", i)
+        printTable(flightMode)
+    end
+
+
 end
 
 init()
