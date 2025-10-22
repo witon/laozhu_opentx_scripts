@@ -6,17 +6,13 @@ local switchPositionList = {}    -- 开关位置列表（从模板获取）
 local switchPositionMap = {}     -- 开关名称到 switchIndex 的映射
 
 local function loadModule()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
     LZ_runModule("TELEMETRY/common/SwitchPositionSelectorO.lua")
-    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
     LZ_runModule("TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
 end
 
 local function unloadModule()
     SwitchPositionSelector = nil
-    InputView = nil
-    ViewMatrix = nil
     FieldsUnload()
 end
 

@@ -6,15 +6,11 @@ local channelList = {}           -- 可用舵面（Channel）列表
 local pinToChannelMap = {}       -- 针脚（Pin）到舵面（Channel）的映射
 
 local function loadModule()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    LZ_runModule("TELEMETRY/common/SelectorO.lua")
-    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
+
 end
 
 local function unloadModule()
-    Selector = nil
-    InputView = nil
-    ViewMatrix = nil
+
 end
 
 -- 创建 Selector 用于选择舵面（Channel）

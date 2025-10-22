@@ -1,3 +1,5 @@
+LZ_runModule("LAOZHU/ModelTPL/ModelTPLUtils.lua")
+
 local GVs = {
   {name = "AFL", index = 0},
   {name = "ELE", index = 1},
@@ -9,6 +11,22 @@ local GVs = {
   {name = "ET", index = 7},
 }
 
+local curConfig = 0
+local curGVs = GVs
+local curInputs = {}
+local curOutputs = {}
+local curCurves = {}
+local curLogicalSwitches = {}
+local curSwitchPositionMap = {}
+local curFlightModes = {}
+local curChannelList = {}
+
+local curPinToChannelMap = {}
+
+local curMixers = {}
+
+
+
 local LogicalSwitches = {
   {key = "L01", index = 0, name = "SpeedMode"},
   {key = "L02", index = 1, name= "CruiseMode"},
@@ -16,6 +34,7 @@ local LogicalSwitches = {
   {key = "L04", index = 3, name= "StayMode"},
   {key = "L05", index = 4, name= "AccelMode"},
 }
+
 
 local FlightModes = {
   -- F3K: 7个飞行模式
@@ -41,6 +60,127 @@ local FlightModes = {
     {name = "Stay", index = 7, lsName = "StayMode", trimsModes = {7, 7, 7, 7}}       
   }
 }
+
+-- 开关位置配置表（按飞机类型分层）
+local switchPositionConfigs = {
+  -- 通用开关（所有飞机类型都需要）
+  common = {
+    {name = "zoom_sw", label = "Zoom"},
+    {name = "brk_sw", label = "Brake"},
+    {name = "speed_sw", label = "Speed"},
+    {name = "cruise_sw", label = "Cruise"},
+    {name = "therm_sw", label = "Thermal"},
+    {name = "fine_sw", label = "fine"}
+  },
+
+  -- F3K 特有开关
+  F3K = {
+    {name = "preset_sw", label = "Preset"}
+  },
+
+  -- F5J 特有开关
+  F5J = {
+    {name = "zoom2_sw", label = "Zoom2"},
+    {name = "zoom3_sw", label = "Zoom3"}
+  }
+}
+
+-- 通道混控生成器映射表（按飞机类型和尾翼类型分层）
+local channelMixerGenerators = {
+  -- F3K 只使用十字尾
+  F3K = {
+    Normal = {
+      LAil = function(ctx, outputIndex)
+        return createAileronMixers(ctx, outputIndex, 'left')
+      end,
+      RAil = function(ctx, outputIndex)
+        return createAileronMixers(ctx, outputIndex, 'right')
+      end,
+      Ele = function(ctx, outputIndex)
+        return createElevatorMixers(ctx, outputIndex)
+      end,
+      Rud = function(ctx, outputIndex)
+        return createRudderMixers(ctx, outputIndex)
+      end,
+      LFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'left')
+      end,
+      RFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'right')
+      end,
+      MFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'middle')
+      end,
+      Flap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'single')
+      end
+    }
+  },
+
+  -- F5J 支持 V尾和十字尾
+  F5J = {
+    VTail = {
+      LAil = function(ctx, outputIndex)
+        return createAileronMixers(ctx, outputIndex, 'left')
+      end,
+      RAil = function(ctx, outputIndex)
+        return createAileronMixers(ctx, outputIndex, 'right')
+      end,
+      LVTail = function(ctx, outputIndex)
+        return createVTailMixers(ctx, outputIndex, 'left')
+      end,
+      RVTail = function(ctx, outputIndex)
+        return createVTailMixers(ctx, outputIndex, 'right')
+      end,
+      Thr = function(ctx, outputIndex)
+        return createThrottleMixers(ctx, outputIndex)
+      end,
+      LFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'left')
+      end,
+      RFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'right')
+      end,
+      MFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'middle')
+      end,
+      Flap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'single')
+      end
+    },
+
+    Normal = {
+      LAil = function(ctx, outputIndex)
+        return createAileronMixers(ctx, outputIndex, 'left')
+      end,
+      RAil = function(ctx, outputIndex)
+        return createAileronMixers(ctx, outputIndex, 'right')
+      end,
+      Ele = function(ctx, outputIndex)
+        return createElevatorMixers(ctx, outputIndex)
+      end,
+      Rud = function(ctx, outputIndex)
+        return createRudderMixers(ctx, outputIndex)
+      end,
+      Thr = function(ctx, outputIndex)
+        return createThrottleMixers(ctx, outputIndex)
+      end,
+      LFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'left')
+      end,
+      RFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'right')
+      end,
+      MFlap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'middle')
+      end,
+      Flap = function(ctx, outputIndex)
+        return createFlapMixers(ctx, outputIndex, 'single')
+      end
+    }
+  }
+}
+
 local function printTable(t, indent)
     indent = indent or ""
     if type(t) ~= "table" then
@@ -59,27 +199,13 @@ local function printTable(t, indent)
 end
 
 
--- 辅助函数：检查通道是否存在
-local function hasChannel(channelList, channelName)
-  for i = 1, #channelList do
-    if channelList[i] == channelName then
-      return true
-    end
-  end
-  return false
-end
-
 -- 获取曲线定义列表（单一数据源）
 -- 返回：曲线定义数组，每个元素包含 {channelName, curveName}
-local function getCurveDefinitions(cfg, channelList)
+local function getCurveDefinitions()
   local defs = {}
 
-  -- cfg.plane_type: 0=F3K, 1=F5J
-  -- cfg.tail_type: 0=V尾, 1=十字尾
-  -- cfg.flap_count: 0=无襟翼, 1-3=襟翼数量
-
   -- 1. 左副翼曲线 (Left Aileron -> la)
-  if hasChannel(channelList, "LAil") then
+  if hasChannel(curChannelList, "LAil") then
     defs[#defs+1] = {
       channelName = "LAil",
       curveName = "la"
@@ -87,7 +213,7 @@ local function getCurveDefinitions(cfg, channelList)
   end
 
   -- 2. 左襟翼曲线 (Left Flap -> lf)
-  if hasChannel(channelList, "LFlap") then
+  if hasChannel(curChannelList, "LFlap") then
     defs[#defs+1] = {
       channelName = "LFlap",
       curveName = "lf"
@@ -95,7 +221,7 @@ local function getCurveDefinitions(cfg, channelList)
   end
 
   -- 3. 左V尾曲线 (Left V-Tail -> lvt)
-  if cfg.tail_type == 0 and hasChannel(channelList, "LVTail") then
+  if curConfig.tail_type == 0 and hasChannel(curChannelList, "LVTail") then
     defs[#defs+1] = {
       channelName = "LVTail",
       curveName = "lvt"
@@ -105,9 +231,9 @@ local function getCurveDefinitions(cfg, channelList)
   return defs
 end
 
-local function getCurves(cfg, channelList)
+local function genCurves()
   local curves = {}
-  local curveDefs = getCurveDefinitions(cfg, channelList)
+  local curveDefs = getCurveDefinitions()
 
   -- 根据曲线定义生成曲线配置
   for i = 1, #curveDefs do
@@ -120,15 +246,15 @@ local function getCurves(cfg, channelList)
       points = {-100, -75, -50, -25, 0, 25, 50, 75, 100}  -- 9点曲线
     }
   end
-
+  curCurves = curves
   return curves
 end
 
-local function getOutputs(cfg, channelList, pinToChannelMap)
+local function genOutputs()
   local outputs = {}
 
   -- 使用共用函数获取曲线定义，构建通道名到曲线索引的映射
-  local curveDefs = getCurveDefinitions(cfg, channelList)
+  local curveDefs = getCurveDefinitions()
   local channelToCurveIndex = {}
   for i = 1, #curveDefs do
     local def = curveDefs[i]
@@ -137,7 +263,7 @@ local function getOutputs(cfg, channelList, pinToChannelMap)
 
   -- 遍历 8 个针脚（Pin1-8 对应 index 0-7）
   for pinNum = 1, 8 do
-    local channelName = pinToChannelMap[pinNum]
+    local channelName = curPinToChannelMap[pinNum]
 
     -- 如果该针脚分配了舵面
     if channelName and channelName ~= "" then
@@ -168,37 +294,166 @@ local function getOutputs(cfg, channelList, pinToChannelMap)
       }
     end
   end
-
+  curOutputs = outputs
   return outputs
 end
 
--- 辅助函数：根据舵面名称查找对应的输出通道索引（0-based）
-local function getOutputIndex(channelName, pinToChannelMap)
-  for pinNum = 1, 8 do
-    if pinToChannelMap[pinNum] == channelName then
-      return pinNum - 1  -- 转换为 0-based 索引
-    end
+
+
+
+-- 准备混控生成器上下文对象
+-- 参数：cfg - 配置对象，pinToChannelMap - 针脚到通道的映射
+-- 返回：包含所有混控生成器需要的通用数据的上下文对象
+local function prepareContext(cfg)
+  local gvIndexes = {}
+  for i = 1, #GVs do
+    gvIndexes[GVs[i].name] = getGVIndex(curGVs, GVs[i].index)
   end
-  return nil
+  return {
+    -- 配置
+    cfg = cfg,
+    pinToChannelMap = curPinToChannelMap,
+    switchPositionMap = curSwitchPositionMap,
+    -- 全局变量索引
+    gvIndexes = gvIndexes,
+  }
 end
 
--- 辅助函数：查找全局变量索引
-local function getGVIndex(gvName)
-  for i = 1, #GVs do
-    if GVs[i].name == gvName then
-      return GVs[i].index
-    end
+-- 副翼混控生成器（支持左右副翼）
+-- 参数：ctx - 上下文对象，outputIndex - 输出通道索引，side - 'left' 或 'right'
+-- 返回：混控配置数组
+local function createAileronMixers(ctx, outputIndex, side)
+  local mixers = {}
+
+  -- 差动：左副翼-5，右副翼+5
+  local differential = (side == 'left') and -5 or 5
+
+  -- 混控名称前缀
+  local mixNamePrefix = (side == 'left') and 'l' or 'r'
+
+  -- 获取全局变量
+  local aflGV = ctx.gvIndexes.AFL
+  local efGV = ctx.gvIndexes.EF
+
+  -- 1. 副翼基础混控
+  mixers[#mixers+1] = {
+    channel = outputIndex,
+    name = mixNamePrefix .. "a",
+    source = getInputIndex(curInputs, "Ail"),
+    weight = 100,
+    offset = 0,
+    differential = differential,
+    multiplex = 0  -- 加法混控
+  }
+
+  -- 2. 刹车乘法混控
+  -- F3K 和 F5J 可能有差异，这里预留判断
+  local brkWeight = 90
+  local brkOffset = 90
+  if ctx.cfg.plane_type == 1 then
+    -- F5J 特有参数（如果需要的话）
+    -- brkWeight = 95
+    -- brkOffset = 95
   end
-  return nil
+
+  mixers[#mixers+1] = {
+    channel = outputIndex,
+    name = "brkm",
+    source = ctx.inputIds.thr,  -- 刹车输入（来自油门摇杆）
+    weight = brkWeight,
+    offset = brkOffset,
+    multiplex = 1,              -- 乘法混控
+    switch = ctx.switchPositionMap.brk_sw,    -- 刹车开关位置
+    flightModes = 0 
+  }
+
+  -- 3. 升降混控副翼
+  -- 使用全局变量作为权重和偏置
+  local efGVSource = getFieldInfo("gvar" .. (efGV + 1)).id
+  local aflGVSource = getFieldInfo("gvar" .. (aflGV + 1)).id
+  mixers[#mixers+1] = {
+    channel = outputIndex,
+    name = "ele",
+    source = ctx.inputIds.ele,
+    weight = efGVSource,    -- 使用全局变量"E-F"作为权重
+    offset = aflGVSource,   -- 使用全局变量"AFL"作为偏置
+    multiplex = 0           -- 加法混控
+  }
+
+  -- 4. 刹车混控
+  mixers[#mixers+1] = {
+    channel = outputIndex,
+    name = "brk",
+    source = ctx.inputIds.thr,  -- 刹车输入
+    weight = -30,
+    offset = 0,
+    multiplex = 0,              -- 加法混控
+    switch = ctx.switchPositionMap.brk_sw,    -- 刹车开关位置
+    flightModes = 0 
+  }
+
+  return mixers
+end
+
+-- 襟翼混控生成器（F3K 和 F5J 共用）
+-- 参数：ctx - 上下文对象，outputIndex - 输出通道索引，position - 'left'/'right'/'middle'/'single'
+-- 返回：混控配置数组
+local function createFlapMixers(ctx, outputIndex, position)
+  local mixers = {}
+
+  -- TODO: 实现襟翼混控逻辑
+
+  return mixers
+end
+
+-- V尾混控生成器
+-- 参数：ctx - 上下文对象，outputIndex - 输出通道索引，side - 'left' 或 'right'
+-- 返回：混控配置数组
+local function createVTailMixers(ctx, outputIndex, side)
+  local mixers = {}
+
+  -- TODO: 实现 V尾混控逻辑
+
+  return mixers
+end
+
+-- 升降舵混控生成器（十字尾）
+-- 参数：ctx - 上下文对象，outputIndex - 输出通道索引
+-- 返回：混控配置数组
+local function createElevatorMixers(ctx, outputIndex)
+  local mixers = {}
+
+  -- TODO: 实现升降舵混控逻辑
+
+  return mixers
+end
+
+-- 方向舵混控生成器（十字尾）
+-- 参数：ctx - 上下文对象，outputIndex - 输出通道索引
+-- 返回：混控配置数组
+local function createRudderMixers(ctx, outputIndex)
+  local mixers = {}
+
+  -- TODO: 实现方向舵混控逻辑
+
+  return mixers
+end
+
+-- 油门混控生成器（仅 F5J）
+-- 参数：ctx - 上下文对象，outputIndex - 输出通道索引
+-- 返回：混控配置数组
+local function createThrottleMixers(ctx, outputIndex)
+  local mixers = {}
+
+  -- TODO: 实现油门混控逻辑
+
+  return mixers
 end
 
 -- 生成输入配置
 -- 返回：输入配置数组，每个元素包含 {index, name, source, weight}
-local function getInputs(cfg)
+local function genInputs()
   local inputs = {}
-
-  -- cfg.plane_type: 0=F3K, 1=F5J
-  local pType = cfg.plane_type
 
   -- 基础输入索引（0-based）
   local inputIndex = 0
@@ -231,7 +486,7 @@ local function getInputs(cfg)
   inputIndex = inputIndex + 1
 
   -- 4. 油门输入 (Throttle) - 仅 F5J
-  if pType == 1 then
+  if curConfig.plane_type == 1 then
     inputs[#inputs+1] = {
       index = inputIndex,
       name = "Thr",
@@ -248,102 +503,47 @@ local function getInputs(cfg)
     source = getFieldInfo("thr").id,
     weight = 100
   }
-
+  curInputs = inputs
   return inputs
 end
 
+
+
 -- 生成混控器配置
-local function getMixers(cfg, channelList, pinToChannelMap)
+-- 返回：混控配置数组
+local function genMixers()
   local mixers = {}
 
-  -- cfg.plane_type: 0=F3K, 1=F5J
-  -- cfg.tail_type: 0=V尾, 1=十字尾
-  -- cfg.flap_count: 0=无襟翼, 1-3=襟翼数量
+  -- 准备上下文对象
+  local ctx = prepareContext(curConfig)
 
-  local pType = cfg.plane_type
-  local tType = cfg.tail_type
-  local fCount = cfg.flap_count
+  -- 根据配置选择对应的生成器映射表
+  local planeType = (curConfig.plane_type == 0) and "F3K" or "F5J"
+  local tailType = (curConfig.tail_type == 0) and "VTail" or "Normal"
 
-  -- 获取全局变量索引
-  local aflGV = getGVIndex("AFL")  -- 副翼偏置
-  local eleGV = getGVIndex("ELE")  -- 升降大小舵
-  local adrGV = getGVIndex("ADR")  -- 副翼大小舵
-  local efGV = getGVIndex("E-F")   -- 升降混控襟翼/副翼
-  local fflGV = getGVIndex("FFL")  -- 襟翼偏置
-  local rudGV = getGVIndex("RUD")  -- 方向大小舵
+  local generatorTable = channelMixerGenerators[planeType][tailType]
 
-  -- 获取输入源ID
-  local ailInput = getFieldInfo("ail").id   -- 副翼输入
-  local eleInput = getFieldInfo("ele").id   -- 升降舵输入
-  local rudInput = getFieldInfo("rud").id   -- 方向输入
-  local thrInput = getFieldInfo("thr").id   -- 油门输入（刹车也使用此输入）
+  if not generatorTable then
+    -- 错误处理：未找到对应的生成器表
+    return mixers
+  end
 
-  -- 获取开关ID
-  -- EdgeTX中三段开关上位通常表示为 "sb↑" 或 "sb2"
-  -- 这里使用 getFieldInfo 获取SB开关的ID，需要根据实际EdgeTX版本调整
-  local sbUpSwitch = getFieldInfo("sb").id  -- SB开关（注：可能需要调整为特定位置，如"sb↑"）
-  -- 飞行模式位掩码
-  -- EdgeTX中 flightModes 字段使用位掩码表示混控在哪些模式下禁用
-  -- 0 = 在所有模式下启用
-  -- 如果要在模式2-8中启用，需要禁用模式0和1
-  -- 位掩码：bit0 | bit1 = 0x03 (二进制 0000 0011)
-  local modes2to8 = 0x03  -- 禁用模式0,1，即在模式2-8中有效
+  -- 遍历 channelList，为每个通道生成混控
+  for i = 1, #curChannelList do
+    local channelName = curChannelList[i]
+    local outputIndex = getOutputIndex(curPinToChannelMap, channelName)
 
+    if outputIndex then
+      local generator = generatorTable[channelName]
+      if generator then
+        local channelMixers = generator(ctx, outputIndex)
 
-  -- 左副翼通道混控
-  local lAilOut = getOutputIndex("LAil", pinToChannelMap)
-  if lAilOut then
-    -- 1. 副翼基础混控 (la)
-    -- 名称"la"，source为副翼输入(Ail)，权重100，差动-5
-    mixers[#mixers+1] = {
-      channel = lAilOut,
-      name = "la",
-      source = ailInput,
-      weight = 100,
-      offset = 0,
-      differential = -5,  -- 差动 -5
-      multiplex = 0       -- 加法混控
-    }
-
-    -- 2. 刹车乘法混控 (brkm)
-    -- 名称"brkm"，source为刹车输入(Brk)，有效模式(2-8)，开启开关SB上，乘法混控，权重90，偏移90
-    mixers[#mixers+1] = {
-      channel = lAilOut,
-      name = "brkm",
-      source = thrInput,      -- 刹车输入（来自油门摇杆）
-      weight = 90,
-      offset = 90,
-      multiplex = 1,          -- 乘法混控
-      switch = sbUpSwitch,    -- SB开关上位
-      flightModes = modes2to8 -- 在模式2-8中有效
-    }
-
-    -- 3. 升降混控副翼 (ele)
-    -- 名称"ele"，source为升降舵输入(Ele)，权重为全局变量"E-F"，偏置为全局变量"AFL"
-    -- 注：EdgeTX中使用全局变量作为权重/偏置需要特殊处理
-    -- 这里使用 getFieldInfo("gvarX") 的方式获取全局变量source ID
-    local efGVSource = getFieldInfo("gvar" .. (efGV + 1)).id   -- GV索引+1得到名称，如GV0->gvar1
-    local aflGVSource = getFieldInfo("gvar" .. (aflGV + 1)).id
-    mixers[#mixers+1] = {
-      channel = lAilOut,
-      name = "ele",
-      source = eleInput,
-      weight = efGVSource,    -- 使用全局变量"E-F"作为权重
-      offset = aflGVSource,   -- 使用全局变量"AFL"作为偏置
-      multiplex = 0           -- 加法混控
-    }
-
-    -- 4. 刹车混控 (brk)
-    -- 名称"brk"，source为刹车输入(Brk)，权重-30，有效模式(2-8)
-    mixers[#mixers+1] = {
-      channel = lAilOut,
-      name = "brk",
-      source = thrInput,      -- 刹车输入
-      weight = -30,
-      offset = 0,
-      multiplex = 0,          -- 加法混控
-      flightModes = modes2to8 -- 在模式2-8中有效
-    }
+        -- 合并到总混控数组
+        for j = 1, #channelMixers do
+          mixers[#mixers+1] = channelMixers[j]
+        end
+      end
+    end
   end
 
   return mixers
@@ -375,103 +575,48 @@ local function genOptions()
   return options
 end
 
-local function genSwitchPositionList(cfg)
+
+
+-- 生成开关位置列表
+-- 返回：开关位置配置数组
+local function genSwitchPositionList()
   local switchPositions = {}
-  local switchPosition = nil
 
-  -- 如果是F3K飞机（plane_type == 0），需要preset开关位置
-  if cfg.plane_type == 0 then
-    switchPosition = {
-      name = "preset_sw",
-      label = "Preset",
-      switchIndex = -1
-    }
-    switchPositions[#switchPositions+1] = switchPosition
+  -- 获取飞机类型特有的开关配置
+  local planeType = (curConfig.plane_type == 0) and "F3K" or "F5J"
+  local specificConfigs = switchPositionConfigs[planeType]
+
+  -- 添加特有开关
+  if specificConfigs then
+    for i = 1, #specificConfigs do
+      switchPositions[#switchPositions+1] = {
+        name = specificConfigs[i].name,
+        label = specificConfigs[i].label,
+        switchIndex = -1
+      }
+    end
   end
 
-  -- 如果是F5J飞机（plane_type == 1），需要zoom2和zoom3开关位置
-  if cfg.plane_type == 1 then
-    switchPosition = {
-      name = "zoom2_sw",
-      label = "Zoom2",
+  -- 添加通用开关
+  local commonConfigs = switchPositionConfigs.common
+  for i = 1, #commonConfigs do
+    switchPositions[#switchPositions+1] = {
+      name = commonConfigs[i].name,
+      label = commonConfigs[i].label,
       switchIndex = -1
     }
-    switchPositions[#switchPositions+1] = switchPosition
-
-    switchPosition = {
-      name = "zoom3_sw",
-      label = "Zoom3",
-      switchIndex = -1
-    }
-    switchPositions[#switchPositions+1] = switchPosition
   end
-
-  -- 飞行模式开关（所有飞机类型都需要）
-
-  --爬升开关位置
-  switchPosition = {
-    name = "zoom_sw",
-    label = "Zoom",
-    switchIndex = -1
-  }
-  switchPositions[#switchPositions+1] = switchPosition
-
-
-  --刹车开关位置
-  switchPosition = {
-    name = "brk_sw",
-    label = "Brake",
-    switchIndex = -1
-  }
-  switchPositions[#switchPositions+1] = switchPosition
-
-  --速度模式开关位置
-  switchPosition = {
-    name = "speed_sw",
-    label = "Speed",
-    switchIndex = -1
-  }
-  switchPositions[#switchPositions+1] = switchPosition
-
-  --巡航模式开关位置
-  switchPosition = {
-    name = "cruise_sw",
-    label = "Cruise",
-    switchIndex = -1
-  }
-  switchPositions[#switchPositions+1] = switchPosition
-
-  --气流模式开关位置
-  switchPosition = {
-    name = "therm_sw",
-    label = "Thermal",
-    switchIndex = -1
-  }
-  switchPositions[#switchPositions+1] = switchPosition
-
-  --精细模式开关位置
-  switchPosition = {
-    name = "fine_sw",
-    label = "fine",
-    switchIndex = -1
-  }
-  switchPositions[#switchPositions+1] = switchPosition
-
 
   return switchPositions
 end
 
 -- 根据飞机配置生成所有可用的舵面（Channel）列表
--- 参数：cfg - 命名配置参数表
---   cfg.plane_type: 0=F3K, 1=F5J
---   cfg.tail_type: 0=V尾, 1=十字尾
---   cfg.flap_count: 0=无襟翼, 1-3=襟翼数量
 -- 返回：舵面名称数组
-local function genChannelList(cfg)
+local function genChannelList()
   local channels = {}
-  local pType = cfg.plane_type
-  local tType = cfg.tail_type
-  local fCount = cfg.flap_count
+  local pType = curConfig.plane_type
+  local tType = curConfig.tail_type
+  local fCount = curConfig.flap_count
 
   -- 尾翼
   if tType == 0 then
@@ -505,21 +650,21 @@ local function genChannelList(cfg)
     channels[#channels+1] = "Thr"
   end
 
+  curChannelList = channels
   return channels
 end
 
 -- 生成逻辑开关配置
--- 参数：cfg - 配置参数表，switchPositionMap - 开关名称到 switchIndex 的映射
 -- 返回：逻辑开关配置数组
-local function getLogicalSwitches(cfg, switchPositionMap)
+local function genLogicalSwitches()
   local logicalSwitches = {}
   
   -- 获取开关索引
-  local speedModeSwitch = switchPositionMap["speed_sw"]
-  local cruiseModeSwitch = switchPositionMap["cruise_sw"]
-  local thermalModeSwitch = switchPositionMap["therm_sw"]
-  local fineModeSwitch = switchPositionMap["fine_sw"]
-  local zoomModeSwitch = switchPositionMap["zoom_sw"]
+  local speedModeSwitch = curSwitchPositionMap["speed_sw"]
+  local cruiseModeSwitch = curSwitchPositionMap["cruise_sw"]
+  local thermalModeSwitch = curSwitchPositionMap["therm_sw"]
+  local fineModeSwitch = curSwitchPositionMap["fine_sw"]
+  local zoomModeSwitch = curSwitchPositionMap["zoom_sw"]
   local ls = nil
   
   -- 1. SpeedMode 逻辑开关 (index 0)
@@ -586,28 +731,20 @@ local function getLogicalSwitches(cfg, switchPositionMap)
       logicalSwitches[#logicalSwitches+1] = ls
     end
   end
+  curLogicalSwitches = logicalSwitches
   return logicalSwitches
 end
 
--- 辅助函数：查找逻辑开关索引
-local function getLogicalSwitchIndex(lsName)
-  for i = 1, #LogicalSwitches do
-    if LogicalSwitches[i].name == lsName then
-      return getSwitchIndex(LogicalSwitches[i].key)
-    end
-  end
-  return nil
-end
+
 
 -- 生成飞行模式配置
--- 参数：cfg - 配置参数表，switchPositionMap - 开关名称到 switchIndex 的映射
 -- 返回：飞行模式配置数组
-local function getFlightModes(cfg, switchPositionMap)
+local function genFlightModes()
   local flightModes = {}
 
   -- 根据飞机类型选择模式列表
   local modeList = nil
-  if cfg.plane_type == 0 then
+  if curConfig.plane_type == 0 then
     -- F3K
     modeList = FlightModes.F3K
   else
@@ -635,13 +772,13 @@ local function getFlightModes(cfg, switchPositionMap)
     -- 确定激活开关
     if modeDef.switchName then
       -- 使用物理开关
-      local switchIndex = switchPositionMap[modeDef.switchName]
+      local switchIndex = curSwitchPositionMap[modeDef.switchName]
       if switchIndex and switchIndex ~= -1 then
         fmCfg.switch = switchIndex
       end
     elseif modeDef.lsName then
       -- 使用逻辑开关
-      local lsIndex = getLogicalSwitchIndex(modeDef.lsName)
+      local lsIndex = getLogicalSwitchIndex(curLogicalSwitches, modeDef.lsName)
       if lsIndex then
         fmCfg.switch = lsIndex
       end
@@ -650,22 +787,33 @@ local function getFlightModes(cfg, switchPositionMap)
 
     flightModes[#flightModes+1] = fmCfg
   end
-
+  curFlightModes = flightModes
   return flightModes
 end
 
+local function setSwitchPositionMap(switchPositionMap)
+  curSwitchPositionMap = switchPositionMap
+end
+
+local function setPinToChannelMap(pinToChannelMap)
+  curPinToChannelMap = pinToChannelMap
+end
+
+local function setConfig(config)
+  curConfig = config
+end
+
 return {
-  GVs = GVs,
-  LogicalSwitches = LogicalSwitches,
-  FlightModes = FlightModes,
-  getCurves = getCurves,
-  getOutputs = getOutputs,
-  getInputs = getInputs,
-  getMixers = getMixers,
-  getLogicalSwitches = getLogicalSwitches,
-  getFlightModes = getFlightModes,
+  genCurves = genCurves,
+  genOutputs = genOutputs,
+  genInputs = genInputs,
+  genMixers = genMixers,
+  genLogicalSwitches = genLogicalSwitches,
+  genFlightModes = genFlightModes,
   genOptions = genOptions,
   genChannelList = genChannelList,
   genSwitchPositionList = genSwitchPositionList,
-
+  setSwitchPositionMap = setSwitchPositionMap,
+  setPinToChannelMap = setPinToChannelMap,
+  setConfig = setConfig,
 }

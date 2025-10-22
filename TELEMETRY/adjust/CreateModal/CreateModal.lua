@@ -15,7 +15,9 @@ local switchPositionMap = {}        -- 开关名称到 switchIndex 的映射
 local template = nil                -- 当前使用的模板（ThermalGlider）
 local optionSelectors = {}          -- 动态生成的选择器数组
 local optionConfigs = {}            -- 选项配置数组（从模板的genOptions()返回）
-
+for sourceIndex, sourceName in sources() do 
+    print("source:--------------------------------", sourceName, sourceIndex)
+end
 local function loadModule()
     LZ_runModule("TELEMETRY/common/InputViewO.lua")
     LZ_runModule("TELEMETRY/common/SelectorO.lua")
@@ -42,20 +44,21 @@ local function getCurrentConfig()
 end
 
 -- 从当前选择器获取命名配置参数表
-local function getCurrentConfigTable()
+local function updateCurrentConfigTable()
     local configTable = {}
     for i = 1, #optionConfigs do
         local key = optionConfigs[i].cfgKey
         configTable[key] = optionSelectors[i].selectedIndex - 1  -- 转换为0-based
     end
+    template.setConfig(configTable)
     return configTable
 end
 
 -- 更新舵面列表和针脚映射
 local function updatePinMapping()
     -- 根据当前配置生成舵面列表（使用模板的genChannelList）
-    local configTable = getCurrentConfigTable()
-    channelList = template.genChannelList(configTable)
+    updateCurrentConfigTable()
+    channelList = template.genChannelList()
 
     -- 从配置文件读取针脚到舵面的映射
     -- 配置文件格式: Pin1=RAil:s, Pin2=LAil:s, etc.
@@ -159,8 +162,8 @@ local function setupCurves()
     updatePinMapping()
 
     -- 使用模板的 getCurves 生成曲线配置
-    local configTable = getCurrentConfigTable()
-    local curves = template.getCurves(configTable, channelList)
+    updateCurrentConfigTable()
+    local curves = template.genCurves()
 
     -- 应用生成的曲线配置到遥控器
     for i = 1, #curves do
@@ -201,8 +204,8 @@ local function setupOutputChannels()
     updatePinMapping()
 
     -- 使用模板的 getOutputs 生成输出配置
-    local configTable = getCurrentConfigTable()
-    local outputs = template.getOutputs(configTable, channelList, pinToChannelMap)
+    updateCurrentConfigTable()
+    local outputs = template.genOutputs()
 
     -- 应用生成的输出配置到遥控器
     for i = 1, #outputs do
@@ -240,8 +243,8 @@ end
 -- 设置输入
 local function setupInputs()
     -- 使用模板的 getInputs 生成输入配置
-    local configTable = getCurrentConfigTable()
-    local inputs = template.getInputs(configTable)
+    updateCurrentConfigTable()
+    local inputs = template.genInputs()
 
     model.deleteInputs()
 
@@ -268,8 +271,8 @@ local function setupMixers()
     updatePinMapping()
 
     -- 使用模板的 getMixers 生成混控配置
-    local configTable = getCurrentConfigTable()
-    local mixers = template.getMixers(configTable, channelList, pinToChannelMap)
+    updateCurrentConfigTable()
+    local mixers = template.genMixers()
 
     -- 清除所有输出通道的现有混控器（可选，取决于需求）
     -- 注意：这里我们选择不清除，而是直接插入新的混控器
@@ -306,8 +309,8 @@ end
 -- 设置逻辑开关
 local function setupLogicalSwitches()
   -- 使用模板的 getLogicalSwitches 生成逻辑开关配置
-  local configTable = getCurrentConfigTable()
-  local logicalSwitches = template.getLogicalSwitches(configTable, switchPositionMap)
+  updateCurrentConfigTable()
+  local logicalSwitches = template.genLogicalSwitches()
 
   -- 应用生成的逻辑开关配置到遥控器
   for i = 1, #logicalSwitches do
@@ -343,8 +346,8 @@ end
 -- 设置飞行模式
 local function setupFlightModes()
   -- 使用模板的 getFlightModes 生成飞行模式配置
-  local configTable = getCurrentConfigTable()
-  local flightModes = template.getFlightModes(configTable, switchPositionMap)
+  updateCurrentConfigTable()
+  local flightModes = template.genFlightModes()
 
   -- 应用生成的飞行模式配置到遥控器
   for i = 1, #flightModes do
@@ -382,11 +385,12 @@ local function onSaveButtonClick(button)
     -- 设置输入
     setupInputs()
 
-    -- 设置混控
-    setupMixers()
-
     -- 设置逻辑开关
     setupLogicalSwitches()
+
+
+    -- 设置混控
+    setupMixers()
 
     -- 设置飞行模式
     setupFlightModes()
@@ -406,6 +410,7 @@ end
 local function run(event, curTime)
     if channelSetPage then
         if channelSetPage.pageState == 1 then
+            template.setPinToChannelMap(pinToChannelMap)
             unloadChannelSetPage()
             return true
         end
@@ -415,6 +420,7 @@ local function run(event, curTime)
 
     if switchSetPage then
         if switchSetPage.pageState == 1 then
+            template.setSwitchPositionMap(switchPositionMap)
             unloadSwitchSetPage()
             return true
         end
@@ -520,8 +526,8 @@ local function init()
     updatePinMapping()
 
     -- 初始化开关位置列表和映射
-    local configTable = getCurrentConfigTable()
-    switchPositionList = template.genSwitchPositionList(configTable)
+    updateCurrentConfigTable()
+    switchPositionList = template.genSwitchPositionList()
 
     -- 从配置文件读取已保存的开关位置
     for i = 1, #switchPositionList do
