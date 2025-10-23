@@ -1,5 +1,4 @@
-CFGC = {kvs={}}
-
+CFGC = {}
 
 function CFGC:getNumberField(fieldName, default)
     local v = self.kvs[fieldName]
@@ -31,7 +30,7 @@ function CFGC:readFromFile(fileName)
         return false
     end
 
-    local content = io.read(cfgFile, 200)
+    local content = io.read(cfgFile, 500)
     io.close(cfgFile)
 
     for line in string.gmatch(content, '([^\r\n]+)') do
@@ -64,7 +63,7 @@ function CFGC:writeToFile(fileName)
 end
 
 function CFGC:new()
-    local o = {}
+    local o = {kvs={}}
     setmetatable(o, self)
     self.__index = self
     return o

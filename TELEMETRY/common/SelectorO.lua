@@ -2,15 +2,36 @@ Selector = setmetatable({}, InputView)
 Selector.super = InputView
 
 function Selector:getText(index)
+    if self.textFun then
+        return self.textFun(index)
+    elseif self.texts then
+        return self.texts[index]
+    end
     return string.tostring(index)
 end
 
+function Selector:setTextFun(textFun)
+    self.textFun = textFun
+end
+
+function Selector:setTexts(texts)
+    self.texts = texts
+end
+
 function Selector:inc()
+    -- 如果有 texts 数组，检查边界
+    if self.texts and self.selectedIndex >= #self.texts then
+        return false
+    end
     self.selectedIndex = self.selectedIndex + 1
     return true
 end
 
 function Selector:dec()
+    -- 检查下边界（最小为 1，因为 Lua 数组从 1 开始）
+    if self.selectedIndex <= 1 then
+        return false
+    end
     self.selectedIndex = self.selectedIndex - 1
     return true
 end
@@ -41,7 +62,7 @@ end
 function Selector:new()
     self.__index = self
     local o = self.super:new()
-    o.selectedIndex = -1
+    o.selectedIndex = 1
     setmetatable(o, self)
-    return o 
+    return o
 end

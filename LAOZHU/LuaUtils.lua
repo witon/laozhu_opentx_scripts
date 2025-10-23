@@ -22,3 +22,22 @@ function splitStr(inputstr, sep)
     end
     return t
 end
+
+--打印hash表
+
+function printTable(t, indent)
+    indent = indent or ""
+    if type(t) ~= "table" then
+        print(indent .. tostring(t))
+        return
+    end
+
+    for k, v in pairs(t) do
+        if type(v) == "table" then
+            print(indent .. k .. ":")
+            printTable(v, indent .. "  ")
+        else
+            print(indent .. k .. ": " .. tostring(v))
+        end
+    end
+end
