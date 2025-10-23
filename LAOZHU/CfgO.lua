@@ -1,5 +1,4 @@
-CFGC = {kvs={}}
-
+CFGC = {}
 
 function CFGC:getNumberField(fieldName, default)
     local v = self.kvs[fieldName]
@@ -64,7 +63,7 @@ function CFGC:writeToFile(fileName)
 end
 
 function CFGC:new()
-    local o = {}
+    local o = {kvs={}}
     setmetatable(o, self)
     self.__index = self
     return o
