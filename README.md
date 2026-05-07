@@ -83,7 +83,7 @@ EdgeTX/OpenTX 遥控器脚本，专为 F3K（手抛滑翔机）和 F5J（电动�
    ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_copy.png)
 
 ### 2. 手动安装
-将 `LAOZHU`、`TELEMETRY`、`data` 三个目录复制到遥控器 SD 卡的 `SCRIPTS` 目录下。
+将仓库中的 **`SCRIPTS`** 目录下内容（含 `LAOZHU`、`TELEMETRY` 等）复制到 SD 卡 **`SCRIPTS`**；若有彩屏 widget，再将仓库 **`WIDGETS`** 复制到 SD 卡根目录下的 **`WIDGETS`**（与 `SCRIPTS` 并列）。按需复制 `data`。
 
 ### 3. 遥控器设置
 1. 进入遥控器 **DISPLAY** 设置界面
