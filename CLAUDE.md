@@ -15,12 +15,12 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - `build_sound_so.sh` - 构建 Linux 声音库用于测试
 
 ### 编译
-- `lua GenCompileList.lua` - 生成编译文件列表
+- `cd SCRIPTS && lua GenCompileList.lua` - 生成编译文件列表
 - 脚本在遥控器首次运行时自动编译
 - 当遥控器检测到缺失 .luac 文件时进行编译
 
 ### 测试
-- `lua test/test.lua` - 运行单元测试
+- `cd SCRIPTS && lua test/test.lua` - 运行单元测试
 - `emutest/` 目录下的自动化测试用于遥控器/模拟器测试
 - CI 通过 GitHub Actions 在推送/PR 到 master 时运行测试
 
@@ -28,21 +28,23 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 ### 核心目录结构
 
-**LAOZHU/** - 核心功能模块（业务逻辑）
+仓库根目录与 SD 卡一致：**`SCRIPTS/`**（遥测与库）与 **`WIDGETS/`**（彩屏 widget）并列。
+
+**LAOZHU/** - 核心功能模块（业务逻辑，位于 `SCRIPTS/` 下）
 - 状态管理类（F3kState.lua, F5jState.lua, SinkRateState.lua）
 - 数据记录（F3kFlightRecord.lua, SinkRateRecord.lua, launchRecord.lua）
 - 工作流实现（F3kWF/ 子目录）
 - 工具函数（OTUtils.lua, LuaUtils.lua）
 - 通用模块（comm/ 子目录）
 
-**TELEMETRY/** - 用户界面层
+**TELEMETRY/** - 用户界面层（位于 `SCRIPTS/` 下）
 - 主入口点：3ktel.lua（F3K）、5jtel.lua（F5J）、adjust.lua（调整工具）
 - UI 页面按功能组织（3k/, 5j/, adjust/, common/）
 - 通用 UI 组件在 common/ 目录
 
 **data/** - 飞行数据存储
-**test/** - 单元测试
-**emutest/** - 遥控器/模拟器集成测试
+**test/**、**emutest/** - 单元测试与模拟器侧测试（位于 `SCRIPTS/` 下）
+**WIDGETS/** - 彩屏 Lua widget（SD 卡根目录下 `WIDGETS/`，与 `SCRIPTS` 同级）
 
 ### 模块加载系统
 

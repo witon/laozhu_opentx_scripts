@@ -1,8 +1,10 @@
 @echo off
-set scriptdir=script
+set scriptsdir=SCRIPTS
+set widgetsdir=WIDGETS
 set dirs=TELEMETRY LAOZHU emutest test
 set files=CompileFiles.lua
-del %scriptdir%\*.luac /S
+del %scriptsdir%\*.luac /S
+if exist %widgetsdir% del %widgetsdir%\*.luac /S
 set disk=%1%
 if "%disk%" == "" (
     echo input the disk to install, such as "f:"
@@ -12,7 +14,8 @@ if "%disk%" == "" (
     exit
 )
 @echo on
-for %%d IN (%dirs%) do xcopy /I /Y /E %scriptdir%\%%d %disk%\SCRIPTS\%%d
-for %%f IN (%files%) do copy /Y %scriptdir%\%%f %disk%\SCRIPTS\
+for %%d IN (%dirs%) do xcopy /I /Y /E %scriptsdir%\%%d %disk%\SCRIPTS\%%d
+if exist %widgetsdir% xcopy /I /Y /E %widgetsdir% %disk%\WIDGETS\
+for %%f IN (%files%) do copy /Y %scriptsdir%\%%f %disk%\SCRIPTS\
 rem mkdir %disk%\SCRIPTS\data
 echo not init > %disk%\SCRIPTS\lzinstall.flag 
