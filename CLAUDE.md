@@ -10,6 +10,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 ### 安装和构建
 - `install.bat [盘符:]` - 将脚本安装到遥控器SD卡（Windows）
+- `./install_mac.sh [/Volumes/SD名]` - 将脚本安装到遥控器SD卡（macOS，挂载根目录下需有或自动创建 `SCRIPTS`）
 - `build_sound_dll.bat` - 构建 Windows 声音库用于测试
 - `build_sound_so.sh` - 构建 Linux 声音库用于测试
 
