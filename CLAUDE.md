@@ -20,8 +20,8 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - 当遥控器检测到缺失 .luac 文件时进行编译
 
 ### 测试
-- `cd SCRIPTS && lua test/test.lua` - 运行单元测试（`test.lua` 会探测 SD 根：`LAOZHU/Cfg.lua` 在当前目录则用 `gSDCardDir="./"`，否则用 `"../"` 指向仓库根）
-- 或在仓库根目录：`lua SCRIPTS/test/test.lua`（同样自动探测 `gSDCardDir`）
+- `cd SCRIPTS && lua test/test.lua` - 运行单元测试
+- 或在仓库根目录：`lua SCRIPTS/test/test.lua`
 - `emutest/` 目录下的自动化测试用于遥控器/模拟器测试
 - CI 通过 GitHub Actions 在推送/PR 到 master 时运行测试
 
