@@ -29,7 +29,7 @@ end
 
 function LDRwriteOneRecordToFile(dateTime, record)
 	local relativePath = string.format("data/ld-%04d%02d%02d.records", dateTime["year"], dateTime["mon"], dateTime["day"])
-    local recordFilePath = gScriptDir .. relativePath
+    local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'a')
     if recordFile == nil then
         return false
@@ -114,7 +114,7 @@ end
 
 function LDRclearOneDayRecordsFromFile(dateTime)
 	local relativePath = string.format("data/ld-%04d%02d%02d.records", dateTime["year"], dateTime["mon"], dateTime["day"])
-    local recordFilePath = gScriptDir .. relativePath
+    local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'w')
     io.close(recordFile)
 end
@@ -122,7 +122,7 @@ end
 function LDRreadOneDayRecordsFromFile(ldr, dateTime)
     ldr.records = {}
 	local relativePath = string.format("data/ld-%04d%02d%02d.records", dateTime["year"], dateTime["mon"], dateTime["day"])
-    local recordFilePath = gScriptDir .. relativePath
+    local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'r')
     if recordFile == nil then
         return false

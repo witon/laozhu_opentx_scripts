@@ -57,12 +57,12 @@ local function addEventToHistory(widget, rawEvent, mappedEvent)
 end
 
 local function create(zone, options)
-	gScriptDir = "/SCRIPTS/"
+	gSDCardDir = "/"
 
 	local ver0, radio0 = getVersion()
 	dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
 
-	local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+	local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
 	if fun then
 		fun()
 		dbg("LoadModule ok")
@@ -70,7 +70,7 @@ local function create(zone, options)
 		dbg("LoadModule FAIL:", tostring(err))
 	end
 
-	LZ_runModule("TELEMETRY/common/keyMap.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 	local keyMap = KMgetKeyMap()
 	KMunload()
 	dbg("keyMap ok")

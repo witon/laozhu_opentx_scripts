@@ -2,7 +2,7 @@
 
 ## 概述
 
-LAOZHU目录包含EdgeTX/OpenTX遥控器脚本的核心功能实现。该目录中的模块提供了底层功能支持，被TELEMETRY目录中的界面脚本调用。主要支持F3K（手抛模型飞机）和F5J（电动滑翔机）比赛和训练功能，以及各种调机工具的核心算法实现。
+LAOZHU 目录包含 EdgeTX/OpenTX 遥控器脚本的核心功能实现（在仓库中与 `SCRIPTS/` 同级；安装到 SD 卡根目录下与 `SCRIPTS/` 并列）。该目录中的模块提供了底层功能支持，被 `SCRIPTS/TELEMETRY/` 中的界面脚本调用。主要支持F3K（手抛模型飞机）和F5J（电动滑翔机）比赛和训练功能，以及各种调机工具的核心算法实现。
 
 ## 目录结构
 
@@ -56,7 +56,6 @@ LAOZHU/
 ### 1. comm目录文件
 - `LinuxSound.lua` - Linux平台声音功能（用于模拟测试）
 - `PCIO.lua` - PC文件读写功能（用于模拟测试）
-- `PCLoadModule.lua` - PC端模块加载器（用于模拟测试）
 - `TestSound.lua` - 测试声音功能（用于模拟测试）
 - `OTSound.lua` - OpenTX/EdgeTX声音功能
 - `Timer.lua` - 计时器功能实现

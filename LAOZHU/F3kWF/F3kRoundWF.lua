@@ -18,22 +18,22 @@ local function setTask(taskName, noflyTime, p1, p2)
 		collectgarbage()
     end
     if taskName == "LastFl" then
-        task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
+        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("LastFl", 420, noflyTime, isTimerMuted)
     elseif taskName == "Train" or taskName == "-" then
-        task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
+        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("Train", 600, noflyTime, isTimerMuted)
     elseif taskName == "OtherTask" or taskName == "-" then
-        task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
+        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("Train", 600, noflyTime, isTimerMuted)
     elseif taskName == "AULD" then
-        task = LZ_runModule("LAOZHU/F3kWF/AULDWF.lua")
+        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/AULDWF.lua")
         task.setTaskParam(3, noflyTime, isTimerMuted)
     elseif taskName == "TEST" then
-        task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
+        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("TEST", 5, noflyTime, isTimerMuted)
     elseif taskName == "Normal" then
-        task = LZ_runModule("LAOZHU/F3kWF/CommonTaskWF.lua")
+        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("Normal", 5999, noflyTime, isTimerMuted)
     end
 end

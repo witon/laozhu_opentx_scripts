@@ -1,6 +1,6 @@
 
 function testQueueAddNormal()
-    dofile(HOME_DIR .. "LAOZHU/Queue.lua")
+    dofile(gSDCardDir .. "LAOZHU/Queue.lua")
     local queue = QUEnewQueue(4)
     QUEadd(queue, 1)
     QUEadd(queue, 2)
@@ -17,7 +17,7 @@ function testQueueAddNormal()
 end
 
 function testQueueAddFull()
-    dofile(HOME_DIR .. "LAOZHU/Queue.lua")
+    dofile(gSDCardDir .. "LAOZHU/Queue.lua")
     local queue = QUEnewQueue(4)
     QUEadd(queue, 1)
     QUEadd(queue, 2)
@@ -36,7 +36,7 @@ function testQueueAddFull()
 end
 
 function testQueueAddAndPoll()
-    dofile(HOME_DIR .. "LAOZHU/Queue.lua")
+    dofile(gSDCardDir .. "LAOZHU/Queue.lua")
     local queue = QUEnewQueue(5)
     for i=1, 10, 1 do
         QUEadd(queue, i)
@@ -46,14 +46,14 @@ function testQueueAddAndPoll()
 end
 
 function testQueuePollWhileEmpty()
-    dofile(HOME_DIR .. "LAOZHU/Queue.lua")
+    dofile(gSDCardDir .. "LAOZHU/Queue.lua")
     local queue = QUEnewQueue(5)
     local e = QUEpoll(queue)
     luaunit.assertEquals(e, nil)
 end
 
 function testQueueGet()
-    dofile(HOME_DIR .. "LAOZHU/Queue.lua")
+    dofile(gSDCardDir .. "LAOZHU/Queue.lua")
     local queue = QUEnewQueue(5)
     for i=1, 11, 1 do
         QUEadd(queue, i)
@@ -65,6 +65,7 @@ function testQueueGet()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -72,3 +73,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

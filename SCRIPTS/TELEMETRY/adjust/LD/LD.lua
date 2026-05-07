@@ -15,16 +15,16 @@ local recordListView = nil
 local playingTone = false
 local readVar = nil
 local function loadModule()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
-    LZ_runModule("TELEMETRY/common/ButtonO.lua")
-    LZ_runModule("TELEMETRY/common/NumEditO.lua")
-    LZ_runModule("LAOZHU/DataFileDecode.lua")
-    LZ_runModule("LAOZHU/CfgO.lua")
-    LZ_runModule("/LAOZHU/LDRecord.lua")
-    LZ_runModule("/LAOZHU/LDState.lua")
-    LZ_runModule("/TELEMETRY/adjust/LD/LDRecordListView.lua")
-    LZ_runModule("/LAOZHU/comm/OTSound.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/DataFileDecode.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/LDRecord.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/LDState.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/LD/LDRecordListView.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 end
 
 local function unloadModule()
@@ -64,7 +64,7 @@ local function loadCfgPage()
     if ldCfgPage ~= nil then
         return
     end
-    ldCfgPage = LZ_runModule("TELEMETRY/adjust/LD/LDCfgPage.lua")
+    ldCfgPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/LD/LDCfgPage.lua")
     ldCfgPage.setCfgFileName(ldCfgFileName)
     ldCfgPage.init()
 end
@@ -290,8 +290,8 @@ local function init()
     getGVValue()
 	altID = getTelemetryId("Alt")
     gpsID = getTelemetryId("GPS")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local ldReadVarMap = LZ_runModule("LAOZHU/LDReadVarMap.lua")
+	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
+	local ldReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/LDReadVarMap.lua")
 	ldReadVarMap.ldState = ldState
 	readVar.setVarMap(ldReadVarMap)
 end

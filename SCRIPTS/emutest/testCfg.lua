@@ -1,6 +1,9 @@
+if not gSDCardDir then
+    gSDCardDir = "/"
+end
 
 local function testCfg()
-    dofile(gScriptDir .. "LAOZHU/Cfg.lua")
+    dofile(gSDCardDir .. "LAOZHU/Cfg.lua")
     local cfg1 = CFGnewCfg()
     local cfg2 = CFGnewCfg()
 

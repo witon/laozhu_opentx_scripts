@@ -1,13 +1,9 @@
 
-function LZ_runModule(file)
-    return dofile(file)
-end
-
 function testTrainNormal()
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
     LZ_playFile = function (path)
     end
-    local task = dofile(HOME_DIR .. "LAOZHU/F3kWF/CommonTaskWF.lua")
+    local task = dofile(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
     task.setTaskParam("train", 600, 60)
 
     local timer = Timer:new()
@@ -35,6 +31,7 @@ function testTrainNormal()
  
 end
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -42,3 +39,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

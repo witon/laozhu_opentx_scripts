@@ -1,6 +1,6 @@
-gScriptDir = "/SCRIPTS/"
+gSDCardDir = "/"
 gConfigFileName = "5j.cfg"
-local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 gFlightState = nil
 f5jCfg = nil
@@ -14,24 +14,24 @@ local curPage = nil
 local lastEvent = 0
 local readVar = nil
 
-LZ_runModule("TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
 local function loadPage()
 	if gFlightState == nil then
-		gFlightState = LZ_runModule("LAOZHU/F5jState.lua")
-		LZ_runModule("/LAOZHU/Cfg.lua")
+		gFlightState = LZ_runModule(gSDCardDir .. "LAOZHU/F5jState.lua")
+		LZ_runModule(gSDCardDir .. "LAOZHU/Cfg.lua")
 		f5jCfg = CFGnewCfg()
 		CFGreadFromFile(f5jCfg, gConfigFileName)
 		altID = getTelemetryId("Alt")
-		readVar = LZ_runModule("LAOZHU/readVar.lua")
-		local f5jReadVarMap = LZ_runModule("LAOZHU/f5jReadVarMap.lua")
+		readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
+		local f5jReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/f5jReadVarMap.lua")
 		f5jReadVarMap.setF5jState(gFlightState)
 		readVar.setVarMap(f5jReadVarMap)
 	end
 	local pagePath = "TELEMETRY/" .. pages[displayIndex]
-	curPage = LZ_runModule(pagePath)
+	curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
 	curPage.init()
 end
 
@@ -45,19 +45,19 @@ local function unloadCurPage()
 end
 
 local function init()
-	LZ_runModule("LAOZHU/LuaUtils.lua")
-	LZ_runModule("LAOZHU/OTUtils.lua")
-	LZ_runModule("LAOZHU/comm/OTSound.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/LuaUtils.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 
-	LZ_runModule("TELEMETRY/common/Fields.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
-	LZ_runModule("TELEMETRY/common/InputView.lua")
-	LZ_runModule("TELEMETRY/common/InputSelector.lua")
-	LZ_runModule("TELEMETRY/common/NumEdit.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputView.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelector.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEdit.lua")
 
 	if LZ_isNeedCompile() then
 		local pagePath = "TELEMETRY/common/comp.lua"
-		curPage = LZ_runModule(pagePath)
+		curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
 		return
 	else
 		LZ_isNeedCompile = nil

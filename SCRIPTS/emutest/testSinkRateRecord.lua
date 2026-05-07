@@ -1,3 +1,6 @@
+if not gSDCardDir then
+    gSDCardDir = "/"
+end
 
 local function isRecordEquals(r1, r2)
     if r1.startTime ~= r2.startTime then
@@ -26,8 +29,8 @@ end
 
 local function testSinkRateRecord()
 
-    dofile(gScriptDir .. "/LAOZHU/DataFileDecode.lua")
-    dofile(gScriptDir .. "/LAOZHU/SinkRateRecord.lua")
+    dofile(gSDCardDir .. "LAOZHU/DataFileDecode.lua")
+    dofile(gSDCardDir .. "LAOZHU/SinkRateRecord.lua")
  
     local sinkRateRecord = SRRnewSinkRateRecord()
     local dateTime = getDateTime()

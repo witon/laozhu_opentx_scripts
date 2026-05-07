@@ -13,16 +13,16 @@ local readVar = nil
 local f3kState = nil
 local curAlt = 0
 local function loadModule()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
-    LZ_runModule("TELEMETRY/common/ButtonO.lua")
-    LZ_runModule("TELEMETRY/common/NumEditO.lua")
-    LZ_runModule("LAOZHU/DataFileDecode.lua")
-    LZ_runModule("LAOZHU/CfgO.lua")
-    LZ_runModule("/LAOZHU/launchRecord.lua")
-    LZ_runModule("LAOZHU/comm/Timer.lua")
-    LZ_runModule("/TELEMETRY/adjust/Launch/LRecordListView.lua")
-	LZ_runModule("LAOZHU/comm/OTSound.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/DataFileDecode.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/launchRecord.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/comm/Timer.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/Launch/LRecordListView.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 end
 
 local function unloadModule()
@@ -62,7 +62,7 @@ local function loadCfgPage()
     if launchCfgPage ~= nil then
         return
     end
-    launchCfgPage = LZ_runModule("TELEMETRY/adjust/Launch/LaunchCfgPage.lua")
+    launchCfgPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/Launch/LaunchCfgPage.lua")
 end
 
 local function unloadCfgPage()
@@ -233,7 +233,7 @@ end
 
 local function init()
     loadModule()
-    f3kState = LZ_runModule("/LAOZHU/F3k/F3kState.lua")
+    f3kState = LZ_runModule(gSDCardDir .. "LAOZHU/F3k/F3kState.lua")
 	f3kState.landedCallback = landedCallback
     f3kState.launchedCallback = launchedCallback
 	
@@ -250,8 +250,8 @@ local function init()
     updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local launchReadVarMap = LZ_runModule("LAOZHU/launchReadVarMap.lua")
+	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
+	local launchReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/launchReadVarMap.lua")
 	launchReadVarMap.f3kState = f3kState
 	readVar.setVarMap(launchReadVarMap)
 end

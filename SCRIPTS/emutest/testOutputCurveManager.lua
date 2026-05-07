@@ -1,4 +1,7 @@
-dofile(gScriptDir .. "TELEMETRY/adjust/OutputCurveManager.lua")
+if not gSDCardDir then
+    gSDCardDir = "/"
+end
+dofile(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/OutputCurveManager.lua")
 
 local function testDisableCurve()
     local channels = {1, 2}

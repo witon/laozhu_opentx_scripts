@@ -66,7 +66,7 @@ function LZ_error(message)
 	local dateTime = getDateTime()
 	local dateStr = string.format("%04d%02d%02d", dateTime["year"], dateTime["mon"], dateTime["day"])
 	local timeStr = LZ_formatDateTime(dateTime)
-    local errLogFilePath = gScriptDir .. "err_" .. dateStr .. ".log"
+    local errLogFilePath = gSDCardDir .. "SCRIPTS/err_" .. dateStr .. ".log"
     local errLogFile = io.open(errLogFilePath, 'a')
     if errLogFile == nil then
 		assert(false, message)
@@ -80,7 +80,7 @@ function LZ_error(message)
 end
 
 function LZ_isNeedCompile()
-    local flgFilePath = gScriptDir .. "lzinstall.flag"
+    local flgFilePath = gSDCardDir .. "SCRIPTS/lzinstall.flag"
     local flgFile = io.open(flgFilePath, 'r')
 	if flgFile == nil then
 		return true
@@ -95,7 +95,7 @@ function LZ_isNeedCompile()
 end
 
 function LZ_markCompiled()
-    local flgFilePath = gScriptDir .. "lzinstall.flag"
+    local flgFilePath = gSDCardDir .. "SCRIPTS/lzinstall.flag"
 	local flgFile = io.open(flgFilePath, 'w')
 	if flgFile ~= nil then
 		io.write(flgFile, "inited")

@@ -1,8 +1,6 @@
-CFGC = {kvs={}}
 
-
-function CFGC:getNumberField(fieldName, default)
-    local v = self.kvs[fieldName]
+function CFGgetNumberField(cfg, fieldName, default)
+    local v = cfg[fieldName]
     if v == nil and default then
         return default
     end
@@ -12,8 +10,8 @@ function CFGC:getNumberField(fieldName, default)
     return v
 end
 
-function CFGC:getStrField(fieldName, default)
-    local v = self.kvs[fieldName]
+function CFGgetStrField(cfg, fieldName, default)
+    local v = cfg[fieldName]
     if v == nil and default then
         return default
     end
@@ -23,9 +21,8 @@ function CFGC:getStrField(fieldName, default)
     return v
 end
 
-
-function CFGC:readFromFile(fileName)
-    local cfgFilePath = gScriptDir .. fileName
+function CFGreadFromFile(cfg, fileName)
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. fileName
     local cfgFile = io.open(cfgFilePath, 'r')
     if cfgFile == nil then
         return false
@@ -38,22 +35,22 @@ function CFGC:readFromFile(fileName)
         local k, v, t = string.match(line, '([^=]+)=(.+):(.)')
         if k and v and t then
             if t == 's' then
-                self.kvs[k] = v
+                cfg[k] = v
             else
-                self.kvs[k] = tonumber(v)
+                cfg[k] = tonumber(v)
             end
         end
     end
     return true
 end
 
-function CFGC:writeToFile(fileName)
-    local cfgFilePath = gScriptDir .. fileName
+function CFGwriteToFile(cfg, fileName)
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. fileName
     local cfgFile = io.open(cfgFilePath, 'w')
     if cfgFile == nil then
         return
     end
-    for k, v in pairs(self.kvs) do
+    for k, v in pairs(cfg) do
         if type(v) == "string" then
            io.write(cfgFile, k, '=', v, ':s\r\n')
         else
@@ -63,9 +60,15 @@ function CFGC:writeToFile(fileName)
     io.close(cfgFile)
 end
 
-function CFGC:new()
-    local o = {}
-    setmetatable(o, self)
-    self.__index = self
-    return o
+function CFGnewCfg()
+    return {}
+end
+
+function CFGunload()
+    CFGgetNumberField = nil
+    CFGgetStrField = nil
+    CFGreadFromFile = nil
+    CFGwriteToFile = nil
+    CFGnewCfg = nil
+    CFGunload = nil
 end

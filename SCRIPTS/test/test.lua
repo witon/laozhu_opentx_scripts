@@ -1,8 +1,34 @@
+LZ_TEST_HARNESS = true
+
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
-    HOME_DIR = "./"
+    if io.open("SCRIPTS/test/test.lua", "r") then
+        HOME_DIR = "SCRIPTS/"
+    else
+        HOME_DIR = "./"
+    end
 else
     HOME_DIR = HOME_DIR .. "/"
+end
+
+if not gSDCardDir then
+    local fh = io.open("LAOZHU/Cfg.lua", "r")
+    if fh then
+        fh:close()
+        gSDCardDir = "./"
+    else
+        fh = io.open("../LAOZHU/Cfg.lua", "r")
+        if fh then
+            fh:close()
+            gSDCardDir = "../"
+        else
+            gSDCardDir = "./"
+        end
+    end
+end
+
+function LZ_runModule(file)
+    return dofile(file)
 end
 
 dofile(HOME_DIR .. "test/TestF3kFlightRecord.lua")
@@ -18,15 +44,6 @@ dofile(HOME_DIR .. "test/TestSensor.lua")
 dofile(HOME_DIR .. "test/TestF3kRound.lua")
 dofile(HOME_DIR .. "test/testF3kTask/TestCommonTask.lua")
 dofile(HOME_DIR .. "test/TestF3kCompetitionWF.lua")
-
-
-
-
-
-
-
-
-
 
 
 

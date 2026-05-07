@@ -122,7 +122,7 @@ function getAllOutputsFromBuf(buf, start)
 end
 
 function getOutputsFromFile(index)
-    local cfgFilePath = gScriptDir .. index .. ".output"
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. index .. ".output"
     local outputFile = io.open(cfgFilePath, "r")
     local buf = io.read(outputFile, 1000)
     local backupInfo, pos = getBackupInfofromBuf(buf, 1)
@@ -139,7 +139,7 @@ end
 
 
 function restoreOutputsFromFile(index)
-    local cfgFilePath = gScriptDir .. index .. ".output"
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. index .. ".output"
     local outputFile = io.open(cfgFilePath, "r")
     local buf = io.read(outputFile, 1000)
     local backupInfo, pos = getBackupInfofromBuf(buf, 1)
@@ -165,7 +165,7 @@ function writeBackupInfoToFile(file)
 end
 
 function backupOutputsToFile(index)
-    local cfgFilePath = gScriptDir .. index .. ".output"
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. index .. ".output"
     local outputFile = io.open(cfgFilePath, "w")
     writeBackupInfoToFile(outputFile)
     for i=0, 15, 1 do

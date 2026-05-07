@@ -1,6 +1,6 @@
-gScriptDir = "/SCRIPTS/"
+gSDCardDir = "/"
 gConfigFileName = "3k.cfg"
-local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
 fun()
 gF3kCore = nil
 
@@ -14,20 +14,20 @@ local curPage = nil
 local lastEvent = 0
 
 
-LZ_runModule("TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
 
 local function init()
-	LZ_runModule("LAOZHU/LuaUtils.lua")
-	LZ_runModule("LAOZHU/OTUtils.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/LuaUtils.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
 	
-	LZ_runModule("LAOZHU/comm/OTSound.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 
 	if LZ_isNeedCompile() then
 		local pagePath = "TELEMETRY/common/comp.lua"
-		curPage = LZ_runModule(pagePath)
+		curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
 		--curPage.init()
 		return
 	else
@@ -40,14 +40,14 @@ end
 
 local function loadPage()
 	if gF3kCore == nil then
-		LZ_runModule("LAOZHU/CfgO.lua")
+		LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 		f3kCfg = CFGC:new()
 		f3kCfg:readFromFile(gConfigFileName)
-		gF3kCore = LZ_runModule("TELEMETRY/3k/f3kCore.lua")
+		gF3kCore = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/f3kCore.lua")
 		gF3kCore.init()
 	end
 	local pagePath = "TELEMETRY/" .. pages[displayIndex]
-	curPage = LZ_runModule(pagePath)
+	curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
 	--curPage.init()
 end
 

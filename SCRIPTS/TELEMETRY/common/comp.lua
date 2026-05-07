@@ -2,9 +2,9 @@ local curFileIndex = 1
 local this = nil
 local compileFiles = nil
 --local function init()
-    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+    local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
     fun()
-    compileFiles = LZ_runModule("CompileFiles.lua")
+    compileFiles = LZ_runModule(gSDCardDir .. "SCRIPTS/CompileFiles.lua")
 --end
 
 local function bg()
@@ -23,7 +23,13 @@ local function run(event, time)
             return false
         end
     end
-    local fun, err = loadScript(gScriptDir .. compileFiles[curFileIndex])
+    local rel = compileFiles[curFileIndex]
+    local r = rel
+    if string.sub(r, 1, 1) == "/" then
+        r = string.sub(r, 2)
+    end
+    local path = (string.sub(r, 1, 7) == "LAOZHU/") and (gSDCardDir .. r) or (gSDCardDir .. "SCRIPTS/" .. r)
+    local fun, err = loadScript(path)
     if fun == nil then
         assert(false, compileFiles[curFileIndex])
     end

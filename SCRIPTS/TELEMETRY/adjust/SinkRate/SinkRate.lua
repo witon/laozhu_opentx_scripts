@@ -14,16 +14,16 @@ local recordListView = nil
 local playingTone = false
 local readVar = nil
 local function loadModule()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
-    LZ_runModule("TELEMETRY/common/ButtonO.lua")
-    LZ_runModule("TELEMETRY/common/NumEditO.lua")
-    LZ_runModule("LAOZHU/DataFileDecode.lua")
-    LZ_runModule("LAOZHU/CfgO.lua")
-    LZ_runModule("/LAOZHU/SinkRateRecord.lua")
-    LZ_runModule("/LAOZHU/SinkRateState.lua")
-    LZ_runModule("/TELEMETRY/adjust/SinkRate/SRRecordListView.lua")
-    LZ_runModule("/LAOZHU/comm/OTSound.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/DataFileDecode.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/SinkRateRecord.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/SinkRateState.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/SinkRate/SRRecordListView.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 end
 
 local function unloadModule()
@@ -63,7 +63,7 @@ local function loadCfgPage()
     if sinkRateCfgPage ~= nil then
         return
     end
-    sinkRateCfgPage = LZ_runModule("TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua")
+    sinkRateCfgPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua")
     sinkRateCfgPage.setCfgFileName(sinkRateCfgFileName)
     sinkRateCfgPage.init()
 end
@@ -263,8 +263,8 @@ local function init()
     updateGvNumEdit()
     getGVValue()
 	altID = getTelemetryId("Alt")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local sinkRateReadVarMap = LZ_runModule("LAOZHU/sinkRateReadVarMap.lua")
+	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
+	local sinkRateReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/sinkRateReadVarMap.lua")
 	sinkRateReadVarMap.sinkRateState = sinkRateState
 	readVar.setVarMap(sinkRateReadVarMap)
 end

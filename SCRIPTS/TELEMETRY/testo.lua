@@ -1,4 +1,4 @@
-gScriptDir = "/SCRIPTS/"
+gSDCardDir = "/"
 gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 local numEditArr = {}
 local buttonArr = {}
@@ -22,10 +22,10 @@ end
 
 
 local function load()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    --LZ_runModule("TELEMETRY/common/NumEditO.lua")
-    LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
-    LZ_runModule("TELEMETRY/common/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
+    --LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
     vm = ViewMatrix:new()
     for i=1, 5, 1 do
         --numEditArr[i] = NumEdit:new()
@@ -41,7 +41,7 @@ local function load()
 end
 
 local function init()
-    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+    local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
     fun()
 end
 

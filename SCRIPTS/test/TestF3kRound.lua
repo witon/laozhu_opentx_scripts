@@ -1,14 +1,10 @@
 
-function LZ_runModule(file)
-    return dofile(file)
-end
-
 function testF3kRoundNormal()
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
     LZ_playFile = function (filepath)
     end
     LZ_playTime = function () end
-    local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3kWF/F3kRoundWF.lua")
+    local f3kRound = dofile(gSDCardDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
     f3kRound.init()
     f3kRound.setRoundParam(120, 40, "TEST", 5)
     luaunit.assertEquals(f3kRound.getState(), 1) --begin
@@ -52,8 +48,8 @@ function testF3kRoundNormal()
 end
 
 function testF3kRoundStopAndStart()
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
-    local f3kRound = dofile(HOME_DIR .. "LAOZHU/F3kWF/F3kRoundWF.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
+    local f3kRound = dofile(gSDCardDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
     LZ_playFile = function (filepath)
     end
 
@@ -87,6 +83,7 @@ function testF3kRoundStopAndStart()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -94,3 +91,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end
