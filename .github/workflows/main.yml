@@ -21,8 +21,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: Setup C++ environment
-        uses: kurocha/setup-cpp@v1
       - uses: leafo/gh-actions-lua@v8.0.0
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
@@ -41,22 +39,12 @@ jobs:
       - name: install a module
         run: luarocks install luaunit
       - name: install a module
-        run: luarocks install lua-mock 
-      - name: install asoundlib
-        run: sudo apt-get install libasound2-dev
-      - name: install liblua5.2
-        run: sudo apt-get install liblua5.2-dev
+        run: luarocks install lua-mock
 
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
+      - name: Lua version
         run: lua -v
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Run unit tests
         run: |
-          pwd
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          bash build_sound_so.sh
+          cd script
           lua test/test.lua

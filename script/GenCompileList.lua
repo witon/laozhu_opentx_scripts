@@ -6,7 +6,6 @@ local searchPath = "."
 local blackList = {
 	"GenCompileList.lua",
 	"CompileFiles.lua",
-    "competition_lib",
     "TELEMETRY\\pando.lua",
 	"TELEMETRY\\testf.lua",
 	"TELEMETRY\\testo.lua",

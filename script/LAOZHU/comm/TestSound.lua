@@ -2,7 +2,13 @@ TEST_lastPlayNumber = -1
 TEST_lastPlayFile = ""
 TEST_lastPlayTime = -1
 TEST_SOUND_DIR = "SOUNDS\\cz\\"
-require("sound")
+-- 无原生 sound 模块时（如 CI）；真机已有 playNumber/playFile 则不覆盖。
+if playNumber == nil then
+	playNumber = function() end
+end
+if playFile == nil then
+	playFile = function() end
+end
 
 function LZ_playNumber(value, flag)
 	if gIsEmulate then
