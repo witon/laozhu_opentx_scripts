@@ -21,6 +21,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 ### 测试
 - **开发机 / CI**：在仓库根目录执行 `lua test/test.lua`（单元测试）；CI 在推送/PR 到 master 时通过 GitHub Actions 运行
+- **macOS**：安装 LuaRocks 后执行 `luarocks install luaunit lua-mock`（与 CI 一致），再在仓库根执行 `./run_tests.sh`；脚本会调用 `luarocks path` 注入 `LUA_PATH`/`LUA_CPATH`，并用仓库内 [tools/lua/5.2.2](tools/lua/5.2.2/README.md) 的 Lua 5.2.2 与 CI 对齐
 - **模拟器 / 遥控器（黑白屏）**：自动化测试入口为遥测脚本 `SCRIPTS/TELEMETRY/utO.lua`，用例脚本位于 `SCRIPTS/emutest/`
 - **彩屏 WIDGET**：自动化测试入口尚未实现
 
