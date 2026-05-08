@@ -73,7 +73,11 @@ function SRRclearOneDayRecordsFromFile(dateTime)
 	local relativePath = string.format("data/%04d%02d%02d.records", dateTime["year"], dateTime["mon"], dateTime["day"])
     local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'w')
+    if recordFile == nil then
+        return false
+    end
     io.close(recordFile)
+    return true
 end
 
 function SRRreadOneDayRecordsFromFile(srr, dateTime)

@@ -3,6 +3,9 @@ if not gSDCardDir then
 end
 
 local function isRecordEquals(r1, r2)
+    if r1 == nil or r2 == nil then
+        return false
+    end
     if r1.startTime ~= r2.startTime then
         return false
     end
@@ -34,9 +37,12 @@ local function testSinkRateRecord()
  
     local sinkRateRecord = SRRnewSinkRateRecord()
     local dateTime = getDateTime()
-    SRRclearOneDayRecordsFromFile(dateTime)
+    assert(
+        SRRclearOneDayRecordsFromFile(dateTime),
+        "SRRclear: need SCRIPTS/data/ (run install script or mkdir SD:/SCRIPTS/data)"
+    )
     local destRecords = {}
-    for i=1, 10, 1 do
+    for i = 1, 10, 1 do
         local record = {}
         record.startTime = 100
         record.startAlt = 200
@@ -45,12 +51,19 @@ local function testSinkRateRecord()
         record.ele = -10
         record.flap1 = i
         record.flap2 = "-"
-        SRRwriteOneRecordToFile(dateTime, record)
-        destRecords[#destRecords+1] = record
+        assert(
+            SRRwriteOneRecordToFile(dateTime, record),
+            "SRRwrite: need SCRIPTS/data/ (run install script or mkdir SD:/SCRIPTS/data)"
+        )
+        destRecords[#destRecords + 1] = record
     end
-    SRRreadOneDayRecordsFromFile(sinkRateRecord, dateTime)
-    for i=1, 10, 1 do
-        assert(isRecordEquals(sinkRateRecord.records[i], destRecords[i]))
+    assert(
+        SRRreadOneDayRecordsFromFile(sinkRateRecord, dateTime),
+        "SRRread: missing .records file under SCRIPTS/data/"
+    )
+    assert(#sinkRateRecord.records == 10, "SRRread: expected 10 records")
+    for i = 1, 10, 1 do
+        assert(isRecordEquals(sinkRateRecord.records[i], destRecords[i]), "record mismatch at " .. tostring(i))
     end
     SRRunload()
     DFDunload()
