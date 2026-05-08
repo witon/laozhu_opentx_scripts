@@ -7,6 +7,7 @@ export COPYFILE_DISABLE=1
 export COPY_EXTENDED_ATTRIBUTES_DISABLE=1
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+TEST_SRC="$ROOT/test"
 SCRIPTS_SRC="$ROOT/SCRIPTS"
 LAOZHU_SRC="$ROOT/LAOZHU"
 WIDGETS_SRC="$ROOT/WIDGETS"
@@ -27,7 +28,7 @@ if [[ -d "$WIDGETS_SRC" ]]; then
   find "$WIDGETS_SRC" -name '*.luac' -delete
 fi
 
-DIRS=(TELEMETRY emutest test)
+DIRS=(TELEMETRY emutest)
 FILES=(CompileFiles.lua)
 
 if [[ -n "${1:-}" ]]; then
@@ -63,6 +64,13 @@ for d in "${DIRS[@]}"; do
   mkdir -p "$TARGET/$d"
   rsync -av --no-specials --no-devices "$SCRIPTS_SRC/$d/" "$TARGET/$d/"
 done
+
+if [[ ! -d "$TEST_SRC" ]]; then
+  echo "install_mac.sh: missing source dir: $TEST_SRC" >&2
+  exit 1
+fi
+mkdir -p "$TARGET/test"
+rsync -av --no-specials --no-devices "$TEST_SRC/" "$TARGET/test/"
 
 mkdir -p "$DEST_ROOT/LAOZHU"
 rsync -av --no-specials --no-devices "$LAOZHU_SRC/" "$DEST_ROOT/LAOZHU/"

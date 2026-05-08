@@ -20,16 +20,15 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - 当遥控器检测到缺失 .luac 文件时进行编译
 
 ### 测试
-- `cd SCRIPTS && lua test/test.lua` - 运行单元测试
-- 或在仓库根目录：`lua SCRIPTS/test/test.lua`
-- `emutest/` 目录下的自动化测试用于遥控器/模拟器测试
+- 在仓库根目录：`lua test/test.lua` - 运行单元测试
+- `SCRIPTS/emutest/` 目录下的自动化测试用于遥控器/模拟器测试
 - CI 通过 GitHub Actions 在推送/PR 到 master 时运行测试
 
 ## 架构
 
 ### 核心目录结构
 
-仓库根目录与 SD 卡一致：**`SCRIPTS/`**（遥测脚本、`test/`、`emutest/` 等）、**`LAOZHU/`**（核心库）与 **`WIDGETS/`**（彩屏 widget）并列；SD 卡上亦为 `SCRIPTS`、`LAOZHU`、`WIDGETS` 同级。
+仓库根目录与 SD 卡一致：**`SCRIPTS/`**（遥测脚本、`emutest/` 等）、**`LAOZHU/`**（核心库）、**`WIDGETS/`**（彩屏 widget）与 **`test/`**（开发机单元测试源码；安装到 SD 时为 `SCRIPTS/test/`）并列；SD 卡上亦为 `SCRIPTS`、`LAOZHU`、`WIDGETS` 同级。
 
 **LAOZHU/** - 核心功能模块（业务逻辑，与 `SCRIPTS/` 同级；脚本路径以 **`gSDCardDir`** 为 SD 卡根目录：`/`（真机/模拟器）或 `./`（本机跑 `test/test.lua`），`LZ_runModule` 将 `LAOZHU/...` 解析为 `gSDCardDir .. "LAOZHU/..."`，其余相对路径解析为 `gSDCardDir .. "SCRIPTS/..."`）
 - 状态管理类（F3kState.lua, F5jState.lua, SinkRateState.lua）
@@ -44,7 +43,8 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - 通用 UI 组件在 common/ 目录
 
 **data/** - 飞行数据存储
-**test/**、**emutest/** - 单元测试与模拟器侧测试（位于 `SCRIPTS/` 下）
+**test/** - 单元测试（仓库根目录，`SCRIPTS` 与 `WIDGETS` 共用逻辑的开发机测试）
+**emutest/** - 模拟器侧自动化测试（位于 `SCRIPTS/` 下）
 **WIDGETS/** - 彩屏 Lua widget（SD 卡根目录下 `WIDGETS/`，与 `SCRIPTS` 同级）
 
 ### 模块加载系统
