@@ -29,7 +29,7 @@ function TEsetFocusState(textEdit, state)
 end
 
 function TEdoKey(textEdit, event)
-    if event == 35 or event == 67 or event == 37 then
+    if event == 35 or event == 67 then
         textEdit.modiChar = textEdit.modiChar + 1
         if textEdit.modiChar == 33 then
             textEdit.modiChar = 48
@@ -40,7 +40,7 @@ function TEdoKey(textEdit, event)
         elseif textEdit.modiChar > 122 then
             textEdit.modiChar = 122
         end
-    elseif event == 36 or event == 68 or event == 38 then
+    elseif event == 36 or event == 68 then
         textEdit.modiChar = textEdit.modiChar - 1
         if textEdit.modiChar < 32 then
             textEdit.modiChar = 32 
@@ -76,16 +76,26 @@ function TEsetText(textEdit, str)
     textEdit.str = str
 end
 
+-- 与 TextEditO 一致：RIGHT 时从右向左接龙，锚点为 x - width。
+local function drawTextAdvanceX(x, y, text, flags)
+    lcd.drawText(x, y, text, flags)
+    local w = select(1, lcd.sizeText(text, flags))
+    if flags % (2 * RIGHT) >= RIGHT then
+        return x - w
+    end
+    return x + w
+end
+
 function TEdraw(textEdit, x, y, invers, option)
     if textEdit.focusState == 2 then
         if invers then
-            lcd.drawText(x, y, textEdit.tailStr, option - INVERS)
-            lcd.drawText(lcd.getLastLeftPos(), y, string.char(textEdit.modiChar), option)
-            lcd.drawText(lcd.getLastLeftPos(), y, textEdit.headStr, option - INVERS)
+            local x2 = drawTextAdvanceX(x, y, textEdit.tailStr, option - INVERS)
+            local x3 = drawTextAdvanceX(x2, y, string.char(textEdit.modiChar), option)
+            drawTextAdvanceX(x3, y, textEdit.headStr, option - INVERS)
         else
-            lcd.drawText(x, y, textEdit.tailStr, option)
-            lcd.drawText(lcd.getLastLeftPos(), y, string.char(textEdit.modiChar), option)
-            lcd.drawText(lcd.getLastLeftPos(), y, textEdit.headStr, option)
+            local x2 = drawTextAdvanceX(x, y, textEdit.tailStr, option)
+            local x3 = drawTextAdvanceX(x2, y, string.char(textEdit.modiChar), option)
+            drawTextAdvanceX(x3, y, textEdit.headStr, option)
         end
     elseif textEdit.focusState == 1 or textEdit.focusState == 0 then
         lcd.drawText(x, y, textEdit.str, option)

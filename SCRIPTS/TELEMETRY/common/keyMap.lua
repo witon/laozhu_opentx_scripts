@@ -7,7 +7,7 @@
 -- 下	99	35	67	131
 
 
-
+print("--------------------------------:", EVT_EXIT_BREAK, EVT_ENTER_BREAK)
 	
 function KMgetKeyMap()
     local ver, radio = getVersion();
@@ -58,11 +58,11 @@ function KMgetKeyMap()
             --keyMap[67] =  --长按page< 左
             --keyMap[68] =  --page> 右
             keyMap[525] = 36 --MDL 上
-            keyMap[513] = 35 --TEL 下
+            --keyMap[513] = 35 --TEL 下
             keyMap[76] = 67 --长按TEL
             keyMap[75] = 133 --长按MDL
-            keyMap[514] = 34 --return
-            keyMap[513] = 33 --exit
+            --keyMap[514] = 34 --return
+            --keyMap[513] = 33 --exit
         end
     elseif string.sub(radio, 1, 4) == "gx12" then
         keyMap[4099] = 38

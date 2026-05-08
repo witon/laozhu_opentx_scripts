@@ -33,7 +33,7 @@ function TextEdit:setFocusState(state)
 end
 
 function TextEdit:doKey(event)
-    if event == 35 or event == 67 or event == 37 then
+    if event == 35 or event == 67 then
         self.modiChar = self.modiChar + 1
         if self.modiChar == 33 then
             self.modiChar = 48
@@ -44,7 +44,7 @@ function TextEdit:doKey(event)
         elseif self.modiChar > 122 then
             self.modiChar = 122
         end
-    elseif event == 36 or event == 68 or event == 38 then
+    elseif event == 36 or event == 68 then
         self.modiChar = self.modiChar - 1
         if self.modiChar < 32 then
             self.modiChar = 32 
@@ -80,17 +80,28 @@ function TextEdit:setText(str)
     self.str = str
 end
 
+-- 统一用 sizeText 推算下一段起点。控件以 SMLSIZE+RIGHT 调用时，多段 drawText 从右向左接龙，
+-- 下一段锚点应为 x - width（与 getLastLeftPos 一致）；左对齐时为 x + width。
+local function drawTextAdvanceX(x, y, text, flags)
+    lcd.drawText(x, y, text, flags)
+    local w = select(1, lcd.sizeText(text, flags))
+    if flags % (2 * RIGHT) >= RIGHT then
+        return x - w
+    end
+    return x + w
+end
+
 function TextEdit:draw(x, y, invers, option1)
     local option = self:getTextOption(invers, option1)
     if self.focusState == 2 then
         if invers then
-            lcd.drawText(x, y, self.tailStr, option - INVERS)
-            lcd.drawText(lcd.getLastLeftPos(), y, string.char(self.modiChar), option)
-            lcd.drawText(lcd.getLastLeftPos(), y, self.headStr, option - INVERS)
+            local x2 = drawTextAdvanceX(x, y, self.tailStr, option - INVERS)
+            local x3 = drawTextAdvanceX(x2, y, string.char(self.modiChar), option)
+            drawTextAdvanceX(x3, y, self.headStr, option - INVERS)
         else
-            lcd.drawText(x, y, self.tailStr, option)
-            lcd.drawText(lcd.getLastLeftPos(), y, string.char(self.modiChar), option)
-            lcd.drawText(lcd.getLastLeftPos(), y, self.headStr, option)
+            local x2 = drawTextAdvanceX(x, y, self.tailStr, option)
+            local x3 = drawTextAdvanceX(x2, y, string.char(self.modiChar), option)
+            drawTextAdvanceX(x3, y, self.headStr, option)
         end
     elseif self.focusState == 1 or self.focusState == 0 then
         lcd.drawText(x, y, self.str, option)

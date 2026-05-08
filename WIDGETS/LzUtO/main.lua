@@ -7,6 +7,14 @@ local options = {
 	{ "Color", COLOR, COLOR_THEME_SECONDARY1 },
 }
 
+-- 调试：见 LAOZHU/DBGTools/dbg.lua；DEBUG_LOG 关则 DBG_dbg 不输出；SHOW_LOG_SCREEN 开且 DEBUG_LOG 开时写入日志缓冲供覆盖层绘制。
+local DBG_OPTS = {
+	printTag = "[LzUtO]",
+	DEBUG_LOG = true,
+	SHOW_LOG_SCREEN = false,
+	LOG_MAX = 20,
+}
+
 local testFiles = {
 	"/emutest/testCfg.lua",
 	"/emutest/testCfgO.lua",
@@ -105,6 +113,9 @@ local function doOneCase(widget)
 		widget.curCaseIndex = 1
 		local testFile = testFiles[widget.curFileIndex]
 		widget.curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFile)
+		if widget.dbgEnabled then
+			DBG_dbg("emutest", "file " .. tostring(widget.curFileIndex) .. "/" .. tostring(#testFiles), testFile)
+		end
 	end
 	widget.curCases[widget.curCaseIndex]()
 	widget.curCaseIndex = widget.curCaseIndex + 1
@@ -127,9 +138,21 @@ local function refresh(widget, event, touchState)
 
 	local TXT = SMLSIZE + LEFT + COLOR_THEME_PRIMARY1
 
+	local rowH = 14
+	local logLinesTop = oy + rowH
+	local logHintY = z.y + z.h - rowH - 2
+	if logHintY < logLinesTop + rowH then
+		logHintY = logLinesTop + rowH
+	end
+	local logAvailH = logHintY - logLinesTop - 2
+	local maxVisLog = math.max(1, math.floor(logAvailH / rowH))
+
 	if widget.curFileIndex <= #testFiles then
 		doOneCase(widget)
 		if widget.curFileIndex > #testFiles then
+			if widget.dbgEnabled then
+				DBG_dbg("emutest OK")
+			end
 			lcd.drawText(ox + 2, oy + 2, "emutest OK", TXT)
 			return
 		end
@@ -150,16 +173,26 @@ local function refresh(widget, event, touchState)
 		initUI(widget)
 	end
 
-	local ev = event or 0
-	if ev ~= 0 then
-		print("[LzUtO] before:", ev)
+	widget._dbgN = (widget._dbgN or 0) + 1
+	local rawEv = event or 0
+	if widget.dbgEnabled then
+		if event ~= nil and rawEv ~= 0 then
+			local m = widget.keyMap[event]
+			DBG_dbg("KEY", "raw=" .. tostring(rawEv), "mapped=" .. tostring(m or rawEv), "hasMap=" .. tostring(m ~= nil))
+		elseif widget._dbgN % 120 == 1 then
+			DBG_dbg(string.format("refresh#%d evt=nil (未交权给 widget)", widget._dbgN))
+		end
 	end
+
+	local ev = rawEv
 	local e = widget.keyMap[ev]
 	if e ~= nil then
 		ev = e
 	end
-	if ev ~= 0 then
-		print("[LzUtO] after:", ev)
+
+	if widget.dbgEnabled and event ~= nil and event ~= 0 then
+		local mappedEvent = widget.keyMap[event] or event
+		DBG_logOnMappedKey(mappedEvent)
 	end
 
 	widget.viewMatrix:doKey(ev)
@@ -197,6 +230,11 @@ local function refresh(widget, event, touchState)
 	if hintY >= oy + 62 then
 		lcd.drawText(ox + 2, hintY, "App:长按ENT交权", TXT)
 	end
+
+	if widget.dbgEnabled then
+		DBG_logClampScroll(maxVisLog)
+		DBGW_drawLogOverlay(z, zoneBg, TXT, "App:长按ENT交权 ↑/↓滚动")
+	end
 end
 
 local function create(zone, options)
@@ -206,18 +244,31 @@ local function create(zone, options)
 	local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
 	if fun then
 		fun()
+		LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
+		DBG_init(DBG_OPTS)
+		LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGWidgetLog.lua")
+		local ver0, radio0 = getVersion()
+		DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
+		DBG_dbg("LoadModule ok")
 	else
 		print("[LzUtO] LoadModule FAIL:", tostring(err))
 	end
 
 	local curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFiles[1])
+	if fun then
+		DBG_dbg("emutest", "file 1/" .. tostring(#testFiles), testFiles[1])
+	end
 	LZ_runModule(gSDCardDir .. "LAOZHU/EmuTestUtils.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
 
 	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 	local keyMap = KMgetKeyMap()
 	KMunload()
+	if fun then
+		DBG_dbg("keyMap ok")
+	end
 
+	local dbgEnabled = fun ~= nil
 	return {
 		zone = zone,
 		options = options,
@@ -226,6 +277,7 @@ local function create(zone, options)
 		curCaseIndex = 1,
 		curCases = curCases,
 		viewMatrix = nil,
+		dbgEnabled = dbgEnabled,
 	}
 end
 
