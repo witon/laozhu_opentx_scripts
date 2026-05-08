@@ -8,6 +8,7 @@ function testNormalProcess()
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 36}, thenReturn = {}}
+    LZ_playNumber:whenCalled{with={any, 0}, thenReturn = {}}
 
     f5jState.setThrottleThreshold(-80)
     local state = f5jState.getFlightState()

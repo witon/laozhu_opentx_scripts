@@ -2,7 +2,11 @@ LZ_TEST_HARNESS = true
 
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
-    if io.open("SCRIPTS/test/test.lua", "r") then
+    if io.open("test/test.lua", "r") then
+        HOME_DIR = ""
+    elseif io.open("../test/test.lua", "r") then
+        HOME_DIR = "../"
+    elseif io.open("SCRIPTS/test/test.lua", "r") then
         HOME_DIR = "SCRIPTS/"
     else
         HOME_DIR = "./"
@@ -55,6 +59,8 @@ dofile(HOME_DIR .. "test/TestF3kCompetitionWF.lua")
 EXPORT_ASSERT_TO_GLOBALS = true
 luaunit = require("luaunit")
 Mock = require "test.mock.Mock"
+local ValueMatcher = require "test.mock.ValueMatcher"
+_G.any = ValueMatcher.any
 --Spy = require "test.mock.Spy"
 
 os.exit(luaunit.LuaUnit.run())

@@ -233,6 +233,7 @@ EdgeTX/OpenTX 遥控器脚本，专为 F3K（手抛滑翔机）和 F5J（电动�
 
 - **LAOZHU/** - 核心功能模块（仓库根目录，与 `SCRIPTS` 同级；SD 卡上亦为卡根目录下与 `SCRIPTS` 并列）
 - **SCRIPTS/TELEMETRY/** - 用户界面层
+- **test/** - 单元测试（仓库根目录；安装到遥控器后为 `SCRIPTS/test/`）
 - **data/** - 飞行数据存储
 - **\*.cfg** - 用户配置文件
 
