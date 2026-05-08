@@ -5,30 +5,15 @@ local options = {
 }
 
 -- 主界面请用「App mode」布局放置本 widget；需先 **长按 ENTER**（或长按触摸）把输入交给 widget 后，`event` 才非 nil，按键才会进历史。
--- USB 调试口 / 模拟器控制台看 print；不用时改 false。
-local DEBUG_LOG = true
+-- 调试：见 LAOZHU/DBGTools/dbg.lua；DEBUG_LOG 关则 DBG_dbg 不输出；SHOW_LOG_SCREEN 开且 DEBUG_LOG 开时写入日志缓冲供覆盖层绘制。
+local DBG_OPTS = {
+	printTag = "[LzKey]",
+	DEBUG_LOG = true,
+	SHOW_LOG_SCREEN = false,
+	LOG_MAX = 20,
+}
 
-local function dbg(...)
-	if DEBUG_LOG then
-		print("[LzKey]", ...)
-	end
-end
 
-local function touchBrief(ts)
-	if ts == nil then
-		return "-"
-	end
-	local x = ts.x or ts.X
-	local y = ts.y or ts.Y
-	if x ~= nil and y ~= nil then
-		local sw = ""
-		if ts.swipe ~= nil then
-			sw = " sw=" .. tostring(ts.swipe)
-		end
-		return string.format("xy=%s,%s%s", tostring(x), tostring(y), sw)
-	end
-	return "touch=" .. tostring(ts)
-end
 
 local function update(widget, newOptions)
 	widget.options = newOptions
@@ -53,27 +38,37 @@ local function addEventToHistory(widget, rawEvent, mappedEvent)
 		widget.eventHistory[i] = nil
 	end
 
-	dbg(string.format("history+1 raw=%s map=%s n=%s", tostring(rawEvent), tostring(mappedEvent), tostring(#widget.eventHistory)))
+	DBG_dbg(string.format("history+1 raw=%s map=%s n=%s", tostring(rawEvent), tostring(mappedEvent), tostring(#widget.eventHistory)))
 end
 
 local function create(zone, options)
 	gSDCardDir = "/"
 
-	local ver0, radio0 = getVersion()
-	dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
-
 	local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
-	if fun then
-		fun()
-		dbg("LoadModule ok")
-	else
-		dbg("LoadModule FAIL:", tostring(err))
+	if not fun then
+		print("[LzKey] LoadModule FAIL:", tostring(err))
+		return {
+			zone = zone,
+			options = options,
+			keyMap = {},
+			eventHistory = {},
+			maxHistorySize = 12,
+		}
 	end
+	fun()
+
+	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
+	DBG_init(DBG_OPTS)
+	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGWidgetLog.lua")
+
+	local ver0, radio0 = getVersion()
+	DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
+	DBG_dbg("LoadModule ok")
 
 	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 	local keyMap = KMgetKeyMap()
 	KMunload()
-	dbg("keyMap ok")
+	DBG_dbg("keyMap ok")
 
 	return {
 		zone = zone,
@@ -94,28 +89,22 @@ local function refresh(widget, event, touchState)
 	local ox = z.x + 2
 	local oy = z.y + 2
 
+	local logLinesTop = oy + rowH
+	local logHintY = z.y + z.h - rowH - 2
+	if logHintY < logLinesTop + rowH then
+		logHintY = logLinesTop + rowH
+	end
+	local logAvailH = logHintY - logLinesTop - 2
+	local maxVisLog = math.max(1, math.floor(logAvailH / rowH))
+
 	widget._dbgN = (widget._dbgN or 0) + 1
-	if DEBUG_LOG then
-		local evtStr = event == nil and "nil" or tostring(event)
-		if event ~= nil then
-			if event ~= 0 or (widget._dbgN % 45 == 1) then
-				dbg(
-					string.format(
-						"refresh#%d evt=%s hist=%d touch=%s",
-						widget._dbgN,
-						evtStr,
-						#widget.eventHistory,
-						touchBrief(touchState)
-					)
-				)
-			end
-			if event ~= 0 then
-				local m = widget.keyMap[event]
-				dbg("KEY", "raw=" .. tostring(event), "mapped=" .. tostring(m or event), "hasMap=" .. tostring(m ~= nil))
-			end
-		elseif widget._dbgN % 120 == 1 then
-			dbg(string.format("refresh#%d evt=nil (未交权给 widget)", widget._dbgN))
+	if event ~= nil then
+		if event ~= 0 then
+			local m = widget.keyMap[event]
+			DBG_dbg("KEY", "raw=" .. tostring(event), "mapped=" .. tostring(m or event), "hasMap=" .. tostring(m ~= nil))
 		end
+	elseif widget._dbgN % 120 == 1 then
+		DBG_dbg(string.format("refresh#%d evt=nil (未交权给 widget)", widget._dbgN))
 	end
 
 	-- 仅刷新本 widget 区域，不用全屏 lcd.clear()
@@ -129,8 +118,11 @@ local function refresh(widget, event, touchState)
 
 	if event ~= nil and event ~= 0 then
 		local mappedEvent = widget.keyMap[event] or event
+		DBG_logOnMappedKey(mappedEvent)
 		addEventToHistory(widget, event, mappedEvent)
 	end
+
+	DBG_logClampScroll(maxVisLog)
 
 	local headerColor = COLOR_THEME_SECONDARY1
 	if widget.options and widget.options.Color ~= nil then
@@ -159,6 +151,8 @@ local function refresh(widget, event, touchState)
 	end
 
 	lcd.drawText(ox, hintY, "App:长按ENT交权", TXT)
+
+	DBGW_drawLogOverlay(z, zoneBg, TXT)
 end
 
 return {

@@ -28,7 +28,7 @@ if [[ -d "$WIDGETS_SRC" ]]; then
   find "$WIDGETS_SRC" -name '*.luac' -delete
 fi
 
-DIRS=(TELEMETRY emutest)
+DIRS=(TELEMETRY emutest data)
 FILES=(CompileFiles.lua)
 
 if [[ -n "${1:-}" ]]; then

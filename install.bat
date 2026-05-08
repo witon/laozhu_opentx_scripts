@@ -2,7 +2,7 @@
 set scriptsdir=SCRIPTS
 set laozhudir=LAOZHU
 set widgetsdir=WIDGETS
-set dirs=TELEMETRY emutest
+set dirs=TELEMETRY emutest data
 set files=CompileFiles.lua
 del %scriptsdir%\*.luac /S
 if exist %laozhudir% del %laozhudir%\*.luac /S
@@ -21,5 +21,5 @@ xcopy /I /Y /E test %disk%\SCRIPTS\test\
 if exist %laozhudir% xcopy /I /Y /E %laozhudir% %disk%\LAOZHU\
 if exist %widgetsdir% xcopy /I /Y /E %widgetsdir% %disk%\WIDGETS\
 for %%f IN (%files%) do copy /Y %scriptsdir%\%%f %disk%\SCRIPTS\
-rem mkdir %disk%\SCRIPTS\data
+mkdir %disk%\SCRIPTS\data 2>nul
 echo not init > %disk%\SCRIPTS\lzinstall.flag 

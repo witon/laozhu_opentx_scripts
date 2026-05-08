@@ -1,5 +1,6 @@
 --    按  松  连按连续触发    触发一次
 -- xlite				
+-- Flysky PA01：独立分支，见下方 pa01
 -- 左  102	38	70	134
 -- 右	101	37	69	133
 -- 上	100	36	68	132
@@ -12,7 +13,7 @@ function KMgetKeyMap()
     local ver, radio = getVersion();
     print("ver: " .. ver .. " radio: " .. radio)
     local keyMap = {};
-    if string.sub(radio, 1, 5) == "zorro"  then
+    if string.sub(radio, 1, 5) == "zorro" then
         if string.sub(ver, 1, 4) == "2.11" or string.sub(ver, 1, 4) == "2.12" then
             keyMap[4099] = 38 --滚轮向左 --左
             keyMap[4100] = 37 --滚轮向右 --右
@@ -47,6 +48,21 @@ function KMgetKeyMap()
             keyMap[69] = 68
             keyMap[34] = 34 --return
             keyMap[33] = 33 --exit
+        end
+    elseif string.sub(radio, 1, 4) == "pa01" then
+        if string.sub(ver, 1, 4) == "2.11" or string.sub(ver, 1, 4) == "2.12" then
+            keyMap[4099] = 36 --滚轮向上 --上
+            keyMap[4100] = 35 --滚轮向下 --下
+            keyMap[515] = 38 --page< 左
+            keyMap[516] = 37 --page> 右
+            --keyMap[67] =  --长按page< 左
+            --keyMap[68] =  --page> 右
+            keyMap[525] = 36 --MDL 上
+            keyMap[513] = 35 --TEL 下
+            keyMap[76] = 67 --长按TEL
+            keyMap[75] = 133 --长按MDL
+            keyMap[514] = 34 --return
+            keyMap[513] = 33 --exit
         end
     elseif string.sub(radio, 1, 4) == "gx12" then
         keyMap[4099] = 38
