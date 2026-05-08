@@ -83,7 +83,7 @@ EdgeTX/OpenTX 遥控器脚本，专为 F3K（手抛滑翔机）和 F5J（电动�
    ![](https://gitee.com/dacaodi/laozhu_opentx_scripts/raw/master/document/screenshot_install_copy.png)
 
 ### 2. 手动安装
-将仓库中的 **`SCRIPTS`** 目录下内容（含 `LAOZHU`、`TELEMETRY` 等）复制到 SD 卡 **`SCRIPTS`**；若有彩屏 widget，再将仓库 **`WIDGETS`** 复制到 SD 卡根目录下的 **`WIDGETS`**（与 `SCRIPTS` 并列）。按需复制 `data`。
+将仓库 **`SCRIPTS`** 目录下内容（含 `TELEMETRY`、`test`、`emutest` 等）复制到 SD 卡 **`SCRIPTS`**；将仓库根目录下的 **`LAOZHU`** 复制到 SD 卡根目录 **`LAOZHU`**（与 `SCRIPTS` 并列）。若有彩屏 widget，再将仓库 **`WIDGETS`** 复制到 SD 卡根目录 **`WIDGETS`**。按需复制 `data`。
 
 ### 3. 遥控器设置
 1. 进入遥控器 **DISPLAY** 设置界面
@@ -231,8 +231,8 @@ EdgeTX/OpenTX 遥控器脚本，专为 F3K（手抛滑翔机）和 F5J（电动�
 
 ## 文件结构
 
-- **LAOZHU/** - 核心功能模块
-- **TELEMETRY/** - 用户界面层  
+- **LAOZHU/** - 核心功能模块（仓库根目录，与 `SCRIPTS` 同级；SD 卡上亦为卡根目录下与 `SCRIPTS` 并列）
+- **SCRIPTS/TELEMETRY/** - 用户界面层
 - **data/** - 飞行数据存储
 - **\*.cfg** - 用户配置文件
 

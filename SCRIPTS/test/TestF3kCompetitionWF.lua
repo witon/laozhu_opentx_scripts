@@ -1,7 +1,7 @@
 function testCompetitionWFNormalFlow()
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
-    local wf = dofile(HOME_DIR .. "LAOZHU/F3kWF/F3kCompetitionWF.lua")
-    dofile(HOME_DIR .. "LAOZHU/comm/TestSound.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
+    local wf = dofile(gSDCardDir .. "LAOZHU/F3kWF/F3kCompetitionWF.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/TestSound.lua")
     wf.setCompetitionParam(0, 0, 0, 2, false, 2, false)
     local task1 = {}
     task1.id = 'A'
@@ -79,6 +79,7 @@ end
 
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -86,3 +87,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

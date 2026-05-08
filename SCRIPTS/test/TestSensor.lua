@@ -1,6 +1,6 @@
 
 function testSensorUpdateValue()
-    dofile(HOME_DIR .. "LAOZHU/Sensor.lua")
+    dofile(gSDCardDir .. "LAOZHU/Sensor.lua")
     local sensor = SENSnewSensor("test_sensor", 30)
     SENSrun(sensor, 1, 10)
     luaunit.assertEquals(sensor.curValue, 10)
@@ -19,7 +19,7 @@ function testSensorRuleNormal()
     local callback  = function() 
         haveWarning = true
     end
-    dofile(HOME_DIR .. "LAOZHU/Sensor.lua")
+    dofile(gSDCardDir .. "LAOZHU/Sensor.lua")
     local sensor = SENSnewSensor("test_sensor", 30)
     SENSaddFluctuateRule(sensor, 0, 5, 1, callback)
     SENSrun(sensor, 1, 10) --average=0
@@ -40,7 +40,7 @@ function testSensorRuleAverage()
     local callback  = function() 
         haveWarning = true
     end
-    dofile(HOME_DIR .. "LAOZHU/Sensor.lua")
+    dofile(gSDCardDir .. "LAOZHU/Sensor.lua")
     local sensor = SENSnewSensor("test_sensor", 30)
     local rule = SENSaddFluctuateRule(sensor, 0, 3, 1, callback)
     SENSrun(sensor, 1, 5)
@@ -56,7 +56,7 @@ function testSensorRuleShouldSmall()
     local callback  = function() 
         haveWarning = true
     end
-    dofile(HOME_DIR .. "LAOZHU/Sensor.lua")
+    dofile(gSDCardDir .. "LAOZHU/Sensor.lua")
     local sensor = SENSnewSensor("test_sensor", 30, true)
     SENSaddFluctuateRule(sensor, 100, 5, -1, callback)
     SENSrun(sensor, 1, 98)
@@ -78,7 +78,7 @@ function testSensorRuleFull()
     local callback  = function() 
         haveWarning = true
     end
-    dofile(HOME_DIR .. "LAOZHU/Sensor.lua")
+    dofile(gSDCardDir .. "LAOZHU/Sensor.lua")
     local sensor = SENSnewSensor("test_sensor", 30)
     SENSaddFluctuateRule(sensor, 0, 3, 0.9, callback)
     SENSrun(sensor, 1, 10)  -- average = 0
@@ -103,6 +103,7 @@ function testSensorRuleFull()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -110,3 +111,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

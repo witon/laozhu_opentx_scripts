@@ -1,5 +1,5 @@
 function testSwitchTrigeDetector()
-    dofile(HOME_DIR .. "LAOZHU/SwitchTrigeDetector.lua")
+    dofile(gSDCardDir .. "LAOZHU/SwitchTrigeDetector.lua")
     local switchTrigeDetector = STD_new(1000)
     luaunit.assertTrue(STD_run(switchTrigeDetector, 700))
     luaunit.assertFalse(STD_run(switchTrigeDetector, 750))
@@ -10,6 +10,7 @@ function testSwitchTrigeDetector()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -17,3 +18,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

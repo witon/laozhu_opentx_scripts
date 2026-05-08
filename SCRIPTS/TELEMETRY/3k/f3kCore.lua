@@ -1,6 +1,6 @@
 gConfigFileName = "3k.cfg"
-LZ_runModule("LAOZHU/comm/Timer.lua")
-LZ_runModule("LAOZHU/SwitchTrigeDetector.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/comm/Timer.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/SwitchTrigeDetector.lua")
 local flightState = nil
 local curAlt = 0
 local altID = 0
@@ -31,16 +31,16 @@ end
 
 local function init()
 
-	flightState = LZ_runModule("LAOZHU/F3k/F3kState.lua")
-	LZ_runModule("LAOZHU/F3k/F3kFlightRecord.lua")
-	f3kRound = LZ_runModule("LAOZHU/F3kWF/F3kRoundWF.lua")
+	flightState = LZ_runModule(gSDCardDir .. "LAOZHU/F3k/F3kState.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
+	f3kRound = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
 	resetRound()
 	flightState.landedCallback = landedCallBack
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
-	readVar = LZ_runModule("LAOZHU/readVar.lua")
-	local f3kReadVarMap = LZ_runModule("LAOZHU/F3k/f3kReadVarMap.lua")
+	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
+	local f3kReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/F3k/f3kReadVarMap.lua")
 
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)

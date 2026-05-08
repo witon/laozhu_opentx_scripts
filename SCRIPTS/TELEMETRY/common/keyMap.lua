@@ -10,10 +10,10 @@
 	
 function KMgetKeyMap()
     local ver, radio = getVersion();
-    --print("ver: " .. ver .. " radio: " .. radio)
+    print("ver: " .. ver .. " radio: " .. radio)
     local keyMap = {};
     if string.sub(radio, 1, 5) == "zorro"  then
-        if string.sub(ver, 1, 4) == "2.11" then
+        if string.sub(ver, 1, 4) == "2.11" or string.sub(ver, 1, 4) == "2.12" then
             keyMap[4099] = 38 --滚轮向左 --左
             keyMap[4100] = 37 --滚轮向右 --右
             keyMap[35] = 38 --page< 左

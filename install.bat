@@ -1,9 +1,11 @@
 @echo off
 set scriptsdir=SCRIPTS
+set laozhudir=LAOZHU
 set widgetsdir=WIDGETS
-set dirs=TELEMETRY LAOZHU emutest test
+set dirs=TELEMETRY emutest test
 set files=CompileFiles.lua
 del %scriptsdir%\*.luac /S
+if exist %laozhudir% del %laozhudir%\*.luac /S
 if exist %widgetsdir% del %widgetsdir%\*.luac /S
 set disk=%1%
 if "%disk%" == "" (
@@ -15,6 +17,7 @@ if "%disk%" == "" (
 )
 @echo on
 for %%d IN (%dirs%) do xcopy /I /Y /E %scriptsdir%\%%d %disk%\SCRIPTS\%%d
+if exist %laozhudir% xcopy /I /Y /E %laozhudir% %disk%\LAOZHU\
 if exist %widgetsdir% xcopy /I /Y /E %widgetsdir% %disk%\WIDGETS\
 for %%f IN (%files%) do copy /Y %scriptsdir%\%%f %disk%\SCRIPTS\
 rem mkdir %disk%\SCRIPTS\data

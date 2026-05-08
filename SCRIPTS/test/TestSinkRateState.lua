@@ -1,10 +1,9 @@
-gScriptDir = HOME_DIR
 
 
 
 
 function testSinkRateStateNormalProcess()
-    dofile(gScriptDir .. "/LAOZHU/SinkRateState.lua")
+    dofile(gSDCardDir .. "LAOZHU/SinkRateState.lua")
     local sinkRateState = SRSnewSinkRateState()
     SRSrun(sinkRateState, 100, 50, -1000)
     luaunit.assertFalse(SRSisStart(sinkRateState))
@@ -31,7 +30,7 @@ function testSinkRateStateOnStateChange()
         isStart = state
     end
 
-    dofile(gScriptDir .. "/LAOZHU/SinkRateState.lua")
+    dofile(gSDCardDir .. "LAOZHU/SinkRateState.lua")
     local sinkRateState = SRSnewSinkRateState()
     SRSsetOnStateChange(sinkRateState, onSinkRateStateChange_test)
     SRSrun(sinkRateState, 100, 50, -1000)
@@ -44,6 +43,7 @@ end
 
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -51,3 +51,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

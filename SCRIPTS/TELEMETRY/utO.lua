@@ -1,4 +1,4 @@
-gScriptDir = "/SCRIPTS/"
+gSDCardDir = "/"
 gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 local textEdit = nil
 local button = nil
@@ -14,7 +14,7 @@ local timeEdit = nil
 
 local viewMatrix = nil
 
-LZ_runModule("TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
@@ -36,42 +36,42 @@ local curFileIndex = 1
 local curCases = nil
 
 local function testLoadAndUnload()
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    LZ_runModule("TELEMETRY/common/TextEditO.lua")
-    LZ_runModule("TELEMETRY/common/ButtonO.lua")
-    LZ_runModule("TELEMETRY/common/CheckBoxO.lua")
-	LZ_runModule("TELEMETRY/common/SelectorO.lua")
-	LZ_runModule("TELEMETRY/common/InputSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/Fields.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TextEditO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CheckBoxO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
     FieldsUnload()
-    LZ_runModule("TELEMETRY/common/NumEditO.lua")
-    LZ_runModule("TELEMETRY/common/OutputSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/CurveSelector.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/OutputSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CurveSelector.lua")
     CSunload()
-	LZ_runModule("TELEMETRY/common/ModeSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
-	LZ_runModule("TELEMETRY/common/TimeEditO.lua")
-	LZ_runModule("TELEMETRY/3k/TaskSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ModeSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TimeEditO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
 end
 
 local function initUI()
     testLoadAndUnload()
-    LZ_runModule("TELEMETRY/common/TextEditO.lua")
-    LZ_runModule("TELEMETRY/common/InputViewO.lua")
-    LZ_runModule("TELEMETRY/common/ButtonO.lua")
-    LZ_runModule("TELEMETRY/common/CheckBoxO.lua")
-	LZ_runModule("TELEMETRY/common/SelectorO.lua")
-	LZ_runModule("TELEMETRY/common/InputSelector.lua")
-	LZ_runModule("TELEMETRY/common/Fields.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TextEditO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CheckBoxO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelector.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
 	initFieldsInfo()
-    LZ_runModule("TELEMETRY/common/NumEditO.lua")
-    LZ_runModule("TELEMETRY/common/OutputSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/CurveSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/ModeSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/ViewMatrixO.lua")
-	LZ_runModule("TELEMETRY/3k/TaskSelectorO.lua")
-	LZ_runModule("TELEMETRY/common/TimeEditO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/OutputSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CurveSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ModeSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TimeEditO.lua")
  
     viewMatrix = ViewMatrix:new()
 
@@ -121,14 +121,14 @@ end
 
 local function init()
     local c2 = collectgarbage("count")
-    local fun, err = loadScript(gScriptDir .. "TELEMETRY/common/LoadModule.lua", "bt")
+    local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
     fun()
     print("begin load")
-    curCases = LZ_runModule(testFiles[curFileIndex])
+    curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFiles[curFileIndex])
     print("loaded")
     curCaseIndex = 1
-    LZ_runModule("LAOZHU/EmuTestUtils.lua")
-    LZ_runModule("LAOZHU/OTUtils.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/EmuTestUtils.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
 
 end
 
@@ -140,7 +140,7 @@ local function doOneCase()
         end
         curCaseIndex = 1
         local testFile = testFiles[curFileIndex]
-        curCases = LZ_runModule(testFile)
+        curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFile)
     end
     curCases[curCaseIndex]()
     curCaseIndex = curCaseIndex + 1

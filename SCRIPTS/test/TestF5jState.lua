@@ -1,11 +1,10 @@
-gScriptDir = HOME_DIR
 function testNormalProcess()
 
     local curDateTime = 100000
 
 
 
-    local f5jState = dofile(HOME_DIR .. "LAOZHU/F5jState.lua")
+    local f5jState = dofile(gSDCardDir .. "LAOZHU/F5jState.lua")
 
     LZ_playNumber = Mock()
     LZ_playNumber:whenCalled{with={any, 36}, thenReturn = {}}
@@ -106,6 +105,7 @@ function testNormalProcess()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -113,3 +113,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

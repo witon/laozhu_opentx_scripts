@@ -14,7 +14,7 @@ local throttle = 0
 local resetSwitch = 0
 local flightSwitch = 0
 
-dofile(gScriptDir .. "LAOZHU/comm/Timer.lua")
+dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
 
 local worktimeTimer = Timer:new()
 worktimeTimer:resetTimer(600)

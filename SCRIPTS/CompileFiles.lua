@@ -1,24 +1,54 @@
 local files = {
 
-	"emutest/luaForTestLoadModule.lua",
-
-	"emutest/testCfg.lua",
-
-	"emutest/testCfgO.lua",
-
-	"emutest/testDataFileDecode.lua",
-
-	"emutest/testLoadModule.lua",
-
-	"emutest/testManagerOutput.lua",
-
-	"emutest/testOutputCurveManager.lua",
-
-	"emutest/testSinkRateRecord.lua",
-
 	"LAOZHU/Cfg.lua",
 
 	"LAOZHU/CfgO.lua",
+
+	"LAOZHU/DataFileDecode.lua",
+
+	"LAOZHU/EmuTestUtils.lua",
+
+	"LAOZHU/F3k/F3kFlightRecord.lua",
+
+	"LAOZHU/F3k/F3kState.lua",
+
+	"LAOZHU/F3k/f3kReadVarMap.lua",
+
+	"LAOZHU/F3kWF/AULDWF.lua",
+
+	"LAOZHU/F3kWF/CommonTaskWF.lua",
+
+	"LAOZHU/F3kWF/F3kCompetitionWF.lua",
+
+	"LAOZHU/F3kWF/F3kRoundWF.lua",
+
+	"LAOZHU/F5jState.lua",
+
+	"LAOZHU/LDReadVarMap.lua",
+
+	"LAOZHU/LDRecord.lua",
+
+	"LAOZHU/LDState.lua",
+
+	"LAOZHU/LuaUtils.lua",
+
+	"LAOZHU/Monitor.lua",
+
+	"LAOZHU/OTUtils.lua",
+
+	"LAOZHU/Queue.lua",
+
+	"LAOZHU/Sensor.lua",
+
+	"LAOZHU/SinkRateLog.lua",
+
+	"LAOZHU/SinkRateReadVarMap.lua",
+
+	"LAOZHU/SinkRateRecord.lua",
+
+	"LAOZHU/SinkRateState.lua",
+
+	"LAOZHU/SwitchTrigeDetector.lua",
 
 	"LAOZHU/comm/LinuxSound.lua",
 
@@ -30,51 +60,13 @@ local files = {
 
 	"LAOZHU/comm/Timer.lua",
 
-	"LAOZHU/DataFileDecode.lua",
-
-	"LAOZHU/EmuTestUtils.lua",
-
-	"LAOZHU/F3k/F3kFlightRecord.lua",
-
-	"LAOZHU/F3k/f3kReadVarMap.lua",
-
-	"LAOZHU/F3k/F3kState.lua",
-
-	"LAOZHU/F3kWF/AULDWF.lua",
-
-	"LAOZHU/F3kWF/CommonTaskWF.lua",
-
-	"LAOZHU/F3kWF/F3kCompetitionWF.lua",
-
-	"LAOZHU/F3kWF/F3kRoundWF.lua",
-
 	"LAOZHU/f5jReadVarMap.lua",
 
 	"LAOZHU/launchReadVarMap.lua",
 
-	"LAOZHU/F5jState.lua",
-
-	"LAOZHU/LuaUtils.lua",
-
-	"LAOZHU/Monitor.lua",
-
-	"LAOZHU/OTUtils.lua",
-
-	"LAOZHU/Queue.lua",
+	"LAOZHU/launchRecord.lua",
 
 	"LAOZHU/readVar.lua",
-
-	"LAOZHU/Sensor.lua",
-
-	"LAOZHU/SinkRateLog.lua",
-
-	"LAOZHU/SinkRateRecord.lua",
-
-	"LAOZHU/SinkRateState.lua",
-
-	"LAOZHU/SwitchTrigeDetector.lua",
-
-	"TELEMETRY/3k/f3kCore.lua",
 
 	"TELEMETRY/3k/F3KRecordListView.lua",
 
@@ -94,6 +86,8 @@ local files = {
 
 	"TELEMETRY/3k/TaskSelectorO.lua",
 
+	"TELEMETRY/3k/f3kCore.lua",
+
 	"TELEMETRY/3ktel.lua",
 
 	"TELEMETRY/5j/FlightPage.lua",
@@ -106,13 +100,29 @@ local files = {
 
 	"TELEMETRY/5jtel.lua",
 
+	"TELEMETRY/adjust.lua",
+
 	"TELEMETRY/adjust/BackupOutput.lua",
 
 	"TELEMETRY/adjust/GlobalVar.lua",
 
-	"TELEMETRY/adjust/ManagerOutput.lua",
+	"TELEMETRY/adjust/LD/LD.lua",
 
-	"TELEMETRY/adjust/output.lua",
+	"TELEMETRY/adjust/LD/LDCfgPage.lua",
+
+	"TELEMETRY/adjust/LD/LDRecordListView.lua",
+
+	"TELEMETRY/adjust/LD/RecordListView.lua",
+
+	"TELEMETRY/adjust/Launch/LRecordListView.lua",
+
+	"TELEMETRY/adjust/Launch/Launch.lua",
+
+	"TELEMETRY/adjust/Launch/LaunchCfgPage.lua",
+
+	"TELEMETRY/adjust/Launch/RecordListView.lua",
+
+	"TELEMETRY/adjust/ManagerOutput.lua",
 
 	"TELEMETRY/adjust/OutputCurve.lua",
 
@@ -128,19 +138,13 @@ local files = {
 
 	"TELEMETRY/adjust/SinkRate/RecordListView.lua",
 
+	"TELEMETRY/adjust/SinkRate/SRRecordListView.lua",
+
 	"TELEMETRY/adjust/SinkRate/SinkRate.lua",
 
 	"TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua",
 
-	"TELEMETRY/adjust/Launch/RecordListView.lua",
-
-	"TELEMETRY/adjust/Launch/Launch.lua",
-
-	"TELEMETRY/adjust/Launch/LaunchCfgPage.lua",
-
-	"TELEMETRY/key.lua",
-
-	"TELEMETRY/adjust.lua",
+	"TELEMETRY/adjust/output.lua",
 
 	"TELEMETRY/common/Button.lua",
 
@@ -149,8 +153,6 @@ local files = {
 	"TELEMETRY/common/CheckBox.lua",
 
 	"TELEMETRY/common/CheckBoxO.lua",
-
-	"TELEMETRY/common/comp.lua",
 
 	"TELEMETRY/common/CurveSelector.lua",
 
@@ -196,11 +198,31 @@ local files = {
 
 	"TELEMETRY/common/ViewMatrixO.lua",
 
+	"TELEMETRY/common/comp.lua",
+
+	"TELEMETRY/common/keyMap.lua",
+
+	"TELEMETRY/key.lua",
+
 	"TELEMETRY/ut.lua",
 
 	"TELEMETRY/utO.lua",
 
-	"test/test.lua",
+	"emutest/luaForTestLoadModule.lua",
+
+	"emutest/testCfg.lua",
+
+	"emutest/testCfgO.lua",
+
+	"emutest/testDataFileDecode.lua",
+
+	"emutest/testLoadModule.lua",
+
+	"emutest/testManagerOutput.lua",
+
+	"emutest/testOutputCurveManager.lua",
+
+	"emutest/testSinkRateRecord.lua",
 
 	"test/TestF3kCompetitionWF.lua",
 
@@ -209,10 +231,6 @@ local files = {
 	"test/TestF3kRound.lua",
 
 	"test/TestF3kState.lua",
-
-	"test/testF3kTask/TestAULD.lua",
-
-	"test/testF3kTask/TestCommonTask.lua",
 
 	"test/TestF5jState.lua",
 
@@ -230,8 +248,13 @@ local files = {
 
 	"test/TestTimer.lua",
 
+	"test/test.lua",
+
+	"test/testF3kTask/TestAULD.lua",
+
+	"test/testF3kTask/TestCommonTask.lua",
+
 	"test/utils4Test.lua",
 
 }
-
 return files

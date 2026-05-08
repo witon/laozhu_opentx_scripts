@@ -1,9 +1,9 @@
 
 function testTimerNormal()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
     local timer = Timer:new()
  
     timer:resetTimer(100)
@@ -29,10 +29,10 @@ function testTimerNormal()
 end
 
 function testStop()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
     local timer = Timer:new()
     timer:resetTimer(100)
     local curTime = 10
@@ -63,10 +63,10 @@ end
 
 function testReadRunTime30s()
 
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
     local timer = Timer:new()
     timer:resetTimer(120)
     local curTime = 10
@@ -87,11 +87,11 @@ function testReadRunTime30s()
 end
 
 function testReadRunTimeMultiIn1s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/OTSound.lua")
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
     local timer = Timer:new()
     timer:resetTimer(120)
     local curTime = 10
@@ -120,10 +120,10 @@ function testReadRunTimeMultiIn1s()
 end
 
 function testReadRunTime60s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(120)
@@ -145,10 +145,10 @@ function testReadRunTime60s()
 end
 
 function testReadRunTime90s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(120)
@@ -167,10 +167,10 @@ function testReadRunTime90s()
 end
 
 function testReadRemainTime91s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(95)
@@ -190,10 +190,10 @@ end
 
 
 function testReadRemainTime90s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(95)
@@ -212,10 +212,10 @@ function testReadRemainTime90s()
 end
 
 function testReadRemainTime60s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(95)
@@ -234,10 +234,10 @@ function testReadRemainTime60s()
 end
 
 function testReadRemainTime30s()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(95)
@@ -256,10 +256,10 @@ function testReadRemainTime30s()
 end
 
 function testDowncount()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(95)
@@ -306,10 +306,10 @@ function testDowncount()
 end
 
 function testForwardTimer()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(65)
@@ -354,10 +354,10 @@ function testForwardTimer()
 end
 
 function testBackwardTimer()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(65)
@@ -393,10 +393,10 @@ function testBackwardTimer()
 end
 
 function testGetDuration()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
  
     local timer = Timer:new()
     timer:resetTimer(65)
@@ -426,10 +426,10 @@ function testGetDuration()
 end
 
 function testForwardAnnounce()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
 
     local haveDoneCallback = false
 
@@ -458,10 +458,10 @@ function testForwardAnnounce()
 end
 
 function testBackwardAnnounce()
-    dofile(HOME_DIR .. "LAOZHU/OTUtils.lua")
-    dofile(HOME_DIR .. "LAOZHU/LuaUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/OTUtils.lua")
+    dofile(gSDCardDir .. "LAOZHU/LuaUtils.lua")
  
-    dofile(HOME_DIR .. "LAOZHU/comm/Timer.lua")
+    dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
 
     local haveDoneCallback = false
 
@@ -490,6 +490,7 @@ function testBackwardAnnounce()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -497,3 +498,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

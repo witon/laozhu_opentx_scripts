@@ -9,7 +9,7 @@ end
 
 function LRwriteOneRecordToFile(dateTime, record)
 	local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
-    local recordFilePath = gScriptDir .. relativePath
+    local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'a')
     if recordFile == nil then
         return false
@@ -61,7 +61,7 @@ end
 
 function LRclearOneDayRecordsFromFile(dateTime)
     local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
-    local recordFilePath = gScriptDir .. relativePath
+    local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'w')
     io.close(recordFile)
 end
@@ -69,7 +69,7 @@ end
 function LRreadOneDayRecordsFromFile(lr, dateTime)
     lr.records = {}
     local relativePath = string.format("data/%04d%02d%02d.lrecords", dateTime["year"], dateTime["mon"], dateTime["day"])
-    local recordFilePath = gScriptDir .. relativePath
+    local recordFilePath = gSDCardDir .. "SCRIPTS/" .. relativePath
     local recordFile = io.open(recordFilePath, 'r')
     if recordFile == nil then
         return false

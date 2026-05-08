@@ -1,5 +1,5 @@
 function testAddFlightRecordsAndGet()
-    dofile(HOME_DIR .. "LAOZHU/F3k/F3kFlightRecord.lua")
+    dofile(gSDCardDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
     local f3kFlightRecord = F3KFRnewFlightRecord()
     local flightTime = 1000
     local launchAlt = 50
@@ -28,7 +28,7 @@ function testAddFlightRecordsAndGet()
 end
 
 function testAddMoreThenMaxFlights()
-    dofile(HOME_DIR .. "LAOZHU/F3k/F3kFlightRecord.lua")
+    dofile(gSDCardDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
     local flightTime = 1000
     local launchAlt = 5
     local flightStartTime = 10000
@@ -55,6 +55,7 @@ function testAddMoreThenMaxFlights()
 end
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -62,3 +63,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

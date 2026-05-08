@@ -1,6 +1,8 @@
+CFGC = {kvs={}}
 
-function CFGgetNumberField(cfg, fieldName, default)
-    local v = cfg[fieldName]
+
+function CFGC:getNumberField(fieldName, default)
+    local v = self.kvs[fieldName]
     if v == nil and default then
         return default
     end
@@ -10,8 +12,8 @@ function CFGgetNumberField(cfg, fieldName, default)
     return v
 end
 
-function CFGgetStrField(cfg, fieldName, default)
-    local v = cfg[fieldName]
+function CFGC:getStrField(fieldName, default)
+    local v = self.kvs[fieldName]
     if v == nil and default then
         return default
     end
@@ -21,8 +23,9 @@ function CFGgetStrField(cfg, fieldName, default)
     return v
 end
 
-function CFGreadFromFile(cfg, fileName)
-    local cfgFilePath = gScriptDir .. fileName
+
+function CFGC:readFromFile(fileName)
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. fileName
     local cfgFile = io.open(cfgFilePath, 'r')
     if cfgFile == nil then
         return false
@@ -35,22 +38,22 @@ function CFGreadFromFile(cfg, fileName)
         local k, v, t = string.match(line, '([^=]+)=(.+):(.)')
         if k and v and t then
             if t == 's' then
-                cfg[k] = v
+                self.kvs[k] = v
             else
-                cfg[k] = tonumber(v)
+                self.kvs[k] = tonumber(v)
             end
         end
     end
     return true
 end
 
-function CFGwriteToFile(cfg, fileName)
-    local cfgFilePath = gScriptDir .. fileName
+function CFGC:writeToFile(fileName)
+    local cfgFilePath = gSDCardDir .. "SCRIPTS/" .. fileName
     local cfgFile = io.open(cfgFilePath, 'w')
     if cfgFile == nil then
         return
     end
-    for k, v in pairs(cfg) do
+    for k, v in pairs(self.kvs) do
         if type(v) == "string" then
            io.write(cfgFile, k, '=', v, ':s\r\n')
         else
@@ -60,15 +63,9 @@ function CFGwriteToFile(cfg, fileName)
     io.close(cfgFile)
 end
 
-function CFGnewCfg()
-    return {}
-end
-
-function CFGunload()
-    CFGgetNumberField = nil
-    CFGgetStrField = nil
-    CFGreadFromFile = nil
-    CFGwriteToFile = nil
-    CFGnewCfg = nil
-    CFGunload = nil
+function CFGC:new()
+    local o = {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
 end

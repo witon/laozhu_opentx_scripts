@@ -16,7 +16,7 @@ end
 
 
 function testDoReadVarMoveSlider()
-    local readVar = dofile(HOME_DIR .. "LAOZHU/readVar.lua")
+    local readVar = dofile(gSDCardDir .. "LAOZHU/readVar.lua")
     local varMap = {fun1, fun2, fun3, fun4}
     readVar.setVarMap(varMap)
 
@@ -47,7 +47,7 @@ function testDoReadVarMoveSlider()
 end
 
 function testDoReadVarTriggerSwitch()
-    local readVar = dofile(HOME_DIR .. "LAOZHU/readVar.lua")
+    local readVar = dofile(gSDCardDir .. "LAOZHU/readVar.lua")
     local varMap = {fun1, fun2, fun3, fun4}
     readVar.setVarMap(varMap)
 
@@ -72,6 +72,7 @@ end
 
 
 
+if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
     HOME_DIR = "./"
@@ -79,3 +80,4 @@ else
     HOME_DIR = HOME_DIR .. "/"
 end
 dofile(HOME_DIR .. "test/utils4Test.lua")
+end

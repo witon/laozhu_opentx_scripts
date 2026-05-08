@@ -1,8 +1,11 @@
+if not gSDCardDir then
+    gSDCardDir = "/"
+end
 
 local function testDataFileDecode()
-    dofile(gScriptDir .. "/LAOZHU/DataFileDecode.lua")
+    dofile(gSDCardDir .. "LAOZHU/DataFileDecode.lua")
     local dfd = DFDnewDataFileDecode()
-    local file = io.open(gScriptDir .. "emutest/test_data_file.data", "r")
+    local file = io.open(gSDCardDir .. "SCRIPTS/emutest/test_data_file.data", "r")
     DFDsetFile(dfd, file)
     local destStrs = {"12345678901234567890123456789", "abc", "def", "ghijk", "lmnopq", "rstuv", "wxyz", "0123", "45678", "90"}
     for i = 1, 10, 1 do
