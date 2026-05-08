@@ -20,9 +20,9 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - 当遥控器检测到缺失 .luac 文件时进行编译
 
 ### 测试
-- 在仓库根目录：`lua test/test.lua` - 运行单元测试
-- `SCRIPTS/emutest/` 目录下的自动化测试用于遥控器/模拟器测试
-- CI 通过 GitHub Actions 在推送/PR 到 master 时运行测试
+- **开发机 / CI**：在仓库根目录执行 `lua test/test.lua`（单元测试）；CI 在推送/PR 到 master 时通过 GitHub Actions 运行
+- **模拟器 / 遥控器（黑白屏）**：自动化测试入口为遥测脚本 `SCRIPTS/TELEMETRY/utO.lua`，用例脚本位于 `SCRIPTS/emutest/`
+- **彩屏 WIDGET**：自动化测试入口尚未实现
 
 ## 架构
 
@@ -44,7 +44,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 **data/** - 飞行数据存储
 **test/** - 单元测试（仓库根目录，`SCRIPTS` 与 `WIDGETS` 共用逻辑的开发机测试）
-**emutest/** - 模拟器侧自动化测试（位于 `SCRIPTS/` 下）
+**emutest/** - 模拟器/真机黑白屏自动化用例（位于 `SCRIPTS/` 下，由 `TELEMETRY/utO.lua` 加载）
 **WIDGETS/** - 彩屏 Lua widget（SD 卡根目录下 `WIDGETS/`，与 `SCRIPTS` 同级）
 
 ### 模块加载系统
@@ -75,7 +75,8 @@ LZ_loadModule("path/to/module.lua") -- 仅加载模块函数
 
 ## 测试方法
 
-- test/ 目录下的单元测试使用自定义测试框架
-- emutest/ 中的集成测试用于遥控器特定测试
+- `test/` 目录下的单元测试使用自定义测试框架；开发机与 CI 上运行 `lua test/test.lua`
+- 模拟器或真机（黑白屏）上运行 `SCRIPTS/TELEMETRY/utO.lua` 执行 `emutest/` 中的自动化用例
+- 彩屏 WIDGET 暂无对等的自动化测试入口
 - CI 在 Ubuntu 上使用 Lua 5.2.2 运行测试
-- 需要在真实的 EdgeTX 硬件/模拟器上进行手动测试
+- 功能与 UI 仍建议在真实 EdgeTX 硬件或模拟器上手动验证
