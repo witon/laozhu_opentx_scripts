@@ -32,7 +32,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 仓库根目录与 SD 卡一致：**`SCRIPTS/`**（遥测脚本、`emutest/` 等）、**`LAOZHU/`**（核心库）、**`WIDGETS/`**（彩屏 widget）与 **`test/`**（开发机单元测试源码；安装到 SD 时为 `SCRIPTS/test/`）并列；SD 卡上亦为 `SCRIPTS`、`LAOZHU`、`WIDGETS` 同级。
 
 **LAOZHU/** - 核心功能模块（与 `SCRIPTS/` 同级；脚本路径以 **`gSDCardDir`** 为 SD 卡根：`/`（真机/模拟器）或 `./`（本机跑 `test/test.lua`），`LAOZHU/...` 展开为 `gSDCardDir .. "LAOZHU/..."`，`SCRIPTS/` 下相对路径展开为 `gSDCardDir .. "SCRIPTS/..."`）
-- **`LAOZHU/uilib/`**：可复用 EdgeTX UI 控件（由原 `TELEMETRY/common` 迁入）
+- **`LAOZHU/uilib/`**：可复用 EdgeTX UI 控件
 - 状态管理类（F3kState.lua, F5jState.lua, SinkRateState.lua）
 - 数据记录（F3kFlightRecord.lua, SinkRateRecord.lua, launchRecord.lua）
 - 工作流实现（F3kWF/ 子目录）
