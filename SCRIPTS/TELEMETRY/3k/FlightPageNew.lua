@@ -1,10 +1,10 @@
 local viewMatrix = nil
 local destFlightTimeEdit = nil
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TimeEditO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEditO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEditO.lua")
 
 
 local function drawFlightList()

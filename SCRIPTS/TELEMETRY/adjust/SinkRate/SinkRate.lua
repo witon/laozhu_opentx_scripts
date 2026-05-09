@@ -14,10 +14,10 @@ local recordListView = nil
 local playingTone = false
 local readVar = nil
 local function loadModule()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEditO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/DataFileDecode.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/SinkRateRecord.lua")

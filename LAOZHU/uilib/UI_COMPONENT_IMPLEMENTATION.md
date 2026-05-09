@@ -1,6 +1,6 @@
-# TELEMETRY common UI 实现约定（组件作者）
+# LAOZHU/uilib UI 实现约定（组件作者）
 
-写给**新增或修改** `SCRIPTS/TELEMETRY/common` 下控件（及功能目录内同源控件，如部分 `TaskSelector`）的实现者：**如何把模块挂到 `_G`、如何保证可被干净卸掉**。页面如何装载与调用见 **[UI_COMPONENT_USAGE.md](UI_COMPONENT_USAGE.md)**。
+写给**新增或修改** `LAOZHU/uilib` 下控件（及功能目录内同源控件，如部分 `TaskSelector`）的实现者：**如何把模块挂到 `_G`、如何保证可被干净卸掉**。页面如何装载与调用见 **[UI_COMPONENT_USAGE.md](UI_COMPONENT_USAGE.md)**。
 
 ## 命名与语义：`O` 后缀
 

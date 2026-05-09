@@ -31,7 +31,8 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 仓库根目录与 SD 卡一致：**`SCRIPTS/`**（遥测脚本、`emutest/` 等）、**`LAOZHU/`**（核心库）、**`WIDGETS/`**（彩屏 widget）与 **`test/`**（开发机单元测试源码；安装到 SD 时为 `SCRIPTS/test/`）并列；SD 卡上亦为 `SCRIPTS`、`LAOZHU`、`WIDGETS` 同级。
 
-**LAOZHU/** - 核心功能模块（**与 UI 解耦的领域逻辑**，与 `SCRIPTS/` 同级；脚本路径以 **`gSDCardDir`** 为 SD 卡根目录：`/`（真机/模拟器）或 `./`（本机跑 `test/test.lua`），`LZ_runModule` 将 `LAOZHU/...` 解析为 `gSDCardDir .. "LAOZHU/..."`，其余相对路径解析为 `gSDCardDir .. "SCRIPTS/..."`）
+**LAOZHU/** - 核心功能模块（与 `SCRIPTS/` 同级；脚本路径以 **`gSDCardDir`** 为 SD 卡根：`/`（真机/模拟器）或 `./`（本机跑 `test/test.lua`），`LAOZHU/...` 展开为 `gSDCardDir .. "LAOZHU/..."`，`SCRIPTS/` 下相对路径展开为 `gSDCardDir .. "SCRIPTS/..."`）
+- **`LAOZHU/uilib/`**：可复用 EdgeTX UI 控件（由原 `TELEMETRY/common` 迁入）
 - 状态管理类（F3kState.lua, F5jState.lua, SinkRateState.lua）
 - 数据记录（F3kFlightRecord.lua, SinkRateRecord.lua, launchRecord.lua）
 - 工作流实现（F3kWF/ 子目录）
@@ -40,8 +41,8 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 **TELEMETRY/** - 用户界面与遥测入口层（位于 `SCRIPTS/` 下；各功能子目录承担场景侧业务编排与页面，详见下节「分层约定与参考范本」）
 - 主入口点：3ktel.lua（F3K）、5jtel.lua（F5J）、adjust.lua（调整工具）
-- UI 页面按功能组织（3k/, 5j/, adjust/, common/）
-- 通用 UI 组件在 common/ 目录（由各功能页面按需加载）
+- UI 页面按功能组织（3k/, 5j/, adjust/ 等）
+- 通用 UI 控件在 **`LAOZHU/uilib/`**（由各功能页面按需加载）
 
 **data/** - 飞行数据存储
 **test/** - 单元测试（仓库根目录，`SCRIPTS` 与 `WIDGETS` 共用逻辑的开发机测试）
@@ -52,22 +53,22 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 **项目级原则**：全项目新增功能应遵循下列依赖关系；存量代码不要求一次性重构，在后续修改、排障或功能扩展时，在触及范围内借机向该模式收敛，避免为对齐而大面积重写。
 
-- **新增功能**：按功能类型选择入口与 `TELEMETRY/<功能>/` 目录（例如 F3K、F5J、调整或未来新入口），但依赖方向保持一致：**薄入口** → **`TELEMETRY/<功能>/` 业务子模块**（页面与场景级编排、glue）→ **`TELEMETRY/common/`**（可复用 UI/UX）与 **`LAOZHU/`**（与界面解耦的领域逻辑）。
-- **参考范本**：[SCRIPTS/TELEMETRY/3ktel.lua](SCRIPTS/TELEMETRY/3ktel.lua) 为可读示例——入口仅负责生命周期、分页表、`background`/`run` 等，不把业务堆在入口里；[SCRIPTS/TELEMETRY/3k/f3kCore.lua](SCRIPTS/TELEMETRY/3k/f3kCore.lua) 组装 `LAOZHU`；[SCRIPTS/TELEMETRY/3k/](SCRIPTS/TELEMETRY/3k/) 下各页面按需加载 `common/` 控件，并通过 core / `LAOZHU` 暴露的接口驱动数据。
+- **新增功能**：按功能类型选择入口与 `TELEMETRY/<功能>/` 目录（例如 F3K、F5J、调整或未来新入口），但依赖方向保持一致：**薄入口** → **`TELEMETRY/<功能>/` 业务子模块**（页面与场景级编排、glue）→ **`LAOZHU/uilib/`**（可复用 UI 控件）与 **`LAOZHU/`** 下领域模块（不含 uilib）。
+- **参考范本**：[SCRIPTS/TELEMETRY/3ktel.lua](SCRIPTS/TELEMETRY/3ktel.lua) 为可读示例——入口仅负责生命周期、分页表、`background`/`run` 等，不把业务堆在入口里；[SCRIPTS/TELEMETRY/3k/f3kCore.lua](SCRIPTS/TELEMETRY/3k/f3kCore.lua) 组装 `LAOZHU`；[SCRIPTS/TELEMETRY/3k/](SCRIPTS/TELEMETRY/3k/) 下各页面按需加载 `LAOZHU/uilib/` 控件，并通过 core / `LAOZHU` 暴露的接口驱动数据。
 - **三层职责**：
   - **`SCRIPTS/TELEMETRY/<功能>/`**：该功能的业务子模块层（页面编排、`*Core` 等与场景绑定的组装；可在此加载 `LAOZHU` 并持有会话级状态，例如 `gF3kCore`）。
-  - **`SCRIPTS/TELEMETRY/common/`**：可复用 UI/UX 组件；由各功能页面按需加载；**不宜**让 `LAOZHU` 依赖此处，以保持逻辑与 EdgeTX 界面 API 解耦。载入/释放约定见下节 **common UI 内存约定**。
-  - **`LAOZHU/`**：与具体页面解耦的领域逻辑（状态机、记录、工作流、`comm/` 等）；由功能侧 core 或等价模块加载，对页面暴露稳定接口。
+  - **`LAOZHU/uilib/`**：可复用 EdgeTX UI 控件；由各功能页面按需加载。载入/释放约定见下节 **uilib 内存约定**（沿用原 common UI 惯例）。
+  - **`LAOZHU/`**（**除 `uilib/` 外**）：与具体页面解耦的领域逻辑（状态机、记录、工作流、`comm/` 等）；由功能侧 core 或等价模块加载，对页面暴露稳定接口；**不宜**让这些领域模块再依赖 **`LAOZHU/uilib/`**，以保持与界面 API 的边界清晰。
 - **其它入口**：`5jtel.lua`、`adjust.lua` 及未来的遥测、Widget 等入口遵循同一套原则；具体对照仍以 `3ktel.lua` 与 `3k/` 为准。
 
-#### common UI 内存约定
+#### uilib 内存约定
 
-遥控器上 Lua 内存有限，`common` UI 组件采用按需加载并从 `_G` 对称撤出的做法。完整约定拆成两篇，按角色查阅：
+遥控器上 Lua 内存有限，`LAOZHU/uilib` UI 组件采用按需加载并从 `_G` 对称撤出的做法。完整约定拆成两篇，按角色查阅：
 
 | 文档 | 读者 | 内容 |
 |------|------|------|
-| [SCRIPTS/TELEMETRY/common/UI_COMPONENT_USAGE.md](SCRIPTS/TELEMETRY/common/UI_COMPONENT_USAGE.md) | 页面与编排代码的作者 | **调用约束**：何时 `LZ_runModule`、`destroy`/局部卸载里调 `XXunload` 或清空 `O` 全局类、`Fields`/`keyMap`、自检清单 |
-| [SCRIPTS/TELEMETRY/common/UI_COMPONENT_IMPLEMENTATION.md](SCRIPTS/TELEMETRY/common/UI_COMPONENT_IMPLEMENTATION.md) | 新增或修改 common 控件的人 | **实现约束**：`*O.lua` 语义、两字母前缀、`XXunload` 要写全、`O` 变体与卸载分工、自检与测试思路 |
+| [LAOZHU/uilib/UI_COMPONENT_USAGE.md](LAOZHU/uilib/UI_COMPONENT_USAGE.md) | 页面与编排代码的作者 | **调用约束**：何时 `LZ_runModule`、`destroy`/局部卸载里调 `XXunload` 或清空 `O` 全局类、`Fields`/`keyMap`、自检清单 |
+| [LAOZHU/uilib/UI_COMPONENT_IMPLEMENTATION.md](LAOZHU/uilib/UI_COMPONENT_IMPLEMENTATION.md) | 新增或修改 uilib 控件的人 | **实现约束**：`*O.lua` 语义、两字母前缀、`XXunload` 要写全、`O` 变体与卸载分工、自检与测试思路 |
 
 依赖方向示意：
 
@@ -75,7 +76,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 flowchart TD
   telEntry[入口如3ktel]
   featDir[TELEMETRY下功能目录如3k]
-  commonUi[TELEMETRY_common]
+  commonUi[LAOZHU_uilib]
   domain[LAOZHU]
   telEntry --> featDir
   featDir --> commonUi
@@ -84,10 +85,10 @@ flowchart TD
 
 ### 模块加载系统
 
-入口脚本须先设置全局 **`gSDCardDir`**（SD 根：`"/"` 或测试时 `"./"`），再加载 `SCRIPTS/TELEMETRY/common/LoadModule.lua`。使用自定义模块加载器：
+入口脚本须先设置全局 **`gSDCardDir`**（SD 根：`"/"` 或测试时 `"./"`），再加载 `LAOZHU/uilib/LoadModule.lua`。使用自定义模块加载器：
 ```lua
 LZ_runModule("LAOZHU/OTUtils.lua")   -- → gSDCardDir .. "LAOZHU/OTUtils.lua"
-LZ_runModule("TELEMETRY/common/Fields.lua") -- → gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua"
+LZ_runModule("LAOZHU/uilib/Fields.lua")   -- → gSDCardDir .. "LAOZHU/uilib/Fields.lua"
 LZ_loadModule("path/to/module.lua") -- 仅加载模块函数
 ```
 

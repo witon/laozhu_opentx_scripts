@@ -146,63 +146,63 @@ local files = {
 
 	"TELEMETRY/adjust/output.lua",
 
-	"TELEMETRY/common/Button.lua",
+	"LAOZHU/uilib/Button.lua",
 
-	"TELEMETRY/common/ButtonO.lua",
+	"LAOZHU/uilib/ButtonO.lua",
 
-	"TELEMETRY/common/CheckBox.lua",
+	"LAOZHU/uilib/CheckBox.lua",
 
-	"TELEMETRY/common/CheckBoxO.lua",
+	"LAOZHU/uilib/CheckBoxO.lua",
 
-	"TELEMETRY/common/CurveSelector.lua",
+	"LAOZHU/uilib/CurveSelector.lua",
 
-	"TELEMETRY/common/CurveSelectorO.lua",
+	"LAOZHU/uilib/CurveSelectorO.lua",
 
-	"TELEMETRY/common/Fields.lua",
+	"LAOZHU/uilib/Fields.lua",
 
-	"TELEMETRY/common/InputSelector.lua",
+	"LAOZHU/uilib/InputSelector.lua",
 
-	"TELEMETRY/common/InputSelectorO.lua",
+	"LAOZHU/uilib/InputSelectorO.lua",
 
-	"TELEMETRY/common/InputView.lua",
+	"LAOZHU/uilib/InputView.lua",
 
-	"TELEMETRY/common/InputViewO.lua",
+	"LAOZHU/uilib/InputViewO.lua",
 
-	"TELEMETRY/common/LoadModule.lua",
+	"LAOZHU/uilib/LoadModule.lua",
 
-	"TELEMETRY/common/ModeSelector.lua",
+	"LAOZHU/uilib/ModeSelector.lua",
 
-	"TELEMETRY/common/ModeSelectorO.lua",
+	"LAOZHU/uilib/ModeSelectorO.lua",
 
-	"TELEMETRY/common/NumEdit.lua",
+	"LAOZHU/uilib/NumEdit.lua",
 
-	"TELEMETRY/common/NumEditO.lua",
+	"LAOZHU/uilib/NumEditO.lua",
 
-	"TELEMETRY/common/OutputSelector.lua",
+	"LAOZHU/uilib/OutputSelector.lua",
 
-	"TELEMETRY/common/OutputSelectorO.lua",
+	"LAOZHU/uilib/OutputSelectorO.lua",
 
-	"TELEMETRY/common/Selector.lua",
+	"LAOZHU/uilib/Selector.lua",
 
-	"TELEMETRY/common/SelectorO.lua",
+	"LAOZHU/uilib/SelectorO.lua",
 
-	"TELEMETRY/common/TextEdit.lua",
+	"LAOZHU/uilib/TextEdit.lua",
 
-	"TELEMETRY/common/TextEditO.lua",
+	"LAOZHU/uilib/TextEditO.lua",
 
-	"TELEMETRY/common/TimeEdit.lua",
+	"LAOZHU/uilib/TimeEdit.lua",
 
-	"TELEMETRY/common/TimeEditO.lua",
+	"LAOZHU/uilib/TimeEditO.lua",
 
-	"TELEMETRY/common/UiParams.lua",
+	"LAOZHU/uilib/UiParams.lua",
 
-	"TELEMETRY/common/ViewMatrix.lua",
+	"LAOZHU/uilib/ViewMatrix.lua",
 
-	"TELEMETRY/common/ViewMatrixO.lua",
+	"LAOZHU/uilib/ViewMatrixO.lua",
 
-	"TELEMETRY/common/comp.lua",
+	"LAOZHU/uilib/comp.lua",
 
-	"TELEMETRY/common/keyMap.lua",
+	"LAOZHU/uilib/keyMap.lua",
 
 	"TELEMETRY/key.lua",
 

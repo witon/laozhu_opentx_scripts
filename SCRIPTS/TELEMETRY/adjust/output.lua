@@ -12,11 +12,11 @@ local curvesPage = nil
 local this = nil
 
 local function loadModule()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrix.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Button.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CheckBox.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEdit.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputView.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrix.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Button.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CheckBox.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEdit.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputView.lua")
 end
 
 local function unloadModule()

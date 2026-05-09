@@ -1,6 +1,6 @@
 gSDCardDir = "/"
 gConfigFileName = "3k.cfg"
-local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 gF3kCore = nil
 
@@ -14,7 +14,7 @@ local curPage = nil
 local lastEvent = 0
 
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
@@ -26,8 +26,7 @@ local function init()
 	LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 
 	if LZ_isNeedCompile() then
-		local pagePath = "TELEMETRY/common/comp.lua"
-		curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
+		curPage = LZ_runModule(gSDCardDir .. "LAOZHU/uilib/comp.lua")
 		--curPage.init()
 		return
 	else

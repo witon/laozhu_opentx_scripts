@@ -3,7 +3,7 @@ local bgFlag = false
 --local k1 = 0
 --local k2 = 0
 
-local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 
 
@@ -11,7 +11,7 @@ local focusIndex = 1
 local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua"}
 local curPage = nil
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
@@ -89,8 +89,7 @@ LZ_runModule(gSDCardDir .. "LAOZHU/LuaUtils.lua")
 LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
 
 if LZ_isNeedCompile() then
-	local pagePath = "TELEMETRY/common/comp.lua"
-	curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
+	curPage = LZ_runModule(gSDCardDir .. "LAOZHU/uilib/comp.lua")
 	--curPage.init()
 else
 	LZ_isNeedCompile = nil

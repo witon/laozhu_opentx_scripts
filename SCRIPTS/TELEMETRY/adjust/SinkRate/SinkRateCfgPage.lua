@@ -12,10 +12,10 @@ local cfgFileName = nil
 local sinkRateCfg = nil
 
 local function loadModule()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ModeSelectorO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelectorO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ModeSelectorO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputSelectorO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Fields.lua")
     initFieldsInfo()
 end
 
