@@ -30,8 +30,8 @@ local function loadPage()
 		f5jReadVarMap.setF5jState(gFlightState)
 		readVar.setVarMap(f5jReadVarMap)
 	end
-	local pagePath = "TELEMETRY/" .. pages[displayIndex]
-	curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
+	local pagePath = "LAOZHU/" .. pages[displayIndex]
+	curPage = LZ_runModule(gSDCardDir .. pagePath)
 	curPage.init()
 end
 

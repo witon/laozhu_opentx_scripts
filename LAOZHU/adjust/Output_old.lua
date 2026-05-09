@@ -120,7 +120,7 @@ local function init()
     CBsetOnChange(channel1ReverseCB, onReverseCheckBoxChange)
     CBsetOnChange(channel2ReverseCB, onReverseCheckBoxChange)
  
-    dofile(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/ReplaceMix.lua")
+    dofile(gSDCardDir .. "LAOZHU/adjust/ReplaceMix.lua")
     onOutputSelectorChange(output1)
     onOutputSelectorChange(output2)
 end

@@ -68,83 +68,83 @@ local files = {
 
 	"LAOZHU/readVar.lua",
 
-	"TELEMETRY/3k/F3KRecordListView.lua",
+	"LAOZHU/3k/F3KRecordListView.lua",
 
-	"TELEMETRY/3k/FlightPage.lua",
+	"LAOZHU/3k/FlightPage.lua",
 
-	"TELEMETRY/3k/FlightPageNew.lua",
+	"LAOZHU/3k/FlightPageNew.lua",
 
-	"TELEMETRY/3k/FlightStaticPage.lua",
+	"LAOZHU/3k/FlightStaticPage.lua",
 
-	"TELEMETRY/3k/RoundSetupPage.lua",
+	"LAOZHU/3k/RoundSetupPage.lua",
 
-	"TELEMETRY/3k/SetupPage.lua",
+	"LAOZHU/3k/SetupPage.lua",
 
-	"TELEMETRY/3k/SmallFontFlightListPage.lua",
+	"LAOZHU/3k/SmallFontFlightListPage.lua",
 
-	"TELEMETRY/3k/TaskSelector.lua",
+	"LAOZHU/3k/TaskSelector.lua",
 
-	"TELEMETRY/3k/TaskSelectorO.lua",
+	"LAOZHU/3k/TaskSelectorO.lua",
 
-	"TELEMETRY/3k/f3kCore.lua",
+	"LAOZHU/3k/f3kCore.lua",
 
 	"TELEMETRY/3ktel.lua",
 
-	"TELEMETRY/5j/FlightPage.lua",
+	"LAOZHU/5j/FlightPage.lua",
 
-	"TELEMETRY/5j/LargeFontFlightListPage.lua",
+	"LAOZHU/5j/LargeFontFlightListPage.lua",
 
-	"TELEMETRY/5j/SetupPage.lua",
+	"LAOZHU/5j/SetupPage.lua",
 
-	"TELEMETRY/5j/SmallFontFlightListPage.lua",
+	"LAOZHU/5j/SmallFontFlightListPage.lua",
 
 	"TELEMETRY/5jtel.lua",
 
 	"TELEMETRY/adjust.lua",
 
-	"TELEMETRY/adjust/BackupOutput.lua",
+	"LAOZHU/adjust/BackupOutput.lua",
 
-	"TELEMETRY/adjust/GlobalVar.lua",
+	"LAOZHU/adjust/GlobalVar.lua",
 
-	"TELEMETRY/adjust/LD/LD.lua",
+	"LAOZHU/adjust/LD/LD.lua",
 
-	"TELEMETRY/adjust/LD/LDCfgPage.lua",
+	"LAOZHU/adjust/LD/LDCfgPage.lua",
 
-	"TELEMETRY/adjust/LD/LDRecordListView.lua",
+	"LAOZHU/adjust/LD/LDRecordListView.lua",
 
-	"TELEMETRY/adjust/LD/RecordListView.lua",
+	"LAOZHU/adjust/LD/RecordListView.lua",
 
-	"TELEMETRY/adjust/Launch/LRecordListView.lua",
+	"LAOZHU/adjust/Launch/LRecordListView.lua",
 
-	"TELEMETRY/adjust/Launch/Launch.lua",
+	"LAOZHU/adjust/Launch/Launch.lua",
 
-	"TELEMETRY/adjust/Launch/LaunchCfgPage.lua",
+	"LAOZHU/adjust/Launch/LaunchCfgPage.lua",
 
-	"TELEMETRY/adjust/Launch/RecordListView.lua",
+	"LAOZHU/adjust/Launch/RecordListView.lua",
 
-	"TELEMETRY/adjust/ManagerOutput.lua",
+	"LAOZHU/adjust/ManagerOutput.lua",
 
-	"TELEMETRY/adjust/OutputCurve.lua",
+	"LAOZHU/adjust/OutputCurve.lua",
 
-	"TELEMETRY/adjust/OutputCurveManager.lua",
+	"LAOZHU/adjust/OutputCurveManager.lua",
 
-	"TELEMETRY/adjust/Output_old.lua",
+	"LAOZHU/adjust/Output_old.lua",
 
-	"TELEMETRY/adjust/ReplaceMix.lua",
+	"LAOZHU/adjust/ReplaceMix.lua",
 
-	"TELEMETRY/adjust/SaveAndRestoreParam.lua",
+	"LAOZHU/adjust/SaveAndRestoreParam.lua",
 
-	"TELEMETRY/adjust/SelectChannel.lua",
+	"LAOZHU/adjust/SelectChannel.lua",
 
-	"TELEMETRY/adjust/SinkRate/RecordListView.lua",
+	"LAOZHU/adjust/SinkRate/RecordListView.lua",
 
-	"TELEMETRY/adjust/SinkRate/SRRecordListView.lua",
+	"LAOZHU/adjust/SinkRate/SRRecordListView.lua",
 
-	"TELEMETRY/adjust/SinkRate/SinkRate.lua",
+	"LAOZHU/adjust/SinkRate/SinkRate.lua",
 
-	"TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua",
+	"LAOZHU/adjust/SinkRate/SinkRateCfgPage.lua",
 
-	"TELEMETRY/adjust/output.lua",
+	"LAOZHU/adjust/output.lua",
 
 	"LAOZHU/uilib/Button.lua",
 

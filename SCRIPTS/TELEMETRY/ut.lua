@@ -74,7 +74,7 @@ local function testLoadAndUnload()
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEdit.lua")
     TIMEEunload()
 
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelector.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/3k/TaskSelector.lua")
     TSunload()
 
 end
@@ -94,7 +94,7 @@ local function initUI()
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Selector.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ModeSelector.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrix.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelector.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/3k/TaskSelector.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEdit.lua")
  
     viewMatrix = VMnewViewMatrix()

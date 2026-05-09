@@ -42,11 +42,11 @@ local function loadPage()
 		LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 		f3kCfg = CFGC:new()
 		f3kCfg:readFromFile(gConfigFileName)
-		gF3kCore = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/f3kCore.lua")
+		gF3kCore = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kCore.lua")
 		gF3kCore.init()
 	end
-	local pagePath = "TELEMETRY/" .. pages[displayIndex]
-	curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
+	local pagePath = "LAOZHU/" .. pages[displayIndex]
+	curPage = LZ_runModule(gSDCardDir .. pagePath)
 	--curPage.init()
 end
 

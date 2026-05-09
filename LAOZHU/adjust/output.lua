@@ -113,7 +113,7 @@ local function onSelectChannelsButtonClick(button)
         return
     end
     if not selectChannelPage then
-        selectChannelPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/SelectChannel.lua")
+        selectChannelPage = LZ_runModule(gSDCardDir .. "LAOZHU/adjust/SelectChannel.lua")
         selectChannelPage.init()
         selectChannelPage.setSelectedChannels(adjustChannels)
     end
@@ -124,7 +124,7 @@ local function onCurvesButtonClick()
         return
     end
     if not curvesPage then
-        curvesPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/OutputCurve.lua")
+        curvesPage = LZ_runModule(gSDCardDir .. "LAOZHU/adjust/OutputCurve.lua")
         curvesPage.init()
         local revertArray = {}
         for i=1, #adjustChannels, 1 do
@@ -253,8 +253,8 @@ end
 
 local function init()
     loadModule()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/ReplaceMix.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/OutputCurveManager.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/adjust/ReplaceMix.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/adjust/OutputCurveManager.lua")
     selectChannelsButton = BTnewButton()
     curvesButton = BTnewButton()
     curvesButton.text = "curves"

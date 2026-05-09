@@ -41,7 +41,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 **TELEMETRY/** - 用户界面与遥测入口层（位于 `SCRIPTS/` 下；各功能子目录承担场景侧业务编排与页面，详见下节「分层约定与参考范本」）
 - 主入口点：3ktel.lua（F3K）、5jtel.lua（F5J）、adjust.lua（调整工具）
-- UI 页面按功能组织（3k/, 5j/, adjust/ 等）
+- UI 页面按功能组织在 `LAOZHU/3k/`、`LAOZHU/5j/`、`LAOZHU/adjust/` 等（入口仍在 `SCRIPTS/TELEMETRY/`）
 - 通用 UI 控件在 **`LAOZHU/uilib/`**（由各功能页面按需加载）
 
 **data/** - 飞行数据存储
@@ -53,13 +53,13 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 
 **项目级原则**：全项目新增功能应遵循下列依赖关系；存量代码不要求一次性重构，在后续修改、排障或功能扩展时，在触及范围内借机向该模式收敛，避免为对齐而大面积重写。
 
-- **新增功能**：按功能类型选择入口与 `TELEMETRY/<功能>/` 目录（例如 F3K、F5J、调整或未来新入口），但依赖方向保持一致：**薄入口** → **`TELEMETRY/<功能>/` 业务子模块**（页面与场景级编排、glue）→ **`LAOZHU/uilib/`**（可复用 UI 控件）与 **`LAOZHU/`** 下领域模块（不含 uilib）。
-- **参考范本**：[SCRIPTS/TELEMETRY/3ktel.lua](SCRIPTS/TELEMETRY/3ktel.lua) 为可读示例——入口仅负责生命周期、分页表、`background`/`run` 等，不把业务堆在入口里；[SCRIPTS/TELEMETRY/3k/f3kCore.lua](SCRIPTS/TELEMETRY/3k/f3kCore.lua) 组装 `LAOZHU`；[SCRIPTS/TELEMETRY/3k/](SCRIPTS/TELEMETRY/3k/) 下各页面按需加载 `LAOZHU/uilib/` 控件，并通过 core / `LAOZHU` 暴露的接口驱动数据。
+- **新增功能**：按功能类型选择遥测入口（`SCRIPTS/TELEMETRY/*.lua`）与 **`LAOZHU/<功能>/`** 页面目录（例如 `3k`、`5j`、`adjust` 或未来新目录），但依赖方向保持一致：**薄入口** → **`LAOZHU/<功能>/` 业务子模块**（页面与场景级编排、glue）→ **`LAOZHU/uilib/`**（可复用 UI 控件）与 **`LAOZHU/`** 下其它领域模块（不含 uilib）。
+- **参考范本**：[SCRIPTS/TELEMETRY/3ktel.lua](SCRIPTS/TELEMETRY/3ktel.lua) 为可读示例——入口仅负责生命周期、分页表、`background`/`run` 等，不把业务堆在入口里；[LAOZHU/3k/f3kCore.lua](LAOZHU/3k/f3kCore.lua) 组装 `LAOZHU`；[LAOZHU/3k/](LAOZHU/3k/) 下各页面按需加载 `LAOZHU/uilib/` 控件，并通过 core / `LAOZHU` 暴露的接口驱动数据。
 - **三层职责**：
-  - **`SCRIPTS/TELEMETRY/<功能>/`**：该功能的业务子模块层（页面编排、`*Core` 等与场景绑定的组装；可在此加载 `LAOZHU` 并持有会话级状态，例如 `gF3kCore`）。
+  - **`LAOZHU/<功能>/`**（如 `LAOZHU/3k/`）：该功能的业务子模块层（页面编排、`*Core` 等与场景绑定的组装；可在此加载其它 `LAOZHU` 模块并持有会话级状态，例如 `gF3kCore`）；遥测**入口**仍在 `SCRIPTS/TELEMETRY/`。
   - **`LAOZHU/uilib/`**：可复用 EdgeTX UI 控件；由各功能页面按需加载。载入/释放约定见下节 **uilib 内存约定**（沿用原 common UI 惯例）。
   - **`LAOZHU/`**（**除 `uilib/` 外**）：与具体页面解耦的领域逻辑（状态机、记录、工作流、`comm/` 等）；由功能侧 core 或等价模块加载，对页面暴露稳定接口；**不宜**让这些领域模块再依赖 **`LAOZHU/uilib/`**，以保持与界面 API 的边界清晰。
-- **其它入口**：`5jtel.lua`、`adjust.lua` 及未来的遥测、Widget 等入口遵循同一套原则；具体对照仍以 `3ktel.lua` 与 `3k/` 为准。
+- **其它入口**：`5jtel.lua`、`adjust.lua` 及未来的遥测、Widget 等入口遵循同一套原则；具体对照仍以 `3ktel.lua` 与 `LAOZHU/3k/` 为准。
 
 #### uilib 内存约定
 
@@ -75,7 +75,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 ```mermaid
 flowchart TD
   telEntry[入口如3ktel]
-  featDir[TELEMETRY下功能目录如3k]
+  featDir[LAOZHU下功能目录如3k]
   commonUi[LAOZHU_uilib]
   domain[LAOZHU]
   telEntry --> featDir
