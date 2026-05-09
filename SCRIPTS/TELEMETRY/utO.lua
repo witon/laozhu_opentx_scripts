@@ -14,6 +14,14 @@ local timeEdit = nil
 
 local viewMatrix = nil
 
+-- 调试：见 LAOZHU/DBGTools/dbg.lua；DEBUG_LOG 关则 DBG_dbg 不输出；SHOW_LOG_SCREEN 开且 DEBUG_LOG 开时写入日志缓冲（遥测侧 DBGTelemetryLog 尚未绘制覆盖层，宜保持 false）。
+local DBG_OPTS = {
+	printTag = "[utO]",
+	DEBUG_LOG = true,
+	SHOW_LOG_SCREEN = false,
+	LOG_MAX = 20,
+}
+
 LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
@@ -123,9 +131,12 @@ local function init()
     local c2 = collectgarbage("count")
     local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
     fun()
-    print("begin load")
+    LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
+    DBG_init(DBG_OPTS)
+    DBG_dbg("begin load")
     curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFiles[curFileIndex])
-    print("loaded")
+    DBG_dbg("loaded")
+    DBG_dbg("emutest", "file 1/" .. tostring(#testFiles), testFiles[1])
     curCaseIndex = 1
     LZ_runModule(gSDCardDir .. "LAOZHU/EmuTestUtils.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
@@ -141,6 +152,7 @@ local function doOneCase()
         curCaseIndex = 1
         local testFile = testFiles[curFileIndex]
         curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFile)
+        DBG_dbg("emutest", "file " .. tostring(curFileIndex) .. "/" .. tostring(#testFiles), testFile)
     end
     curCases[curCaseIndex]()
     curCaseIndex = curCaseIndex + 1
@@ -151,6 +163,9 @@ end
 local function run(event)
     if curFileIndex <= #testFiles then
         doOneCase()
+        if curFileIndex > #testFiles then
+            DBG_dbg("emutest OK")
+        end
         return
     end
 
@@ -166,15 +181,14 @@ local function run(event)
     lcd.clear()
 
 
-	if event ~= 0 then
-		print("before:", event)
+	local rawEv = event or 0
+	if rawEv ~= 0 then
+		local m = keyMap[rawEv]
+		DBG_dbg("KEY", "raw=" .. tostring(rawEv), "mapped=" .. tostring(m or rawEv), "hasMap=" .. tostring(m ~= nil))
 	end
 	e = keyMap[event];
 	if e ~= nil then
 		event = e;
-	end
-	if event ~= 0 then
-		print("after:", event)
 	end
 
 

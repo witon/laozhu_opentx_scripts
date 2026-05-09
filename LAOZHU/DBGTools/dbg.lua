@@ -36,16 +36,25 @@ function DBG_dbg(...)
 		return
 	end
 	local n = select("#", ...)
-	local parts = {}
-	for i = 1, n do
-		parts[i] = tostring(select(i, ...))
+	local line
+	if n == 0 then
+		line = ""
+	else
+		line = tostring(select(1, ...))
+		for i = 2, n do
+			line = line .. " " .. tostring(select(i, ...))
+		end
 	end
-	local line = table.concat(parts, " ")
 	print(DBG.printTag, line)
 	if DBG.SHOW_LOG_SCREEN then
-		DBG.logHistory[#DBG.logHistory + 1] = line
-		if #DBG.logHistory > DBG.LOG_MAX then
-			table.remove(DBG.logHistory, 1)
+		local h = DBG.logHistory
+		h[#h + 1] = line
+		while #h > DBG.LOG_MAX do
+			local len = #h
+			for i = 1, len - 1 do
+				h[i] = h[i + 1]
+			end
+			h[len] = nil
 		end
 	end
 end
