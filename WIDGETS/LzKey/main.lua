@@ -151,7 +151,6 @@ local function refresh(widget, event, touchState)
 		lcd.drawText(ox, headerBottom, "无记录", TXT)
 	end
 
-	lcd.drawText(ox, hintY, "App:长按ENT交权", TXT)
 
 	DBGW_drawLogOverlay(z, zoneBg, TXT)
 end

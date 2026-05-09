@@ -81,14 +81,6 @@ local function refresh(widget, event, _touchState)
 
 	widget.f3kNav.handleNavAfterPage(st, mappedEvent)
 
-	if gF3kCore ~= nil and LZ_ui then
-		local rowH = LZ_ui.rowStep
-		local hintY = z.y + z.h - rowH - 2
-		if hintY >= z.y + 2 then
-			local TXT = LZ_ui.font + LEFT + LZ_ui.themeText
-			lcd.drawText(z.x + 2, hintY, "App:长按ENT交权", TXT)
-		end
-	end
 end
 
 local function create(zone, options)

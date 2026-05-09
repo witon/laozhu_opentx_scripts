@@ -49,9 +49,9 @@ local function drawFlightInfo()
 	lcd.drawText(midX - 1, 0, taskName, RIGHT + LZ_ui.font)
 	lcd.drawLine(0, math.floor(9 * LCD_H / 64), midX, math.floor(9 * LCD_H / 64), SOLID, 0)
 	lcd.drawLine(0, math.floor(46 * LCD_H / 64), midX, math.floor(46 * LCD_H / 64), SOLID, 0)
-	lcd.drawText(midX - 1, math.floor(48 * LCD_H / 64), flightState.getCurFlightStateName(), RIGHT)
-	lcd.drawChannel(0, math.floor(57 * LCD_H / 64), "RxBt", LEFT)
-	lcd.drawChannel(math.floor(50 * LCD_W / 128), math.floor(57 * LCD_H / 64), "RSSI", RIGHT)
+	lcd.drawText(midX - 1, math.floor(48 * LCD_H / 64), flightState.getCurFlightStateName(), RIGHT + LZ_ui.font)
+	lcd.drawChannel(0, math.floor(57 * LCD_H / 64), "RxBt", LEFT + LZ_ui.font)
+	lcd.drawChannel(math.floor(50 * LCD_W / 128), math.floor(57 * LCD_H / 64), "RSSI", RIGHT + LZ_ui.font)
 
 
 	local roundState = gF3kCore.getRound().getState()

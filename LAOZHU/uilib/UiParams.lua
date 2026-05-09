@@ -19,7 +19,9 @@ function LZ_uiInit(mode)
 	if mode == "color1" then
 		LZ_ui.font = MIDSIZE or SMLSIZE or 0
 		LZ_ui.fontSmall = SMLSIZE or LZ_ui.font
-		LZ_ui.rowStep = 18
+		LZ_ui.rowStep = 21
+		LZ_ui.rowFillTopPad = 2
+		LZ_ui.rowFillBottomPad = 4
 		LZ_ui.headerRowHeight = 26
 		LZ_ui.headerFont = MIDSIZE or SMLSIZE or 0
 		LZ_ui.themeText = COLOR_THEME_PRIMARY1 or 0
@@ -27,6 +29,8 @@ function LZ_uiInit(mode)
 		LZ_ui.font = SMLSIZE or 0
 		LZ_ui.fontSmall = SMLSIZE or 0
 		LZ_ui.rowStep = 9
+		LZ_ui.rowFillTopPad = 1
+		LZ_ui.rowFillBottomPad = 0
 		LZ_ui.headerRowHeight = 9
 		LZ_ui.headerFont = SMLSIZE or 0
 		LZ_ui.themeText = 0

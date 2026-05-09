@@ -240,10 +240,6 @@ local function refresh(widget, event, touchState)
 	lcd.drawText(leftLbl, oy + 5 * rs + 1, "timeedit:", LZ_ui.font + LEFT)
 	widget.timeEdit:draw(rightCtlR, oy + 5 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-	local hintY = z.y + z.h - rs - 2
-	if hintY >= oy + 5 * rs + 12 then
-		lcd.drawText(ox + 2, hintY, "App:长按ENT交权", TXT)
-	end
 
 	if widget.dbgEnabled then
 		DBG_logClampScroll(maxVisLog)

@@ -58,7 +58,7 @@ function F3KRLVdraw(recordListView, x, y, invers, option)
 			local op = 0
 			if i == recordListView.selectedRow and recordListView.focusState == 2 then
 				op = INVERS
-				lcd.drawFilledRectangle(x, ly - 1, rowFillW, rs, FORCE)
+				lcd.drawFilledRectangle(x, ly - LZ_ui.rowFillTopPad, rowFillW, rs + LZ_ui.rowFillTopPad + LZ_ui.rowFillBottomPad, FORCE)
 			end
 			local prefix = "(" .. record.index .. ") "
 			local rowFlags = LZ_ui.font + LEFT + op
