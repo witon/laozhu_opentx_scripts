@@ -10,12 +10,12 @@ end
 
 local function run(event, time)
 
-	lcd.drawText(64, 22, "MaxAlt:", SMLSIZE)
-	lcd.drawNumber(128, 18, getValue(maxAltID), MIDSIZE + RIGHT)
-	lcd.drawText(64, 39, "MinRVol:", SMLSIZE)
-	lcd.drawNumber(128, 34, getValue(minRxbtID) * 100, MIDSIZE + RIGHT + PREC2)
-	lcd.drawText(64, 56, "MinRSSI:", SMLSIZE)
-	lcd.drawNumber(128, 50, getValue(minRssiID), MIDSIZE + RIGHT)
+	lcd.drawText(64, 22, "MaxAlt:", LZ_ui.font)
+	lcd.drawNumber(128, 18, getValue(maxAltID), LZ_ui.headerFont + RIGHT)
+	lcd.drawText(64, 39, "MinRVol:", LZ_ui.font)
+	lcd.drawNumber(128, 34, getValue(minRxbtID) * 100, LZ_ui.headerFont + RIGHT + PREC2)
+	lcd.drawText(64, 56, "MinRSSI:", LZ_ui.font)
+	lcd.drawNumber(128, 50, getValue(minRssiID), LZ_ui.headerFont + RIGHT)
 end
 
 init()

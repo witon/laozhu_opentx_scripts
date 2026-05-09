@@ -201,35 +201,41 @@ local function run(event)
 
 
     viewMatrix:doKey(event)
-    lcd.drawText(1, 1, "CheckBox:", SMLSIZE + LEFT)
-    checkBox:draw(54, 1, invers, SMLSIZE + RIGHT)
-    lcd.drawText(60, 1, "TextEdit:", SMLSIZE + LEFT)
-    textEdit:draw(128, 1, invers, SMLSIZE + RIGHT)
+    local rs = LZ_ui.rowStep
+    local midX = math.floor(LCD_W / 2)
+    local pad = 1
+    local gutter = 2
+    local leftCtlR = midX - gutter
+    local rightLbl = midX
+    local rightCtlR = LCD_W - pad
+    lcd.drawText(pad, 1, "CheckBox:", LZ_ui.font + LEFT)
+    checkBox:draw(leftCtlR, 1, invers, LZ_ui.font + RIGHT)
+    lcd.drawText(rightLbl, 1, "TextEdit:", LZ_ui.font + LEFT)
+    textEdit:draw(rightCtlR, 1, invers, LZ_ui.font + RIGHT)
 
+    lcd.drawText(pad, rs + 1, "Button:", LZ_ui.font + LEFT)
+    button:draw(leftCtlR, rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(1, 10, "Button:", SMLSIZE + LEFT)
-    button:draw(54, 10, invers, SMLSIZE + RIGHT)
+    lcd.drawText(rightLbl, rs + 1, "ipselect:", LZ_ui.font + LEFT)
+    inputSelector:draw(rightCtlR, rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(60, 10, "ipselect:", SMLSIZE + LEFT)
-    inputSelector:draw(128, 10, invers, SMLSIZE + RIGHT)
+    lcd.drawText(pad, 2 * rs + 1, "NumEdit:", LZ_ui.font + LEFT)
+    numEdit:draw(leftCtlR, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(1, 20, "NumEdit:", SMLSIZE + LEFT)
-    numEdit:draw(54, 20, invers, SMLSIZE + RIGHT)
+    lcd.drawText(rightLbl, 2 * rs + 1, "opselect:", LZ_ui.font + LEFT)
+    outputSelector:draw(rightCtlR, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(60, 20, "opselect:", SMLSIZE + LEFT)
-    outputSelector:draw(128, 20, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(60, 30, "csselect:", SMLSIZE + LEFT)
-    curveSelector:draw(128, 30, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(0, 30, "mdselect:", SMLSIZE + LEFT)
-    modeSelector:draw(58, 30, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(0, 40, "tsselect:", SMLSIZE + LEFT)
-    taskSelector:draw(84, 40, invers, SMLSIZE + RIGHT)
---
-    lcd.drawText(0, 50, "timeedit:", SMLSIZE + LEFT)
-    timeEdit:draw(84, 50, invers, SMLSIZE + RIGHT)
+    lcd.drawText(rightLbl, 3 * rs + 1, "csselect:", LZ_ui.font + LEFT)
+    curveSelector:draw(rightCtlR, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
+
+    lcd.drawText(pad, 3 * rs + 1, "mdselect:", LZ_ui.font + LEFT)
+    modeSelector:draw(leftCtlR, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
+
+    lcd.drawText(pad, 4 * rs + 1, "tsselect:", LZ_ui.font + LEFT)
+    taskSelector:draw(rightCtlR, 4 * rs + 1, invers, LZ_ui.font + RIGHT)
+
+    lcd.drawText(pad, 5 * rs + 1, "timeedit:", LZ_ui.font + LEFT)
+    timeEdit:draw(rightCtlR, 5 * rs + 1, invers, LZ_ui.font + RIGHT)
 end
 
 return {run=run, init=init }

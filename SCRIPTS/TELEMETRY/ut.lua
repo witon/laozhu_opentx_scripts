@@ -203,35 +203,41 @@ local function run(event)
 
 
     viewMatrix.doKey(viewMatrix, event)
-    lcd.drawText(1, 1, "CheckBox:", SMLSIZE + LEFT)
-    IVdraw(checkBox, 54, 1, invers, SMLSIZE + RIGHT)
-    lcd.drawText(60, 1, "TextEdit:", SMLSIZE + LEFT)
-    IVdraw(textEdit, 128, 1, invers, SMLSIZE + RIGHT)
+    local rs = LZ_ui.rowStep
+    local midX = math.floor(LCD_W / 2)
+    local pad = 1
+    local gutter = 2
+    local leftCtlR = midX - gutter
+    local rightLbl = midX
+    local rightCtlR = LCD_W - pad
+    lcd.drawText(pad, 1, "CheckBox:", LZ_ui.font + LEFT)
+    IVdraw(checkBox, leftCtlR, 1, invers, LZ_ui.font + RIGHT)
+    lcd.drawText(rightLbl, 1, "TextEdit:", LZ_ui.font + LEFT)
+    IVdraw(textEdit, rightCtlR, 1, invers, LZ_ui.font + RIGHT)
 
+    lcd.drawText(pad, rs + 1, "Button:", LZ_ui.font + LEFT)
+    IVdraw(button, leftCtlR, rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(1, 10, "Button:", SMLSIZE + LEFT)
-    IVdraw(button, 54, 10, invers, SMLSIZE + RIGHT)
+    lcd.drawText(rightLbl, rs + 1, "ipselect:", LZ_ui.font + LEFT)
+    IVdraw(inputSelector, rightCtlR, rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(60, 10, "ipselect:", SMLSIZE + LEFT)
-    IVdraw(inputSelector, 128, 10, invers, SMLSIZE + RIGHT)
+    lcd.drawText(pad, 2 * rs + 1, "NumEdit:", LZ_ui.font + LEFT)
+    IVdraw(numEdit, leftCtlR, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(1, 20, "NumEdit:", SMLSIZE + LEFT)
-    IVdraw(numEdit, 54, 20, invers, SMLSIZE + RIGHT)
+    lcd.drawText(rightLbl, 2 * rs + 1, "opselect:", LZ_ui.font + LEFT)
+    IVdraw(outputSelector, rightCtlR, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(60, 20, "opselect:", SMLSIZE + LEFT)
-    IVdraw(outputSelector, 128, 20, invers, SMLSIZE + RIGHT)
+    lcd.drawText(rightLbl, 3 * rs + 1, "csselect:", LZ_ui.font + LEFT)
+    IVdraw(curveSelector, rightCtlR, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(60, 30, "csselect:", SMLSIZE + LEFT)
-    IVdraw(curveSelector, 128, 30, invers, SMLSIZE + RIGHT)
+    lcd.drawText(pad, 3 * rs + 1, "mdselect:", LZ_ui.font + LEFT)
+    IVdraw(modeSelector, leftCtlR, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(0, 30, "mdselect:", SMLSIZE + LEFT)
-    IVdraw(modeSelector, 58, 30, invers, SMLSIZE + RIGHT)
+    lcd.drawText(pad, 4 * rs + 1, "tsselect:", LZ_ui.font + LEFT)
+    IVdraw(taskSelector, rightCtlR, 4 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(0, 40, "tsselect:", SMLSIZE + LEFT)
-    IVdraw(taskSelector, 84, 40, invers, SMLSIZE + RIGHT)
-
-    lcd.drawText(0, 50, "timeedit:", SMLSIZE + LEFT)
-    IVdraw(timeEdit, 84, 50, invers, SMLSIZE + RIGHT)
+    lcd.drawText(pad, 5 * rs + 1, "timeedit:", LZ_ui.font + LEFT)
+    IVdraw(timeEdit, rightCtlR, 5 * rs + 1, invers, LZ_ui.font + RIGHT)
 end
 
 return {run=run, init=init }

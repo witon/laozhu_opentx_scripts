@@ -12,11 +12,12 @@ end
 
 local function run(event, time)
     lcd.clear()
+    local rs = LZ_ui.rowStep
     if curFileIndex > #compileFiles then
-        lcd.drawText(1, 20, "installation completed.", SMLSIZE+LEFT)
-        lcd.drawText(1, 30, "press exit key to start.", SMLSIZE+LEFT)
-        --lcd.drawText(1, 30, "you must restart the radio", SMLSIZE+LEFT)
-        --lcd.drawText(1, 40, "to use this script.", SMLSIZE+LEFT)
+        lcd.drawText(1, 2 * rs + 2, "installation completed.", LZ_ui.font+LEFT)
+        lcd.drawText(1, 3 * rs + 3, "press exit key to start.", LZ_ui.font+LEFT)
+        --lcd.drawText(1, 30, "you must restart the radio", LZ_ui.font+LEFT)
+        --lcd.drawText(1, 40, "to use this script.", LZ_ui.font+LEFT)
         if event ~= EVT_EXIT_BREAK then
             return true
         else
@@ -36,8 +37,8 @@ local function run(event, time)
     LZ_clearTable(fun)
     fun = nil
     collectgarbage()
-    lcd.drawText(1, 20, "compiling", SMLSIZE+LEFT)
-    lcd.drawText(1, 30, compileFiles[curFileIndex], SMLSIZE+LEFT)
+    lcd.drawText(1, 2 * rs + 2, "compiling", LZ_ui.font+LEFT)
+    lcd.drawText(1, 3 * rs + 3, compileFiles[curFileIndex], LZ_ui.font+LEFT)
     curFileIndex = curFileIndex + 1
     if curFileIndex > #compileFiles then
         LZ_markCompiled()

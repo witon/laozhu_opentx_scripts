@@ -211,13 +211,13 @@ local function run(event, curTime)
 
     cfgButton:draw(127, 0, invers, RIGHT)
 
-    lcd.drawText(0, 10, "state:", SMLSIZE + LEFT)
-	lcd.drawText(30, 10, f3kState.getCurFlightStateName(), SMLSIZE + LEFT)
+    lcd.drawText(0, 10, "state:", LZ_ui.font + LEFT)
+	lcd.drawText(30, 10, f3kState.getCurFlightStateName(), LZ_ui.font + LEFT)
 
 
 
-    lcd.drawText(80, 10, "height:", SMLSIZE + LEFT)
-    lcd.drawNumber(128, 10, f3kState.launchAlt, SMLSIZE + RIGHT)
+    lcd.drawText(80, 10, "height:", LZ_ui.font + LEFT)
+    lcd.drawNumber(128, 10, f3kState.launchAlt, LZ_ui.font + RIGHT)
 
     local varSelectorSliderValue = getValue(launchCfg:getNumberField('SelSlider'))
     local varReadSwitchValue = getValue(launchCfg:getNumberField('ReadSw'))

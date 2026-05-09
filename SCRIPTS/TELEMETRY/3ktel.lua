@@ -72,11 +72,11 @@ local function run(event)
 	if false then
 		if event ~= 0 then
 			lcd.clear()
-			lcd.drawText(10, 10, "event:", SMLSIZE)
-			lcd.drawNumber(10, 20, event, SMLSIZE)
-			lcd.drawText(10, 30, "e:", SMLSIZE)
+			lcd.drawText(10, 10, "event:", LZ_ui.font)
+			lcd.drawNumber(10, 20, event, LZ_ui.font)
+			lcd.drawText(10, 30, "e:", LZ_ui.font)
 			if e ~= nil then
-				lcd.drawNumber(10, 40, e, SMLSIZE)
+				lcd.drawNumber(10, 40, e, LZ_ui.font)
 			end
 		end
 		return

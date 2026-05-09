@@ -32,34 +32,36 @@ function RLVdoKey(recordListView, event)
 end
 
 function RLVdraw(recordListView, x, y, invers, option)
-    lcd.drawFilledRectangle(0, 19, 128, 9, FORCE)
-    lcd.drawText(0, 20, "time", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(57, 20, "ele", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(80, 20, "f1", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(103, 20, "f2", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(128, 20, "sr", SMLSIZE + RIGHT + INVERS)
+    local rs = LZ_ui.rowStep
+    lcd.drawFilledRectangle(0, 19, 128, rs, FORCE)
+    lcd.drawText(0, 20, "time", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(57, 20, "ele", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(80, 20, "f1", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(103, 20, "f2", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(128, 20, "sr", LZ_ui.font + RIGHT + INVERS)
 
     local records = recordListView.records
     if records ~= nil then
         local scrollRow = recordListView.scrollRow
         for i=scrollRow+1, #records, 1 do
             local record = records[#records - i + 1]
-            local y = 30 + (i-scrollRow-1) * 10
+            local ry = 30 + (i-scrollRow-1) * rs
             local op = 0
             if i==recordListView.selectedRow and recordListView.focusState == 2 then
                 op = INVERS
-                lcd.drawFilledRectangle(0, y-1, 127, 8, FORCE)
+                lcd.drawFilledRectangle(0, ry-1, 127, rs, FORCE)
             end
-            lcd.drawText(0, y, LZ_formatTimeStamp(record.startTime), SMLSIZE + LEFT + op)
-            lcd.drawText(57, y, record.ele, SMLSIZE + RIGHT + op)
-            lcd.drawText(80, y, record.flap1, SMLSIZE + RIGHT + op)
-            lcd.drawText(103, y, record.flap2, SMLSIZE + RIGHT + op)
-            lcd.drawNumber(128, y, SRRgetRecordSinkRate(record), SMLSIZE + RIGHT + op)
+            lcd.drawText(0, ry, LZ_formatTimeStamp(record.startTime), LZ_ui.font + LEFT + op)
+            lcd.drawText(57, ry, record.ele, LZ_ui.font + RIGHT + op)
+            lcd.drawText(80, ry, record.flap1, LZ_ui.font + RIGHT + op)
+            lcd.drawText(103, ry, record.flap2, LZ_ui.font + RIGHT + op)
+            lcd.drawNumber(128, ry, SRRgetRecordSinkRate(record), LZ_ui.font + RIGHT + op)
             if record.invalid then
+                local ym = ry + math.floor(rs / 2)
                 if op == INVERS then
-                    lcd.drawLine(0, y+3, 127, y+3, SOLID, ERASE)
+                    lcd.drawLine(0, ym, 127, ym, SOLID, ERASE)
                 else
-                    lcd.drawLine(0, y+3, 127, y+3, SOLID, FORCE)
+                    lcd.drawLine(0, ym, 127, ym, SOLID, FORCE)
                 end
             end
         end

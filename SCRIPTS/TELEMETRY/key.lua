@@ -40,26 +40,26 @@ local function run(event)
     lcd.clear()
     
     local ver, radio = getVersion()
-    lcd.drawText(1, 1, "Ver:" .. string.sub(ver, 1, 4) .. " Radio:" .. radio, SMLSIZE)
+    lcd.drawText(1, 1, "Ver:" .. string.sub(ver, 1, 4) .. " Radio:" .. radio, LZ_ui.font)
     
-    lcd.drawText(1, 10, "ENTER:" .. tostring(EVT_ENTER_BREAK) .. " EXIT:" .. tostring(EVT_EXIT_BREAK), SMLSIZE)
+    lcd.drawText(1, 10, "ENTER:" .. tostring(EVT_ENTER_BREAK) .. " EXIT:" .. tostring(EVT_EXIT_BREAK), LZ_ui.font)
     
     if event ~= 0 then
         local mappedEvent = keyMap[event] or event
         addEventToHistory(event, mappedEvent)
     end
     
-    lcd.drawText(1, 19, "Raw -> Mapped  Time", SMLSIZE)
+    lcd.drawText(1, 19, "Raw -> Mapped  Time", LZ_ui.font)
     
     for i = 1, math.min(#eventHistory, 10) do
         local entry = eventHistory[i]
         local y = 26 + (i - 1) * 7
         local text = string.format("%d -> %d     %s", entry.raw, entry.mapped, entry.time)
-        lcd.drawText(1, y, text, SMLSIZE)
+        lcd.drawText(1, y, text, LZ_ui.font)
     end
     
     if #eventHistory == 0 then
-        lcd.drawText(1, 30, "Press any key...", SMLSIZE)
+        lcd.drawText(1, 30, "Press any key...", LZ_ui.font)
     end
     
     if event == EVT_EXIT_BREAK then

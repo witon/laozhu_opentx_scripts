@@ -99,17 +99,17 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    lcd.drawText(2, 0, "mode", SMLSIZE + LEFT)
+    lcd.drawText(2, 0, "mode", LZ_ui.font + LEFT)
 
     local curModeIndex = getFlightMode()
     local index, name = getFlightMode(0)
     if name == "" then
         name = "FM0"
     end
-    lcd.drawText(0, 12, name, SMLSIZE + LEFT)
+    lcd.drawText(0, 12, name, LZ_ui.font + LEFT)
     
     if curModeIndex==0 then
-        lcd.drawText(lcd.getLastPos(), 10, "*", SMLSIZE + BLINK +  LEFT)
+        lcd.drawText(lcd.getLastPos(), 10, "*", LZ_ui.font + BLINK +  LEFT)
     end
 
     lcd.drawLine(0, 9, 128, 9, DOTTED, 0)
@@ -120,23 +120,23 @@ local function run(event, time)
         if name == "" then
             name = "FM" .. i - 1
         end
-        lcd.drawText(0, y, name, SMLSIZE + LEFT)
+        lcd.drawText(0, y, name, LZ_ui.font + LEFT)
         if curModeIndex==i-1 then
-            lcd.drawText(lcd.getLastPos(), y, "*", SMLSIZE + BLINK +  LEFT)
+            lcd.drawText(lcd.getLastPos(), y, "*", LZ_ui.font + BLINK +  LEFT)
         end
  
     end
 
     for i = scrollCol+1, 6, 1 do
         local x = 48 + (i-1-scrollCol) * 25
-        IVdraw(gvNameEditArray[i], x, 1, invers, SMLSIZE + RIGHT)
-        IVdraw(gvNumEditArray[1][i], x, 12, invers, SMLSIZE + RIGHT)
+        IVdraw(gvNameEditArray[i], x, 1, invers, LZ_ui.font + RIGHT)
+        IVdraw(gvNumEditArray[1][i], x, 12, invers, LZ_ui.font + RIGHT)
         for j=scrollLine + 2, scrollLine + 7, 1 do
             if j>9 then
                 break
             end
             local y = (j-scrollLine)*8 + 4
-            IVdraw(gvNumEditArray[j][i], x, y, invers, SMLSIZE + RIGHT)
+            IVdraw(gvNumEditArray[j][i], x, y, invers, LZ_ui.font + RIGHT)
         end
     end
     return doKey(event)

@@ -34,9 +34,9 @@ end
 
 local function run(event, time)
     lcd.drawFilledRectangle(0, 0, 128, 9, FORCE)
-    lcd.drawText(2, 1, "name", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(68, 1, "value", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(128, 1, "selected", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(2, 1, "name", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(68, 1, "value", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(128, 1, "selected", LZ_ui.font + RIGHT + INVERS)
  
     for i=scrollLine + 1, scrollLine + 6, 1 do
         local output = model.getOutput(i-1)
@@ -47,15 +47,15 @@ local function run(event, time)
                 lcd.drawFilledRectangle(1, 9 * (i-scrollLine) + 1, 126, 9, FORCE)
             end
             if output.name == "" then
-                lcd.drawText(2, 9 * (i-scrollLine)+2, i, SMLSIZE + LEFT + option)
+                lcd.drawText(2, 9 * (i-scrollLine)+2, i, LZ_ui.font + LEFT + option)
             else
-                lcd.drawText(2, 9 * (i-scrollLine)+2, output.name, SMLSIZE + LEFT + option)
+                lcd.drawText(2, 9 * (i-scrollLine)+2, output.name, LZ_ui.font + LEFT + option)
             end
-            lcd.drawText(68, 9 * (i-scrollLine)+2, getValue(i), SMLSIZE + RIGHT + option)
+            lcd.drawText(68, 9 * (i-scrollLine)+2, getValue(i), LZ_ui.font + RIGHT + option)
             if channels[i] then
-                lcd.drawText(128, 9 * (i-scrollLine)+2, "y", SMLSIZE + RIGHT + option)
+                lcd.drawText(128, 9 * (i-scrollLine)+2, "y", LZ_ui.font + RIGHT + option)
             else
-                lcd.drawText(128, 9 * (i-scrollLine)+2, "n", SMLSIZE + RIGHT + option)
+                lcd.drawText(128, 9 * (i-scrollLine)+2, "n", LZ_ui.font + RIGHT + option)
             end
         end
     end

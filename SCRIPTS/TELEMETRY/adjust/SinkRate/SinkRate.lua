@@ -218,12 +218,12 @@ local function run(event, curTime)
             playingTone = false
         end
 
-        lcd.drawText(0, 10, "dur:", SMLSIZE + LEFT)
-        lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState)), SMLSIZE + RIGHT)
-        lcd.drawText(44, 10, "sink:", SMLSIZE + LEFT)
-        lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState)), SMLSIZE + RIGHT)
-        lcd.drawText(80, 10, "srate:", SMLSIZE + LEFT)
-        lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState)*100, SMLSIZE + RIGHT)
+        lcd.drawText(0, 10, "dur:", LZ_ui.font + LEFT)
+        lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState)), LZ_ui.font + RIGHT)
+        lcd.drawText(44, 10, "sink:", LZ_ui.font + LEFT)
+        lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState)), LZ_ui.font + RIGHT)
+        lcd.drawText(80, 10, "srate:", LZ_ui.font + LEFT)
+        lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState)*100, LZ_ui.font + RIGHT)
 
         local varSelectorSliderValue = getValue(sinkRateCfg:getNumberField('SelSlider'))
         local varReadSwitchValue = getValue(sinkRateCfg:getNumberField('ReadSw'))

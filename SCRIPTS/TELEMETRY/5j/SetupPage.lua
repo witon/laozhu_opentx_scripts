@@ -94,18 +94,19 @@ local function run(event, time)
         invers = true
     end
     local drawOptions
-    lcd.drawText(2, 1, "Var Slider", SMLSIZE + LEFT)
-    IVdraw(varSliderSelector, 100, 1, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 11, "Read Switch", SMLSIZE + LEFT)
-    IVdraw(readSwitchSelector, 100, 11, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 21, "Reset Switch", SMLSIZE + LEFT)
-    IVdraw(resetSwitchSelector, 100, 21, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 31, "Flight Switch", SMLSIZE + LEFT)
-    IVdraw(flightSwitchSelector, 100, 31, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 41, "Throttle Channel", SMLSIZE + LEFT)
-    IVdraw(throttleChannelSelector, 100, 41, invers, SMLSIZE + LEFT)
-    lcd.drawText(2, 51, "Throttle Threshold", SMLSIZE + LEFT)
-    IVdraw(throttleThresholdNumEdit, 117, 51, invers, SMLSIZE + RIGHT)
+    local rs = LZ_ui.rowStep
+    lcd.drawText(2, 1, "Var Slider", LZ_ui.font + LEFT)
+    IVdraw(varSliderSelector, 100, 1, invers, LZ_ui.font + LEFT)
+    lcd.drawText(2, 1 + rs, "Read Switch", LZ_ui.font + LEFT)
+    IVdraw(readSwitchSelector, 100, 1 + rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(2, 1 + 2 * rs, "Reset Switch", LZ_ui.font + LEFT)
+    IVdraw(resetSwitchSelector, 100, 1 + 2 * rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(2, 1 + 3 * rs, "Flight Switch", LZ_ui.font + LEFT)
+    IVdraw(flightSwitchSelector, 100, 1 + 3 * rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(2, 1 + 4 * rs, "Throttle Channel", LZ_ui.font + LEFT)
+    IVdraw(throttleChannelSelector, 100, 1 + 4 * rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(2, 1 + 5 * rs, "Throttle Threshold", LZ_ui.font + LEFT)
+    IVdraw(throttleThresholdNumEdit, 117, 1 + 5 * rs, invers, LZ_ui.font + RIGHT)
  
     return doKey(event)
 

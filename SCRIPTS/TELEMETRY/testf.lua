@@ -66,9 +66,9 @@ local function run(event)
         VMdoKey(vm, event)
         local y = 5
         for i=1, #buttonArr, 1 do
-            lcd.drawText(1, y, "NumEdit:", SMLSIZE + LEFT)
-            IVdraw(buttonArr[i], 54, y, invers, SMLSIZE + LEFT)
-            y = y + 10
+            lcd.drawText(1, y, "NumEdit:", LZ_ui.font + LEFT)
+            IVdraw(buttonArr[i], 54, y, invers, LZ_ui.font + LEFT)
+            y = y + LZ_ui.rowStep
         end
     else
         if vm ~= nil then
@@ -76,7 +76,7 @@ local function run(event)
         end
     end
     collectgarbage("collect")
-    lcd.drawText(1, 55, collectgarbage("count")*1024, SMLSIZE + LEFT)
+    lcd.drawText(1, 55, collectgarbage("count")*1024, LZ_ui.font + LEFT)
  
 end
 

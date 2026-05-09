@@ -117,25 +117,25 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    lcd.drawText(0, 0, "mode:", SMLSIZE + LEFT)
-    modeSelector:draw(64, 0, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 0, "mode:", LZ_ui.font + LEFT)
+    modeSelector:draw(64, 0, invers, LZ_ui.font + LEFT)
 
-    lcd.drawText(0, 9, "ele gv:", SMLSIZE + LEFT)
-    eleNumedit:draw(64, 9, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 9, "ele gv:", LZ_ui.font + LEFT)
+    eleNumedit:draw(64, 9, invers, LZ_ui.font + LEFT)
 
-    lcd.drawText(0, 18, "flap1 gv:", SMLSIZE + LEFT)
-    flap1Numedit:draw(64, 18, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 18, "flap1 gv:", LZ_ui.font + LEFT)
+    flap1Numedit:draw(64, 18, invers, LZ_ui.font + LEFT)
 
-    lcd.drawText(0, 27, "flap2 gv:", SMLSIZE + LEFT)
-    flap2Numedit:draw(64, 27, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 27, "flap2 gv:", LZ_ui.font + LEFT)
+    flap2Numedit:draw(64, 27, invers, LZ_ui.font + LEFT)
 
-    lcd.drawText(0, 36, "test switch:", SMLSIZE + LEFT)
-    testSwitchSelector:draw(64, 36, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 36, "test switch:", LZ_ui.font + LEFT)
+    testSwitchSelector:draw(64, 36, invers, LZ_ui.font + LEFT)
 
-    lcd.drawText(0, 45, "read switch:", SMLSIZE + LEFT)
-    readSwitchSelector:draw(64, 45, invers, SMLSIZE + LEFT)
-    lcd.drawText(0, 54, "select slider:", SMLSIZE + LEFT)
-    varSliderSelector:draw(64, 54, invers, SMLSIZE + LEFT)
+    lcd.drawText(0, 45, "read switch:", LZ_ui.font + LEFT)
+    readSwitchSelector:draw(64, 45, invers, LZ_ui.font + LEFT)
+    lcd.drawText(0, 54, "select slider:", LZ_ui.font + LEFT)
+    varSliderSelector:draw(64, 54, invers, LZ_ui.font + LEFT)
  
     return doKey(event)
 end

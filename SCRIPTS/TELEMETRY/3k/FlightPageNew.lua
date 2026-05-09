@@ -16,8 +16,8 @@ local function drawFlightList()
             local y = (i-1) * 8
             local op = 0
 			local str = record.index .. ")" .. LZ_formatTimeStamp(record.flightStartTime, 2)
-			lcd.drawText(102, y, str, SMLSIZE + RIGHT + op)
-            lcd.drawText(128, y, LZ_formatTime(record.flightTime), SMLSIZE + RIGHT + op)
+			lcd.drawText(102, y, str, LZ_ui.font + RIGHT + op)
+            lcd.drawText(128, y, LZ_formatTime(record.flightTime), LZ_ui.font + RIGHT + op)
         end
     end
 end
@@ -67,9 +67,9 @@ local function drawFlightInfo()
 
 	local invers = math.floor(getTime() / 100) % 2 == 0
 
-	lcd.drawText(0, 30, "FT", SMLSIZE)
+	lcd.drawText(0, 30, "FT", LZ_ui.font)
 	lcd.drawText(24, 29, LZ_formatTime(flightState.getFlightTime()), LEFT + DBLSIZE)
-	destFlightTimeEdit:draw(0, 38, invers, LEFT + SMLSIZE)
+	destFlightTimeEdit:draw(0, 38, invers, LEFT + LZ_ui.font)
 
 end
 

@@ -7,7 +7,6 @@
 -- 下	99	35	67	131
 
 
-print("--------------------------------:", EVT_EXIT_BREAK, EVT_ENTER_BREAK)
 	
 function KMgetKeyMap()
     local ver, radio = getVersion();

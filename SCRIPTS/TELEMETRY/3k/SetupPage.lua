@@ -85,16 +85,17 @@ local function run(event, time)
     end
     local drawOptions
 
-    lcd.drawFilledRectangle(0, 0, 128, 8, FORCE)
-    lcd.drawText(0, 0, "Switch Setup", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(0, 10, "Round Start Switch", SMLSIZE + LEFT)
-    roundSwitchSelector:draw(128, 10, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 19, "Round Reset Switch", SMLSIZE + LEFT)
-    roundResetSwitchSelector:draw(128, 19, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 28, "Var Slider", SMLSIZE + LEFT)
-    varSliderSelector:draw(128, 28, invers, SMLSIZE + RIGHT)
-    lcd.drawText(0, 37, "Read Switch", SMLSIZE + LEFT)
-    readSwitchSelector:draw(128, 37, invers, SMLSIZE + RIGHT)
+    local rs = LZ_ui.rowStep
+    lcd.drawFilledRectangle(0, 0, 128, rs, FORCE)
+    lcd.drawText(0, 0, "Switch Setup", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(0, rs + 1, "Round Start Switch", LZ_ui.font + LEFT)
+    roundSwitchSelector:draw(128, rs + 1, invers, LZ_ui.font + RIGHT)
+    lcd.drawText(0, 2 * rs + 1, "Round Reset Switch", LZ_ui.font + LEFT)
+    roundResetSwitchSelector:draw(128, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
+    lcd.drawText(0, 3 * rs + 1, "Var Slider", LZ_ui.font + LEFT)
+    varSliderSelector:draw(128, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
+    lcd.drawText(0, 4 * rs + 1, "Read Switch", LZ_ui.font + LEFT)
+    readSwitchSelector:draw(128, 4 * rs + 1, invers, LZ_ui.font + RIGHT)
  
     return doKey(event)
 end

@@ -145,16 +145,17 @@ local function run(event, time)
         invers = true
     end
 
-    lcd.drawFilledRectangle(0, 0, 128, 8, FORCE)
-    lcd.drawText(0, 0, "Round Setup", SMLSIZE + LEFT + INVERS)
+    local rs = LZ_ui.rowStep
+    lcd.drawFilledRectangle(0, 0, 128, rs, FORCE)
+    lcd.drawText(0, 0, "Round Setup", LZ_ui.font + LEFT + INVERS)
 
     local drawOptions
 
-    local y = 10
+    local y = rs + 1
     for i=viewMatrix.scrollLine + 1, 7, 1 do
-        lcd.drawText(0, y, lineArray[i][1], SMLSIZE + LEFT)
-        lineArray[i][2]:draw(128, y, invers, SMLSIZE + RIGHT)
-        y = y + 9
+        lcd.drawText(0, y, lineArray[i][1], LZ_ui.font + LEFT)
+        lineArray[i][2]:draw(128, y, invers, LZ_ui.font + RIGHT)
+        y = y + rs
     end
     return doKey(event)
 end
