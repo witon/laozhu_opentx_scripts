@@ -45,7 +45,7 @@ end
 local function create(zone, options)
 	gSDCardDir = "/"
 
-	local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+	local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 	if not fun then
 		print("[LzKey] LoadModule FAIL:", tostring(err))
 		return {
@@ -66,7 +66,7 @@ local function create(zone, options)
 	DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
 	DBG_dbg("LoadModule ok")
 
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 	local keyMap = KMgetKeyMap()
 	KMunload()
 	DBG_dbg("keyMap ok")

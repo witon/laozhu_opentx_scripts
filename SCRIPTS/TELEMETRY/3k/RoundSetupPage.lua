@@ -8,14 +8,14 @@ local muteCheckbox = nil
 local viewMatrix = nil
 local lineArray = nil
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TimeEditO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ButtonO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEditO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEditO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
 LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CheckBoxO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CheckBoxO.lua")
 
 local function onTaskSelectorChange(taskSelector)
     f3kCfg.kvs["task"] = taskSelector:getText(taskSelector.selectedIndex)

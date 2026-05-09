@@ -1,7 +1,7 @@
 
 gSDCardDir = "/"
 do
-	local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+	local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 	if fun then fun() end
 end
 

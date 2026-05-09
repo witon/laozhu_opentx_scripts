@@ -27,7 +27,7 @@ end
 do
 	local root = rawget(_G, "gSDCardDir")
 	if type(root) == "string" then
-		local pathUi = root .. "SCRIPTS/TELEMETRY/common/UiParams.lua"
+		local pathUi = root .. "LAOZHU/uilib/UiParams.lua"
 		local fu, ferr = loadScript(pathUi, LZ_scriptLoadMode())
 		if fu ~= nil then
 			fu()

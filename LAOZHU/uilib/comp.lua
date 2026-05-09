@@ -2,7 +2,7 @@ local curFileIndex = 1
 local this = nil
 local compileFiles = nil
 --local function init()
-    local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+    local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
     fun()
     compileFiles = LZ_runModule(gSDCardDir .. "SCRIPTS/CompileFiles.lua")
 --end

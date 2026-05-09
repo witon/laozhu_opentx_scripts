@@ -1,6 +1,6 @@
 gSDCardDir = "/"
 gConfigFileName = "5j.cfg"
-local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 gFlightState = nil
 f5jCfg = nil
@@ -14,7 +14,7 @@ local curPage = nil
 local lastEvent = 0
 local readVar = nil
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
@@ -49,15 +49,14 @@ local function init()
 	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Fields.lua")
 	initFieldsInfo()
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputView.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelector.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEdit.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputView.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputSelector.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEdit.lua")
 
 	if LZ_isNeedCompile() then
-		local pagePath = "TELEMETRY/common/comp.lua"
-		curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
+		curPage = LZ_runModule(gSDCardDir .. "LAOZHU/uilib/comp.lua")
 		return
 	else
 		LZ_isNeedCompile = nil

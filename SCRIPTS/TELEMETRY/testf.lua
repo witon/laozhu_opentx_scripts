@@ -21,10 +21,10 @@ local function unload()
 end
 
 local function load()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputView.lua")
-    --LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEdit.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Button.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrix.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputView.lua")
+    --LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEdit.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Button.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrix.lua")
 
     vm = VMnewViewMatrix()
     for i=1, 5, 1 do
@@ -41,7 +41,7 @@ local function load()
 end
 
 local function init()
-    local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+    local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
     fun()
 end
 

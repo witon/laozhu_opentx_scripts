@@ -3,11 +3,11 @@ local readSwitchSelector = nil
 local roundSwitchSelector = nil
 local roundResetSwitchSelector = nil
 local viewMatrix = nil
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelectorO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputSelectorO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Fields.lua")
 
  
 local function setCfgValue()

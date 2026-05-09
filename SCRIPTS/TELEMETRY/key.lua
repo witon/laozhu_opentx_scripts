@@ -1,13 +1,13 @@
 gSDCardDir = "/"
 
-local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 
 local eventHistory = {}
 local maxHistorySize = 12
 local lastEventTime = 0
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 local keyMap = KMgetKeyMap()
 KMunload()
 

@@ -1,5 +1,5 @@
 gSDCardDir = "/"
-local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 local textEdit = nil
@@ -25,7 +25,7 @@ local DBG_OPTS = {
 	LOG_MAX = 20,
 }
 
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/keyMap.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 local keyMap = KMgetKeyMap();
 KMunload();
 
@@ -47,42 +47,42 @@ local curFileIndex = 1
 local curCases = nil
 
 local function testLoadAndUnload()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TextEditO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CheckBoxO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TextEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CheckBoxO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Fields.lua")
 	initFieldsInfo()
     FieldsUnload()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/OutputSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CurveSelector.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/OutputSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CurveSelector.lua")
     CSunload()
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ModeSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TimeEditO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ModeSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEditO.lua")
 	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
 end
 
 local function initUI()
     testLoadAndUnload()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TextEditO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputViewO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ButtonO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CheckBoxO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/SelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/InputSelector.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/Fields.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TextEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ButtonO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CheckBoxO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputSelector.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/Fields.lua")
 	initFieldsInfo()
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/NumEditO.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/OutputSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/CurveSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ModeSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/ViewMatrixO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEditO.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/uilib/OutputSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CurveSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ModeSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
 	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/common/TimeEditO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEditO.lua")
  
     viewMatrix = ViewMatrix:new()
 
