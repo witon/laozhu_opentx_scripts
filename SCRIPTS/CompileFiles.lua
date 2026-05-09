@@ -88,6 +88,8 @@ local files = {
 
 	"LAOZHU/3k/f3kCore.lua",
 
+	"LAOZHU/3k/f3kTelNav.lua",
+
 	"TELEMETRY/3ktel.lua",
 
 	"LAOZHU/5j/FlightPage.lua",
