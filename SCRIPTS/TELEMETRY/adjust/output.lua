@@ -210,30 +210,30 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    IVdraw(selectChannelsButton, 3, 0, invers, SMLSIZE + LEFT)
-    lcd.drawText(50, 0, "adj:", SMLSIZE + LEFT)
-    IVdraw(enableAdjustCheckBox, 75, 0, invers, SMLSIZE + RIGHT)
-    IVdraw(curvesButton, 125, 0, invers, SMLSIZE + RIGHT)
+    IVdraw(selectChannelsButton, 3, 0, invers, LZ_ui.font + LEFT)
+    lcd.drawText(50, 0, "adj:", LZ_ui.font + LEFT)
+    IVdraw(enableAdjustCheckBox, 75, 0, invers, LZ_ui.font + RIGHT)
+    IVdraw(curvesButton, 125, 0, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(2, 9, "s1:", SMLSIZE + LEFT)
-    lcd.drawText(22, 9, math.floor(getValue("s1") * 100 / 1024), SMLSIZE+LEFT)
-    lcd.drawText(64, 9, "output:", SMLSIZE + LEFT)
-    lcd.drawText(98, 9, math.floor(getValue("s1") * 150/1024), SMLSIZE+LEFT)
+    lcd.drawText(2, 9, "s1:", LZ_ui.font + LEFT)
+    lcd.drawText(22, 9, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font+LEFT)
+    lcd.drawText(64, 9, "output:", LZ_ui.font + LEFT)
+    lcd.drawText(98, 9, math.floor(getValue("s1") * 150/1024), LZ_ui.font+LEFT)
  
 
     lcd.drawFilledRectangle(0, 17, 128, 9, FORCE)
-    lcd.drawText(2, 18, "name", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(48, 18, "min", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(71, 18, "mid", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(94, 18, "max", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(127, 18, "rev", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(2, 18, "name", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(48, 18, "min", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(71, 18, "mid", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(94, 18, "max", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(127, 18, "rev", LZ_ui.font + RIGHT + INVERS)
  
     for i=scrollLine + 1, scrollLine + 6, 1 do
         if i <= #adjustChannels then
             lcd.drawText(2, 9 * (i-scrollLine + 2), outputNameArray[i])
             for j=1, 4, 1 do
                 if i <= 16 then
-                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 9 * (i - scrollLine + 2), invers, SMLSIZE + RIGHT)
+                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 9 * (i - scrollLine + 2), invers, LZ_ui.font + RIGHT)
                 end
             end
         end

@@ -140,9 +140,9 @@ local function refresh(widget, event, touchState)
 	local zoneBg = _G["COLOR_THEME_SECONDARY2"] or ERASE
 	lcd.drawFilledRectangle(z.x, z.y, z.w, z.h, zoneBg)
 
-	local TXT = SMLSIZE + LEFT + COLOR_THEME_PRIMARY1
+	local TXT = LZ_ui.font + LEFT + LZ_ui.themeText
 
-	local rowH = 14
+	local rowH = LZ_ui.rowStep
 	local logLinesTop = oy + rowH
 	local logHintY = z.y + z.h - rowH - 2
 	if logHintY < logLinesTop + rowH then
@@ -162,9 +162,9 @@ local function refresh(widget, event, touchState)
 		end
 		local fn = testFiles[widget.curFileIndex] or "?"
 		lcd.drawText(ox + 2, oy + 2, "emutest", TXT)
-		lcd.drawText(ox + 2, oy + 16, "f " .. tostring(widget.curFileIndex) .. "/" .. tostring(#testFiles), TXT)
-		lcd.drawText(ox + 2, oy + 30, string.sub(tostring(fn), 1, 28), TXT)
-		lcd.drawText(ox + 2, oy + 44, "c " .. tostring(widget.curCaseIndex), TXT)
+		lcd.drawText(ox + 2, oy + 2 + rowH, "f " .. tostring(widget.curFileIndex) .. "/" .. tostring(#testFiles), TXT)
+		lcd.drawText(ox + 2, oy + 2 + 2 * rowH, string.sub(tostring(fn), 1, 28), TXT)
+		lcd.drawText(ox + 2, oy + 2 + 3 * rowH, "c " .. tostring(widget.curCaseIndex), TXT)
 		return
 	end
 
@@ -201,37 +201,47 @@ local function refresh(widget, event, touchState)
 
 	widget.viewMatrix:doKey(ev)
 
-	lcd.drawText(ox + 1, oy + 1, "CheckBox:", SMLSIZE + LEFT)
-	widget.checkBox:draw(ox + 54, oy + 1, invers, SMLSIZE + RIGHT)
-	lcd.drawText(ox + 60, oy + 1, "TextEdit:", SMLSIZE + LEFT)
-	widget.textEdit:draw(ox + 128, oy + 1, invers, SMLSIZE + RIGHT)
+	local rs = rowH
+	local midGap = 6
+	local leftEnd = math.floor((z.w - midGap) / 2)
+	local rightStart = leftEnd + midGap
+	local pad = 1
+	local leftLbl = ox + pad
+	local leftCtlR = ox + leftEnd - pad
+	local rightLbl = ox + rightStart
+	local rightCtlR = ox + z.w - pad
 
-	lcd.drawText(ox + 1, oy + 10, "Button:", SMLSIZE + LEFT)
-	widget.button:draw(ox + 54, oy + 10, invers, SMLSIZE + RIGHT)
+	lcd.drawText(leftLbl, oy + 1, "CheckBox:", LZ_ui.font + LEFT)
+	widget.checkBox:draw(leftCtlR, oy + 1, invers, LZ_ui.font + RIGHT)
+	lcd.drawText(rightLbl, oy + 1, "TextEdit:", LZ_ui.font + LEFT)
+	widget.textEdit:draw(rightCtlR, oy + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 60, oy + 10, "ipselect:", SMLSIZE + LEFT)
-	widget.inputSelector:draw(ox + 128, oy + 10, invers, SMLSIZE + RIGHT)
+	lcd.drawText(leftLbl, oy + rs + 1, "Button:", LZ_ui.font + LEFT)
+	widget.button:draw(leftCtlR, oy + rs + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 1, oy + 20, "NumEdit:", SMLSIZE + LEFT)
-	widget.numEdit:draw(ox + 54, oy + 20, invers, SMLSIZE + RIGHT)
+	lcd.drawText(rightLbl, oy + rs + 1, "ipselect:", LZ_ui.font + LEFT)
+	widget.inputSelector:draw(rightCtlR, oy + rs + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 60, oy + 20, "opselect:", SMLSIZE + LEFT)
-	widget.outputSelector:draw(ox + 128, oy + 20, invers, SMLSIZE + RIGHT)
+	lcd.drawText(leftLbl, oy + 2 * rs + 1, "NumEdit:", LZ_ui.font + LEFT)
+	widget.numEdit:draw(leftCtlR, oy + 2 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 60, oy + 30, "csselect:", SMLSIZE + LEFT)
-	widget.curveSelector:draw(ox + 128, oy + 30, invers, SMLSIZE + RIGHT)
+	lcd.drawText(rightLbl, oy + 2 * rs + 1, "opselect:", LZ_ui.font + LEFT)
+	widget.outputSelector:draw(rightCtlR, oy + 2 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 0, oy + 30, "mdselect:", SMLSIZE + LEFT)
-	widget.modeSelector:draw(ox + 58, oy + 30, invers, SMLSIZE + RIGHT)
+	lcd.drawText(rightLbl, oy + 3 * rs + 1, "csselect:", LZ_ui.font + LEFT)
+	widget.curveSelector:draw(rightCtlR, oy + 3 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 0, oy + 40, "tsselect:", SMLSIZE + LEFT)
-	widget.taskSelector:draw(ox + 84, oy + 40, invers, SMLSIZE + RIGHT)
+	lcd.drawText(leftLbl, oy + 3 * rs + 1, "mdselect:", LZ_ui.font + LEFT)
+	widget.modeSelector:draw(leftCtlR, oy + 3 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-	lcd.drawText(ox + 0, oy + 50, "timeedit:", SMLSIZE + LEFT)
-	widget.timeEdit:draw(ox + 84, oy + 50, invers, SMLSIZE + RIGHT)
+	lcd.drawText(leftLbl, oy + 4 * rs + 1, "tsselect:", LZ_ui.font + LEFT)
+	widget.taskSelector:draw(rightCtlR, oy + 4 * rs + 1, invers, LZ_ui.font + RIGHT)
 
-	local hintY = z.y + z.h - 14
-	if hintY >= oy + 62 then
+	lcd.drawText(leftLbl, oy + 5 * rs + 1, "timeedit:", LZ_ui.font + LEFT)
+	widget.timeEdit:draw(rightCtlR, oy + 5 * rs + 1, invers, LZ_ui.font + RIGHT)
+
+	local hintY = z.y + z.h - rs - 2
+	if hintY >= oy + 5 * rs + 12 then
 		lcd.drawText(ox + 2, hintY, "App:长按ENT交权", TXT)
 	end
 

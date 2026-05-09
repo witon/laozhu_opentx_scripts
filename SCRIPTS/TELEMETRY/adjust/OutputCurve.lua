@@ -171,11 +171,11 @@ end
 
 local function drawHeadLine()
     lcd.drawFilledRectangle(0, 7, 128, 8, FORCE)
-    lcd.drawText(0, 8, "ch", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(33, 8, "cur", SMLSIZE + RIGHT + INVERS)
+    lcd.drawText(0, 8, "ch", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(33, 8, "cur", LZ_ui.font + RIGHT + INVERS)
  
     for i=1+scrollCol, 10, 1 do
-        lcd.drawText(33 + 20 * (i-scrollCol), 8, "p" .. i, SMLSIZE + RIGHT + INVERS)
+        lcd.drawText(33 + 20 * (i-scrollCol), 8, "p" .. i, LZ_ui.font + RIGHT + INVERS)
     end
  
 end
@@ -189,14 +189,14 @@ local function drawOneRow(index, invers)
     local outputName = LZ_getOutputName(row.output)
     local y = 17 * (index - scrollLine) - 1
     lcd.drawLine(0, y+15, 128, y+15, DOTTED, 0)
-    lcd.drawText(0, y, outputName, SMLSIZE + LEFT)
-    lcd.drawText(34, y, LZ_getCurveName(row.curve), SMLSIZE + RIGHT)
+    lcd.drawText(0, y, outputName, LZ_ui.font + LEFT)
+    lcd.drawText(34, y, LZ_getCurveName(row.curve), LZ_ui.font + RIGHT)
     for i=1+scrollCol, #row.yNumEditArray, 1 do
-        IVdraw(row.yNumEditArray[i], 35 + 20 * (i-scrollCol), y, invers, SMLSIZE + RIGHT)
+        IVdraw(row.yNumEditArray[i], 35 + 20 * (i-scrollCol), y, invers, LZ_ui.font + RIGHT)
         if row.xNumEditArray then
-            IVdraw(row.xNumEditArray[i], 35 + 20 * (i-scrollCol), y + 8, invers, SMLSIZE + RIGHT)
+            IVdraw(row.xNumEditArray[i], 35 + 20 * (i-scrollCol), y + 8, invers, LZ_ui.font + RIGHT)
         else
-            lcd.drawText(35 + 20 * (i-scrollCol), y + 8, getX(#row.yNumEditArray, i), SMLSIZE + RIGHT)
+            lcd.drawText(35 + 20 * (i-scrollCol), y + 8, getX(#row.yNumEditArray, i), LZ_ui.font + RIGHT)
         end
     end
 end
@@ -207,10 +207,10 @@ local function run(event, time)
         invers = true
     end
 
-    lcd.drawText(2, 0, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(22, 0, math.floor(getValue("s1") * 100 / 1024), SMLSIZE+LEFT)
-    lcd.drawText(64, 0, "output:", SMLSIZE + LEFT)
-    lcd.drawText(98, 0, math.floor(getValue("s1") * 150/1024), SMLSIZE+LEFT)
+    lcd.drawText(2, 0, "thr:", LZ_ui.font + LEFT)
+    lcd.drawText(22, 0, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font+LEFT)
+    lcd.drawText(64, 0, "output:", LZ_ui.font + LEFT)
+    lcd.drawText(98, 0, math.floor(getValue("s1") * 150/1024), LZ_ui.font+LEFT)
  
     drawHeadLine()
     for i=1 + scrollLine, #curvePointNumEditArray, 1 do

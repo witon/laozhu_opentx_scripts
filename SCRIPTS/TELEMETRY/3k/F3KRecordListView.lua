@@ -32,32 +32,34 @@ function F3KRLVdoKey(recordListView, event)
 end
 
 function F3KRLVdraw(recordListView, x, y, invers, option)
-    lcd.drawFilledRectangle(0, 0, 128, 8, FORCE)
-    lcd.drawText(0, 0, "LauTime", SMLSIZE + LEFT + INVERS)
-    lcd.drawText(84, 0, "LauAlt", SMLSIZE + RIGHT + INVERS)
-    lcd.drawText(128, 0, "FTime", SMLSIZE + RIGHT + INVERS)
+    local rs = LZ_ui.rowStep
+    lcd.drawFilledRectangle(0, 0, 128, rs, FORCE)
+    lcd.drawText(0, 0, "LauTime", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(84, 0, "LauAlt", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(128, 0, "FTime", LZ_ui.font + RIGHT + INVERS)
 
     local records = recordListView.records
     if records ~= nil then
         local scrollRow = recordListView.scrollRow
         for i=scrollRow+1, #records, 1 do
             local record = records[#records - i + 1]
-            local y = 10 + (i-scrollRow-1) * 8
+            local ly = rs + 1 + (i-scrollRow-1) * rs
             local op = 0
             if i==recordListView.selectedRow and recordListView.focusState == 2 then
                 op = INVERS
-                lcd.drawFilledRectangle(0, y-1, 127, 8, FORCE)
+                lcd.drawFilledRectangle(0, ly-1, 127, rs, FORCE)
             end
-			lcd.drawText(1, y, "(" .. record.index .. ") ", SMLSIZE + LEFT + op)
-			lcd.drawText(lcd.getLastRightPos(), y, LZ_formatTimeStamp(record.flightStartTime), SMLSIZE + LEFT + op)
-            lcd.drawNumber(85, y, record.launchAlt, SMLSIZE + RIGHT + op)
-            lcd.drawText(128, y, LZ_formatTime(record.flightTime), SMLSIZE + RIGHT + op)
- 
+			lcd.drawText(1, ly, "(" .. record.index .. ") ", LZ_ui.font + LEFT + op)
+			lcd.drawText(lcd.getLastRightPos(), ly, LZ_formatTimeStamp(record.flightStartTime), LZ_ui.font + LEFT + op)
+            lcd.drawNumber(85, ly, record.launchAlt, LZ_ui.font + RIGHT + op)
+            lcd.drawText(128, ly, LZ_formatTime(record.flightTime), LZ_ui.font + RIGHT + op)
+
             if record.invalid then
+                local mid = ly + math.floor(rs / 2)
                 if op == INVERS then
-                    lcd.drawLine(0, y+3, 127, y+3, SOLID, ERASE)
+                    lcd.drawLine(0, mid, 127, mid, SOLID, ERASE)
                 else
-                    lcd.drawLine(0, y+3, 127, y+3, SOLID, FORCE)
+                    lcd.drawLine(0, mid, 127, mid, SOLID, FORCE)
                 end
             end
         end

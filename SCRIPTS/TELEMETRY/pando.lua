@@ -1,4 +1,10 @@
 
+gSDCardDir = "/"
+do
+	local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+	if fun then fun() end
+end
+
 local function __andBit(left,right)    --与
     return (left == 1 and right == 1) and 1 or 0
 end
@@ -108,15 +114,15 @@ local function run(event)
 		else
 			windowType = "Inval"
 		end
-		lcd.drawText(64, 10, "type:", LEFT + SMLSIZE)
-		lcd.drawText(128, 8, windowType, RIGHT + MIDSIZE)
+		lcd.drawText(64, 10, "type:", LEFT + LZ_ui.font)
+		lcd.drawText(128, 8, windowType, RIGHT + LZ_ui.headerFont)
 
-		lcd.drawText(64, 30, "time:", LEFT + SMLSIZE)
+		lcd.drawText(64, 30, "time:", LEFT + LZ_ui.font)
 		lcd.drawText(128, 23, formatTime(time), RIGHT + DBLSIZE)
 
 
         --if(sensorID == 0x67) then -- and frameID == 0x10 and dataID == 0x5111) then
-			--lcd.drawText(1, 15, "haha", SMLSIZE)
+			--lcd.drawText(1, 15, "haha", LZ_ui.font)
 		--end
     end
 

@@ -194,6 +194,8 @@ local files = {
 
 	"TELEMETRY/common/TimeEditO.lua",
 
+	"TELEMETRY/common/UiParams.lua",
+
 	"TELEMETRY/common/ViewMatrix.lua",
 
 	"TELEMETRY/common/ViewMatrixO.lua",

@@ -85,8 +85,8 @@ end
 
 local function refresh(widget, event, touchState)
 	local z = widget.zone
-	local TXT = SMLSIZE + LEFT + COLOR_THEME_PRIMARY1
-	local rowH = 14
+	local TXT = LZ_ui.font + LEFT + LZ_ui.themeText
+	local rowH = LZ_ui.rowStep
 	local ox = z.x + 2
 	local oy = z.y + 2
 
@@ -130,7 +130,7 @@ local function refresh(widget, event, touchState)
 		headerColor = widget.options.Color
 	end
 	lcd.setColor(CUSTOM_COLOR, headerColor)
-	lcd.drawText(ox, oy + rowH * 2, "Raw->Map T", SMLSIZE + LEFT + CUSTOM_COLOR)
+	lcd.drawText(ox, oy + rowH * 2, "Raw->Map T", LZ_ui.font + LEFT + CUSTOM_COLOR)
 
 	local headerBottom = oy + rowH * 3
 	local hintY = z.y + z.h - rowH - 2

@@ -3,18 +3,18 @@ local flightState = nil
 
 
 local function destFlightTimeViewFocusDraw()
-	lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE + INVERS)
+	lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + LZ_ui.font + INVERS)
 end
 
 local function destFlightTimeViewUnfocusDraw()
-	lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE)
+	lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + LZ_ui.font)
 end
 
 local function destFlightTimeViewSelectingDraw(b)
 	if b then
-		lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE)
+		lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + LZ_ui.font)
 	else
-		lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + SMLSIZE + INVERS)
+		lcd.drawText(65, 38, LZ_formatTime(flightState.destFlightTime), LEFT + LZ_ui.font + INVERS)
 	end
 end
 
@@ -59,9 +59,9 @@ local focusView = destFlightTimeView
 local isFocusViewEditing = false
 
 local function drawFlightInfo()
-	lcd.drawText(1, 1, model.getInfo().name, SMLSIZE)
-	lcd.drawText(40, 1, gF3kCore.getRound().getTask().getTaskName(), LEFT + SMLSIZE)
-	lcd.drawChannel(90, 1, "RxBt", RIGHT + SMLSIZE)
+	lcd.drawText(1, 1, model.getInfo().name, LZ_ui.font)
+	lcd.drawText(40, 1, gF3kCore.getRound().getTask().getTaskName(), LEFT + LZ_ui.font)
+	lcd.drawChannel(90, 1, "RxBt", RIGHT + LZ_ui.font)
 
 	local roundState = gF3kCore.getRound().getState()
 	if roundState == 1 then
@@ -80,23 +80,23 @@ local function drawFlightInfo()
 
 	local invers = math.floor(getTime() / 100) % 2 == 0
 
-	lcd.drawText(65, 18, "ST", SMLSIZE)
+	lcd.drawText(65, 18, "ST", LZ_ui.font)
 	lcd.drawText(87, 11, flightState.getCurFlightStateName(), LEFT + DBLSIZE)
 
 
-	lcd.drawText(1, 36, "RSSI", SMLSIZE)
+	lcd.drawText(1, 36, "RSSI", LZ_ui.font)
 	lcd.drawChannel(50, 29,  "RSSI", RIGHT + DBLSIZE)
 
 
 
-	lcd.drawText(65, 30, "FT", SMLSIZE)
+	lcd.drawText(65, 30, "FT", LZ_ui.font)
 	drawView(destFlightTimeView, focusView == destFlightTimeView, isFocusViewEditing, invers)
 	lcd.drawText(87, 29, LZ_formatTime(flightState.getFlightTime()), LEFT + DBLSIZE)
 
-	lcd.drawText(1, 53, "ALT", SMLSIZE)
+	lcd.drawText(1, 53, "ALT", LZ_ui.font)
 	lcd.drawNumber(62, 47, flightState.curAlt, RIGHT + DBLSIZE)
 
-	lcd.drawText(65, 53, "LALT", SMLSIZE)
+	lcd.drawText(65, 53, "LALT", LZ_ui.font)
 	lcd.drawNumber(128, 47, flightState.launchAlt, RIGHT + DBLSIZE)
 
 end

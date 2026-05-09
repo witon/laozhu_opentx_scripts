@@ -38,6 +38,18 @@ flowchart LR
 
 载入后 **`KMgetKeyMap()`** 取得映射表即可，随后立即 **`KMunload()`**，避免把按键模块的导出长期留在 `_G`。
 
+## `UiParams.lua` — 全局 `LZ_ui`
+
+统一 **`font`**、**`fontSmall`**、**`rowStep`**、**`headerFont`**、彩屏 **`themeText`**（与 `LEFT`/`RIGHT`/`INVERS` 等相加；用法同原先的 `SMLSIZE + LEFT`）。
+
+| 载入侧 | 说明 |
+|--------|------|
+| 初始化 | 由 **[LoadModule.lua](LoadModule.lua)** 在末尾加载 `UiParams` 并 **`LZ_uiInit(LZ_uiInitMode)`**。预设 **`mode`** 为字符串（可并列扩展）：**`"bw"`** 黑白套；**`"color1"`** 彩屏第一套。**在 **`loadScript(LoadModule)`** 之前可设 **`LZ_uiInitMode = "bw"`** 或 **`"color1"`**；若为 **`nil`** 或未识别字符串，则按是否存在 **`lcd.sizeText`** 自动选 **`"color1"`** 或 **`"bw"`**。亦可事后 **`LZ_uiInit(...)`** 覆盖。**页面与各 UI 控件不要**单独 `LZ_runModule UiParams`。 |
+| 使用 | 绘制处直接使用 **`LZ_ui.font`**、**`LZ_ui.rowStep`** 等。 |
+| 离开 | 按需 **`LZ_uiUnload()`**（一般会话级常驻即可）。 |
+
+若 `UiParams` 未执行（极少数未走 LoadModule 的宿主），`LZ_ui` 可能未定义；正常运行路径均会先执行 LoadModule。
+
 ## 子场景内多次进入/退出
 
 同一功能里若有一组 common 只在某子界面需要，可用局部 **`loadModule` / `unloadModule`**：`unload` 里集中调用若干个 **`XXunload()`**（及必要的类表清空）。示例：`adjust/output.lua`。

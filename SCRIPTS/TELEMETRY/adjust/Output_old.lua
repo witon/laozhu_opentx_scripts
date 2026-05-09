@@ -168,30 +168,30 @@ local function run(event, time)
         invers = true
     end
 
-    lcd.drawText(2, 5, "thr:", SMLSIZE + LEFT)
-    lcd.drawText(34, 5, getValue("thr"), SMLSIZE+LEFT)
+    lcd.drawText(2, 5, "thr:", LZ_ui.font + LEFT)
+    lcd.drawText(34, 5, getValue("thr"), LZ_ui.font+LEFT)
 
-    lcd.drawText(64, 5, "adj:", SMLSIZE + LEFT)
+    lcd.drawText(64, 5, "adj:", LZ_ui.font + LEFT)
     IVdraw(adjustCheckBox, 84, 5, invers)
 
-    lcd.drawText(2, 15, "output1:", SMLSIZE + LEFT)
+    lcd.drawText(2, 15, "output1:", LZ_ui.font + LEFT)
     IVdraw(output1, 42, 15, invers)
-    lcd.drawText(66, 15, "output2:", SMLSIZE + LEFT)
+    lcd.drawText(66, 15, "output2:", LZ_ui.font + LEFT)
     IVdraw(output2, 106, 15, invers)
 
-    lcd.drawText(2, 25, "min:", SMLSIZE+LEFT)
+    lcd.drawText(2, 25, "min:", LZ_ui.font+LEFT)
     IVdraw(channel1MinNumEdit, 62, 25, invers)
     IVdraw(channel2MinNumEdit, 126, 25, invers)
 
-    lcd.drawText(2, 35, "center:", SMLSIZE+LEFT)
+    lcd.drawText(2, 35, "center:", LZ_ui.font+LEFT)
     IVdraw(channel1CenterNumEdit, 62, 35, invers)
     IVdraw(channel2CenterNumEdit, 126, 35, invers)
 
-    lcd.drawText(2, 45, "max:", SMLSIZE+LEFT)
+    lcd.drawText(2, 45, "max:", LZ_ui.font+LEFT)
     IVdraw(channel1MaxNumEdit, 62, 45, invers)
     IVdraw(channel2MaxNumEdit, 126, 45, invers)
 
-    lcd.drawText(2, 55, "reverse:", SMLSIZE+LEFT)
+    lcd.drawText(2, 55, "reverse:", LZ_ui.font+LEFT)
     IVdraw(channel1ReverseCB, 56, 55, invers)
     IVdraw(channel2ReverseCB, 120, 55, invers)
 
