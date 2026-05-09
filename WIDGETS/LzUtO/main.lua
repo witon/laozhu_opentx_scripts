@@ -7,9 +7,10 @@ local options = {
 	{ "Color", COLOR, COLOR_THEME_SECONDARY1 },
 }
 
--- 调试：见 LAOZHU/DBGTools/dbg.lua；DEBUG_LOG 关则 DBG_dbg 不输出；SHOW_LOG_SCREEN 开且 DEBUG_LOG 开时写入日志缓冲供覆盖层绘制。
+-- 调试：见 LAOZHU/DBGTools/dbg.lua；ERROR_LOG 控制 DBG_err，DEBUG_LOG 控制 DBG_dbg；SHOW_LOG_SCREEN 开时对应级别写入缓冲供覆盖层绘制。
 local DBG_OPTS = {
 	printTag = "[LzUtO]",
+	ERROR_LOG = true,
 	DEBUG_LOG = true,
 	SHOW_LOG_SCREEN = false,
 	LOG_MAX = 20,
@@ -114,6 +115,9 @@ local function doOneCase(widget)
 		local testFile = testFiles[widget.curFileIndex]
 		widget.curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFile)
 		if widget.dbgEnabled then
+			if widget.curCases == nil then
+				DBG_err("emutest", "load test file failed", testFile)
+			end
 			DBG_dbg("emutest", "file " .. tostring(widget.curFileIndex) .. "/" .. tostring(#testFiles), testFile)
 		end
 	end
@@ -257,6 +261,9 @@ local function create(zone, options)
 	local curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFiles[1])
 	if fun then
 		DBG_dbg("emutest", "file 1/" .. tostring(#testFiles), testFiles[1])
+		if curCases == nil then
+			DBG_err("emutest", "first file load failed", testFiles[1])
+		end
 	end
 	LZ_runModule(gSDCardDir .. "LAOZHU/EmuTestUtils.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")

@@ -74,6 +74,10 @@ LZ_loadModule("path/to/module.lua") -- 仅加载模块函数
 - 由于遥控器限制，内存管理至关重要
 - 通过自定义 C++ 库（competition_lib/）提供声音反馈
 
+### 日志原则（必须遵守）
+
+遥测脚本、Widget、`LAOZHU` 中与调试/排障相关的输出须按分级使用 **`DBG_err`**（错误）与 **`DBG_dbg`**（调试），并完成 **`DBG_init`**；细则、开关语义与引导失败时的例外见 **[LOGGING_PRINCIPLE.md](LOGGING_PRINCIPLE.md)**。新增或修改代码时应打开该文档对照自检清单，避免滥用 `print`、级别错用或重复 `[ERR]`/`[DBG]` 前缀。
+
 ## 测试方法
 
 - `test/` 目录下的单元测试使用自定义测试框架；开发机与 CI 上运行 `lua test/test.lua`

@@ -14,9 +14,10 @@ local timeEdit = nil
 
 local viewMatrix = nil
 
--- 调试：见 LAOZHU/DBGTools/dbg.lua；DEBUG_LOG 关则 DBG_dbg 不输出；SHOW_LOG_SCREEN 开且 DEBUG_LOG 开时写入日志缓冲（遥测侧 DBGTelemetryLog 尚未绘制覆盖层，宜保持 false）。
+-- 调试：见 LAOZHU/DBGTools/dbg.lua；ERROR_LOG 控制 DBG_err，DEBUG_LOG 控制 DBG_dbg；SHOW_LOG_SCREEN 开时对应级别写入日志缓冲（遥测侧 DBGTelemetryLog 尚未绘制覆盖层，宜保持 false）。
 local DBG_OPTS = {
 	printTag = "[utO]",
+	ERROR_LOG = true,
 	DEBUG_LOG = true,
 	SHOW_LOG_SCREEN = false,
 	LOG_MAX = 20,
@@ -136,6 +137,9 @@ local function init()
     DBG_dbg("begin load")
     curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFiles[curFileIndex])
     DBG_dbg("loaded")
+    if curCases == nil then
+        DBG_err("load test file failed:", testFiles[curFileIndex])
+    end
     DBG_dbg("emutest", "file 1/" .. tostring(#testFiles), testFiles[1])
     curCaseIndex = 1
     LZ_runModule(gSDCardDir .. "LAOZHU/EmuTestUtils.lua")
@@ -152,6 +156,9 @@ local function doOneCase()
         curCaseIndex = 1
         local testFile = testFiles[curFileIndex]
         curCases = LZ_runModule(gSDCardDir .. "SCRIPTS" .. testFile)
+        if curCases == nil then
+            DBG_err("load test file failed:", testFile)
+        end
         DBG_dbg("emutest", "file " .. tostring(curFileIndex) .. "/" .. tostring(#testFiles), testFile)
     end
     curCases[curCaseIndex]()
