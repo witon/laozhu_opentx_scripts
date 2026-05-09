@@ -7,6 +7,7 @@ local taskSelector = nil
 local muteCheckbox = nil
 local viewMatrix = nil
 local lineArray = nil
+local maxLines
 
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
@@ -130,7 +131,9 @@ local function init()
         {"No Fly Time", noflyTimeEdit},
         {"Mute Round Timer", muteCheckbox}}
     getCfgValue()
-    viewMatrix.visibleRows = 6
+    local rs = LZ_ui.rowStep
+    maxLines = math.min(7, math.max(1, math.floor((LCD_H - rs - 1) / rs)))
+    viewMatrix.visibleRows = maxLines
 end
 
 local function doKey(event)
@@ -146,15 +149,16 @@ local function run(event, time)
     end
 
     local rs = LZ_ui.rowStep
-    lcd.drawFilledRectangle(0, 0, 128, rs, FORCE)
+    lcd.drawFilledRectangle(0, 0, LCD_W, rs, FORCE)
     lcd.drawText(0, 0, "Round Setup", LZ_ui.font + LEFT + INVERS)
 
     local drawOptions
 
     local y = rs + 1
-    for i=viewMatrix.scrollLine + 1, 7, 1 do
+    local lastLine = math.min(7, viewMatrix.scrollLine + maxLines)
+    for i = viewMatrix.scrollLine + 1, lastLine, 1 do
         lcd.drawText(0, y, lineArray[i][1], LZ_ui.font + LEFT)
-        lineArray[i][2]:draw(128, y, invers, LZ_ui.font + RIGHT)
+        lineArray[i][2]:draw(LCD_W, y, invers, LZ_ui.font + RIGHT)
         y = y + rs
     end
     return doKey(event)

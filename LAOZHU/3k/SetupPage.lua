@@ -86,16 +86,16 @@ local function run(event, time)
     local drawOptions
 
     local rs = LZ_ui.rowStep
-    lcd.drawFilledRectangle(0, 0, 128, rs, FORCE)
+    lcd.drawFilledRectangle(0, 0, LCD_W, rs, FORCE)
     lcd.drawText(0, 0, "Switch Setup", LZ_ui.font + LEFT + INVERS)
     lcd.drawText(0, rs + 1, "Round Start Switch", LZ_ui.font + LEFT)
-    roundSwitchSelector:draw(128, rs + 1, invers, LZ_ui.font + RIGHT)
+    roundSwitchSelector:draw(LCD_W, rs + 1, invers, LZ_ui.font + RIGHT)
     lcd.drawText(0, 2 * rs + 1, "Round Reset Switch", LZ_ui.font + LEFT)
-    roundResetSwitchSelector:draw(128, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
+    roundResetSwitchSelector:draw(LCD_W, 2 * rs + 1, invers, LZ_ui.font + RIGHT)
     lcd.drawText(0, 3 * rs + 1, "Var Slider", LZ_ui.font + LEFT)
-    varSliderSelector:draw(128, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
+    varSliderSelector:draw(LCD_W, 3 * rs + 1, invers, LZ_ui.font + RIGHT)
     lcd.drawText(0, 4 * rs + 1, "Read Switch", LZ_ui.font + LEFT)
-    readSwitchSelector:draw(128, 4 * rs + 1, invers, LZ_ui.font + RIGHT)
+    readSwitchSelector:draw(LCD_W, 4 * rs + 1, invers, LZ_ui.font + RIGHT)
  
     return doKey(event)
 end
