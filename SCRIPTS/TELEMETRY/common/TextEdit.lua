@@ -76,31 +76,49 @@ function TEsetText(textEdit, str)
     textEdit.str = str
 end
 
--- 与 TextEditO 一致：RIGHT 时从右向左接龙，锚点为 x - width。
-local function drawTextAdvanceX(x, y, text, flags)
-    lcd.drawText(x, y, text, flags)
-    local w = select(1, lcd.sizeText(text, flags))
-    if flags % (2 * RIGHT) >= RIGHT then
-        return x - w
-    end
-    return x + w
-end
+-- 加载期二选一：彩屏 sizeText；黑白屏原 getLastLeftPos 三连 drawText（与 TextEditO 一致）。
 
-function TEdraw(textEdit, x, y, invers, option)
+local function TEdraw_color(textEdit, x, y, invers, option)
     if textEdit.focusState == 2 then
+        local function adv(ax, text, flags)
+            lcd.drawText(ax, y, text, flags)
+            local w = select(1, lcd.sizeText(text, flags))
+            if flags % (2 * RIGHT) >= RIGHT then
+                return ax - w
+            end
+            return ax + w
+        end
         if invers then
-            local x2 = drawTextAdvanceX(x, y, textEdit.tailStr, option - INVERS)
-            local x3 = drawTextAdvanceX(x2, y, string.char(textEdit.modiChar), option)
-            drawTextAdvanceX(x3, y, textEdit.headStr, option - INVERS)
+            local x2 = adv(x, textEdit.tailStr, option - INVERS)
+            local x3 = adv(x2, string.char(textEdit.modiChar), option)
+            adv(x3, textEdit.headStr, option - INVERS)
         else
-            local x2 = drawTextAdvanceX(x, y, textEdit.tailStr, option)
-            local x3 = drawTextAdvanceX(x2, y, string.char(textEdit.modiChar), option)
-            drawTextAdvanceX(x3, y, textEdit.headStr, option)
+            local x2 = adv(x, textEdit.tailStr, option)
+            local x3 = adv(x2, string.char(textEdit.modiChar), option)
+            adv(x3, textEdit.headStr, option)
         end
     elseif textEdit.focusState == 1 or textEdit.focusState == 0 then
         lcd.drawText(x, y, textEdit.str, option)
     end
 end
+
+local function TEdraw_bw(textEdit, x, y, invers, option)
+    if textEdit.focusState == 2 then
+        if invers then
+            lcd.drawText(x, y, textEdit.tailStr, option - INVERS)
+            lcd.drawText(lcd.getLastLeftPos(), y, string.char(textEdit.modiChar), option)
+            lcd.drawText(lcd.getLastLeftPos(), y, textEdit.headStr, option - INVERS)
+        else
+            lcd.drawText(x, y, textEdit.tailStr, option)
+            lcd.drawText(lcd.getLastLeftPos(), y, string.char(textEdit.modiChar), option)
+            lcd.drawText(lcd.getLastLeftPos(), y, textEdit.headStr, option)
+        end
+    elseif textEdit.focusState == 1 or textEdit.focusState == 0 then
+        lcd.drawText(x, y, textEdit.str, option)
+    end
+end
+
+TEdraw = type(lcd.sizeText) == "function" and TEdraw_color or TEdraw_bw
 
 function TEsetOnChange(textEdit, onChange)
     textEdit.onChange = onChange
