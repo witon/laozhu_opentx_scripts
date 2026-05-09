@@ -1,4 +1,6 @@
 gSDCardDir = "/"
+local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
+fun()
 gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 local textEdit = nil
 local button = nil
@@ -130,8 +132,6 @@ end
 
 local function init()
     local c2 = collectgarbage("count")
-    local fun, err = loadScript(gSDCardDir .. "SCRIPTS/TELEMETRY/common/LoadModule.lua", "bt")
-    fun()
     LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
     DBG_init(DBG_OPTS)
     DBG_dbg("begin load")

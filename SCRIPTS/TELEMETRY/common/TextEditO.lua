@@ -80,33 +80,51 @@ function TextEdit:setText(str)
     self.str = str
 end
 
--- 统一用 sizeText 推算下一段起点。控件以 SMLSIZE+RIGHT 调用时，多段 drawText 从右向左接龙，
--- 下一段锚点应为 x - width（与 getLastLeftPos 一致）；左对齐时为 x + width。
-local function drawTextAdvanceX(x, y, text, flags)
-    lcd.drawText(x, y, text, flags)
-    local w = select(1, lcd.sizeText(text, flags))
-    if flags % (2 * RIGHT) >= RIGHT then
-        return x - w
-    end
-    return x + w
-end
+-- 加载期二选一：彩屏 sizeText 推算接龙锚点；黑白屏无 sizeText，用原 getLastLeftPos 三连 drawText。
 
-function TextEdit:draw(x, y, invers, option1)
+local function draw_color(self, x, y, invers, option1)
     local option = self:getTextOption(invers, option1)
     if self.focusState == 2 then
+        local function adv(ax, text, flags)
+            lcd.drawText(ax, y, text, flags)
+            local w = select(1, lcd.sizeText(text, flags))
+            if flags % (2 * RIGHT) >= RIGHT then
+                return ax - w
+            end
+            return ax + w
+        end
         if invers then
-            local x2 = drawTextAdvanceX(x, y, self.tailStr, option - INVERS)
-            local x3 = drawTextAdvanceX(x2, y, string.char(self.modiChar), option)
-            drawTextAdvanceX(x3, y, self.headStr, option - INVERS)
+            local x2 = adv(x, self.tailStr, option - INVERS)
+            local x3 = adv(x2, string.char(self.modiChar), option)
+            adv(x3, self.headStr, option - INVERS)
         else
-            local x2 = drawTextAdvanceX(x, y, self.tailStr, option)
-            local x3 = drawTextAdvanceX(x2, y, string.char(self.modiChar), option)
-            drawTextAdvanceX(x3, y, self.headStr, option)
+            local x2 = adv(x, self.tailStr, option)
+            local x3 = adv(x2, string.char(self.modiChar), option)
+            adv(x3, self.headStr, option)
         end
     elseif self.focusState == 1 or self.focusState == 0 then
         lcd.drawText(x, y, self.str, option)
     end
 end
+
+local function draw_bw(self, x, y, invers, option1)
+    local option = self:getTextOption(invers, option1)
+    if self.focusState == 2 then
+        if invers then
+            lcd.drawText(x, y, self.tailStr, option - INVERS)
+            lcd.drawText(lcd.getLastLeftPos(), y, string.char(self.modiChar), option)
+            lcd.drawText(lcd.getLastLeftPos(), y, self.headStr, option - INVERS)
+        else
+            lcd.drawText(x, y, self.tailStr, option)
+            lcd.drawText(lcd.getLastLeftPos(), y, string.char(self.modiChar), option)
+            lcd.drawText(lcd.getLastLeftPos(), y, self.headStr, option)
+        end
+    elseif self.focusState == 1 or self.focusState == 0 then
+        lcd.drawText(x, y, self.str, option)
+    end
+end
+
+TextEdit.draw = type(lcd.sizeText) == "function" and draw_color or draw_bw
 
 function TextEdit:setOnChange(onChange)
     self.onChange = onChange
