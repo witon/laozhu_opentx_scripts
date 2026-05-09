@@ -32,7 +32,7 @@ flowchart LR
 
 ## `Fields.lua`（调用侧）
 
-若本页 **`LZ_runModule` 了 Fields** 并调用了 **`initFieldsInfo()`**，在 **`destroy` 里必须调用 `FieldsUnload()`**。参考 `3k/SetupPage.lua`。
+若本页 **`LZ_runModule` 了 Fields** 并调用了 **`initFieldsInfo()`**，在 **`destroy` 里必须调用 `FieldsUnload()`**。参考 `LAOZHU/3k/SetupPage.lua`。
 
 ## `keyMap.lua`（调用侧）
 
@@ -52,7 +52,7 @@ flowchart LR
 
 ## 子场景内多次进入/退出
 
-同一功能里若有一组 uilib 只在某子界面需要，可用局部 **`loadModule` / `unloadModule`**：`unload` 里集中调用若干个 **`XXunload()`**（及必要的类表清空）。示例：`adjust/output.lua`。
+同一功能里若有一组 uilib 只在某子界面需要，可用局部 **`loadModule` / `unloadModule`**：`unload` 里集中调用若干个 **`XXunload()`**（及必要的类表清空）。示例：`LAOZHU/adjust/output.lua`。
 
 ## 页面作者自检
 

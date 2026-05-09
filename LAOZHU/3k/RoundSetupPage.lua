@@ -14,7 +14,7 @@ LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ButtonO.lua")
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/NumEditO.lua")
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEditO.lua")
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
-LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
+LZ_runModule(gSDCardDir .. "LAOZHU/3k/TaskSelectorO.lua")
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CheckBoxO.lua")
 
 local function onTaskSelectorChange(taskSelector)

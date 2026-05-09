@@ -22,7 +22,7 @@ local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/SinkRateRecord.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/SinkRateState.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/SinkRate/SRRecordListView.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/adjust/SinkRate/SRRecordListView.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 end
 
@@ -63,7 +63,7 @@ local function loadCfgPage()
     if sinkRateCfgPage ~= nil then
         return
     end
-    sinkRateCfgPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/SinkRate/SinkRateCfgPage.lua")
+    sinkRateCfgPage = LZ_runModule(gSDCardDir .. "LAOZHU/adjust/SinkRate/SinkRateCfgPage.lua")
     sinkRateCfgPage.setCfgFileName(sinkRateCfgFileName)
     sinkRateCfgPage.init()
 end

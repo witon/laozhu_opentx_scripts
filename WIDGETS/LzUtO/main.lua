@@ -41,7 +41,7 @@ local function testLoadAndUnload()
 	CSunload()
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ModeSelectorO.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/3k/TaskSelectorO.lua")
 end
 
 local function initUI(widget)
@@ -59,7 +59,7 @@ local function initUI(widget)
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CurveSelectorO.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ModeSelectorO.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/TaskSelectorO.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/3k/TaskSelectorO.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/TimeEditO.lua")
 
 	widget.viewMatrix = ViewMatrix:new()

@@ -21,7 +21,7 @@ local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/launchRecord.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/comm/Timer.lua")
-    LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/Launch/LRecordListView.lua")
+    LZ_runModule(gSDCardDir .. "LAOZHU/adjust/Launch/LRecordListView.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/comm/OTSound.lua")
 end
 
@@ -62,7 +62,7 @@ local function loadCfgPage()
     if launchCfgPage ~= nil then
         return
     end
-    launchCfgPage = LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/adjust/Launch/LaunchCfgPage.lua")
+    launchCfgPage = LZ_runModule(gSDCardDir .. "LAOZHU/adjust/Launch/LaunchCfgPage.lua")
 end
 
 local function unloadCfgPage()

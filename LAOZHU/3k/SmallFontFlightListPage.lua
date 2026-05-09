@@ -2,7 +2,7 @@ local f3kRecordListView = nil
 
 local function init()
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputView.lua")
-	LZ_runModule(gSDCardDir .. "SCRIPTS/TELEMETRY/3k/F3kRecordListView.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/3k/F3kRecordListView.lua")
 	f3kRecordListView = F3KRLVnewRecordListView()
 	f3kRecordListView.records = F3KFRgetFlightArray(gF3kCore.getRound().getTask().getFlightRecord())
 	IVsetFocusState(f3kRecordListView, 2)

@@ -8,7 +8,7 @@ fun()
 
 
 local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/Output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua"}
+local pages = {"adjust/GlobalVar.lua", "adjust/output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua"}
 local curPage = nil
 
 LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
@@ -17,8 +17,8 @@ KMunload();
 
 
 local function loadPage(index)
-	local pagePath = "TELEMETRY/" .. pages[index]
-	curPage = LZ_runModule(gSDCardDir .. "SCRIPTS/" .. pagePath)
+	local pagePath = "LAOZHU/" .. pages[index]
+	curPage = LZ_runModule(gSDCardDir .. pagePath)
 	--curPage.init()
 end
 
