@@ -32,11 +32,16 @@ local function unloadCurPage(widget)
 	widget.f3kNav.unloadCurPage(widget.f3kState)
 end
 
-local function background(widget)
+-- Widget：不可见时只调 background，可见时只调 refresh；须两处都推进 core（与 TELEMETRY 全程 background 不同）。
+local function tickF3kCore()
 	if gF3kCore == nil then
 		return
 	end
 	gF3kCore.run()
+end
+
+local function background(widget)
+	tickF3kCore()
 end
 
 local function refresh(widget, event, _touchState)
@@ -66,6 +71,8 @@ local function refresh(widget, event, _touchState)
 	if st.curPage == nil then
 		loadPage(widget)
 	end
+
+	tickF3kCore()
 
 	local eventProcessed = st.curPage.run(mappedEvent, curTime)
 	if eventProcessed then
