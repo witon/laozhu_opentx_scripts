@@ -56,9 +56,18 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - **参考范本**：[SCRIPTS/TELEMETRY/3ktel.lua](SCRIPTS/TELEMETRY/3ktel.lua) 为可读示例——入口仅负责生命周期、分页表、`background`/`run` 等，不把业务堆在入口里；[SCRIPTS/TELEMETRY/3k/f3kCore.lua](SCRIPTS/TELEMETRY/3k/f3kCore.lua) 组装 `LAOZHU`；[SCRIPTS/TELEMETRY/3k/](SCRIPTS/TELEMETRY/3k/) 下各页面按需加载 `common/` 控件，并通过 core / `LAOZHU` 暴露的接口驱动数据。
 - **三层职责**：
   - **`SCRIPTS/TELEMETRY/<功能>/`**：该功能的业务子模块层（页面编排、`*Core` 等与场景绑定的组装；可在此加载 `LAOZHU` 并持有会话级状态，例如 `gF3kCore`）。
-  - **`SCRIPTS/TELEMETRY/common/`**：可复用 UI/UX 组件；由各功能页面按需加载；**不宜**让 `LAOZHU` 依赖此处，以保持逻辑与 EdgeTX 界面 API 解耦。
+  - **`SCRIPTS/TELEMETRY/common/`**：可复用 UI/UX 组件；由各功能页面按需加载；**不宜**让 `LAOZHU` 依赖此处，以保持逻辑与 EdgeTX 界面 API 解耦。载入/释放约定见下节 **common UI 内存约定**。
   - **`LAOZHU/`**：与具体页面解耦的领域逻辑（状态机、记录、工作流、`comm/` 等）；由功能侧 core 或等价模块加载，对页面暴露稳定接口。
 - **其它入口**：`5jtel.lua`、`adjust.lua` 及未来的遥测、Widget 等入口遵循同一套原则；具体对照仍以 `3ktel.lua` 与 `3k/` 为准。
+
+#### common UI 内存约定
+
+遥控器上 Lua 内存有限，`common` UI 组件采用按需加载并从 `_G` 对称撤出的做法。完整约定拆成两篇，按角色查阅：
+
+| 文档 | 读者 | 内容 |
+|------|------|------|
+| [SCRIPTS/TELEMETRY/common/UI_COMPONENT_USAGE.md](SCRIPTS/TELEMETRY/common/UI_COMPONENT_USAGE.md) | 页面与编排代码的作者 | **调用约束**：何时 `LZ_runModule`、`destroy`/局部卸载里调 `XXunload` 或清空 `O` 全局类、`Fields`/`keyMap`、自检清单 |
+| [SCRIPTS/TELEMETRY/common/UI_COMPONENT_IMPLEMENTATION.md](SCRIPTS/TELEMETRY/common/UI_COMPONENT_IMPLEMENTATION.md) | 新增或修改 common 控件的人 | **实现约束**：`*O.lua` 语义、两字母前缀、`XXunload` 要写全、`O` 变体与卸载分工、自检与测试思路 |
 
 依赖方向示意：
 
