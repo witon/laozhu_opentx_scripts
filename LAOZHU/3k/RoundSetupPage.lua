@@ -132,7 +132,8 @@ local function init()
         {"Mute Round Timer", muteCheckbox}}
     getCfgValue()
     local rs = LZ_ui.rowStep
-    maxLines = math.min(7, math.max(1, math.floor((LCD_H - rs - 1) / rs)))
+    local hh = LZ_ui.headerRowHeight
+    maxLines = math.min(7, math.max(1, math.floor((LCD_H - hh - 1) / rs)))
     viewMatrix.visibleRows = maxLines
 end
 
@@ -149,12 +150,13 @@ local function run(event, time)
     end
 
     local rs = LZ_ui.rowStep
-    lcd.drawFilledRectangle(0, 0, LCD_W, rs, FORCE)
+    local hh = LZ_ui.headerRowHeight
+    lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
     lcd.drawText(0, 0, "Round Setup", LZ_ui.font + LEFT + INVERS)
 
     local drawOptions
 
-    local y = rs + 1
+    local y = hh + 1
     local lastLine = math.min(7, viewMatrix.scrollLine + maxLines)
     for i = viewMatrix.scrollLine + 1, lastLine, 1 do
         lcd.drawText(0, y, lineArray[i][1], LZ_ui.font + LEFT)

@@ -33,13 +33,14 @@ end
 
 function F3KRLVdraw(recordListView, x, y, invers, option)
 	local rs = LZ_ui.rowStep
+	local hh = LZ_ui.headerRowHeight
 	local maxVis = recordListView.maxVisRows
 	local lauAltRight = x + math.floor(84 * LCD_W / 128)
 	local lauNumX = x + math.floor(85 * LCD_W / 128)
 	local rightX = x + LCD_W - 1
 	local rowFillW = math.max(1, LCD_W - 1)
 
-	lcd.drawFilledRectangle(x, y, LCD_W, rs, FORCE)
+	lcd.drawFilledRectangle(x, y, LCD_W, hh, FORCE)
 	lcd.drawText(x, y, "LauTime", LZ_ui.font + LEFT + INVERS)
 	lcd.drawText(lauAltRight, y, "LauAlt", LZ_ui.font + RIGHT + INVERS)
 	lcd.drawText(rightX, y, "FTime", LZ_ui.font + RIGHT + INVERS)
@@ -53,7 +54,7 @@ function F3KRLVdraw(recordListView, x, y, invers, option)
 				break
 			end
 			local record = records[#records - i + 1]
-			local ly = y + rs + 1 + (i - scrollRow - 1) * rs
+			local ly = y + hh + 1 + (i - scrollRow - 1) * rs
 			local op = 0
 			if i == recordListView.selectedRow and recordListView.focusState == 2 then
 				op = INVERS
@@ -99,7 +100,8 @@ end
 
 function F3KRLVnewRecordListView()
 	local rs = LZ_ui.rowStep
-	local maxVisRows = math.max(1, math.floor((LCD_H - rs - 1) / rs))
+	local hh = LZ_ui.headerRowHeight
+	local maxVisRows = math.max(1, math.floor((LCD_H - hh - 1) / rs))
 	return {
 		scrollRow = 0,
 		selectedRow = 1,
