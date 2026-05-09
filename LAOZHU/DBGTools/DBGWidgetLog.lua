@@ -1,4 +1,5 @@
 -- 彩屏 Widget：在 zone 内绘制调试日志覆盖层（依赖已加载的 dbg.lua）。
+-- logHistory 中可能混排 DBG_err（[ERR]）与 DBG_dbg（[DBG]）行；ERROR_LOG/DEBUG_LOG 与 SHOW_LOG_SCREEN 决定哪些行会写入。
 -- 调用前请先 DBG_logClampScroll(maxVisLog)，maxVisLog 须与本函数内部布局算法一致（或由调用方传入 rowH/hint 时再扩展）。
 
 function DBGW_drawLogOverlay(zone, zoneBg, txtFlags, hintLine)
