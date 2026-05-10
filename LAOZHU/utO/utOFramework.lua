@@ -11,6 +11,7 @@ local TEST_FILES = {
 	"/emutest/testManagerOutput.lua",
 	"/emutest/testDataFileDecode.lua",
 	"/emutest/testSinkRateRecord.lua",
+	"/emutest/testSound.lua",
 	-- "/SCRIPTS/emutest/testOutputCurveManager.lua",
 }
 
