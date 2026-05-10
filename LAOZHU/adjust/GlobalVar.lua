@@ -10,6 +10,9 @@ local curGetGVIndex = -1
 local configFileName = "output.cfg"
 local outputCfg = nil
 
+local gvColGap, gvModeColW, gvColW, gvMaxK, gvVisRows
+local gvListMaxScroll = 7
+
 local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputView.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrix.lua")
@@ -58,20 +61,32 @@ local function onTextEditChange(textEdit)
     outputCfg:writeToFile(configFileName)
 end
 
-
+local function initGvLayout()
+    gvColGap = math.floor(LCD_W / 128)
+    gvModeColW = 7 * LZ_ui.fontWidth
+    gvColW = 4 * LZ_ui.fontWidth
+    gvMaxK = math.max(1, math.min(6, math.floor((LCD_W - 1 - gvModeColW) / (gvColW + gvColGap))))
+    local hh = LZ_ui.headerRowHeight
+    local rs = LZ_ui.rowStep
+    local yList0 = 1 + hh + rs
+    gvVisRows = math.max(1, math.min(8, math.floor((LCD_H - yList0 - 1) / rs)))
+end
 
 local function doKey(event)
     local ret = viewMatrix.doKey(viewMatrix, event)
+    local firstMR = scrollLine + 3
+    local iLast = math.min(9, scrollLine + 1 + gvVisRows)
+    local lastMR = iLast + 1
 	if (event==36) then
-        if viewMatrix.selectedRow - scrollLine < 3 and scrollLine > 0 then
+        if viewMatrix.selectedRow < firstMR and scrollLine > 0 then
             scrollLine = scrollLine - 1
         end
 	elseif (event==35) then
-        if viewMatrix.selectedRow - scrollLine > 6 then
+        if viewMatrix.selectedRow > lastMR and scrollLine < gvListMaxScroll then
             scrollLine = scrollLine + 1
         end
     elseif (event==37) then
-        if viewMatrix.selectedCol - scrollCol > 4 then
+        if viewMatrix.selectedCol - scrollCol > gvMaxK then
             scrollCol = scrollCol + 1
         end
     elseif (event==38) then
@@ -101,44 +116,43 @@ local function run(event, time)
     end
     local rs = LZ_ui.rowStep
     local hh = LZ_ui.headerRowHeight
-    lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
-    lcd.drawText(0, 0, "mode", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(0, 0, "mode", LZ_ui.font + LEFT)
 
     local curModeIndex = getFlightMode()
     local index, name = getFlightMode(0)
     if name == "" then
         name = "FM0"
     end
-    local yGv = hh + 1
-    local yFm0 = yGv + rs
-    lcd.drawText(0, yFm0, name, LZ_ui.font + LEFT)
+    local yGv =  1
+    local yFm0 = yGv + hh
     if curModeIndex == 0 then
-        lcd.drawText(lcd.getLastPos(), yFm0, "*", LZ_ui.font + BLINK + LEFT)
-    end
-
+        lcd.drawText(0, yFm0, name .. "*", LZ_ui.font + BLINK + LEFT)
+    else
+        lcd.drawText(0, yFm0, name, LZ_ui.font + LEFT)
+    end  
     lcd.drawLine(0, yFm0 - 1, LCD_W, yFm0 - 1, DOTTED, 0)
 
     local yList0 = yFm0 + rs
-    for i = scrollLine + 2, 9, 1 do
+    local iListEnd = math.min(9, scrollLine + 1 + gvVisRows + 1)
+    for i = scrollLine + 2, iListEnd, 1 do
         local y = yList0 + (i - scrollLine - 2) * rs
         index, name = getFlightMode(i - 1)
         if name == "" then
             name = "FM" .. i - 1
         end
-        lcd.drawText(0, y, name, LZ_ui.font + LEFT)
         if curModeIndex == i - 1 then
-            lcd.drawText(lcd.getLastPos(), y, "*", LZ_ui.font + BLINK + LEFT)
+            lcd.drawText(0, y, name .. "*", LZ_ui.font + BLINK + LEFT)
+        else
+            lcd.drawText(0, y, name, LZ_ui.font + LEFT)
         end
     end
 
     for i = scrollCol + 1, 6, 1 do
-        local x = 48 + (i - 1 - scrollCol) * 25
+        local k = i - scrollCol
+        local x = gvModeColW + k * gvColW + k * gvColGap
         IVdraw(gvNameEditArray[i], x, yGv, invers, LZ_ui.font + RIGHT)
         IVdraw(gvNumEditArray[1][i], x, yFm0, invers, LZ_ui.font + RIGHT)
-        for j = scrollLine + 2, scrollLine + 7, 1 do
-            if j > 9 then
-                break
-            end
+        for j = scrollLine + 2, iListEnd, 1 do
             local y = yList0 + (j - scrollLine - 2) * rs
             IVdraw(gvNumEditArray[j][i], x, y, invers, LZ_ui.font + RIGHT)
         end
@@ -152,6 +166,7 @@ end
 
 --local function init()
     loadModule()
+    initGvLayout()
     outputCfg = CFGC:new()
 	outputCfg:readFromFile(configFileName)
 
