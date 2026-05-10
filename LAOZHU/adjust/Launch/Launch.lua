@@ -196,34 +196,33 @@ local function run(event, curTime)
     if rtcTime % 2 == 1 then
         invers = true
     end
+    local rs = LZ_ui.rowStep
     if eleGvNumEdit then
-        lcd.drawText(0, 0, "e:", LEFT)
-        eleGvNumEdit:draw(10, 0, invers, LEFT)
+        lcd.drawText(0, 0, "e:", LZ_ui.font + LEFT)
+        eleGvNumEdit:draw(10, 0, invers, LZ_ui.font + LEFT)
     end
     if flap1GvNumEdit then
-        lcd.drawText(35, 0, "f1:", LEFT)
-        flap1GvNumEdit:draw(50, 0, invers, LEFT) --54
+        lcd.drawText(35, 0, "f1:", LZ_ui.font + LEFT)
+        flap1GvNumEdit:draw(50, 0, invers, LZ_ui.font + LEFT)
     end
     if rudGvNumEdit then
-        lcd.drawText(75, 0, "r:", LEFT)
-        rudGvNumEdit:draw(90, 0, invers, LEFT)
+        lcd.drawText(75, 0, "r:", LZ_ui.font + LEFT)
+        rudGvNumEdit:draw(90, 0, invers, LZ_ui.font + LEFT)
     end
 
-    cfgButton:draw(127, 0, invers, RIGHT)
+    cfgButton:draw(LCD_W, 0, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(0, 10, "state:", LZ_ui.font + LEFT)
-	lcd.drawText(30, 10, f3kState.getCurFlightStateName(), LZ_ui.font + LEFT)
-
-
-
-    lcd.drawText(80, 10, "height:", LZ_ui.font + LEFT)
-    lcd.drawNumber(128, 10, f3kState.launchAlt, LZ_ui.font + RIGHT)
+    local yStat = rs
+    lcd.drawText(0, yStat, "state:", LZ_ui.font + LEFT)
+    lcd.drawText(30, yStat, f3kState.getCurFlightStateName(), LZ_ui.font + LEFT)
+    lcd.drawText(80, yStat, "height:", LZ_ui.font + LEFT)
+    lcd.drawNumber(LCD_W - 1, yStat, f3kState.launchAlt, LZ_ui.font + RIGHT)
 
     local varSelectorSliderValue = getValue(launchCfg:getNumberField('SelSlider'))
     local varReadSwitchValue = getValue(launchCfg:getNumberField('ReadSw'))
     readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
 
-    recordListView:draw(0, 19, invers, 0)
+    recordListView:draw(0, yStat + rs, invers, 0)
     return doKey(event)
 end
 

@@ -184,20 +184,21 @@ local function run(event, curTime)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
+    local rs = LZ_ui.rowStep
     if eleGvNumEdit then
-        lcd.drawText(0, 0, "e:", LEFT)
-        eleGvNumEdit:draw(10, 0, invers, LEFT)
+        lcd.drawText(0, 0, "e:", LZ_ui.font + LEFT)
+        eleGvNumEdit:draw(10, 0, invers, LZ_ui.font + LEFT)
     end
     if flap1GvNumEdit then
-        lcd.drawText(35, 0, "f1:", LEFT)
-        flap1GvNumEdit:draw(50, 0, invers, LEFT) --54
+        lcd.drawText(35, 0, "f1:", LZ_ui.font + LEFT)
+        flap1GvNumEdit:draw(50, 0, invers, LZ_ui.font + LEFT)
     end
     if flap2GvNumEdit then
-        lcd.drawText(75, 0, "f2:", LEFT)
-        flap2GvNumEdit:draw(90, 0, invers, LEFT)
+        lcd.drawText(75, 0, "f2:", LZ_ui.font + LEFT)
+        flap2GvNumEdit:draw(90, 0, invers, LZ_ui.font + LEFT)
     end
 
-    cfgButton:draw(127, 0, invers, RIGHT)
+    cfgButton:draw(LCD_W, 0, invers, LZ_ui.font + RIGHT)
 
     local testSwIndex = sinkRateCfg:getNumberField("testsw", -1)
     local playTone = false
@@ -218,12 +219,13 @@ local function run(event, curTime)
             playingTone = false
         end
 
-        lcd.drawText(0, 10, "dur:", LZ_ui.font + LEFT)
-        lcd.drawText(40, 10, LZ_formatTime(SRSgetCurDuration(sinkRateState)), LZ_ui.font + RIGHT)
-        lcd.drawText(44, 10, "sink:", LZ_ui.font + LEFT)
-        lcd.drawText(76, 10, math.floor(SRSgetCurSinkAlt(sinkRateState)), LZ_ui.font + RIGHT)
-        lcd.drawText(80, 10, "srate:", LZ_ui.font + LEFT)
-        lcd.drawNumber(128, 10, SRSgetCurSinkRate(sinkRateState)*100, LZ_ui.font + RIGHT)
+        local yStat = rs
+        lcd.drawText(0, yStat, "dur:", LZ_ui.font + LEFT)
+        lcd.drawText(40, yStat, LZ_formatTime(SRSgetCurDuration(sinkRateState)), LZ_ui.font + RIGHT)
+        lcd.drawText(44, yStat, "sink:", LZ_ui.font + LEFT)
+        lcd.drawText(76, yStat, math.floor(SRSgetCurSinkAlt(sinkRateState)), LZ_ui.font + RIGHT)
+        lcd.drawText(80, yStat, "srate:", LZ_ui.font + LEFT)
+        lcd.drawNumber(LCD_W - 1, yStat, SRSgetCurSinkRate(sinkRateState) * 100, LZ_ui.font + RIGHT)
 
         local varSelectorSliderValue = getValue(sinkRateCfg:getNumberField('SelSlider'))
         local varReadSwitchValue = getValue(sinkRateCfg:getNumberField('ReadSw'))
@@ -233,7 +235,7 @@ local function run(event, curTime)
 
 
 
-    recordListView:draw(0, 19, invers, 0)
+    recordListView:draw(0, rs * 2, invers, 0)
     return doKey(event)
 end
 

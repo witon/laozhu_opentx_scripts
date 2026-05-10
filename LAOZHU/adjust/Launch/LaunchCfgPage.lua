@@ -9,6 +9,8 @@ local varSliderSelector = nil
 
 local cfgFileName = "launch.cfg"
 local sinkRateCfg = nil
+local lineArray = nil
+local maxLines = nil
 
 local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/SelectorO.lua")
@@ -59,24 +61,17 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    lcd.drawText(0, 0, "mode:", LZ_ui.font + LEFT)
-    modeSelector:draw(64, 0, invers, LZ_ui.font + LEFT)
-
-    lcd.drawText(0, 9, "ele gv:", LZ_ui.font + LEFT)
-    eleNumedit:draw(64, 9, invers, LZ_ui.font + LEFT)
-
-    lcd.drawText(0, 18, "flap1 gv:", LZ_ui.font + LEFT)
-    flap1Numedit:draw(64, 18, invers, LZ_ui.font + LEFT)
-
-    lcd.drawText(0, 27, "rud gv:", LZ_ui.font + LEFT)
-    rudNumedit:draw(64, 27, invers, LZ_ui.font + LEFT)
-
-
-    lcd.drawText(0, 45, "read switch:", LZ_ui.font + LEFT)
-    readSwitchSelector:draw(64, 45, invers, LZ_ui.font + LEFT)
-    lcd.drawText(0, 54, "select slider:", LZ_ui.font + LEFT)
-    varSliderSelector:draw(64, 54, invers, LZ_ui.font + LEFT)
- 
+    local rs = LZ_ui.rowStep
+    local hh = LZ_ui.headerRowHeight
+    lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
+    lcd.drawText(0, 0, "Launch Cfg", LZ_ui.font + LEFT + INVERS)
+    local y = hh + 1
+    local lastLine = math.min(#lineArray, viewMatrix.scrollLine + maxLines)
+    for i = viewMatrix.scrollLine + 1, lastLine, 1 do
+        lcd.drawText(0, y, lineArray[i][1], LZ_ui.font + LEFT)
+        lineArray[i][2]:draw(LCD_W, y, invers, LZ_ui.font + RIGHT)
+        y = y + rs
+    end
     return doKey(event)
 end
 
@@ -126,9 +121,22 @@ end
 
     viewMatrix.selectedRow = 1
     viewMatrix.selectedCol = 1
+    viewMatrix.scrollLine = 0
     viewMatrix:updateCurIVFocus()
 
- 
+    lineArray = {
+        { "mode:", modeSelector },
+        { "ele gv:", eleNumedit },
+        { "flap1 gv:", flap1Numedit },
+        { "rud gv:", rudNumedit },
+        { "read switch:", readSwitchSelector },
+        { "select slider:", varSliderSelector },
+    }
+    local rs = LZ_ui.rowStep
+    local hh = LZ_ui.headerRowHeight
+    maxLines = math.min(#lineArray, math.max(1, math.floor((LCD_H - hh - 1) / rs)))
+    viewMatrix.visibleRows = maxLines
+
 --end
 
 this = {run=run, bg=bg, pageState=0}

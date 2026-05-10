@@ -99,43 +99,47 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
-    lcd.drawText(2, 0, "mode", LZ_ui.font + LEFT)
+    local rs = LZ_ui.rowStep
+    local hh = LZ_ui.headerRowHeight
+    lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
+    lcd.drawText(0, 0, "mode", LZ_ui.font + LEFT + INVERS)
 
     local curModeIndex = getFlightMode()
     local index, name = getFlightMode(0)
     if name == "" then
         name = "FM0"
     end
-    lcd.drawText(0, 12, name, LZ_ui.font + LEFT)
-    
-    if curModeIndex==0 then
-        lcd.drawText(lcd.getLastPos(), 10, "*", LZ_ui.font + BLINK +  LEFT)
+    local yGv = hh + 1
+    local yFm0 = yGv + rs
+    lcd.drawText(0, yFm0, name, LZ_ui.font + LEFT)
+    if curModeIndex == 0 then
+        lcd.drawText(lcd.getLastPos(), yFm0, "*", LZ_ui.font + BLINK + LEFT)
     end
 
-    lcd.drawLine(0, 9, 128, 9, DOTTED, 0)
+    lcd.drawLine(0, yFm0 - 1, LCD_W, yFm0 - 1, DOTTED, 0)
 
-    for i=scrollLine + 2, 9, 1 do
-        local y = (i-scrollLine)*8 + 4
-        index, name = getFlightMode(i-1)
+    local yList0 = yFm0 + rs
+    for i = scrollLine + 2, 9, 1 do
+        local y = yList0 + (i - scrollLine - 2) * rs
+        index, name = getFlightMode(i - 1)
         if name == "" then
             name = "FM" .. i - 1
         end
         lcd.drawText(0, y, name, LZ_ui.font + LEFT)
-        if curModeIndex==i-1 then
-            lcd.drawText(lcd.getLastPos(), y, "*", LZ_ui.font + BLINK +  LEFT)
+        if curModeIndex == i - 1 then
+            lcd.drawText(lcd.getLastPos(), y, "*", LZ_ui.font + BLINK + LEFT)
         end
- 
     end
 
-    for i = scrollCol+1, 6, 1 do
-        local x = 48 + (i-1-scrollCol) * 25
-        IVdraw(gvNameEditArray[i], x, 1, invers, LZ_ui.font + RIGHT)
-        IVdraw(gvNumEditArray[1][i], x, 12, invers, LZ_ui.font + RIGHT)
-        for j=scrollLine + 2, scrollLine + 7, 1 do
-            if j>9 then
+    for i = scrollCol + 1, 6, 1 do
+        local x = 48 + (i - 1 - scrollCol) * 25
+        IVdraw(gvNameEditArray[i], x, yGv, invers, LZ_ui.font + RIGHT)
+        IVdraw(gvNumEditArray[1][i], x, yFm0, invers, LZ_ui.font + RIGHT)
+        for j = scrollLine + 2, scrollLine + 7, 1 do
+            if j > 9 then
                 break
             end
-            local y = (j-scrollLine)*8 + 4
+            local y = yList0 + (j - scrollLine - 2) * rs
             IVdraw(gvNumEditArray[j][i], x, y, invers, LZ_ui.font + RIGHT)
         end
     end

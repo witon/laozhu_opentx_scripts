@@ -177,33 +177,36 @@ local function draw(event, invers)
         return
     end
 
+    local rs = LZ_ui.rowStep
     if eleGvNumEdit then
-        lcd.drawText(0, 0, "e:", LEFT)
-        eleGvNumEdit:draw(10, 0, invers, LEFT)
+        lcd.drawText(0, 0, "e:", LZ_ui.font + LEFT)
+        eleGvNumEdit:draw(10, 0, invers, LZ_ui.font + LEFT)
     end
     if flap1GvNumEdit then
-        lcd.drawText(35, 0, "f1:", LEFT)
-        flap1GvNumEdit:draw(50, 0, invers, LEFT) --54
+        lcd.drawText(35, 0, "f1:", LZ_ui.font + LEFT)
+        flap1GvNumEdit:draw(50, 0, invers, LZ_ui.font + LEFT)
     end
     if flap2GvNumEdit then
-        lcd.drawText(75, 0, "f2:", LEFT)
-        flap2GvNumEdit:draw(90, 0, invers, LEFT)
+        lcd.drawText(75, 0, "f2:", LZ_ui.font + LEFT)
+        flap2GvNumEdit:draw(90, 0, invers, LZ_ui.font + LEFT)
     end
 
-    cfgButton:draw(127, 0, invers, RIGHT)
-    lcd.drawText(0, 10, "dur:", LZ_ui.font + LEFT)
-    lcd.drawText(40, 10, LZ_formatTime(LDSgetCurDuration(ldState)), LZ_ui.font + RIGHT)
-    lcd.drawText(44, 10, "sink:", LZ_ui.font + LEFT)
-    lcd.drawText(76, 10, math.floor(LDSgetCurSinkAlt(ldState)), LZ_ui.font + RIGHT)
-    lcd.drawText(80, 10, "dist:", LZ_ui.font + LEFT)
-    lcd.drawNumber(128, 10, math.floor(LDSgetCurDistance(ldState)), LZ_ui.font + RIGHT)
-    lcd.drawText(0, 19, "speed:", LZ_ui.font + LEFT)
-    lcd.drawText(40, 19, math.floor(LDSgetCurSpeed(ldState)*10)/10, LZ_ui.font + RIGHT)
-    lcd.drawText(44, 19, "ld:", LZ_ui.font + LEFT)
-    lcd.drawText(76, 19, math.floor(LDSgetCurLD(ldState)*10)/10, LZ_ui.font + RIGHT)
-    lcd.drawText(80, 19, "srate:", LZ_ui.font + LEFT)
-    lcd.drawText(128, 19, math.floor(LDSgetCurSinkRate(ldState)*10)/10, LZ_ui.font + RIGHT)
-    recordListView:draw(0, 29, invers, 0)
+    cfgButton:draw(LCD_W, 0, invers, LZ_ui.font + RIGHT)
+    local yStat1 = rs
+    local yStat2 = rs * 2
+    lcd.drawText(0, yStat1, "dur:", LZ_ui.font + LEFT)
+    lcd.drawText(40, yStat1, LZ_formatTime(LDSgetCurDuration(ldState)), LZ_ui.font + RIGHT)
+    lcd.drawText(44, yStat1, "sink:", LZ_ui.font + LEFT)
+    lcd.drawText(76, yStat1, math.floor(LDSgetCurSinkAlt(ldState)), LZ_ui.font + RIGHT)
+    lcd.drawText(80, yStat1, "dist:", LZ_ui.font + LEFT)
+    lcd.drawNumber(LCD_W - 1, yStat1, math.floor(LDSgetCurDistance(ldState)), LZ_ui.font + RIGHT)
+    lcd.drawText(0, yStat2, "speed:", LZ_ui.font + LEFT)
+    lcd.drawText(40, yStat2, math.floor(LDSgetCurSpeed(ldState) * 10) / 10, LZ_ui.font + RIGHT)
+    lcd.drawText(44, yStat2, "ld:", LZ_ui.font + LEFT)
+    lcd.drawText(76, yStat2, math.floor(LDSgetCurLD(ldState) * 10) / 10, LZ_ui.font + RIGHT)
+    lcd.drawText(80, yStat2, "srate:", LZ_ui.font + LEFT)
+    lcd.drawText(LCD_W - 1, yStat2, math.floor(LDSgetCurSinkRate(ldState) * 10) / 10, LZ_ui.font + RIGHT)
+    recordListView:draw(0, rs * 3, invers, 0)
 end
 
 local function run(event, curTime)

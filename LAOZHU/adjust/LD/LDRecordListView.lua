@@ -2,7 +2,8 @@ LDRecordListView = setmetatable({}, InputView)
 LDRecordListView.super = InputView
 
 function LDRecordListView:doKey(event)
-    if event ==  EVT_ENTER_BREAK then
+    local mv = self.maxVisRows or 3
+    if event == EVT_ENTER_BREAK then
         local record = self.records[#self.records - self.selectedRow + 1]
         if record == nil then
             return true
@@ -17,7 +18,7 @@ function LDRecordListView:doKey(event)
         if self.selectedRow < #self.records then
             self.selectedRow = self.selectedRow + 1
         end
-        if self.selectedRow - self.scrollRow > 3 then
+        if self.selectedRow - self.scrollRow > mv then
             self.scrollRow = self.scrollRow + 1
         end
         return true
@@ -35,39 +36,50 @@ end
 
 function LDRecordListView:draw(x, y, invers, option)
     local rs = LZ_ui.rowStep
-    lcd.drawFilledRectangle(0+x, 0+y, 128, rs, FORCE)
-    lcd.drawText(0+x, 1+y, "i", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(27+x, 1+y, "ele", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(50+x, 1+y, "f1", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(73+x, 1+y, "f2", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(103+x, 1+y, "spd", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(128+x, 1+y, "ld", LZ_ui.font + RIGHT + INVERS)
+    local hh = LZ_ui.headerRowHeight
+    self.listAnchorY = y
+    self.maxVisRows = math.max(1, math.floor((LCD_H - y - hh - 1) / rs))
+    local rowFillW = math.max(1, LCD_W - x - 1)
+
+    lcd.drawFilledRectangle(x, y, LCD_W, hh, FORCE)
+    lcd.drawText(x, y, "i", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(27 + x, y, "ele", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(50 + x, y, "f1", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(73 + x, y, "f2", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(103 + x, y, "spd", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(LCD_W - 1 + x, y, "ld", LZ_ui.font + RIGHT + INVERS)
 
     local records = self.records
     if records ~= nil then
         local scrollRow = self.scrollRow
-        for i=scrollRow+1, #records, 1 do
-            local record = records[#records - i + 1]
-            local y1 = y + rs + 1 + (i-scrollRow-1) * rs
-            local op = 0
-            if i==self.selectedRow and self.focusState == 2 then
-                op = INVERS
-                lcd.drawFilledRectangle(0, y1-1, 127, rs, FORCE)
+        local ly0 = y + hh + 1
+        local shown = 0
+        for i = scrollRow + 1, #records, 1 do
+            if shown >= self.maxVisRows then
+                break
             end
-            lcd.drawText(0, y1, #records - i + 1, LZ_ui.font + LEFT + op)
-            lcd.drawText(27, y1, record.ele, LZ_ui.font + RIGHT + op)
-            lcd.drawText(50, y1, record.flap1, LZ_ui.font + RIGHT + op)
-            lcd.drawText(73, y1, record.flap2, LZ_ui.font + RIGHT + op)
-            lcd.drawText(103, y1, math.floor(LDRgetRecordSpeed(record)*10)/10, LZ_ui.font + RIGHT + op)
-            lcd.drawText(128, y1, math.floor(LDRgetRecordLD(record)*10)/10, LZ_ui.font + RIGHT + op)
+            local record = records[#records - i + 1]
+            local ly = ly0 + (i - scrollRow - 1) * rs
+            local op = 0
+            if i == self.selectedRow and self.focusState == 2 then
+                op = INVERS
+                lcd.drawFilledRectangle(x, ly - LZ_ui.rowFillTopPad, rowFillW, rs + LZ_ui.rowFillTopPad + LZ_ui.rowFillBottomPad, FORCE)
+            end
+            lcd.drawText(x, ly, #records - i + 1, LZ_ui.font + LEFT + op)
+            lcd.drawText(27 + x, ly, record.ele, LZ_ui.font + RIGHT + op)
+            lcd.drawText(50 + x, ly, record.flap1, LZ_ui.font + RIGHT + op)
+            lcd.drawText(73 + x, ly, record.flap2, LZ_ui.font + RIGHT + op)
+            lcd.drawText(103 + x, ly, math.floor(LDRgetRecordSpeed(record) * 10) / 10, LZ_ui.font + RIGHT + op)
+            lcd.drawText(LCD_W - 1 + x, ly, math.floor(LDRgetRecordLD(record) * 10) / 10, LZ_ui.font + RIGHT + op)
             if record.invalid then
-                local ym = y1 + math.floor(rs / 2)
+                local ym = ly + math.floor(rs / 2)
                 if op == INVERS then
-                    lcd.drawLine(0, ym, 127, ym, SOLID, ERASE)
+                    lcd.drawLine(x, ym, x + rowFillW, ym, SOLID, ERASE)
                 else
-                    lcd.drawLine(0, ym, 127, ym, SOLID, FORCE)
+                    lcd.drawLine(x, ym, x + rowFillW, ym, SOLID, FORCE)
                 end
             end
+            shown = shown + 1
         end
     end
 end
@@ -79,5 +91,6 @@ function LDRecordListView:new()
     o.scrollRow = 0
     o.selectedRow = 1
     o.records = nil
-    return o 
+    o.maxVisRows = 3
+    return o
 end
