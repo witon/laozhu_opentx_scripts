@@ -13,6 +13,7 @@ end
 local function run(event, time)
     lcd.clear()
     local rs = LZ_ui.rowStep
+    local pathMaxChars = math.max(12, math.floor(LCD_W / 5))
     if curFileIndex > #compileFiles then
         lcd.drawText(1, 2 * rs + 2, "installation completed.", LZ_ui.font+LEFT)
         lcd.drawText(1, 3 * rs + 3, "press exit key to start.", LZ_ui.font+LEFT)
@@ -38,7 +39,7 @@ local function run(event, time)
     fun = nil
     collectgarbage()
     lcd.drawText(1, 2 * rs + 2, "compiling", LZ_ui.font+LEFT)
-    lcd.drawText(1, 3 * rs + 3, compileFiles[curFileIndex], LZ_ui.font+LEFT)
+    lcd.drawText(1, 3 * rs + 3, string.sub(tostring(compileFiles[curFileIndex]), 1, pathMaxChars), LZ_ui.font+LEFT)
     curFileIndex = curFileIndex + 1
     if curFileIndex > #compileFiles then
         LZ_markCompiled()

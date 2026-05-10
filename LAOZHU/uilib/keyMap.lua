@@ -58,8 +58,8 @@ function KMgetKeyMap()
             --keyMap[68] =  --page> 右
             keyMap[525] = 36 --MDL 上
             --keyMap[513] = 35 --TEL 下
-            keyMap[76] = 67 --长按TEL
-            keyMap[75] = 133 --长按MDL
+            --keyMap[76] = 67 --长按TEL
+            keyMap[1035] = 133 --长按MDL
             --keyMap[514] = 34 --return
             --keyMap[513] = 33 --exit
         end
