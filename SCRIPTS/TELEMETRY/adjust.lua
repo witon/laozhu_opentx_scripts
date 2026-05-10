@@ -1,105 +1,17 @@
 gSDCardDir = "/"
-local bgFlag = false
---local k1 = 0
---local k2 = 0
 
 local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 
-
-local focusIndex = 1
-local pages = {"adjust/GlobalVar.lua", "adjust/output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua"}
-local curPage = nil
-
-LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
-local keyMap = KMgetKeyMap();
-KMunload();
-
-
-local function loadPage(index)
-	local pagePath = "LAOZHU/" .. pages[index]
-	curPage = LZ_runModule(gSDCardDir .. pagePath)
-	--curPage.init()
-end
-
+local adjustFramework = LZ_runModule(gSDCardDir .. "LAOZHU/adjust/adjustFramework.lua")
+adjustFramework.initFramework()
 
 local function background()
-    if curPage and curPage.pageState == 1 then
-		LZ_clearTable(curPage)
-		curPage = nil
-    end
-
-    if not bgFlag then
-        bgFlag = true
-        return
-    else
-        if curPage then
-            curPage.bg()
-        end
-    end
+	adjustFramework.background()
 end
 
 local function run(event)
-
-	bgFlag = false
-	lcd.clear()
-	e = keyMap[event];
-
-	if e ~= nil then
-		event = e;
-	end
-
-	if curPage then
-		local eventProcessed = curPage.run(event, getTime())
-		if eventProcessed then
-			return
-		end
-		if event == EVT_EXIT_BREAK then
-			LZ_clearTable(curPage)
-			curPage = nil
-			collectgarbage()
-		end
-		return
-	end
-	for i=1, #pages, 1 do
-		if focusIndex == i then
-			lcd.drawText(2, i * 11, pages[i], INVERS)
-		else
-			lcd.drawText(2, i * 11, pages[i])
-		end
-	end
-	if event == EVT_ENTER_BREAK then
-		loadPage(focusIndex)
-	elseif event == 37 or event == 35 then --EVT_VIRTUAL_NEXT then
-		focusIndex = focusIndex + 1
-		if focusIndex > #pages then
-			focusIndex = 1
-		end
-	elseif event == 38 or event == 36 then --EVT_VIRTUAL_PREV then
-		focusIndex = focusIndex - 1
-		if focusIndex < 1 then
-			focusIndex = #pages
-		end
-	end
+	adjustFramework.run(event)
 end
 
---local function init()
-
-LZ_runModule(gSDCardDir .. "LAOZHU/LuaUtils.lua")
-LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
-
-if LZ_isNeedCompile() then
-	curPage = LZ_runModule(gSDCardDir .. "LAOZHU/uilib/comp.lua")
-	--curPage.init()
-else
-	LZ_isNeedCompile = nil
-	LZ_markCompiled = nil
-end
-collectgarbage();
---end
-
---init()
-
-return { run=run, background=background }
-
-
+return { run = run, background = background }
