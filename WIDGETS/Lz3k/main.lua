@@ -114,7 +114,7 @@ local function create(zone, options)
 	KMunload()
 	DBG_dbg("keyMap ok")
 
-	local Nav = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kTelNav.lua")
+	local Nav = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kFramework.lua")
 
 	return {
 		zone = zone,

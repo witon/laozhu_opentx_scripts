@@ -6,7 +6,7 @@ gF3kCore = nil
 
 f3kCfg = nil
 
-local Nav = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kTelNav.lua")
+local Nav = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kFramework.lua")
 local state = {
 	pages = Nav.FLIGHT_PAGE_PATHS,
 	displayIndex = 1,

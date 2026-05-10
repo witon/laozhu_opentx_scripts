@@ -88,7 +88,7 @@ local files = {
 
 	"LAOZHU/3k/f3kCore.lua",
 
-	"LAOZHU/3k/f3kTelNav.lua",
+	"LAOZHU/3k/f3kFramework.lua",
 
 	"TELEMETRY/3ktel.lua",
 
