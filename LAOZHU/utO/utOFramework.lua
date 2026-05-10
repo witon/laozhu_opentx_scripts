@@ -32,38 +32,8 @@ local st = {
 	modeSelector = nil,
 	taskSelector = nil,
 	timeEdit = nil,
+	dbgLogView = nil,
 }
-
-local function mapRaw(rawEv)
-	local ke = keyMap[rawEv]
-	return ke ~= nil and ke or rawEv
-end
-
-local function telemetryMappedEvent(event)
-	local rawEv = event or 0
-	if rawEv ~= 0 then
-		local m = keyMap[rawEv]
-		DBG_dbg("KEY", "raw=" .. tostring(rawEv), "mapped=" .. tostring(m or rawEv), "hasMap=" .. tostring(m ~= nil))
-	end
-	return mapRaw(rawEv)
-end
-
-local function widgetMappedEvent(event, refreshCount)
-	local rawEv = event or 0
-	if st.dbgEnabled then
-		if event ~= nil and rawEv ~= 0 then
-			local m = keyMap[event]
-			DBG_dbg("KEY", "raw=" .. tostring(rawEv), "mapped=" .. tostring(m or rawEv), "hasMap=" .. tostring(m ~= nil))
-		elseif refreshCount % 120 == 1 then
-			DBG_dbg(string.format("refresh#%d evt=nil (未交权给 widget)", refreshCount))
-		end
-	end
-	local mapped = mapRaw(rawEv)
-	if st.dbgEnabled and event ~= nil and event ~= 0 then
-		DBG_logOnMappedKey(mapped)
-	end
-	return mapped
-end
 
 local function testLoadAndUnload()
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
@@ -112,19 +82,6 @@ end
 
 local function handleViewMatrixKey(mappedEvent)
 	st.viewMatrix:doKey(mappedEvent)
-end
-
-local function drawEmutestProgress(layout)
-	local ox, oy, rowH, TXT = layout.ox, layout.oy, layout.rowH, layout.TXT
-	local fn = TEST_FILES[st.curFileIndex] or "?"
-	lcd.drawText(ox + 2, oy + 2, "emutest", TXT)
-	lcd.drawText(ox + 2, oy + 2 + rowH, "f " .. tostring(st.curFileIndex) .. "/" .. tostring(#TEST_FILES), TXT)
-	lcd.drawText(ox + 2, oy + 2 + 2 * rowH, string.sub(tostring(fn), 1, 28), TXT)
-	lcd.drawText(ox + 2, oy + 2 + 3 * rowH, "c " .. tostring(st.curCaseIndex), TXT)
-end
-
-local function drawEmutestComplete(layout)
-	lcd.drawText(layout.ox + 2, layout.oy + 2, "emutest OK", layout.TXT)
 end
 
 local function drawViewMatrixDemo(layout)
@@ -224,7 +181,6 @@ function M.initFramework(opts)
 	st.frameworkInited = true
 	st.surface = opts.surface or "telemetry"
 	st.dbgEnabled = opts.dbgEnabled ~= false
-
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 	keyMap = KMgetKeyMap()
 	KMunload()
@@ -241,6 +197,10 @@ function M.initFramework(opts)
 	end
 	LZ_runModule(gSDCardDir .. "LAOZHU/EmuTestUtils.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
+	if st.dbgEnabled then
+		LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGLogListView.lua")
+		st.dbgLogView = DBGLogLVnew()
+	end
 end
 
 function M.initUI()
@@ -311,37 +271,43 @@ function M.run(event, surfaceCtx)
 
 	if emutestStillRunning() then
 		doOneCase()
-		if not emutestStillRunning() then
-			if st.surface == "telemetry" or st.dbgEnabled then
-				DBG_dbg("emutest OK")
-			end
-			if st.surface == "widget" then
-				drawEmutestComplete(surfaceCtx)
-			end
+		if emutestStillRunning() then
 			return
 		end
-		if st.surface == "widget" then
-			drawEmutestProgress(surfaceCtx)
-		end
-		return
 	end
 
 	if st.viewMatrix == nil then
 		M.initUI()
 	end
 
+	local e = event or 0
+	local mapped = keyMap[e] or e
+	local layout
 	if st.surface == "telemetry" then
 		lcd.clear()
-		local mapped = telemetryMappedEvent(event)
-		handleViewMatrixKey(mapped)
-		drawViewMatrixDemo({ kind = "full", rowH = LZ_ui.rowStep })
+		layout = { kind = "full", rowH = LZ_ui.rowStep }
 	else
-		local mapped = widgetMappedEvent(event, surfaceCtx.refreshCount)
-		handleViewMatrixKey(mapped)
-		drawViewMatrixDemo({ kind = "zone", ox = surfaceCtx.ox, oy = surfaceCtx.oy, z = surfaceCtx.z, rowH = surfaceCtx.rowH })
-		if st.dbgEnabled then
-			DBG_logClampScroll(surfaceCtx.maxVisLog)
-			DBGW_drawLogOverlay(surfaceCtx.z, surfaceCtx.zoneBg, surfaceCtx.TXT, "App:长按ENT交权 ↑/↓滚动")
+		layout = { kind = "zone", ox = surfaceCtx.ox, oy = surfaceCtx.oy, z = surfaceCtx.z, rowH = surfaceCtx.rowH }
+	end
+	handleViewMatrixKey(mapped)
+	drawViewMatrixDemo(layout)
+	if st.dbgEnabled and st.dbgLogView ~= nil and DBG ~= nil then
+		if st.surface == "widget" and surfaceCtx ~= nil then
+			local z = surfaceCtx.z
+			local maxVis = DBGLogLVmaxVisForRect(z.w, z.h)
+			DBG_logClampScroll(maxVis)
+			DBGLogLVdraw(st.dbgLogView, z.x, z.y, z.w, z.h, surfaceCtx.zoneBg, surfaceCtx.TXT, "App:长按ENT交权 ↑/↓滚动")
+		elseif st.surface == "telemetry" then
+			local rs = LZ_ui.rowStep
+			local bandH = math.min(LCD_H, math.max(rs * 6, math.floor(LCD_H * 0.38)))
+			local logY = LCD_H - bandH
+			local maxVis = DBGLogLVmaxVisForRect(LCD_W, bandH)
+			DBG_logClampScroll(maxVis)
+			local txtFlags = LZ_ui.font + LEFT
+			if LZ_ui.themeText ~= nil and LZ_ui.themeText ~= 0 then
+				txtFlags = txtFlags + LZ_ui.themeText
+			end
+			DBGLogLVdraw(st.dbgLogView, 0, logY, LCD_W, bandH, ERASE, txtFlags, "↑/↓滚动")
 		end
 	end
 end

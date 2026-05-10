@@ -32,27 +32,19 @@ local function refresh(widget, event, touchState)
 
 	local TXT = LZ_ui.font + LEFT + LZ_ui.themeText
 	local rowH = LZ_ui.rowStep
-	local logLinesTop = oy + rowH
-	local logHintY = z.y + z.h - rowH - 2
-	if logHintY < logLinesTop + rowH then
-		logHintY = logLinesTop + rowH
-	end
-	local logAvailH = logHintY - logLinesTop - 2
-	local maxVisLog = math.max(1, math.floor(logAvailH / rowH))
+	local maxVisLog = DBGLogLVmaxVisForRect(z.w, z.h)
 
 	if not widget.loadOk then
 		lcd.drawText(z.x + 2, z.y + 2, "LzUtO: LoadModule失败", LEFT + SMLSIZE)
 		return
 	end
 
-	widget._dbgN = (widget._dbgN or 0) + 1
 	widget.framework.run(event, {
 		ox = ox,
 		oy = oy,
 		z = z,
 		rowH = rowH,
 		TXT = TXT,
-		refreshCount = widget._dbgN,
 		maxVisLog = maxVisLog,
 		zoneBg = zoneBg,
 	})
@@ -69,7 +61,7 @@ local function create(zone, options)
 		loadOk = true
 		LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
 		DBG_init(DBG_OPTS)
-		LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGWidgetLog.lua")
+		LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGLogListView.lua")
 		local ver0, radio0 = getVersion()
 		DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
 		DBG_dbg("LoadModule ok")

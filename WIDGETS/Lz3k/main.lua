@@ -104,7 +104,7 @@ local function create(zone, options)
 
 	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
 	DBG_init(DBG_OPTS)
-	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGWidgetLog.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGLogListView.lua")
 
 	local ver0, radio0 = getVersion()
 	DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")

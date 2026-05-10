@@ -3,7 +3,7 @@ local fun, err = loadScript(gSDCardDir .. "LAOZHU/uilib/LoadModule.lua", "bt")
 fun()
 gAssertFlag = "ASSERT FLAG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
--- 调试：见 LAOZHU/DBGTools/dbg.lua；ERROR_LOG 控制 DBG_err，DEBUG_LOG 控制 DBG_dbg；SHOW_LOG_SCREEN 开时对应级别写入日志缓冲（遥测侧 DBGTelemetryLog 尚未绘制覆盖层，宜保持 false）。
+-- 调试：见 LAOZHU/DBGTools/dbg.lua；SHOW_LOG_SCREEN 开时写入 DBG.logHistory；utOFramework 在遥测模式下用 DBGLogListView 于屏底绘制（见 LAOZHU/DBGTools/DBGLogListView.lua）。
 local DBG_OPTS = {
 	printTag = "[utO]",
 	ERROR_LOG = true,
