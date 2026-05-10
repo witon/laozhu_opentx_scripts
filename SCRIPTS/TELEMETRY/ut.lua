@@ -35,7 +35,8 @@ local testFiles = {
     "/emutest/testLoadModule.lua",
     "/emutest/testManagerOutput.lua",
     "/emutest/testDataFileDecode.lua",
-    "/emutest/testSinkRateRecord.lua"
+    "/emutest/testSinkRateRecord.lua",
+    "/emutest/testSound.lua"
  
     --"/SCRIPTS/emutest/testOutputCurveManager.lua",
 }

@@ -230,6 +230,8 @@ local files = {
 
 	"emutest/testSinkRateRecord.lua",
 
+	"emutest/testSound.lua",
+
 	"test/TestF3kCompetitionWF.lua",
 
 	"test/TestF3kFlightRecord.lua",
