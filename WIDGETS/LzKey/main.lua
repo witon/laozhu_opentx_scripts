@@ -60,7 +60,7 @@ local function create(zone, options)
 
 	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
 	DBG_init(DBG_OPTS)
-	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGWidgetLog.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGLogListView.lua")
 
 	local ver0, radio0 = getVersion()
 	DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
@@ -77,6 +77,7 @@ local function create(zone, options)
 		keyMap = keyMap,
 		eventHistory = {},
 		maxHistorySize = 12,
+		dbgLogView = DBGLogLVnew(),
 	}
 end
 
@@ -90,13 +91,7 @@ local function refresh(widget, event, touchState)
 	local ox = z.x + 2
 	local oy = z.y + 2
 
-	local logLinesTop = oy + rowH
-	local logHintY = z.y + z.h - rowH - 2
-	if logHintY < logLinesTop + rowH then
-		logHintY = logLinesTop + rowH
-	end
-	local logAvailH = logHintY - logLinesTop - 2
-	local maxVisLog = math.max(1, math.floor(logAvailH / rowH))
+	local maxVisLog = DBGLogLVmaxVisForRect(z.w, z.h)
 
 	widget._dbgN = (widget._dbgN or 0) + 1
 	if event ~= nil then
@@ -152,7 +147,9 @@ local function refresh(widget, event, touchState)
 	end
 
 
-	DBGW_drawLogOverlay(z, zoneBg, TXT)
+	if DBG then
+		DBGLogLVdraw(widget.dbgLogView, z.x, z.y, z.w, z.h, zoneBg, TXT)
+	end
 end
 
 return {

@@ -21,15 +21,7 @@ local function update(widget, newOptions)
 end
 
 local function telInit(widget)
-	widget.f3kNav.telInit(widget.f3kState)
-end
-
-local function loadPage(widget)
-	widget.f3kNav.loadPage(widget.f3kState)
-end
-
-local function unloadCurPage(widget)
-	widget.f3kNav.unloadCurPage(widget.f3kState)
+	widget.f3kFramework.initFramework()
 end
 
 -- Widget：不可见时只调 background，可见时只调 refresh；须两处都推进 core（与 TELEMETRY 全程 background 不同）。
@@ -59,28 +51,7 @@ local function refresh(widget, event, _touchState)
 		widget.telInitDone = true
 	end
 
-	local rawEv = event or 0
-	local e = widget.keyMap[rawEv]
-	local mappedEvent = rawEv
-	if e ~= nil then
-		mappedEvent = e
-	end
-
-	local st = widget.f3kState
-	local curTime = getTime()
-	if st.curPage == nil then
-		loadPage(widget)
-	end
-
-	tickF3kCore()
-
-	local eventProcessed = st.curPage.run(mappedEvent, curTime)
-	if eventProcessed then
-		return
-	end
-
-	widget.f3kNav.handleNavAfterPage(st, mappedEvent)
-
+	widget.f3kFramework.run(event, { beforePageRun = tickF3kCore })
 end
 
 local function create(zone, options)
@@ -95,7 +66,6 @@ local function create(zone, options)
 		return {
 			zone = zone,
 			options = options,
-			keyMap = {},
 			loadOk = false,
 			telInitDone = false,
 		}
@@ -104,31 +74,19 @@ local function create(zone, options)
 
 	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
 	DBG_init(DBG_OPTS)
-	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGWidgetLog.lua")
+	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/DBGLogListView.lua")
 
 	local ver0, radio0 = getVersion()
 	DBG_dbg("create", "fw=" .. string.sub(tostring(ver0), 1, 8), "radio=" .. tostring(radio0), "zone", zone and zone.w or "?", zone and zone.h or "?")
 
-	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
-	local keyMap = KMgetKeyMap()
-	KMunload()
-	DBG_dbg("keyMap ok")
-
-	local Nav = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kFramework.lua")
+	local f3kFramework = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kFramework.lua")
 
 	return {
 		zone = zone,
 		options = options,
-		keyMap = keyMap,
 		loadOk = true,
 		telInitDone = false,
-		f3kNav = Nav,
-		f3kState = {
-			pages = Nav.FLIGHT_PAGE_PATHS,
-			displayIndex = 1,
-			curPage = nil,
-			lastEvent = 0,
-		},
+		f3kFramework = f3kFramework,
 	}
 end
 

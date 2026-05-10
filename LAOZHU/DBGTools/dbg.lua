@@ -1,7 +1,7 @@
 -- 开发用分级日志：控制台 print + 可选环形缓冲，供 Widget / 遥测脚本绘制。
--- Widget 请先 LZ_runModule 本文件再 DBG_init，再加载 DBGWidgetLog.lua。
+-- 需要屏幕绘制时：先本文件再 DBG_init，再 LZ_runModule LAOZHU/DBGTools/DBGLogListView.lua，调用 DBGLogLVdraw。
 -- DBG_err：受 ERROR_LOG 控制（默认开）；DBG_dbg：受 DEBUG_LOG 控制（库默认关，入口 DBG_init 可打开）。
--- SHOW_LOG_SCREEN 为真且对应级别开关为真时，该行写入环形缓冲（见 DBGWidgetLog 覆盖层）。
+-- SHOW_LOG_SCREEN 为真且对应级别开关为真时，该行写入环形缓冲（见 DBGLogListView 绘制）。
 -- 控制台与缓冲中均带前缀 [ERR] / [DBG]，调用处无需再拼接。
 -- 开关与缓冲状态见全局表 DBG，判断时直接读 DBG.xxx，勿再封装 getter。
 
