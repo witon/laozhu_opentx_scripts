@@ -13,17 +13,6 @@ local state = {
 
 local keyMap
 
-local function mapRawEvent(rawEvent)
-	if keyMap == nil then
-		return rawEvent
-	end
-	local e = keyMap[rawEvent]
-	if e ~= nil then
-		return e
-	end
-	return rawEvent
-end
-
 local function unloadCurPage()
 	if state.curPage and state.curPage.destroy then
 		state.curPage.destroy()
@@ -111,7 +100,9 @@ end
 -- opts.beforePageRun：Widget 在 curPage.run 前调用 gF3kCore.run（与 TELEMETRY 用 background 推进 core 对齐）。
 function M.run(rawEvent, opts)
 	opts = opts or {}
-	local event = mapRawEvent(rawEvent or 0)
+	local raw = rawEvent or 0
+	local mapped = keyMap and keyMap[raw]
+	local event = mapped ~= nil and mapped or raw
 	local curTime = getTime()
 	if state.curPage == nil then
 		loadPage()
