@@ -45,41 +45,17 @@ local function refresh(widget, event, touchState)
 		return
 	end
 
-	if not widget.initFrameworkDone then
-		widget.framework.initFramework(widget.utOState)
-		widget.initFrameworkDone = true
-	end
-
-	local fw = widget.framework
-	local st = widget.utOState
-
-	if fw.emutestStillRunning(st) then
-		fw.doOneCase(st)
-		if not fw.emutestStillRunning(st) then
-			if widget.dbgEnabled then
-				DBG_dbg("emutest OK")
-			end
-			fw.drawEmutestComplete({ ox = ox, oy = oy, TXT = TXT })
-			return
-		end
-		fw.drawEmutestProgress(st, { ox = ox, oy = oy, rowH = rowH, TXT = TXT })
-		return
-	end
-
-	if st.viewMatrix == nil then
-		fw.initUI(st)
-	end
-
 	widget._dbgN = (widget._dbgN or 0) + 1
-	local mapped = fw.widgetViewMatrixMappedEvent(widget.dbgEnabled, event, widget._dbgN)
-
-	fw.handleViewMatrixKey(st, mapped)
-	fw.drawViewMatrixDemo(st, { kind = "zone", ox = ox, oy = oy, z = z, rowH = rowH })
-
-	if widget.dbgEnabled then
-		DBG_logClampScroll(maxVisLog)
-		DBGW_drawLogOverlay(z, zoneBg, TXT, "App:长按ENT交权 ↑/↓滚动")
-	end
+	widget.framework.run(event, {
+		ox = ox,
+		oy = oy,
+		z = z,
+		rowH = rowH,
+		TXT = TXT,
+		refreshCount = widget._dbgN,
+		maxVisLog = maxVisLog,
+		zoneBg = zoneBg,
+	})
 end
 
 local function create(zone, options)
@@ -104,21 +80,14 @@ local function create(zone, options)
 	local framework = nil
 	if loadOk then
 		framework = LZ_runModule(gSDCardDir .. "LAOZHU/utO/utOFramework.lua")
+		framework.initFramework({ surface = "widget", dbgEnabled = loadOk })
 	end
 
 	return {
 		zone = zone,
 		options = options,
 		loadOk = loadOk,
-		initFrameworkDone = false,
 		framework = framework,
-		utOState = {
-			curFileIndex = 1,
-			curCaseIndex = 1,
-			curCases = nil,
-			dbgEnabled = loadOk,
-		},
-		dbgEnabled = loadOk,
 	}
 end
 

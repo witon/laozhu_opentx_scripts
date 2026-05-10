@@ -14,38 +14,14 @@ local DBG_OPTS = {
 
 local framework = LZ_runModule(gSDCardDir .. "LAOZHU/utO/utOFramework.lua")
 
-local state = {
-	curFileIndex = 1,
-	curCaseIndex = 1,
-	curCases = nil,
-	dbgEnabled = true,
-}
-
 local function init()
 	LZ_runModule(gSDCardDir .. "LAOZHU/DBGTools/dbg.lua")
 	DBG_init(DBG_OPTS)
-	framework.initFramework(state)
+	framework.initFramework()
 end
 
 local function run(event)
-	if framework.emutestStillRunning(state) then
-		framework.doOneCase(state)
-		if not framework.emutestStillRunning(state) then
-			DBG_dbg("emutest OK")
-		end
-		return
-	end
-
-	if state.viewMatrix == nil then
-		framework.initUI(state)
-	end
-
-	lcd.clear()
-
-	local mapped = framework.telemetryViewMatrixMappedEvent(event)
-
-	framework.handleViewMatrixKey(state, mapped)
-	framework.drawViewMatrixDemo(state, { kind = "full", rowH = LZ_ui.rowStep })
+	framework.run(event)
 end
 
 return { run = run, init = init }
