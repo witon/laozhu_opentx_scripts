@@ -1,3 +1,5 @@
 *.luac
 *.records
 *.output
+*.wav
+*.csv
