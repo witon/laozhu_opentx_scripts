@@ -40,7 +40,7 @@ flowchart LR
 
 ## `UiParams.lua` — 全局 `LZ_ui`
 
-统一 **`font`**、**`fontSmall`**、**`rowStep`**、**`headerFont`**、彩屏 **`themeText`**（与 `LEFT`/`RIGHT`/`INVERS` 等相加；用法同原先的 `SMLSIZE + LEFT`）。
+统一 **`font`**、**`rowStep`**、**`headerFont`**、彩屏 **`themeText`**（与 `LEFT`/`RIGHT`/`INVERS` 等相加；用法同原先的 `SMLSIZE + LEFT`）。
 
 | 载入侧 | 说明 |
 |--------|------|
