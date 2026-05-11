@@ -17,6 +17,26 @@ local viewMatrix = nil
 local this = nil
 local adjustMixSourceName = nil
 
+-- 布局：与 output.lua / GlobalVar 一致按 LCD_W、LZ_ui.fontWidth 计算（仅绘制）
+local curveColGap, curveLeftPad, curveNameColW, curveCurColW, curvePointColW
+local curveXCurRight
+local crvXS1ValRight, crvOutLabelX, crvOutValRight
+
+local function initCurveLayout()
+    curveColGap = math.max(1, math.floor(LCD_W / 128))
+    curveLeftPad = 2
+    curveNameColW = 4 * LZ_ui.fontWidth
+    curveCurColW = 3 * LZ_ui.fontWidth
+    curvePointColW = 5 * LZ_ui.fontWidth
+    curveXCurRight = curveLeftPad + curveNameColW + curveColGap + curveCurColW
+    crvXS1ValRight = curveLeftPad + (6 + 4) * LZ_ui.fontWidth + curveColGap
+    crvOutLabelX = math.floor(LCD_W / 2)
+    crvOutValRight = crvOutLabelX + (6 + 4) * LZ_ui.fontWidth + curveColGap
+end
+
+local function curvePointAnchorX(i)
+    return curveXCurRight + curveColGap + (i - scrollCol) * (curvePointColW + curveColGap)
+end
 
 local function setCurve(index)
 
@@ -136,6 +156,7 @@ end
 
 
 local function init()
+    initCurveLayout()
     viewMatrix = VMnewViewMatrix()
 end
 
@@ -172,11 +193,15 @@ local function doKey(event)
 end
 
 local function drawHeadLine(yHead, hh)
-    lcd.drawFilledRectangle(0, yHead, LCD_W, hh, FORCE)
-    lcd.drawText(0, yHead, "ch", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(33, yHead, "cur", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawFilledRectangle(0, yHead - LZ_ui.headFillTopPad, LCD_W, hh + LZ_ui.headFillTopPad + LZ_ui.headFillBottomPad, FORCE)
+    lcd.drawText(curveLeftPad, yHead, "ch", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(curveXCurRight, yHead, "cur", LZ_ui.font + RIGHT + INVERS)
     for i = 1 + scrollCol, 10, 1 do
-        lcd.drawText(33 + 20 * (i - scrollCol), yHead, "p" .. i, LZ_ui.font + RIGHT + INVERS)
+        local ax = curvePointAnchorX(i)
+        if ax > LCD_W - 1 then
+            break
+        end
+        lcd.drawText(ax, yHead, "p" .. i, LZ_ui.font + RIGHT + INVERS)
     end
 end
 
@@ -189,14 +214,18 @@ local function drawOneRow(index, invers, yRowStart, rowSpan, subDy)
     local outputName = LZ_getOutputName(row.output)
     local y = yRowStart + (index - scrollLine - 1) * rowSpan
     lcd.drawLine(0, y + rowSpan - 1, LCD_W, y + rowSpan - 1, DOTTED, 0)
-    lcd.drawText(0, y, outputName, LZ_ui.font + LEFT)
-    lcd.drawText(34, y, LZ_getCurveName(row.curve), LZ_ui.font + RIGHT)
+    lcd.drawText(curveLeftPad, y, outputName, LZ_ui.font + LEFT)
+    lcd.drawText(curveXCurRight, y, LZ_getCurveName(row.curve), LZ_ui.font + RIGHT)
     for i = 1 + scrollCol, #row.yNumEditArray, 1 do
-        IVdraw(row.yNumEditArray[i], 35 + 20 * (i - scrollCol), y, invers, LZ_ui.font + RIGHT)
+        local ax = curvePointAnchorX(i)
+        if ax > LCD_W - 1 then
+            break
+        end
+        IVdraw(row.yNumEditArray[i], ax, y, invers, LZ_ui.font + RIGHT)
         if row.xNumEditArray then
-            IVdraw(row.xNumEditArray[i], 35 + 20 * (i - scrollCol), y + subDy, invers, LZ_ui.font + RIGHT)
+            IVdraw(row.xNumEditArray[i], ax, y + subDy, invers, LZ_ui.font + RIGHT)
         else
-            lcd.drawText(35 + 20 * (i - scrollCol), y + subDy, getX(#row.yNumEditArray, i), LZ_ui.font + RIGHT)
+            lcd.drawText(ax, y + subDy, getX(#row.yNumEditArray, i), LZ_ui.font + RIGHT)
         end
     end
 end
@@ -212,7 +241,7 @@ local function run(event, time)
     local subDy = rs
     local yThr = 0
     local yHead = rs
-    local yRowStart = yHead + hh + 1
+    local yRowStart = yHead + hh + LZ_ui.headFillTopPad + LZ_ui.headFillBottomPad + 1
 
     local adjRaw = 0
     if adjustMixSourceName then
@@ -221,10 +250,10 @@ local function run(event, time)
             adjRaw = getValue(fi.id)
         end
     end
-    lcd.drawText(2, yThr, adjustMixSourceName and (adjustMixSourceName .. ":") or "-:", LZ_ui.font + LEFT)
-    lcd.drawText(22, yThr, math.floor(adjRaw * 100 / 1024), LZ_ui.font + LEFT)
-    lcd.drawText(64, yThr, "output:", LZ_ui.font + LEFT)
-    lcd.drawText(98, yThr, math.floor(adjRaw * 150 / 1024), LZ_ui.font + LEFT)
+    lcd.drawText(curveLeftPad, yThr, adjustMixSourceName and (adjustMixSourceName .. ":") or "-:", LZ_ui.font + LEFT)
+    lcd.drawText(crvXS1ValRight, yThr, math.floor(adjRaw * 100 / 1024), LZ_ui.font + RIGHT)
+    lcd.drawText(crvOutLabelX, yThr, "output:", LZ_ui.font + LEFT)
+    lcd.drawText(crvOutValRight, yThr, math.floor(adjRaw * 150 / 1024), LZ_ui.font + RIGHT)
 
     drawHeadLine(yHead, hh)
     for i = 1 + scrollLine, #curvePointNumEditArray, 1 do
