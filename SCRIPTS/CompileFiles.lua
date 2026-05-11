@@ -88,6 +88,8 @@ local files = {
 
 	"LAOZHU/3k/f3kFramework.lua",
 
+	"LAOZHU/key/keyFramework.lua",
+
 	"LAOZHU/utO/utOFramework.lua",
 
 	"TELEMETRY/3ktel.lua",
