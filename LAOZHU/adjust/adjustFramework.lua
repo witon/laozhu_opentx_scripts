@@ -76,12 +76,17 @@ function M.run(rawEvent, opts)
 		end
 		return
 	end
+	local rs = LZ_ui.rowStep
+	local hh = LZ_ui.headerRowHeight
+	lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
+	lcd.drawText(0, 0, "Adjust", LZ_ui.font + LEFT + INVERS)
 	local pages = state.pages
 	for i = 1, #pages, 1 do
+		local y = hh + 1 + (i - 1) * rs
 		if state.focusIndex == i then
-			lcd.drawText(2, i * 11, pages[i], INVERS)
+			lcd.drawText(2, y, pages[i], LZ_ui.font + INVERS)
 		else
-			lcd.drawText(2, i * 11, pages[i])
+			lcd.drawText(2, y, pages[i], LZ_ui.font)
 		end
 	end
 	if event == EVT_ENTER_BREAK then

@@ -33,29 +33,34 @@ local function doKey(event)
 end
 
 local function run(event, time)
-    lcd.drawFilledRectangle(0, 0, 128, 9, FORCE)
-    lcd.drawText(2, 1, "name", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(68, 1, "value", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(128, 1, "selected", LZ_ui.font + RIGHT + INVERS)
- 
-    for i=scrollLine + 1, scrollLine + 6, 1 do
-        local output = model.getOutput(i-1)
+    local rs = LZ_ui.rowStep
+    local hh = LZ_ui.headerRowHeight
+    local rowFillW = math.max(1, LCD_W - 2)
+    lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
+    lcd.drawText(2, 0, "name", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(68, 0, "value", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(LCD_W - 1, 0, "selected", LZ_ui.font + RIGHT + INVERS)
+
+    local y0 = hh + 1
+    for i = scrollLine + 1, scrollLine + 6, 1 do
+        local output = model.getOutput(i - 1)
         local option = 0
         if i <= 16 then
-            if i==selectedRow then
+            local rowY = y0 + (i - scrollLine - 1) * rs
+            if i == selectedRow then
                 option = INVERS
-                lcd.drawFilledRectangle(1, 9 * (i-scrollLine) + 1, 126, 9, FORCE)
+                lcd.drawFilledRectangle(1, rowY - LZ_ui.rowFillTopPad, rowFillW, rs + LZ_ui.rowFillTopPad + LZ_ui.rowFillBottomPad, FORCE)
             end
             if output.name == "" then
-                lcd.drawText(2, 9 * (i-scrollLine)+2, i, LZ_ui.font + LEFT + option)
+                lcd.drawText(2, rowY, i, LZ_ui.font + LEFT + option)
             else
-                lcd.drawText(2, 9 * (i-scrollLine)+2, output.name, LZ_ui.font + LEFT + option)
+                lcd.drawText(2, rowY, output.name, LZ_ui.font + LEFT + option)
             end
-            lcd.drawText(68, 9 * (i-scrollLine)+2, getValue(i), LZ_ui.font + RIGHT + option)
+            lcd.drawText(68, rowY, getValue(i), LZ_ui.font + RIGHT + option)
             if channels[i] then
-                lcd.drawText(128, 9 * (i-scrollLine)+2, "y", LZ_ui.font + RIGHT + option)
+                lcd.drawText(LCD_W - 1, rowY, "y", LZ_ui.font + RIGHT + option)
             else
-                lcd.drawText(128, 9 * (i-scrollLine)+2, "n", LZ_ui.font + RIGHT + option)
+                lcd.drawText(LCD_W - 1, rowY, "n", LZ_ui.font + RIGHT + option)
             end
         end
     end

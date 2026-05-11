@@ -210,30 +210,35 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
+    local rs = LZ_ui.rowStep
+    local hh = LZ_ui.headerRowHeight
     IVdraw(selectChannelsButton, 3, 0, invers, LZ_ui.font + LEFT)
     lcd.drawText(50, 0, "adj:", LZ_ui.font + LEFT)
     IVdraw(enableAdjustCheckBox, 75, 0, invers, LZ_ui.font + RIGHT)
-    IVdraw(curvesButton, 125, 0, invers, LZ_ui.font + RIGHT)
+    IVdraw(curvesButton, LCD_W - 3, 0, invers, LZ_ui.font + RIGHT)
 
-    lcd.drawText(2, 9, "s1:", LZ_ui.font + LEFT)
-    lcd.drawText(22, 9, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font+LEFT)
-    lcd.drawText(64, 9, "output:", LZ_ui.font + LEFT)
-    lcd.drawText(98, 9, math.floor(getValue("s1") * 150/1024), LZ_ui.font+LEFT)
- 
+    local yS1 = rs
+    lcd.drawText(2, yS1, "s1:", LZ_ui.font + LEFT)
+    lcd.drawText(22, yS1, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font + LEFT)
+    lcd.drawText(64, yS1, "output:", LZ_ui.font + LEFT)
+    lcd.drawText(98, yS1, math.floor(getValue("s1") * 150 / 1024), LZ_ui.font + LEFT)
 
-    lcd.drawFilledRectangle(0, 17, 128, 9, FORCE)
-    lcd.drawText(2, 18, "name", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(48, 18, "min", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(71, 18, "mid", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(94, 18, "max", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(127, 18, "rev", LZ_ui.font + RIGHT + INVERS)
- 
-    for i=scrollLine + 1, scrollLine + 6, 1 do
+    local yTblHead = yS1 + rs
+    lcd.drawFilledRectangle(0, yTblHead, LCD_W, hh, FORCE)
+    lcd.drawText(2, yTblHead, "name", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(48, yTblHead, "min", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(71, yTblHead, "mid", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(94, yTblHead, "max", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(LCD_W - 1, yTblHead, "rev", LZ_ui.font + RIGHT + INVERS)
+
+    local yData0 = yTblHead + hh + 1
+    for i = scrollLine + 1, scrollLine + 6, 1 do
         if i <= #adjustChannels then
-            lcd.drawText(2, 9 * (i-scrollLine + 2), outputNameArray[i])
-            for j=1, 4, 1 do
+            local rowY = yData0 + (i - scrollLine - 1) * rs
+            lcd.drawText(2, rowY, outputNameArray[i], LZ_ui.font)
+            for j = 1, 4, 1 do
                 if i <= 16 then
-                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), 9 * (i - scrollLine + 2), invers, LZ_ui.font + RIGHT)
+                    IVdraw(outputEditRows[i][j], 25 + 23 * (j), rowY, invers, LZ_ui.font + RIGHT)
                 end
             end
         end

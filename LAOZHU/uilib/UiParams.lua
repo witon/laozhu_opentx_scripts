@@ -19,6 +19,7 @@ function LZ_uiInit(mode)
 	if mode == "color1" then
 		LZ_ui.font = MIDSIZE or SMLSIZE or 0
 		LZ_ui.fontSmall = SMLSIZE or LZ_ui.font
+		LZ_ui.fontWidth = 9
 		LZ_ui.rowStep = 21
 		LZ_ui.rowFillTopPad = 2
 		LZ_ui.rowFillBottomPad = 4
@@ -28,6 +29,7 @@ function LZ_uiInit(mode)
 	else
 		LZ_ui.font = SMLSIZE or 0
 		LZ_ui.fontSmall = SMLSIZE or 0
+		LZ_ui.fontWidth = 5
 		LZ_ui.rowStep = 9
 		LZ_ui.rowFillTopPad = 1
 		LZ_ui.rowFillBottomPad = 0

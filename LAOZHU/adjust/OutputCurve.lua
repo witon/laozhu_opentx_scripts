@@ -169,34 +169,32 @@ local function doKey(event)
     end
 end
 
-local function drawHeadLine()
-    lcd.drawFilledRectangle(0, 7, 128, 8, FORCE)
-    lcd.drawText(0, 8, "ch", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(33, 8, "cur", LZ_ui.font + RIGHT + INVERS)
- 
-    for i=1+scrollCol, 10, 1 do
-        lcd.drawText(33 + 20 * (i-scrollCol), 8, "p" .. i, LZ_ui.font + RIGHT + INVERS)
+local function drawHeadLine(yHead, hh)
+    lcd.drawFilledRectangle(0, yHead, LCD_W, hh, FORCE)
+    lcd.drawText(0, yHead, "ch", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(33, yHead, "cur", LZ_ui.font + RIGHT + INVERS)
+    for i = 1 + scrollCol, 10, 1 do
+        lcd.drawText(33 + 20 * (i - scrollCol), yHead, "p" .. i, LZ_ui.font + RIGHT + INVERS)
     end
- 
 end
 
 local function getX(pointNum, index)
     return -100 + 200 / (pointNum-1) * (index - 1)
 end 
 
-local function drawOneRow(index, invers)
+local function drawOneRow(index, invers, yRowStart, rowSpan, subDy)
     local row = curvePointNumEditArray[index]
     local outputName = LZ_getOutputName(row.output)
-    local y = 17 * (index - scrollLine) - 1
-    lcd.drawLine(0, y+15, 128, y+15, DOTTED, 0)
+    local y = yRowStart + (index - scrollLine - 1) * rowSpan
+    lcd.drawLine(0, y + rowSpan - 1, LCD_W, y + rowSpan - 1, DOTTED, 0)
     lcd.drawText(0, y, outputName, LZ_ui.font + LEFT)
     lcd.drawText(34, y, LZ_getCurveName(row.curve), LZ_ui.font + RIGHT)
-    for i=1+scrollCol, #row.yNumEditArray, 1 do
-        IVdraw(row.yNumEditArray[i], 35 + 20 * (i-scrollCol), y, invers, LZ_ui.font + RIGHT)
+    for i = 1 + scrollCol, #row.yNumEditArray, 1 do
+        IVdraw(row.yNumEditArray[i], 35 + 20 * (i - scrollCol), y, invers, LZ_ui.font + RIGHT)
         if row.xNumEditArray then
-            IVdraw(row.xNumEditArray[i], 35 + 20 * (i-scrollCol), y + 8, invers, LZ_ui.font + RIGHT)
+            IVdraw(row.xNumEditArray[i], 35 + 20 * (i - scrollCol), y + subDy, invers, LZ_ui.font + RIGHT)
         else
-            lcd.drawText(35 + 20 * (i-scrollCol), y + 8, getX(#row.yNumEditArray, i), LZ_ui.font + RIGHT)
+            lcd.drawText(35 + 20 * (i - scrollCol), y + subDy, getX(#row.yNumEditArray, i), LZ_ui.font + RIGHT)
         end
     end
 end
@@ -206,15 +204,26 @@ local function run(event, time)
     if getRtcTime() % 2 == 1 then
         invers = true
     end
+    local rs = LZ_ui.rowStep
+    local hh = LZ_ui.headerRowHeight
+    local rowSpan = rs * 2
+    local subDy = rs
+    local yThr = 0
+    local yHead = rs
+    local yRowStart = yHead + hh + 1
 
-    lcd.drawText(2, 0, "thr:", LZ_ui.font + LEFT)
-    lcd.drawText(22, 0, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font+LEFT)
-    lcd.drawText(64, 0, "output:", LZ_ui.font + LEFT)
-    lcd.drawText(98, 0, math.floor(getValue("s1") * 150/1024), LZ_ui.font+LEFT)
- 
-    drawHeadLine()
-    for i=1 + scrollLine, #curvePointNumEditArray, 1 do
-        drawOneRow(i, invers)
+    lcd.drawText(2, yThr, "thr:", LZ_ui.font + LEFT)
+    lcd.drawText(22, yThr, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font + LEFT)
+    lcd.drawText(64, yThr, "output:", LZ_ui.font + LEFT)
+    lcd.drawText(98, yThr, math.floor(getValue("s1") * 150 / 1024), LZ_ui.font + LEFT)
+
+    drawHeadLine(yHead, hh)
+    for i = 1 + scrollLine, #curvePointNumEditArray, 1 do
+        local y = yRowStart + (i - scrollLine - 1) * rowSpan
+        if y + rowSpan > LCD_H then
+            break
+        end
+        drawOneRow(i, invers, yRowStart, rowSpan, subDy)
     end
 
     return doKey(event)
