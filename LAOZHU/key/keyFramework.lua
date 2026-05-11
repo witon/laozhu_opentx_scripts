@@ -15,6 +15,7 @@ local setkeyRect = { x = 0, y = 0, w = 0, h = 0 }
 
 function M.ensureKeyMap()
 	if keyMap == nil then
+		LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 		LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 		keyMap = KMgetKeyMap()
 		KMunload()

@@ -80,6 +80,7 @@ local function handleNavAfterPage(mappedEvent)
 end
 
 function M.initFramework()
+	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	if keyMap == nil then
 		LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 		keyMap = KMgetKeyMap()

@@ -1,6 +1,8 @@
 --[[
-  keymap.cfg 用户覆盖：键名 = 目标映射 event（整数字符串），值 = 硬件 raw（:n）。
-  下列为脚本内使用的「目标映射值」中文含义（与 keymap.cfg 键一致；不写文件的为说明用）：
+  SCRIPTS/keymap.cfg 存在且可读时，映射表仅由该文件构建（键名 = 目标映射 event 整数字符串，值 = 硬件 raw :n），不执行下方内置电台/固件适配。
+  无法打开该文件时，使用 getVersion() 对应的内置适配分支。
+  调用 KMgetKeyMap 前须已由 framework 等加载 LAOZHU/CfgO.lua（提供 CFGC）。
+  下列为脚本内使用的「目标映射值」中文含义（与 keymap.cfg 键一致；说明用）：
   36 — 上（ViewMatrix 行上移、列表向上等）
   35 — 下
   38 — 左（列左移）
@@ -36,6 +38,12 @@ function KMmergeKeyMapFromKvs(keyMap, kvs)
 end
 
 function KMgetKeyMap()
+    local cfg = CFGC:new()
+    if cfg:readFromFile("keymap.cfg") then
+        local keyMap = {}
+        KMmergeKeyMapFromKvs(keyMap, cfg.kvs)
+        return keyMap
+    end
     local ver, radio = getVersion();
     print("ver: " .. ver .. " radio: " .. radio)
     local keyMap = {};
@@ -107,11 +115,6 @@ function KMgetKeyMap()
         keyMap[35] = 35
         keyMap[34] = 34 --return
         keyMap[33] = 33 --exit
-    end
-    LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
-    local cfg = CFGC:new()
-    if cfg:readFromFile("keymap.cfg") then
-        KMmergeKeyMapFromKvs(keyMap, cfg.kvs)
     end
     return keyMap;
 end

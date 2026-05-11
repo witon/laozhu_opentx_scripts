@@ -16,6 +16,7 @@ local function loadPage(index)
 end
 
 function M.initFramework()
+	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	if state.keyMap == nil then
 		LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 		state.keyMap = KMgetKeyMap()

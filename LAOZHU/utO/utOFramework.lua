@@ -182,6 +182,7 @@ function M.initFramework(opts)
 	st.frameworkInited = true
 	st.surface = opts.surface or "telemetry"
 	st.dbgEnabled = opts.dbgEnabled ~= false
+	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 	keyMap = KMgetKeyMap()
 	KMunload()

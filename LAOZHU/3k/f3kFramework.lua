@@ -26,7 +26,6 @@ end
 
 local function loadPage()
 	if gF3kCore == nil then
-		LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 		f3kCfg = CFGC:new()
 		f3kCfg:readFromFile(gConfigFileName)
 		gF3kCore = LZ_runModule(gSDCardDir .. "LAOZHU/3k/f3kCore.lua")
@@ -77,6 +76,7 @@ local function handleNavAfterPage(mappedEvent)
 end
 
 function M.initFramework()
+	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	if keyMap == nil then
 		LZ_runModule(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 		keyMap = KMgetKeyMap()
