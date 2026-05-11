@@ -48,26 +48,24 @@ function KMgetKeyMap()
     local keyMap = {};
     if string.sub(radio, 1, 5) == "zorro" then
         if string.sub(ver, 1, 4) == "2.11" or string.sub(ver, 1, 4) == "2.12" then
-            keyMap[4099] = 38 --滚轮向左 --左
-            keyMap[4100] = 37 --滚轮向右 --右
-            keyMap[35] = 38 --page< 左
-            keyMap[36] = 37 --page> 右
-            --keyMap[67] =  --长按page< 左
-            --keyMap[68] =  --page> 右
-            keyMap[43] = 36 --MDL 上
-            keyMap[44] = 35 --TEL 下
+            keyMap[4099] = 38 --左
+            keyMap[4100] = 37 --右
+            keyMap[35] = 38 --左
+            keyMap[36] = 37 --右
+            keyMap[43] = 36 --上
+            keyMap[44] = 35 --下
             keyMap[76] = 67 --长按下
             keyMap[75] = 68 --长按上
             keyMap[34] = 34 --return
             keyMap[33] = 33 --exit
  
         elseif string.sub(ver, 1, 4) == "2.10" then
-            keyMap[4099] = 38 --滚轮向左 --左
-            keyMap[4100] = 37 --滚轮向右 --右
-            keyMap[100] = 38 --page< 左
-            keyMap[101] = 37 --page> 右
-            keyMap[44] = 36 --MDL 上
-            keyMap[45] = 35 --TEL 下
+            keyMap[4099] = 38 --左
+            keyMap[4100] = 37 --右
+            keyMap[100] = 38 --左
+            keyMap[101] = 37 --右
+            keyMap[44] = 36 --上
+            keyMap[45] = 35 --下
             keyMap[77] = 67 --长按下
             keyMap[76] = 68 --长按上
             keyMap[34] = 34 --return
@@ -84,18 +82,15 @@ function KMgetKeyMap()
         end
     elseif string.sub(radio, 1, 4) == "pa01" then
         if string.sub(ver, 1, 4) == "2.11" or string.sub(ver, 1, 4) == "2.12" then
-            keyMap[4099] = 36 --滚轮向上 --上
-            keyMap[4100] = 35 --滚轮向下 --下
-            keyMap[515] = 38 --page< 左
-            keyMap[516] = 37 --page> 右
-            --keyMap[67] =  --长按page< 左
-            --keyMap[68] =  --page> 右
-            keyMap[525] = 36 --MDL 上
-            --keyMap[513] = 35 --TEL 下
-            --keyMap[76] = 67 --长按下
+            keyMap[4099] = 36 --上
+            keyMap[4100] = 35 --下
+            keyMap[515] = 38 --左
+            keyMap[516] = 37 --右
+            keyMap[1027] = 69 --长按 左
+            keyMap[1028] = 70 --长按 右
             keyMap[1035] = 68 --长按上
-            --keyMap[514] = 34 --return
-            --keyMap[513] = 33 --exit
+            keyMap[514] = 34 --return
+            keyMap[513] = 33 --exit
         end
     elseif string.sub(radio, 1, 4) == "gx12" then
         keyMap[4099] = 38
