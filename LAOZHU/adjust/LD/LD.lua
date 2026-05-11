@@ -14,6 +14,25 @@ local ldRecord = nil
 local recordListView = nil
 local playingTone = false
 local readVar = nil
+
+-- 128px 屏设计坐标按 LCD_W 比例缩放（与 Launch / LRecordListView 同源）
+local ldEleLabelX, ldEleValX, ldF1LabelX, ldF1ValX, ldF2LabelX, ldF2ValX
+local ldStatVal1X, ldStatLab2X, ldStatVal2X, ldStatLab3X
+
+local function initLDLayout()
+    local s = LCD_W / 128
+    ldEleLabelX = math.floor(0 * s)
+    ldEleValX = math.floor(10 * s)
+    ldF1LabelX = math.floor(35 * s)
+    ldF1ValX = math.floor(50 * s)
+    ldF2LabelX = math.floor(75 * s)
+    ldF2ValX = math.floor(90 * s)
+    ldStatVal1X = math.floor(40 * s)
+    ldStatLab2X = math.floor(44 * s)
+    ldStatVal2X = math.floor(76 * s)
+    ldStatLab3X = math.floor(80 * s)
+end
+
 local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
@@ -179,32 +198,32 @@ local function draw(event, invers)
 
     local rs = LZ_ui.rowStep
     if eleGvNumEdit then
-        lcd.drawText(0, 0, "e:", LZ_ui.font + LEFT)
-        eleGvNumEdit:draw(10, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(ldEleLabelX, 0, "e:", LZ_ui.font + LEFT)
+        eleGvNumEdit:draw(ldEleValX, 0, invers, LZ_ui.font + LEFT)
     end
     if flap1GvNumEdit then
-        lcd.drawText(35, 0, "f1:", LZ_ui.font + LEFT)
-        flap1GvNumEdit:draw(50, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(ldF1LabelX, 0, "f1:", LZ_ui.font + LEFT)
+        flap1GvNumEdit:draw(ldF1ValX, 0, invers, LZ_ui.font + LEFT)
     end
     if flap2GvNumEdit then
-        lcd.drawText(75, 0, "f2:", LZ_ui.font + LEFT)
-        flap2GvNumEdit:draw(90, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(ldF2LabelX, 0, "f2:", LZ_ui.font + LEFT)
+        flap2GvNumEdit:draw(ldF2ValX, 0, invers, LZ_ui.font + LEFT)
     end
 
     cfgButton:draw(LCD_W, 0, invers, LZ_ui.font + RIGHT)
     local yStat1 = rs
     local yStat2 = rs * 2
     lcd.drawText(0, yStat1, "dur:", LZ_ui.font + LEFT)
-    lcd.drawText(40, yStat1, LZ_formatTime(LDSgetCurDuration(ldState)), LZ_ui.font + RIGHT)
-    lcd.drawText(44, yStat1, "sink:", LZ_ui.font + LEFT)
-    lcd.drawText(76, yStat1, math.floor(LDSgetCurSinkAlt(ldState)), LZ_ui.font + RIGHT)
-    lcd.drawText(80, yStat1, "dist:", LZ_ui.font + LEFT)
+    lcd.drawText(ldStatVal1X, yStat1, LZ_formatTime(LDSgetCurDuration(ldState)), LZ_ui.font + RIGHT)
+    lcd.drawText(ldStatLab2X, yStat1, "sink:", LZ_ui.font + LEFT)
+    lcd.drawText(ldStatVal2X, yStat1, math.floor(LDSgetCurSinkAlt(ldState)), LZ_ui.font + RIGHT)
+    lcd.drawText(ldStatLab3X, yStat1, "dist:", LZ_ui.font + LEFT)
     lcd.drawNumber(LCD_W - 1, yStat1, math.floor(LDSgetCurDistance(ldState)), LZ_ui.font + RIGHT)
     lcd.drawText(0, yStat2, "speed:", LZ_ui.font + LEFT)
-    lcd.drawText(40, yStat2, math.floor(LDSgetCurSpeed(ldState) * 10) / 10, LZ_ui.font + RIGHT)
-    lcd.drawText(44, yStat2, "ld:", LZ_ui.font + LEFT)
-    lcd.drawText(76, yStat2, math.floor(LDSgetCurLD(ldState) * 10) / 10, LZ_ui.font + RIGHT)
-    lcd.drawText(80, yStat2, "srate:", LZ_ui.font + LEFT)
+    lcd.drawText(ldStatVal1X, yStat2, math.floor(LDSgetCurSpeed(ldState) * 10) / 10, LZ_ui.font + RIGHT)
+    lcd.drawText(ldStatLab2X, yStat2, "ld:", LZ_ui.font + LEFT)
+    lcd.drawText(ldStatVal2X, yStat2, math.floor(LDSgetCurLD(ldState) * 10) / 10, LZ_ui.font + RIGHT)
+    lcd.drawText(ldStatLab3X, yStat2, "srate:", LZ_ui.font + LEFT)
     lcd.drawText(LCD_W - 1, yStat2, math.floor(LDSgetCurSinkRate(ldState) * 10) / 10, LZ_ui.font + RIGHT)
     recordListView:draw(0, rs * 3, invers, 0)
 end
@@ -217,7 +236,7 @@ local function run(event, curTime)
             getGVValue()
             return true
         end
-        local processed = ldCfgPage.run(event, time)
+        local processed = ldCfgPage.run(event, curTime)
         if processed then
             return true
         end
@@ -297,6 +316,7 @@ local function init()
 	local ldReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/LDReadVarMap.lua")
 	ldReadVarMap.ldState = ldState
 	readVar.setVarMap(ldReadVarMap)
+    initLDLayout()
 end
 
 init()

@@ -1,6 +1,12 @@
 SRRecordListView = setmetatable({}, InputView)
 SRRecordListView.super = InputView
 
+-- 表头/数据列右对齐锚点：原 128px 设计（57/80/103）按 LCD_W 比例缩放，与 LRecordListView 一致
+local function srvColumnRights(x)
+    local s = LCD_W / 128
+    return x + math.floor(57 * s), x + math.floor(80 * s), x + math.floor(103 * s)
+end
+
 function SRRecordListView:doKey(event)
     local mv = self.maxVisRows or 3
     if event == EVT_ENTER_BREAK then
@@ -41,12 +47,13 @@ function SRRecordListView:draw(x, y, invers, option)
     self.maxVisRows = math.max(1, math.floor((LCD_H - y - hh - 1) / rs))
     local rowFillW = math.max(1, LCD_W - x - 1)
     local rightX = x + LCD_W - 1
+    local xEle, xF1, xF2 = srvColumnRights(x)
 
-    lcd.drawFilledRectangle(x, y, LCD_W, hh, FORCE)
+    lcd.drawFilledRectangle(x, y - LZ_ui.headFillTopPad, LCD_W, hh + LZ_ui.headFillTopPad + LZ_ui.headFillBottomPad, FORCE)
     lcd.drawText(x, y, "time", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(57 + x, y, "ele", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(80 + x, y, "f1", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(103 + x, y, "f2", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xEle, y, "ele", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xF1, y, "f1", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xF2, y, "f2", LZ_ui.font + RIGHT + INVERS)
     lcd.drawText(rightX, y, "sr", LZ_ui.font + RIGHT + INVERS)
 
     local records = self.records
@@ -66,9 +73,9 @@ function SRRecordListView:draw(x, y, invers, option)
                 lcd.drawFilledRectangle(x, ly - LZ_ui.rowFillTopPad, rowFillW, rs + LZ_ui.rowFillTopPad + LZ_ui.rowFillBottomPad, FORCE)
             end
             lcd.drawText(x, ly, LZ_formatTimeStamp(record.startTime), LZ_ui.font + LEFT + op)
-            lcd.drawText(57 + x, ly, record.ele, LZ_ui.font + RIGHT + op)
-            lcd.drawText(80 + x, ly, record.flap1, LZ_ui.font + RIGHT + op)
-            lcd.drawText(103 + x, ly, record.flap2, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xEle, ly, record.ele, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xF1, ly, record.flap1, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xF2, ly, record.flap2, LZ_ui.font + RIGHT + op)
             lcd.drawNumber(rightX, ly, SRRgetRecordSinkRate(record), LZ_ui.font + RIGHT + op)
             if record.invalid then
                 local ym = ly + math.floor(rs / 2)

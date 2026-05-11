@@ -1,6 +1,12 @@
 LDRecordListView = setmetatable({}, InputView)
 LDRecordListView.super = InputView
 
+-- 表头/数据列右对齐锚点：原 128px 设计（27/50/73/103）按 LCD_W 比例缩放
+local function ldrlvColumnRights(x)
+    local s = LCD_W / 128
+    return x + math.floor(27 * s), x + math.floor(50 * s), x + math.floor(73 * s), x + math.floor(103 * s)
+end
+
 function LDRecordListView:doKey(event)
     local mv = self.maxVisRows or 3
     if event == EVT_ENTER_BREAK then
@@ -40,14 +46,16 @@ function LDRecordListView:draw(x, y, invers, option)
     self.listAnchorY = y
     self.maxVisRows = math.max(1, math.floor((LCD_H - y - hh - 1) / rs))
     local rowFillW = math.max(1, LCD_W - x - 1)
+    local rightX = x + LCD_W - 1
+    local xEle, xF1, xF2, xSpd = ldrlvColumnRights(x)
 
-    lcd.drawFilledRectangle(x, y, LCD_W, hh, FORCE)
+    lcd.drawFilledRectangle(x, y - LZ_ui.headFillTopPad, LCD_W, hh + LZ_ui.headFillTopPad + LZ_ui.headFillBottomPad, FORCE)
     lcd.drawText(x, y, "i", LZ_ui.font + LEFT + INVERS)
-    lcd.drawText(27 + x, y, "ele", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(50 + x, y, "f1", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(73 + x, y, "f2", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(103 + x, y, "spd", LZ_ui.font + RIGHT + INVERS)
-    lcd.drawText(LCD_W - 1 + x, y, "ld", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xEle, y, "ele", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xF1, y, "f1", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xF2, y, "f2", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(xSpd, y, "spd", LZ_ui.font + RIGHT + INVERS)
+    lcd.drawText(rightX, y, "ld", LZ_ui.font + RIGHT + INVERS)
 
     local records = self.records
     if records ~= nil then
@@ -66,11 +74,11 @@ function LDRecordListView:draw(x, y, invers, option)
                 lcd.drawFilledRectangle(x, ly - LZ_ui.rowFillTopPad, rowFillW, rs + LZ_ui.rowFillTopPad + LZ_ui.rowFillBottomPad, FORCE)
             end
             lcd.drawText(x, ly, #records - i + 1, LZ_ui.font + LEFT + op)
-            lcd.drawText(27 + x, ly, record.ele, LZ_ui.font + RIGHT + op)
-            lcd.drawText(50 + x, ly, record.flap1, LZ_ui.font + RIGHT + op)
-            lcd.drawText(73 + x, ly, record.flap2, LZ_ui.font + RIGHT + op)
-            lcd.drawText(103 + x, ly, math.floor(LDRgetRecordSpeed(record) * 10) / 10, LZ_ui.font + RIGHT + op)
-            lcd.drawText(LCD_W - 1 + x, ly, math.floor(LDRgetRecordLD(record) * 10) / 10, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xEle, ly, record.ele, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xF1, ly, record.flap1, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xF2, ly, record.flap2, LZ_ui.font + RIGHT + op)
+            lcd.drawText(xSpd, ly, math.floor(LDRgetRecordSpeed(record) * 10) / 10, LZ_ui.font + RIGHT + op)
+            lcd.drawText(rightX, ly, math.floor(LDRgetRecordLD(record) * 10) / 10, LZ_ui.font + RIGHT + op)
             if record.invalid then
                 local ym = ly + math.floor(rs / 2)
                 if op == INVERS then
