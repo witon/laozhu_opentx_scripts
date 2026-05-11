@@ -50,7 +50,7 @@ function LRecordListView:draw(x, y, invers, option)
     local rightX = x + LCD_W - 1
     local xEle, xF1, xRud = lrvColumnRights(x)
 
-    lcd.drawFilledRectangle(x, y-LZ_ui.headerRowFillTopPad, LCD_W, hh+LZ_ui.headerRowFillTopPad+LZ_ui.headerRowFillBottomPad, FORCE)
+    lcd.drawFilledRectangle(x, y-LZ_ui.headFillTopPad, LCD_W, hh+LZ_ui.headFillTopPad+LZ_ui.headFillBottomPad, FORCE)
     lcd.drawText(x, y, "time", LZ_ui.font + LEFT + INVERS)
     lcd.drawText(xEle, y, "ele", LZ_ui.font + RIGHT + INVERS)
     lcd.drawText(xF1, y, "f1", LZ_ui.font + RIGHT + INVERS)
