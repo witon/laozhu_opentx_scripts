@@ -90,6 +90,8 @@ local files = {
 
 	"LAOZHU/key/keyFramework.lua",
 
+	"LAOZHU/key/keyMapSetupPage.lua",
+
 	"LAOZHU/utO/utOFramework.lua",
 
 	"TELEMETRY/3ktel.lua",

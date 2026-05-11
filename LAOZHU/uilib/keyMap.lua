@@ -1,3 +1,19 @@
+--[[
+  keymap.cfg 用户覆盖：键名 = 目标映射 event（整数字符串），值 = 硬件 raw（:n）。
+  下列为脚本内使用的「目标映射值」中文含义（与 keymap.cfg 键一致；不写文件的为说明用）：
+  36 — 上（ViewMatrix 行上移、列表向上等）
+  35 — 下
+  38 — 左（列左移）
+  37 — 右（列右移）
+  EVT_EXIT_BREAK（数值因固件而异，常见如 33）— 返回/退出（框架退出、关闭编辑等）
+  133 — 长按更多类（如 F3K/F5J 遥测切设置页等）
+  68 — 长按上（NumEdit/Selector/TextEdit 等控件中与「上」等价的长按分支）
+  67 — 长按下
+  70 — 长按左
+  69 — 长按右
+  EVT_ENTER_BREAK（及常见映射 34）— 确定/进入编辑；由固件语义处理，一般不写入 keymap.cfg
+]]
+
 --    按  松  连按连续触发    触发一次
 -- xlite				
 -- Flysky PA01：独立分支，见下方 pa01
@@ -7,7 +23,18 @@
 -- 下	99	35	67	131
 
 
-	
+function KMmergeKeyMapFromKvs(keyMap, kvs)
+	if keyMap == nil or kvs == nil then
+		return
+	end
+	for ks, v in pairs(kvs) do
+		local canon = tonumber(ks)
+		if canon ~= nil and type(v) == "number" then
+			keyMap[v] = canon
+		end
+	end
+end
+
 function KMgetKeyMap()
     local ver, radio = getVersion();
     print("ver: " .. ver .. " radio: " .. radio)
@@ -81,10 +108,16 @@ function KMgetKeyMap()
         keyMap[34] = 34 --return
         keyMap[33] = 33 --exit
     end
+    LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
+    local cfg = CFGC:new()
+    if cfg:readFromFile("keymap.cfg") then
+        KMmergeKeyMapFromKvs(keyMap, cfg.kvs)
+    end
     return keyMap;
 end
 
 function KMunload()
     KMgetKeyMap = nill
+    KMmergeKeyMapFromKvs = nill
     KMunload = nill
 end

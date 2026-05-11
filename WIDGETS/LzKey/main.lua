@@ -34,7 +34,7 @@ local function refresh(widget, event, touchState)
 	local z = widget.zone
 	if not widget.loadOk then
 		lcd.drawFilledRectangle(z.x, z.y, z.w, z.h, _G["COLOR_THEME_SECONDARY2"] or ERASE)
-		lcd.drawText(z.x + 2, z.y + 2, "LzKey: LoadModule失败", LEFT + SMLSIZE)
+		lcd.drawText(z.x + 2, z.y + 2, "LzKey: LoadModule failed", LEFT + SMLSIZE)
 		return
 	end
 	widget.keyFramework.run(event, {
@@ -42,6 +42,7 @@ local function refresh(widget, event, touchState)
 		maxHistorySize = widget.maxHistorySize,
 		zone = widget.zone,
 		zoneBg = _G["COLOR_THEME_SECONDARY2"] or ERASE,
+		touchState = touchState,
 	})
 end
 
