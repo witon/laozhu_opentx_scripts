@@ -54,7 +54,7 @@ local function handleNavAfterPage(mappedEvent)
 		end
 		unloadCurPage()
 	elseif mappedEvent == 37 then
-		if state.lastEvent == 133 then
+		if state.lastEvent == 68 then
 			state.lastEvent = mappedEvent
 		else
 			state.displayIndex = state.displayIndex + 1
@@ -65,8 +65,8 @@ local function handleNavAfterPage(mappedEvent)
 		end
 	end
 
-	if mappedEvent == 133 then
-		state.lastEvent = 133
+	if mappedEvent == 68 then
+		state.lastEvent = 68
 		if state.pages == FLIGHT_PAGE_PATHS then
 			unloadCurPage()
 			state.pages = SETUP_PAGE_PATHS

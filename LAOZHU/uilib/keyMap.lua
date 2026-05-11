@@ -8,8 +8,7 @@
   38 — 左（列左移）
   37 — 右（列右移）
   EVT_EXIT_BREAK（数值因固件而异，常见如 33）— 返回/退出（框架退出、关闭编辑等）
-  133 — 长按更多类（如 F3K/F5J 遥测切设置页等）
-  68 — 长按上（NumEdit/Selector/TextEdit 等控件中与「上」等价的长按分支）
+  68 — 长按上（NumEdit/Selector/TextEdit 等与「上」等价的长按分支；F3K/F5J 遥测进设置页等原「长按更多」亦用此值）
   67 — 长按下
   70 — 长按左
   69 — 长按右
@@ -20,7 +19,7 @@
 -- xlite				
 -- Flysky PA01：独立分支，见下方 pa01
 -- 左  102	38	70	134
--- 右	101	37	69	133
+-- 右	101	37	69	132
 -- 上	100	36	68	132
 -- 下	99	35	67	131
 
@@ -57,8 +56,8 @@ function KMgetKeyMap()
             --keyMap[68] =  --page> 右
             keyMap[43] = 36 --MDL 上
             keyMap[44] = 35 --TEL 下
-            keyMap[76] = 67 --长按TEL
-            keyMap[75] = 133 --长按MDL
+            keyMap[76] = 67 --长按下
+            keyMap[75] = 68 --长按上
             keyMap[34] = 34 --return
             keyMap[33] = 33 --exit
  
@@ -69,8 +68,8 @@ function KMgetKeyMap()
             keyMap[101] = 37 --page> 右
             keyMap[44] = 36 --MDL 上
             keyMap[45] = 35 --TEL 下
-            keyMap[77] = 67 --长按TEL
-            keyMap[76] = 133 --长按MDL
+            keyMap[77] = 67 --长按下
+            keyMap[76] = 68 --长按上
             keyMap[34] = 34 --return
             keyMap[33] = 33 --exit
         else
@@ -93,8 +92,8 @@ function KMgetKeyMap()
             --keyMap[68] =  --page> 右
             keyMap[525] = 36 --MDL 上
             --keyMap[513] = 35 --TEL 下
-            --keyMap[76] = 67 --长按TEL
-            keyMap[1035] = 133 --长按MDL
+            --keyMap[76] = 67 --长按下
+            keyMap[1035] = 68 --长按上
             --keyMap[514] = 34 --return
             --keyMap[513] = 33 --exit
         end
@@ -105,7 +104,7 @@ function KMgetKeyMap()
         keyMap[43] = 37
         keyMap[100] = 36
         keyMap[99] = 35
-        keyMap[75] = 133 --长按MDL
+        keyMap[75] = 68 --长按上
         keyMap[34] = 34 --return
         keyMap[33] = 33 --exit
     else

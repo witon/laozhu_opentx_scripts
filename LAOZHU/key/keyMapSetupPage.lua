@@ -13,7 +13,6 @@ local BASIC_STEPS = {
 }
 
 local EXT_STEPS = {
-	{ 133, "Long+More" },
 	{ 68, "Long+Up" },
 	{ 67, "Long+Dn" },
 	{ 70, "Long+Lt" },
