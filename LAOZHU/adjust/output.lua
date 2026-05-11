@@ -271,14 +271,14 @@ local function run(event, time)
     lcd.drawText(outOutValRight, yS1, math.floor(adjRaw * 150 / 1024), LZ_ui.font + RIGHT)
 
     local yTblHead = yS1 + rs
-    lcd.drawFilledRectangle(0, yTblHead, LCD_W, hh, FORCE)
+    lcd.drawFilledRectangle(0, yTblHead - LZ_ui.headFillTopPad, LCD_W, hh + LZ_ui.headFillTopPad + LZ_ui.headFillBottomPad, FORCE)
     lcd.drawText(outLeftPad, yTblHead, "name", LZ_ui.font + LEFT + INVERS)
     lcd.drawText(outXMin, yTblHead, "min", LZ_ui.font + RIGHT + INVERS)
     lcd.drawText(outXMid, yTblHead, "mid", LZ_ui.font + RIGHT + INVERS)
     lcd.drawText(outXMax, yTblHead, "max", LZ_ui.font + RIGHT + INVERS)
     lcd.drawText(outXRev, yTblHead, "rev", LZ_ui.font + RIGHT + INVERS)
 
-    local yData0 = yTblHead + hh + 1
+    local yData0 = yTblHead + hh + LZ_ui.headFillTopPad + LZ_ui.headFillBottomPad + 1
     for i = scrollLine + 1, scrollLine + 6, 1 do
         if i <= #adjustChannels then
             local rowY = yData0 + (i - scrollLine - 1) * rs
