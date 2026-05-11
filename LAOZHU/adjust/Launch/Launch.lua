@@ -12,6 +12,23 @@ local recordListView = nil
 local readVar = nil
 local f3kState = nil
 local curAlt = 0
+
+-- 128px 屏设计坐标按 LCD_W 比例缩放（与 F3KRecordListView / output 同源）
+local lauEleLabelX, lauEleValX, lauF1LabelX, lauF1ValX, lauRLabelX, lauRValX
+local lauStateNameX, lauHeightLabelX
+
+local function initLaunchLayout()
+    local s = LCD_W / 128
+    lauEleLabelX = math.floor(0 * s)
+    lauEleValX = math.floor(10 * s)
+    lauF1LabelX = math.floor(35 * s)
+    lauF1ValX = math.floor(50 * s)
+    lauRLabelX = math.floor(75 * s)
+    lauRValX = math.floor(90 * s)
+    lauStateNameX = math.floor(30 * s)
+    lauHeightLabelX = math.floor(80 * s)
+end
+
 local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
@@ -186,7 +203,7 @@ local function run(event, curTime)
             getGVValue()
             return true
         end
-        local processed = launchCfgPage.run(event, time)
+        local processed = launchCfgPage.run(event, curTime)
         if processed then
             return true
         end
@@ -198,24 +215,24 @@ local function run(event, curTime)
     end
     local rs = LZ_ui.rowStep
     if eleGvNumEdit then
-        lcd.drawText(0, 0, "e:", LZ_ui.font + LEFT)
-        eleGvNumEdit:draw(10, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(lauEleLabelX, 0, "e:", LZ_ui.font + LEFT)
+        eleGvNumEdit:draw(lauEleValX, 0, invers, LZ_ui.font + LEFT)
     end
     if flap1GvNumEdit then
-        lcd.drawText(35, 0, "f1:", LZ_ui.font + LEFT)
-        flap1GvNumEdit:draw(50, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(lauF1LabelX, 0, "f1:", LZ_ui.font + LEFT)
+        flap1GvNumEdit:draw(lauF1ValX, 0, invers, LZ_ui.font + LEFT)
     end
     if rudGvNumEdit then
-        lcd.drawText(75, 0, "r:", LZ_ui.font + LEFT)
-        rudGvNumEdit:draw(90, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(lauRLabelX, 0, "r:", LZ_ui.font + LEFT)
+        rudGvNumEdit:draw(lauRValX, 0, invers, LZ_ui.font + LEFT)
     end
 
     cfgButton:draw(LCD_W, 0, invers, LZ_ui.font + RIGHT)
 
     local yStat = rs
     lcd.drawText(0, yStat, "state:", LZ_ui.font + LEFT)
-    lcd.drawText(30, yStat, f3kState.getCurFlightStateName(), LZ_ui.font + LEFT)
-    lcd.drawText(80, yStat, "height:", LZ_ui.font + LEFT)
+    lcd.drawText(lauStateNameX, yStat, f3kState.getCurFlightStateName(), LZ_ui.font + LEFT)
+    lcd.drawText(lauHeightLabelX, yStat, "height:", LZ_ui.font + LEFT)
     lcd.drawNumber(LCD_W - 1, yStat, f3kState.launchAlt, LZ_ui.font + RIGHT)
 
     local varSelectorSliderValue = getValue(launchCfg:getNumberField('SelSlider'))
@@ -253,6 +270,7 @@ local function init()
 	local launchReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/launchReadVarMap.lua")
 	launchReadVarMap.f3kState = f3kState
 	readVar.setVarMap(launchReadVarMap)
+    initLaunchLayout()
 end
 
 init()
