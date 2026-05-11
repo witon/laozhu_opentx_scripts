@@ -13,6 +13,25 @@ local sinkRateRecord = nil
 local recordListView = nil
 local playingTone = false
 local readVar = nil
+
+-- 128px 屏设计坐标按 LCD_W 比例缩放（与 Launch / LRecordListView 同源）
+local srEleLabelX, srEleValX, srF1LabelX, srF1ValX, srF2LabelX, srF2ValX
+local srStatVal1X, srStatLab2X, srStatVal2X, srStatLab3X
+
+local function initSinkRateLayout()
+    local s = LCD_W / 128
+    srEleLabelX = math.floor(0 * s)
+    srEleValX = math.floor(10 * s)
+    srF1LabelX = math.floor(35 * s)
+    srF1ValX = math.floor(50 * s)
+    srF2LabelX = math.floor(75 * s)
+    srF2ValX = math.floor(90 * s)
+    srStatVal1X = math.floor(40 * s)
+    srStatLab2X = math.floor(44 * s)
+    srStatVal2X = math.floor(76 * s)
+    srStatLab3X = math.floor(80 * s)
+end
+
 local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputViewO.lua")
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/ViewMatrixO.lua")
@@ -174,7 +193,7 @@ local function run(event, curTime)
             getGVValue()
             return true
         end
-        local processed = sinkRateCfgPage.run(event, time)
+        local processed = sinkRateCfgPage.run(event, curTime)
         if processed then
             return true
         end
@@ -186,16 +205,16 @@ local function run(event, curTime)
     end
     local rs = LZ_ui.rowStep
     if eleGvNumEdit then
-        lcd.drawText(0, 0, "e:", LZ_ui.font + LEFT)
-        eleGvNumEdit:draw(10, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(srEleLabelX, 0, "e:", LZ_ui.font + LEFT)
+        eleGvNumEdit:draw(srEleValX, 0, invers, LZ_ui.font + LEFT)
     end
     if flap1GvNumEdit then
-        lcd.drawText(35, 0, "f1:", LZ_ui.font + LEFT)
-        flap1GvNumEdit:draw(50, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(srF1LabelX, 0, "f1:", LZ_ui.font + LEFT)
+        flap1GvNumEdit:draw(srF1ValX, 0, invers, LZ_ui.font + LEFT)
     end
     if flap2GvNumEdit then
-        lcd.drawText(75, 0, "f2:", LZ_ui.font + LEFT)
-        flap2GvNumEdit:draw(90, 0, invers, LZ_ui.font + LEFT)
+        lcd.drawText(srF2LabelX, 0, "f2:", LZ_ui.font + LEFT)
+        flap2GvNumEdit:draw(srF2ValX, 0, invers, LZ_ui.font + LEFT)
     end
 
     cfgButton:draw(LCD_W, 0, invers, LZ_ui.font + RIGHT)
@@ -207,7 +226,10 @@ local function run(event, curTime)
     end
     if testSwIndex ~= -1 then
         local time = getRtcTime()
-        local alt = getValue(altID)
+        local alt = 0
+        if altID ~= -1 then
+            alt = getValue(altID)
+        end
         SRSrun(sinkRateState, time, alt, getValue(testSwIndex))
 
         if SRSisStart(sinkRateState) and playTone and playingTone == false then
@@ -221,10 +243,10 @@ local function run(event, curTime)
 
         local yStat = rs
         lcd.drawText(0, yStat, "dur:", LZ_ui.font + LEFT)
-        lcd.drawText(40, yStat, LZ_formatTime(SRSgetCurDuration(sinkRateState)), LZ_ui.font + RIGHT)
-        lcd.drawText(44, yStat, "sink:", LZ_ui.font + LEFT)
-        lcd.drawText(76, yStat, math.floor(SRSgetCurSinkAlt(sinkRateState)), LZ_ui.font + RIGHT)
-        lcd.drawText(80, yStat, "srate:", LZ_ui.font + LEFT)
+        lcd.drawText(srStatVal1X, yStat, LZ_formatTime(SRSgetCurDuration(sinkRateState)), LZ_ui.font + RIGHT)
+        lcd.drawText(srStatLab2X, yStat, "sink:", LZ_ui.font + LEFT)
+        lcd.drawText(srStatVal2X, yStat, math.floor(SRSgetCurSinkAlt(sinkRateState)), LZ_ui.font + RIGHT)
+        lcd.drawText(srStatLab3X, yStat, "srate:", LZ_ui.font + LEFT)
         lcd.drawNumber(LCD_W - 1, yStat, SRSgetCurSinkRate(sinkRateState) * 100, LZ_ui.font + RIGHT)
 
         local varSelectorSliderValue = getValue(sinkRateCfg:getNumberField('SelSlider'))
@@ -269,6 +291,7 @@ local function init()
 	local sinkRateReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/sinkRateReadVarMap.lua")
 	sinkRateReadVarMap.sinkRateState = sinkRateState
 	readVar.setVarMap(sinkRateReadVarMap)
+    initSinkRateLayout()
 end
 
 init()
