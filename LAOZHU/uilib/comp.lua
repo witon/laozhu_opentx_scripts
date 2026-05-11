@@ -30,7 +30,12 @@ local function run(event, time)
     if string.sub(r, 1, 1) == "/" then
         r = string.sub(r, 2)
     end
-    local path = (string.sub(r, 1, 7) == "LAOZHU/") and (gSDCardDir .. r) or (gSDCardDir .. "SCRIPTS/" .. r)
+    local path
+    if string.sub(r, 1, 7) == "LAOZHU/" or string.sub(r, 1, 8) == "WIDGETS/" then
+        path = gSDCardDir .. r
+    else
+        path = gSDCardDir .. "SCRIPTS/" .. r
+    end
     local fun, err = loadScript(path)
     if fun == nil then
         assert(false, compileFiles[curFileIndex])

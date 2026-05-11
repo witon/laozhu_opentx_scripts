@@ -1,3 +1,6 @@
+local function sx(x)
+	return math.floor(x * LCD_W / 128)
+end
 
 local varSliderSelector = ISnewInputSelector()
 ISsetFieldType(varSliderSelector, FIELDS_INPUT)
@@ -95,18 +98,18 @@ local function run(event, time)
     end
     local drawOptions
     local rs = LZ_ui.rowStep
-    lcd.drawText(2, 1, "Var Slider", LZ_ui.font + LEFT)
-    IVdraw(varSliderSelector, 100, 1, invers, LZ_ui.font + LEFT)
-    lcd.drawText(2, 1 + rs, "Read Switch", LZ_ui.font + LEFT)
-    IVdraw(readSwitchSelector, 100, 1 + rs, invers, LZ_ui.font + LEFT)
-    lcd.drawText(2, 1 + 2 * rs, "Reset Switch", LZ_ui.font + LEFT)
-    IVdraw(resetSwitchSelector, 100, 1 + 2 * rs, invers, LZ_ui.font + LEFT)
-    lcd.drawText(2, 1 + 3 * rs, "Flight Switch", LZ_ui.font + LEFT)
-    IVdraw(flightSwitchSelector, 100, 1 + 3 * rs, invers, LZ_ui.font + LEFT)
-    lcd.drawText(2, 1 + 4 * rs, "Throttle Channel", LZ_ui.font + LEFT)
-    IVdraw(throttleChannelSelector, 100, 1 + 4 * rs, invers, LZ_ui.font + LEFT)
-    lcd.drawText(2, 1 + 5 * rs, "Throttle Threshold", LZ_ui.font + LEFT)
-    IVdraw(throttleThresholdNumEdit, 117, 1 + 5 * rs, invers, LZ_ui.font + RIGHT)
+    lcd.drawText(sx(2), 1, "Var Slider", LZ_ui.font + LEFT)
+    IVdraw(varSliderSelector, sx(100), 1, invers, LZ_ui.font + LEFT)
+    lcd.drawText(sx(2), 1 + rs, "Read Switch", LZ_ui.font + LEFT)
+    IVdraw(readSwitchSelector, sx(100), 1 + rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(sx(2), 1 + 2 * rs, "Reset Switch", LZ_ui.font + LEFT)
+    IVdraw(resetSwitchSelector, sx(100), 1 + 2 * rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(sx(2), 1 + 3 * rs, "Flight Switch", LZ_ui.font + LEFT)
+    IVdraw(flightSwitchSelector, sx(100), 1 + 3 * rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(sx(2), 1 + 4 * rs, "Throttle Channel", LZ_ui.font + LEFT)
+    IVdraw(throttleChannelSelector, sx(100), 1 + 4 * rs, invers, LZ_ui.font + LEFT)
+    lcd.drawText(sx(2), 1 + 5 * rs, "Throttle Threshold", LZ_ui.font + LEFT)
+    IVdraw(throttleThresholdNumEdit, sx(117), 1 + 5 * rs, invers, LZ_ui.font + RIGHT)
  
     return doKey(event)
 

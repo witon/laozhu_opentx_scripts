@@ -94,6 +94,10 @@ local files = {
 
 	"LAOZHU/5j/FlightPage.lua",
 
+	"LAOZHU/5j/f5jCore.lua",
+
+	"LAOZHU/5j/f5jFramework.lua",
+
 	"LAOZHU/5j/LargeFontFlightListPage.lua",
 
 	"LAOZHU/5j/SetupPage.lua",
@@ -101,6 +105,8 @@ local files = {
 	"LAOZHU/5j/SmallFontFlightListPage.lua",
 
 	"TELEMETRY/5jtel.lua",
+
+	"WIDGETS/Lz5j/main.lua",
 
 	"TELEMETRY/adjust.lua",
 
