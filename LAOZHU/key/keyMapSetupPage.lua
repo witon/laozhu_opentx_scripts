@@ -1,7 +1,7 @@
--- 按键映射配置向导：基础五键 3 秒捕获 → 可导航主界面 → 扩展五键捕获。持久化经 CFGC（CfgO）写 SCRIPTS/keymap.data。
+-- 按键映射配置向导：基础五键 3 秒捕获 → 可导航主界面 → 扩展五键捕获。持久化经 CFGC（CfgO）写 SCRIPTS/keymap.cfg。
 local M = {}
 
-local KEYMAP_DATA_FILE = "keymap.data"
+local KEYMAP_CFG_FILE = "keymap.cfg"
 local CAPTURE_TICKS = 300
 
 local BASIC_STEPS = {
@@ -32,7 +32,7 @@ local extPickIdx
 local function loadBindingsFromFile()
 	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	local cfg = CFGC:new()
-	local ok = cfg:readFromFile(KEYMAP_DATA_FILE)
+	local ok = cfg:readFromFile(KEYMAP_CFG_FILE)
 	local t = {}
 	if ok then
 		for ks, v in pairs(cfg.kvs) do
@@ -48,11 +48,11 @@ end
 local function persistBindings(bindings)
 	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	local cfg = CFGC:new()
-	cfg:readFromFile(KEYMAP_DATA_FILE)
+	cfg:readFromFile(KEYMAP_CFG_FILE)
 	for canon, raw in pairs(bindings) do
 		cfg.kvs[tostring(canon)] = raw
 	end
-	cfg:writeToFile(KEYMAP_DATA_FILE)
+	cfg:writeToFile(KEYMAP_CFG_FILE)
 end
 
 local function startCaptureWindow()

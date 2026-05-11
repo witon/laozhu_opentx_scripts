@@ -1,6 +1,6 @@
 --[[
-  keymap.data 用户覆盖：键名 = 目标映射 event（整数字符串），值 = 硬件 raw（:n）。
-  下列为脚本内使用的「目标映射值」中文含义（与 keymap.data 键一致；不写文件的为说明用）：
+  keymap.cfg 用户覆盖：键名 = 目标映射 event（整数字符串），值 = 硬件 raw（:n）。
+  下列为脚本内使用的「目标映射值」中文含义（与 keymap.cfg 键一致；不写文件的为说明用）：
   36 — 上（ViewMatrix 行上移、列表向上等）
   35 — 下
   38 — 左（列左移）
@@ -11,7 +11,7 @@
   67 — 长按下
   70 — 长按左
   69 — 长按右
-  EVT_ENTER_BREAK（及常见映射 34）— 确定/进入编辑；由固件语义处理，一般不写入 keymap.data
+  EVT_ENTER_BREAK（及常见映射 34）— 确定/进入编辑；由固件语义处理，一般不写入 keymap.cfg
 ]]
 
 --    按  松  连按连续触发    触发一次
@@ -110,7 +110,7 @@ function KMgetKeyMap()
     end
     LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
     local cfg = CFGC:new()
-    if cfg:readFromFile("keymap.data") then
+    if cfg:readFromFile("keymap.cfg") then
         KMmergeKeyMapFromKvs(keyMap, cfg.kvs)
     end
     return keyMap;
