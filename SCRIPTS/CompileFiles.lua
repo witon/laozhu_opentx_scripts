@@ -70,8 +70,6 @@ local files = {
 
 	"LAOZHU/3k/F3KRecordListView.lua",
 
-	"LAOZHU/3k/FlightPage.lua",
-
 	"LAOZHU/3k/FlightPageNew.lua",
 
 	"LAOZHU/3k/FlightStaticPage.lua",
@@ -131,8 +129,6 @@ local files = {
 	"LAOZHU/adjust/OutputCurve.lua",
 
 	"LAOZHU/adjust/OutputCurveManager.lua",
-
-	"LAOZHU/adjust/Output_old.lua",
 
 	"LAOZHU/adjust/ReplaceMix.lua",
 

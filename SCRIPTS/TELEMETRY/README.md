@@ -34,7 +34,7 @@ F3K手抛模型飞机比赛和训练辅助脚本，主要功能包括：
 关键文件：
 - `3ktel.lua` - F3K功能主入口
 - `LAOZHU/3k/f3kCore.lua` - F3K核心组装与页面侧 glue
-- `LAOZHU/3k/FlightPage.lua` - 飞行信息页面
+- `LAOZHU/3k/FlightPageNew.lua` - 飞行信息页面
 - `LAOZHU/3k/SetupPage.lua` - 设置页面
 
 ### 2. F5J飞行辅助 (5jtel.lua + LAOZHU/5j/)
