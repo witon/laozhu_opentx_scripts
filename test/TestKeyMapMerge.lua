@@ -1,8 +1,8 @@
 
-function testKMmergeKeyMapFromKvs_appliesNumericKeys()
+function testKMmergeKeyMapFromKvs_appliesRawToTarget()
 	dofile(gSDCardDir .. "LAOZHU/uilib/keyMap.lua")
 	local km = { [100] = 50 }
-	KMmergeKeyMapFromKvs(km, { ["36"] = 4099, ["35"] = 4100, ["x"] = 1, ["37"] = "bad" })
+	KMmergeKeyMapFromKvs(km, { ["4099"] = 36, ["4100"] = 35, ["x"] = 1, ["bad"] = "x" })
 	luaunit.assertEquals(km[4099], 36)
 	luaunit.assertEquals(km[4100], 35)
 	luaunit.assertEquals(km[100], 50)

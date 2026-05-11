@@ -1,4 +1,4 @@
--- 按键映射配置向导：基础五键 5 秒捕获 → 可导航主界面 → 扩展五键捕获。持久化经 CFGC（CfgO）写 SCRIPTS/keymap.cfg。
+-- 按键映射配置向导：基础五键 5 秒捕获 → 可导航主界面 → 扩展键捕获。持久化经 CFGC（CfgO）写 SCRIPTS/keymap.cfg（键=raw，值=目标 event）。
 local M = {}
 
 local KEYMAP_CFG_FILE = "keymap.cfg"
@@ -12,19 +12,40 @@ local BASIC_STEPS = {
 	{ nil, "Back" },
 }
 
+-- 第二方向键槽键 → 与基础方向相同 target，持久化为多行 raw→36/35/38/37
+local DUP_SLOT_BASE = { d36 = 36, d35 = 35, d38 = 38, d37 = 37 }
+
 local EXT_STEPS = {
 	{ 68, "Long+Up" },
 	{ 67, "Long+Dn" },
 	{ 70, "Long+Lt" },
 	{ 69, "Long+Rt" },
+	{ "d36", "Up+" },
+	{ "d35", "Down+" },
+	{ "d38", "Left+" },
+	{ "d37", "Right+" },
 }
 
-local WIZARD_CANONS = {}
-for _, step in ipairs(BASIC_STEPS) do
-	WIZARD_CANONS[#WIZARD_CANONS + 1] = step[1] or EVT_EXIT_BREAK
-end
-for _, step in ipairs(EXT_STEPS) do
-	WIZARD_CANONS[#WIZARD_CANONS + 1] = step[1]
+-- 槽顺序与 load 消费 raw 一致；sk 为 sessionBindings 键，t 为写入 cfg 的 target
+local WIZARD_SLOTS = {
+	{ sk = 36, t = 36 },
+	{ sk = 35, t = 35 },
+	{ sk = 38, t = 38 },
+	{ sk = 37, t = 37 },
+	{ sk = EVT_EXIT_BREAK, t = EVT_EXIT_BREAK },
+	{ sk = 68, t = 68 },
+	{ sk = 67, t = 67 },
+	{ sk = 70, t = 70 },
+	{ sk = 69, t = 69 },
+	{ sk = "d36", t = 36 },
+	{ sk = "d35", t = 35 },
+	{ sk = "d38", t = 38 },
+	{ sk = "d37", t = 37 },
+}
+
+local WIZARD_TARGET_PURGE = {}
+for _, s in ipairs(WIZARD_SLOTS) do
+	WIZARD_TARGET_PURGE[s.t] = true
 end
 
 local phase
@@ -36,17 +57,48 @@ local baseKeyAtEnter
 local viewMatrix
 local extPickIdx
 
+local function extStepTarget(sk)
+	if type(sk) == "number" then
+		return sk
+	end
+	return DUP_SLOT_BASE[sk]
+end
+
 local function loadBindingsFromFile()
 	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	local cfg = CFGC:new()
 	local ok = cfg:readFromFile(KEYMAP_CFG_FILE)
-	local t = {}
+	local byTarget = {}
 	if ok then
 		for ks, v in pairs(cfg.kvs) do
-			local c = tonumber(ks)
-			if c ~= nil and type(v) == "number" then
-				t[c] = v
+			local raw = tonumber(ks)
+			if raw ~= nil and type(v) == "number" then
+				local list = byTarget[v]
+				if list == nil then
+					list = {}
+					byTarget[v] = list
+				end
+				list[#list + 1] = raw
 			end
+		end
+		for _, list in pairs(byTarget) do
+			table.sort(list)
+		end
+	end
+	local ptr = {}
+	local t = {}
+	for _, slot in ipairs(WIZARD_SLOTS) do
+		local T = slot.t
+		local list = byTarget[T]
+		local idx = ptr[T] or 1
+		ptr[T] = idx
+		local raw = nil
+		if list ~= nil and idx <= #list then
+			raw = list[idx]
+			ptr[T] = idx + 1
+		end
+		if raw ~= nil then
+			t[slot.sk] = raw
 		end
 	end
 	return t
@@ -56,13 +108,19 @@ local function persistWizardBindings(bindings)
 	LZ_runModule(gSDCardDir .. "LAOZHU/CfgO.lua")
 	local cfg = CFGC:new()
 	cfg:readFromFile(KEYMAP_CFG_FILE)
-	for i = 1, #WIZARD_CANONS do
-		local canon = WIZARD_CANONS[i]
-		local raw = bindings[canon]
-		if raw == nil then
-			cfg.kvs[tostring(canon)] = nil
-		else
-			cfg.kvs[tostring(canon)] = raw
+	local rm = {}
+	for k, v in pairs(cfg.kvs) do
+		if type(v) == "number" and WIZARD_TARGET_PURGE[v] then
+			rm[#rm + 1] = k
+		end
+	end
+	for i = 1, #rm do
+		cfg.kvs[rm[i]] = nil
+	end
+	for _, slot in ipairs(WIZARD_SLOTS) do
+		local raw = bindings[slot.sk]
+		if raw ~= nil then
+			cfg.kvs[tostring(raw)] = slot.t
 		end
 	end
 	cfg:writeToFile(KEYMAP_CFG_FILE)
@@ -77,9 +135,15 @@ local function mapSetupEvent(raw)
 	if raw == nil or raw == 0 then
 		return 0
 	end
-	for canon, r in pairs(sessionBindings) do
+	for sk, r in pairs(sessionBindings) do
 		if r == raw then
-			return canon
+			if type(sk) == "string" then
+				local b = DUP_SLOT_BASE[sk]
+				if b ~= nil then
+					return b
+				end
+			end
+			return sk
 		end
 	end
 	return baseKeyAtEnter[raw] or raw
@@ -110,7 +174,7 @@ local function onMainExtClick()
 		local row = vm:addRow()
 		local j1 = i
 		local b1 = Button:new()
-		b1.extKeyCanon = EXT_STEPS[j1][1]
+		b1.extSlotKey = EXT_STEPS[j1][1]
 		b1.extBaseLabel = EXT_STEPS[j1][2]
 		b1.text = b1.extBaseLabel .. " :-"
 		b1:setOnClick(function()
@@ -121,7 +185,7 @@ local function onMainExtClick()
 		if i <= n then
 			local j2 = i
 			local b2 = Button:new()
-			b2.extKeyCanon = EXT_STEPS[j2][1]
+			b2.extSlotKey = EXT_STEPS[j2][1]
 			b2.extBaseLabel = EXT_STEPS[j2][2]
 			b2.text = b2.extBaseLabel .. " :-"
 			b2:setOnClick(function()
@@ -181,8 +245,9 @@ end
 
 local function paintExtCap(zone)
 	local step = EXT_STEPS[extPickIdx]
-	local canon = step[1]
+	local sk = step[1]
 	local label = step[2]
+	local targ = extStepTarget(sk)
 	local oy0 = drawHeader(zone, "Key Map Ext")
 	local TXT = LZ_ui.font + LEFT + (LZ_ui.themeText or 0)
 	local ox = zone.x + 2
@@ -190,7 +255,7 @@ local function paintExtCap(zone)
 	if remain < 0 then
 		remain = 0
 	end
-	lcd.drawText(ox, oy0, "Press: " .. label .. " (" .. tostring(canon) .. ")", TXT)
+	lcd.drawText(ox, oy0, "Press: " .. label .. " (" .. tostring(targ) .. ")", TXT)
 	lcd.drawText(ox, oy0 + LZ_ui.rowStep, "Last key in 5s wins", TXT)
 	lcd.drawText(ox, oy0 + LZ_ui.rowStep * 2, "T-" .. tostring(math.floor(remain / 100)) .. "." .. tostring(math.floor((remain % 100) / 10)), TXT)
 	if lastRaw ~= nil then
@@ -244,8 +309,8 @@ local function paintExt(zone)
 		local row = vm.matrix[ri]
 		for ci = 1, #row do
 			local iv = row[ci]
-			if iv.extKeyCanon ~= nil and iv.extBaseLabel ~= nil and sessionBindings ~= nil then
-				local r = sessionBindings[iv.extKeyCanon]
+			if iv.extSlotKey ~= nil and iv.extBaseLabel ~= nil and sessionBindings ~= nil then
+				local r = sessionBindings[iv.extSlotKey]
 				iv.text = iv.extBaseLabel .. " :" .. (r ~= nil and tostring(r) or "-")
 			end
 			local x = zone.x + 2 + (ci - 1) * colW
@@ -302,15 +367,20 @@ local function tickExtCap(raw)
 	if getTime() < capDeadline then
 		return nil
 	end
+	local step = EXT_STEPS[extPickIdx]
+	local sk = step[1]
 	if lastRaw ~= nil then
-		local step = EXT_STEPS[extPickIdx]
-		sessionBindings[step[1]] = lastRaw
+		local base = DUP_SLOT_BASE[sk]
+		if base ~= nil and lastRaw == sessionBindings[base] then
+			sessionBindings[sk] = nil
+		else
+			sessionBindings[sk] = lastRaw
+		end
 		persistWizardBindings(sessionBindings)
 		phase = "ext"
 		onMainExtClick()
 	else
-		local step = EXT_STEPS[extPickIdx]
-		sessionBindings[step[1]] = nil
+		sessionBindings[sk] = nil
 		persistWizardBindings(sessionBindings)
 		phase = "ext"
 		onMainExtClick()

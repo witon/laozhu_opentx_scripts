@@ -1,14 +1,15 @@
 --[[
-  SCRIPTS/keymap.cfg 存在且可读时，映射表仅由该文件构建（键名 = 目标映射 event 整数字符串，值 = 硬件 raw :n），不执行下方内置电台/固件适配。
-  无法打开该文件时，使用 getVersion() 对应的内置适配分支。
+  SCRIPTS/keymap.cfg 存在且可读时，映射表仅由该文件构建：
+  键名 = 硬件 rawEvent（整数字符串），值 = 目标映射 event（:n）。即 keyMap[raw] = target；多颗键可映到同一 target。
+  无法打开该文件时，使用 getVersion() 对应的内置电台/固件适配。
   调用 KMgetKeyMap 前须已由 framework 等加载 LAOZHU/CfgO.lua（提供 CFGC）。
-  下列为脚本内使用的「目标映射值」中文含义（与 keymap.cfg 键一致；说明用）：
+  常用目标 event 含义（说明用；写入 cfg 的是数值）：
   36 — 上（ViewMatrix 行上移、列表向上等）
   35 — 下
   38 — 左（列左移）
   37 — 右（列右移）
-  EVT_EXIT_BREAK（数值因固件而异，常见如 33）— 返回/退出（框架退出、关闭编辑等）
-  68 — 长按上（NumEdit/Selector/TextEdit 等与「上」等价的长按分支；F3K/F5J 遥测进设置页等原「长按更多」亦用此值）
+  EVT_EXIT_BREAK（数值因固件而异，常见如 33）— 返回/退出
+  68 — 长按上（NumEdit/Selector/TextEdit 等与「上」等价的长按分支；F3K/F5J 遥测进设置页等）
   67 — 长按下
   70 — 长按左
   69 — 长按右
@@ -29,9 +30,9 @@ function KMmergeKeyMapFromKvs(keyMap, kvs)
 		return
 	end
 	for ks, v in pairs(kvs) do
-		local canon = tonumber(ks)
-		if canon ~= nil and type(v) == "number" then
-			keyMap[v] = canon
+		local raw = tonumber(ks)
+		if raw ~= nil and type(v) == "number" then
+			keyMap[raw] = v
 		end
 	end
 end
