@@ -1,6 +1,7 @@
 --[[
   全局 LZ_ui。LoadModule 会执行 LZ_uiInit(LZ_uiInitMode)。
   mode 为字符串预设：目前 "bw" | "color1"，后续可并列增加 color2…
+  字号阶梯：fontL1 最大，预留 fontL2、fontL3 逐级变小。
 ]]
 
 LZ_ui = LZ_ui or {}
@@ -18,6 +19,7 @@ function LZ_uiInit(mode)
 	end
 	if mode == "color1" then
 		LZ_ui.font = MIDSIZE or SMLSIZE or 0
+		LZ_ui.fontL1 = XXLSIZE or DBLSIZE or MIDSIZE or LZ_ui.font
 		LZ_ui.fontSmall = SMLSIZE or LZ_ui.font
 		LZ_ui.fontWidth = 9
 		LZ_ui.rowStep = 21
@@ -30,6 +32,7 @@ function LZ_uiInit(mode)
 		LZ_ui.themeText = COLOR_THEME_PRIMARY1 or 0
 	else
 		LZ_ui.font = SMLSIZE or 0
+		LZ_ui.fontL1 = DBLSIZE or MIDSIZE or LZ_ui.font
 		LZ_ui.fontSmall = SMLSIZE or 0
 		LZ_ui.fontWidth = 5
 		LZ_ui.rowStep = 9

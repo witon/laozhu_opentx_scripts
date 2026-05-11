@@ -57,7 +57,7 @@ local function drawFlightInfo()
 	local roundState = gF3kCore.getRound().getState()
 	if roundState == 1 then
 		lcd.drawText(0, math.floor(18 * LCD_H / 64), "WT", smlsize)
-		lcd.drawText(math.floor(24 * LCD_W / 128), math.floor(11 * LCD_H / 64), LZ_formatTime(gF3kCore.getRound().getTask().getWorkTime()), LEFT + DBLSIZE)
+		lcd.drawText(midX, math.floor(11 * LCD_H / 64), LZ_formatTime(gF3kCore.getRound().getTask().getWorkTime()), RIGHT + LZ_ui.fontL1)
 	elseif roundState == 2 then
 		lcd.drawText(0, math.floor(18 * LCD_H / 64), "PREP", smlsize)
 	elseif roundState == 3 then
@@ -68,13 +68,13 @@ local function drawFlightInfo()
 		lcd.drawText(0, math.floor(18 * LCD_H / 64), "END", smlsize)
 	end
 	if roundState ~= 1 then
-		lcd.drawText(math.floor(24 * LCD_W / 128), math.floor(11 * LCD_H / 64), LZ_formatTime(gF3kCore.getRound().getTimer():getRemainTime()), LEFT + DBLSIZE)
+		lcd.drawText(midX, math.floor(11 * LCD_H / 64), LZ_formatTime(gF3kCore.getRound().getTimer():getRemainTime()), RIGHT + LZ_ui.fontL1)
 	end
 
 	invers = math.floor(getTime() / 100) % 2 == 0
 
 	lcd.drawText(0, math.floor(30 * LCD_H / 64), "FT", LZ_ui.font)
-	lcd.drawText(math.floor(24 * LCD_W / 128), math.floor(29 * LCD_H / 64), LZ_formatTime(flightState.getFlightTime()), LEFT + DBLSIZE)
+	lcd.drawText(midX, math.floor(29 * LCD_H / 64), LZ_formatTime(flightState.getFlightTime()), RIGHT + LZ_ui.fontL1)
 	destFlightTimeEdit:draw(0, math.floor(38 * LCD_H / 64), invers, LEFT + LZ_ui.font)
 
 end
