@@ -190,7 +190,11 @@ local function run(event, curTime)
 
 
 	local flightMode, flightModeName = getFlightMode()
-	curAlt = getValue(altID)
+	if altID ~= -1 then
+		curAlt = getValue(altID)
+	else
+		curAlt = 0
+	end
 	local rtcTime = getRtcTime()
 
 	f3kState.curAlt = curAlt

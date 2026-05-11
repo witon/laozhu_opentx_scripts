@@ -255,13 +255,19 @@ local function run(event, curTime)
 
     if testSwIndex ~= -1 then
         local time = getRtcTime()
-        local alt = getValue(altID)
-        local gps = getValue(gpsID)
-        if(gps ~= nil and gps ~= 0) then
-            LDSrun(ldState, time, alt, gps.lon, gps.lat, getValue(testSwIndex))
-        else
-            LDSrun(ldState, time, alt, 0, 0, getValue(testSwIndex))
+        local alt = 0
+        if altID ~= -1 then
+            alt = getValue(altID)
         end
+        local lon, lat = 0, 0
+        if gpsID ~= -1 then
+            local gps = getValue(gpsID)
+            if type(gps) == "table" and gps.lon ~= nil and gps.lat ~= nil then
+                lon = gps.lon
+                lat = gps.lat
+            end
+        end
+        LDSrun(ldState, time, alt, lon, lat, getValue(testSwIndex))
 
         if LDSisStart(ldState) and playTone and playingTone == false then
             --playTone(1000, 100, 0, 0)

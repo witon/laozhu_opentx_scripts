@@ -226,7 +226,10 @@ local function run(event, curTime)
     end
     if testSwIndex ~= -1 then
         local time = getRtcTime()
-        local alt = getValue(altID)
+        local alt = 0
+        if altID ~= -1 then
+            alt = getValue(altID)
+        end
         SRSrun(sinkRateState, time, alt, getValue(testSwIndex))
 
         if SRSisStart(sinkRateState) and playTone and playingTone == false then
