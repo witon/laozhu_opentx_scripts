@@ -15,6 +15,7 @@ local scrollLine = 0
 local scrollCol = 0
 local viewMatrix = nil
 local this = nil
+local adjustMixSourceName = nil
 
 
 local function setCurve(index)
@@ -113,11 +114,12 @@ end
 
 local function enableAdjust()
     for i=1, #curvePointNumEditArray, 1 do
-        replaceMix(curvePointNumEditArray[i].output, curvePointNumEditArray[i].revert)
+        replaceMix(curvePointNumEditArray[i].output, curvePointNumEditArray[i].revert, adjustMixSourceName)
     end
 end
  
-local function setSelectedChannels(channels, revert)
+local function setSelectedChannelsAndMixSource(channels, revert, sourceName)
+    adjustMixSourceName = sourceName
     LZ_clearTable(curvePointNumEditArray)
     curvePointNumEditArray = {}
     VMclear(viewMatrix.matrix)
@@ -212,10 +214,17 @@ local function run(event, time)
     local yHead = rs
     local yRowStart = yHead + hh + 1
 
-    lcd.drawText(2, yThr, "thr:", LZ_ui.font + LEFT)
-    lcd.drawText(22, yThr, math.floor(getValue("s1") * 100 / 1024), LZ_ui.font + LEFT)
+    local adjRaw = 0
+    if adjustMixSourceName then
+        local fi = getFieldInfo(adjustMixSourceName)
+        if fi then
+            adjRaw = getValue(fi.id)
+        end
+    end
+    lcd.drawText(2, yThr, adjustMixSourceName and (adjustMixSourceName .. ":") or "-:", LZ_ui.font + LEFT)
+    lcd.drawText(22, yThr, math.floor(adjRaw * 100 / 1024), LZ_ui.font + LEFT)
     lcd.drawText(64, yThr, "output:", LZ_ui.font + LEFT)
-    lcd.drawText(98, yThr, math.floor(getValue("s1") * 150 / 1024), LZ_ui.font + LEFT)
+    lcd.drawText(98, yThr, math.floor(adjRaw * 150 / 1024), LZ_ui.font + LEFT)
 
     drawHeadLine(yHead, hh)
     for i = 1 + scrollLine, #curvePointNumEditArray, 1 do
@@ -234,5 +243,5 @@ local function bg()
     disableAdjust()
 end
 
-this = {run = run, init=init, setSelectedChannels=setSelectedChannels, bg = bg, pageState=0}
+this = {run = run, init=init, setSelectedChannelsAndMixSource=setSelectedChannelsAndMixSource, bg = bg, pageState=0}
 return this
