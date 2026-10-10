@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 用 Zorro 的 simu-cli 跑遥测脚本 utO 的 emutest。
 # 必填：SIMU_CLI 指向 simu-cli。
-# 可选：EDGETX_TOOLS 指向 EdgeTX 的 tools 目录；未设置时尝试 ../edgetx/tools 与 ~/code/edgetx/tools。
+# 可选：EDGETX_TOOLS 指向 EdgeTX 的 tools 目录；未设置时依次尝试子模块 edgetx/tools、../edgetx/tools 与 ~/code/edgetx/tools。
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$REPO_ROOT"
@@ -21,14 +21,17 @@ if [[ -n "${EDGETX_TOOLS:-}" ]]; then
     exit 1
   fi
 else
+  cand_sub="$REPO_ROOT/edgetx/tools"
   cand_repo="$REPO_ROOT/../edgetx/tools"
   cand_home="$HOME/code/edgetx/tools"
-  if [[ -d "$cand_repo" ]]; then
+  if [[ -d "$cand_sub" ]]; then
+    EDGETX_TOOLS="$cand_sub"
+  elif [[ -d "$cand_repo" ]]; then
     EDGETX_TOOLS="$cand_repo"
   elif [[ -d "$cand_home" ]]; then
     EDGETX_TOOLS="$cand_home"
   else
-    echo "run_simu_telemetry.sh: 未设置 EDGETX_TOOLS，且未找到 $cand_repo 或 $cand_home" >&2
+    echo "run_simu_telemetry.sh: 未设置 EDGETX_TOOLS，且未找到 $cand_sub、$cand_repo 或 $cand_home" >&2
     exit 1
   fi
 fi
