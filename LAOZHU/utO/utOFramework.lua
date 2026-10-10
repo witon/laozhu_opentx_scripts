@@ -276,6 +276,7 @@ function M.run(event, surfaceCtx)
 		if emutestStillRunning() then
 			return
 		end
+		DBG_dbg("emutest done")
 	end
 
 	if st.viewMatrix == nil then
