@@ -23,6 +23,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - **开发机 / CI**：在仓库根目录执行 `lua test/test.lua`（单元测试）；CI 在推送/PR 到 master 时通过 GitHub Actions 运行
 - **macOS**：安装 LuaRocks 后执行 `luarocks install luaunit lua-mock`（与 CI 一致），再在仓库根执行 `./run_tests.sh`；脚本会调用 `luarocks path` 注入 `LUA_PATH`/`LUA_CPATH`，并用仓库内 [tools/lua/5.2.2](tools/lua/5.2.2/README.md) 的 Lua 5.2.2 与 CI 对齐
 - **模拟器 / 遥控器（黑白屏）**：自动化测试入口为遥测脚本 `SCRIPTS/TELEMETRY/utO.lua`，用例脚本位于 `SCRIPTS/emutest/`
+- **Zorro simu-cli**：[`edgetx/`](https://github.com/witon/edgetx) 是子模块，里面有 `tools/simctl` 和 `simu-cli` 构建目标。首次拉取执行 `git submodule update --init --recursive`（编译 simu-cli 需要 EdgeTX 自己的子模块）。设置 `SIMU_CLI` 指向编好的 Zorro simu-cli（例如 `edgetx/build-zorro/simu-cli`）；可选 `EDGETX_TOOLS` 指向 EdgeTX 的 tools 目录（未设置时依次尝试 `edgetx/tools`、`../edgetx/tools` 与 `~/code/edgetx/tools`）。在仓库根执行 `./run_simu_telemetry.sh`，即 `python -m simctl test --kind telemetry --sim "$SIMU_CLI" --storage <临时目录> --script utO --expect "emutest done" --timeout 60`（临时目录为复制的 `SCRIPTS/`、`LAOZHU/`、`WIDGETS/`）。日志出现 `-E-`、`Error loading script`、`Error parsing script` 或 `[ERR]` 时失败
 - **彩屏 WIDGET**：在 App 布局下添加 `WIDGETS/LzUtO` widget，与 `utO.lua` 相同批跑 `emutest/` 并可在跑完后演练 ViewMatrix 控件（需长按 ENT 交权后按键才生效）
 
 ## 架构
