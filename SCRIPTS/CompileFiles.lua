@@ -76,6 +76,8 @@ local files = {
 
 	"LAOZHU/3k/RoundSetupPage.lua",
 
+	"LAOZHU/3k/SensorPage.lua",
+
 	"LAOZHU/3k/SetupPage.lua",
 
 	"LAOZHU/3k/SmallFontFlightListPage.lua",
@@ -87,6 +89,8 @@ local files = {
 	"LAOZHU/3k/f3kCore.lua",
 
 	"LAOZHU/3k/f3kFramework.lua",
+
+	"LAOZHU/3k/rxVoltWindow.lua",
 
 	"LAOZHU/key/keyFramework.lua",
 
@@ -253,6 +257,8 @@ local files = {
 	"test/TestQueue.lua",
 
 	"test/TestReadVar.lua",
+
+	"test/TestRxVoltWindow.lua",
 
 	"test/TestSensor.lua",
 

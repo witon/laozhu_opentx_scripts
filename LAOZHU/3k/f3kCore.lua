@@ -5,6 +5,10 @@ local flightState = nil
 local curAlt = 0
 local altID = 0
 local rxbtID = 0
+local rxVoltWindow = nil
+local tpwrID = 0
+local tpwrMax = 0
+local tpwrTracking = false
 local readVar = nil
 local roundResetSwitchTrigeDetector = nil
 local f3kRound = nil
@@ -16,6 +20,8 @@ local function landedCallBack(flightTime, launchAlt, launchTime)
 end
 
 local function resetRound()
+	tpwrMax = 0
+	tpwrTracking = false
 	f3kRound.stop()
 	local isRoundTimerMuted = false
 	if f3kCfg:getNumberField("MuteRndTimer", 0) == 1 then
@@ -39,6 +45,8 @@ local function init()
 	flightState.landedCallback = landedCallBack
 	altID = getTelemetryId("Alt")
 	rxbtID = getTelemetryId("RxBt")
+	tpwrID = getTelemetryId("TPWR")
+	rxVoltWindow = LZ_runModule(gSDCardDir .. "LAOZHU/3k/rxVoltWindow.lua")
 	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/F3k/f3kReadVarMap.lua")
 
@@ -47,8 +55,33 @@ local function init()
 	roundResetSwitchTrigeDetector = STD_new(getValue(f3kCfg:getNumberField('RdResetSw')))
 end
 
+local function workWindowOn()
+	if f3kRound.getState() ~= 4 then
+		return false
+	end
+	local st, flight = f3kRound.getTask().getState()
+	if flight ~= nil then
+		return st >= 2 or flight > 1
+	end
+	return st >= 2
+end
+
+local function noteTpwr()
+	if not tpwrTracking then
+		if not workWindowOn() then
+			return
+		end
+		tpwrTracking = true
+	end
+	local power = getValue(tpwrID)
+	if power > tpwrMax then
+		tpwrMax = power
+	end
+end
+
 local function run(event)
 	local curTime = getTime()
+	rxVoltWindow.note(curTime, getValue(rxbtID))
 	f3kRound.run(curTime)
 	local flightMode, flightModeName = getFlightMode()
 	curAlt = getValue(altID)
@@ -75,6 +108,7 @@ local function run(event)
 	local varReadSwitchValue = getValue(f3kCfg:getNumberField('ReadSw'))
 	
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
+	noteTpwr()
 end
 
 local function getRound()
@@ -85,4 +119,16 @@ local function getFlightState()
 	return flightState
 end
 
-return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
+local function getRxVoltSpan(t)
+	return rxVoltWindow.span(t)
+end
+
+local function getTpwr()
+	return getValue(tpwrID)
+end
+
+local function getTpwrMax()
+	return tpwrMax
+end
+
+return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound, getRxVoltSpan=getRxVoltSpan, getTpwr=getTpwr, getTpwrMax=getTpwrMax}

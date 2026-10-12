@@ -1,7 +1,7 @@
 -- F3K 遥测 / Widget 共用：仅对外 initFramework、run；内部管理 state、keyMap、翻页与设置进出。
 local M = {}
 
-local FLIGHT_PAGE_PATHS = { "3k/FlightPageNew.lua", "3k/SmallFontFlightListPage.lua" }
+local FLIGHT_PAGE_PATHS = { "3k/FlightPageNew.lua", "3k/SmallFontFlightListPage.lua", "3k/SensorPage.lua" }
 local SETUP_PAGE_PATHS = { "3k/RoundSetupPage.lua", "3k/SetupPage.lua" }
 
 local state = {
