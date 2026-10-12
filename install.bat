@@ -18,6 +18,7 @@ if "%disk%" == "" (
 @echo on
 for %%d IN (%dirs%) do xcopy /I /Y /E %scriptsdir%\%%d %disk%\SCRIPTS\%%d
 xcopy /I /Y /E test %disk%\SCRIPTS\test\
+if exist %disk%\SCRIPTS\test\simu rmdir /S /Q %disk%\SCRIPTS\test\simu
 if exist %laozhudir% xcopy /I /Y /E %laozhudir% %disk%\LAOZHU\
 if exist %widgetsdir% xcopy /I /Y /E %widgetsdir% %disk%\WIDGETS\
 for %%f IN (%files%) do copy /Y %scriptsdir%\%%f %disk%\SCRIPTS\

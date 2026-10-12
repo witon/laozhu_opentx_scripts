@@ -3,3 +3,4 @@
 *.output
 *.wav
 *.csv
+/simu-cli

@@ -70,7 +70,7 @@ if [[ ! -d "$TEST_SRC" ]]; then
   exit 1
 fi
 mkdir -p "$TARGET/test"
-rsync -av --no-specials --no-devices "$TEST_SRC/" "$TARGET/test/"
+rsync -av --no-specials --no-devices --exclude simu "$TEST_SRC/" "$TARGET/test/"
 
 mkdir -p "$DEST_ROOT/LAOZHU"
 rsync -av --no-specials --no-devices "$LAOZHU_SRC/" "$DEST_ROOT/LAOZHU/"
