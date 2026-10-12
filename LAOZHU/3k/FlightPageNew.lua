@@ -31,6 +31,7 @@ end
 local function onDestFlightTimeChange(timeEdit)
 	LZ_playTime(timeEdit.num, true)
 	gF3kCore.getFlightState().setDestFlightTime(timeEdit.num)
+	DBG_dbg("dest", timeEdit.num)
 end
 
 
@@ -90,12 +91,17 @@ local function init()
 	local row = viewMatrix:addRow()
 	row[1] = destFlightTimeEdit
 	viewMatrix:updateCurIVFocus()
+	DBG_dbg("dest", destFlightTimeEdit.num)
 end
 
 
 local function run(event, time)
 	drawFlightInfo()
 	drawFlightList()
+	if event == 35 or event == 36 then
+		destFlightTimeEdit:doKey(event)
+		return true
+	end
 	return viewMatrix:doKey(event)
 end
 
