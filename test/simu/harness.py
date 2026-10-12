@@ -58,6 +58,68 @@ class _Sim(Simulator):
         return self
 
 
+_CASE_NEED = ("[DBG] simu ok",)
+_CASE_BAD = ("-E-", "Error loading script", "Error parsing script", "[ERR]")
+
+
+def _write_case(sim, name):
+    case_path = Path(sim.storage) / "SCRIPTS" / "simu.case"
+    case_path.write_text(name.strip() + "\n", encoding="utf-8")
+
+
+def _raise_if_bad(label, lines):
+    text = "\n".join(lines)
+    bad = [mark for mark in _CASE_BAD if mark in text]
+    if bad:
+        raise AssertionError("simt %s 失败 bad=%s\n%s" % (label, bad, text))
+
+
+def run_case(sim, name, timeout=60000):
+    """让遥测入口 simt 在 init 里跑完一个批量用例。"""
+    _write_case(sim, name)
+    sim.show_telemetry("simt", timeout=int(timeout))
+    lines = sim.log_since()
+    text = "\n".join(lines)
+    missing = [mark for mark in _CASE_NEED if mark not in text]
+    bad = [mark for mark in _CASE_BAD if mark in text]
+    if missing or bad:
+        raise AssertionError(
+            "simt %s 失败 missing=%s bad=%s\n%s" % (name, missing, bad, text)
+        )
+
+
+def open_case(sim, name, timeout=60000):
+    """打开按键用例，等到脚本可以接收遥控器事件。"""
+    _write_case(sim, name)
+    sim.show_telemetry("simt", timeout=int(timeout))
+    try:
+        lines = sim.wait_log("[DBG] simu ready", timeout=max(5, timeout / 1000))
+    except SimulatorError as exc:
+        lines = (exc.response or {}).get("lines") or []
+        raise AssertionError(
+            "simt %s 未就绪\n%s" % (name, "\n".join(lines))
+        ) from exc
+    _raise_if_bad(name, lines)
+    return lines
+
+
+def expect_log(sim, text, timeout=5):
+    try:
+        lines = sim.wait_log(text, timeout=timeout)
+    except SimulatorError as exc:
+        lines = (exc.response or {}).get("lines") or []
+        raise AssertionError("等待 %s 超时\n%s" % (text, "\n".join(lines))) from exc
+    _raise_if_bad(text, lines)
+    return lines
+
+
+def hold_key(sim, name, ms=800):
+    """按住再松开，让固件发出长按事件。"""
+    sim.key(name, "down")
+    sim.wait(int(ms))
+    sim.key(name, "up")
+
+
 @contextmanager
 def session(screen=False):
     if not SIM.is_file() or not os.access(SIM, os.X_OK):
@@ -67,6 +129,7 @@ def session(screen=False):
     try:
         shutil.copytree(REPO / "SCRIPTS", Path(tmp) / "SCRIPTS")
         shutil.copytree(REPO / "LAOZHU", Path(tmp) / "LAOZHU")
+        shutil.copytree(REPO / "test" / "simu" / "cases", Path(tmp) / "SCRIPTS" / "simu")
         sim = _Sim(tmp, screen)
         sim.start()
         yield sim

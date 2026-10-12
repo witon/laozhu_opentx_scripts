@@ -23,7 +23,7 @@ EdgeTX/OpenTX 遥控器脚本，用于 F3K（手抛滑翔机）和 F5J（电动�
 - **开发机 / CI**：在仓库根目录执行 `lua test/test.lua`（单元测试）；CI 在推送/PR 到 master 时通过 GitHub Actions 运行
 - **macOS**：安装 LuaRocks 后执行 `luarocks install luaunit lua-mock`（与 CI 一致），再在仓库根执行 `./run_tests.sh`；脚本会调用 `luarocks path` 注入 `LUA_PATH`/`LUA_CPATH`，并用仓库内 [tools/lua/5.2.2](tools/lua/5.2.2/README.md) 的 Lua 5.2.2 与 CI 对齐
 - **模拟器 / 遥控器（黑白屏）**：自动化测试入口为遥测脚本 `SCRIPTS/TELEMETRY/utO.lua`，用例脚本位于 `SCRIPTS/emutest/`
-- **Zorro simu-cli**：仓库根目录的 `simu-cli` 配合子模块 `edgetx/tools/simctl`。在仓库根执行 `python3 test/simu/run.py`，加载并执行遥测脚本；要看 LCD 时加 `--screen`。日志出现 `-E-`、`Error loading script`、`Error parsing script` 或 `[ERR]` 时失败
+- **Zorro simu-cli**：仓库根目录的 `simu-cli` 配合子模块 `edgetx/tools/simctl`。在仓库根执行 `python3 test/simu/run.py`，要看 LCD 时加 `--screen`。用例经唯一遥测入口 `SCRIPTS/TELEMETRY/simt.lua` 加载 `test/simu/cases/`，约定见 [test/simu/README.md](test/simu/README.md)。日志出现 `-E-`、`Error loading script`、`Error parsing script` 或 `[ERR]` 时失败
 - **彩屏 WIDGET**：在 App 布局下添加 `WIDGETS/LzUtO` widget，与 `utO.lua` 相同批跑 `emutest/` 并可在跑完后演练 ViewMatrix 控件（需长按 ENT 交权后按键才生效）
 
 ## 架构
@@ -118,7 +118,7 @@ LZ_loadModule("path/to/module.lua") -- 仅加载模块函数
 
 - `test/` 目录下的单元测试使用自定义测试框架；开发机与 CI 上运行 `lua test/test.lua`
 - 模拟器或真机（黑白屏）上运行 `SCRIPTS/TELEMETRY/utO.lua` 执行 `emutest/` 中的自动化用例
-- 开发机上用仓库根的 `simu-cli` 执行 `python3 test/simu/run.py`（加 `--screen` 可看 LCD）
+- 开发机上用仓库根的 `simu-cli` 执行 `python3 test/simu/run.py`（加 `--screen` 可看 LCD）。新增用例的写法见 [test/simu/README.md](test/simu/README.md)
 - 彩屏上安装 `WIDGETS/LzUtO` 后可在主屏/App 中执行同一批 `emutest/` 用例（见上文「彩屏 WIDGET」）
 - CI 在 Ubuntu 上使用 Lua 5.2.2 运行测试
 - 功能与 UI 仍建议在真实 EdgeTX 硬件或模拟器上手动验证
