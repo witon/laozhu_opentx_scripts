@@ -4,24 +4,20 @@ LZ_runModule(gSDCardDir .. "LAOZHU/SwitchTrigeDetector.lua")
 local flightState = nil
 local curAlt = 0
 local altID = 0
-local rxbtID = 0
-local rxVoltWindow = nil
-local tpwrID = 0
-local tpwrMax = 0
 local tpwrTracking = false
 local readVar = nil
 local roundResetSwitchTrigeDetector = nil
 local f3kRound = nil
-
---local monitor = nil
+local monitor = nil
+local api
 
 local function landedCallBack(flightTime, launchAlt, launchTime)
 	f3kRound.getTask().addFlight(flightTime, launchAlt, launchTime)
 end
 
 local function resetRound()
-	tpwrMax = 0
 	tpwrTracking = false
+	monitor.resetTpwr()
 	f3kRound.stop()
 	local isRoundTimerMuted = false
 	if f3kCfg:getNumberField("MuteRndTimer", 0) == 1 then
@@ -41,12 +37,13 @@ local function init()
 	LZ_runModule(gSDCardDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
 	f3kRound = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
+	monitor = LZ_runModule(gSDCardDir .. "LAOZHU/Monitor.lua")
+	monitor.init()
+	monitor.bind()
+	api.monitor = monitor
 	resetRound()
 	flightState.landedCallback = landedCallBack
 	altID = getTelemetryId("Alt")
-	rxbtID = getTelemetryId("RxBt")
-	tpwrID = getTelemetryId("TPWR")
-	rxVoltWindow = LZ_runModule(gSDCardDir .. "LAOZHU/3k/rxVoltWindow.lua")
 	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/F3k/f3kReadVarMap.lua")
 
@@ -66,28 +63,13 @@ local function workWindowOn()
 	return st >= 2
 end
 
-local function noteTpwr()
-	if not tpwrTracking then
-		if not workWindowOn() then
-			return
-		end
-		tpwrTracking = true
-	end
-	local power = getValue(tpwrID)
-	if power > tpwrMax then
-		tpwrMax = power
-	end
-end
-
 local function run(event)
 	local curTime = getTime()
-	rxVoltWindow.note(curTime, getValue(rxbtID))
 	f3kRound.run(curTime)
 	local flightMode, flightModeName = getFlightMode()
 	curAlt = getValue(altID)
 
 	local rtcTime = getRtcTime()
-	--monitor.run(rtcTime, 0, getValue(rxbtID), 0)
 
 	flightState.curAlt = curAlt
 	flightState.doFlightState(curTime, flightModeName, rtcTime)
@@ -108,7 +90,10 @@ local function run(event)
 	local varReadSwitchValue = getValue(f3kCfg:getNumberField('ReadSw'))
 	
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
-	noteTpwr()
+	if not tpwrTracking and workWindowOn() then
+		tpwrTracking = true
+	end
+	monitor.sample(curTime, tpwrTracking)
 end
 
 local function getRound()
@@ -119,16 +104,5 @@ local function getFlightState()
 	return flightState
 end
 
-local function getRxVoltSpan(t)
-	return rxVoltWindow.span(t)
-end
-
-local function getTpwr()
-	return getValue(tpwrID)
-end
-
-local function getTpwrMax()
-	return tpwrMax
-end
-
-return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound, getRxVoltSpan=getRxVoltSpan, getTpwr=getTpwr, getTpwrMax=getTpwrMax}
+api = {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
+return api

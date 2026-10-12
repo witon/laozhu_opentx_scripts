@@ -38,7 +38,7 @@ local files = {
 
 	"LAOZHU/Queue.lua",
 
-	"LAOZHU/Sensor.lua",
+	"LAOZHU/SensorMetric.lua",
 
 	"LAOZHU/SinkRateLog.lua",
 
@@ -89,8 +89,6 @@ local files = {
 	"LAOZHU/3k/f3kCore.lua",
 
 	"LAOZHU/3k/f3kFramework.lua",
-
-	"LAOZHU/3k/rxVoltWindow.lua",
 
 	"LAOZHU/key/keyFramework.lua",
 
@@ -258,9 +256,7 @@ local files = {
 
 	"test/TestReadVar.lua",
 
-	"test/TestRxVoltWindow.lua",
-
-	"test/TestSensor.lua",
+	"test/TestSensorMetric.lua",
 
 	"test/TestSinkRateState.lua",
 

@@ -8,11 +8,24 @@ local state = {
 	bgFlag = false,
 	keyMap = nil,
 	frameworkInitDone = false,
+	compiling = false,
+	monitor = nil,
 }
 
 local function loadPage(index)
 	local pagePath = "LAOZHU/" .. state.pages[index]
 	state.curPage = LZ_runModule(gSDCardDir .. pagePath)
+end
+
+local function startMonitor()
+	if state.monitor ~= nil then
+		return
+	end
+	LZ_isNeedCompile = nil
+	LZ_markCompiled = nil
+	state.monitor = LZ_runModule(gSDCardDir .. "LAOZHU/Monitor.lua")
+	state.monitor.init()
+	state.monitor.bind()
 end
 
 function M.initFramework()
@@ -29,15 +42,22 @@ function M.initFramework()
 	LZ_runModule(gSDCardDir .. "LAOZHU/LuaUtils.lua")
 	LZ_runModule(gSDCardDir .. "LAOZHU/OTUtils.lua")
 	if LZ_isNeedCompile() then
+		state.compiling = true
 		state.curPage = LZ_runModule(gSDCardDir .. "LAOZHU/uilib/comp.lua")
 	else
-		LZ_isNeedCompile = nil
-		LZ_markCompiled = nil
+		startMonitor()
 	end
 	collectgarbage()
 end
 
+local function sampleLink()
+	if state.monitor ~= nil then
+		state.monitor.sample(getTime())
+	end
+end
+
 function M.background()
+	sampleLink()
 	local curPage = state.curPage
 	if curPage and curPage.pageState == 1 then
 		LZ_clearTable(curPage)
@@ -56,6 +76,7 @@ end
 -- opts.clearScreen：默认 true（遥测全屏清屏）；Widget 传 false，由分区背景代替。
 function M.run(rawEvent, opts)
 	opts = opts or {}
+	sampleLink()
 	state.bgFlag = false
 	if opts.clearScreen ~= false then
 		lcd.clear()
@@ -71,9 +92,14 @@ function M.run(rawEvent, opts)
 			return
 		end
 		if event == EVT_EXIT_BREAK then
+			local startAfter = state.compiling
 			LZ_clearTable(state.curPage)
 			state.curPage = nil
+			state.compiling = false
 			collectgarbage()
+			if startAfter then
+				startMonitor()
+			end
 		end
 		return
 	end
