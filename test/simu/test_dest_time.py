@@ -72,6 +72,8 @@ def test_dest_time(screen=False):
         _encoder(sim, -1, "[DBG] dest 15")
         _encoder(sim, 1, "[DBG] dest 0")
         _click(sim, KEY_UP, "[DBG] dest 15")
+        sim.key("ENTER", "click")
+        _assert_dest_unchanged(sim, "Enter")
 
         harness.hold_key(sim, KEY_DOWN)
         _pause(sim)
