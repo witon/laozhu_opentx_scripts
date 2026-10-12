@@ -98,6 +98,9 @@ end
 local function run(event, time)
 	drawFlightInfo()
 	drawFlightList()
+	if event == EVT_ENTER_BREAK then
+		return true
+	end
 	if event == 35 or event == 36 then
 		destFlightTimeEdit:doKey(event)
 		return true
