@@ -38,7 +38,7 @@ local files = {
 
 	"LAOZHU/Queue.lua",
 
-	"LAOZHU/Sensor.lua",
+	"LAOZHU/SensorMetric.lua",
 
 	"LAOZHU/SinkRateLog.lua",
 
@@ -75,6 +75,8 @@ local files = {
 	"LAOZHU/3k/FlightStaticPage.lua",
 
 	"LAOZHU/3k/RoundSetupPage.lua",
+
+	"LAOZHU/3k/SensorPage.lua",
 
 	"LAOZHU/3k/SetupPage.lua",
 
@@ -254,7 +256,7 @@ local files = {
 
 	"test/TestReadVar.lua",
 
-	"test/TestSensor.lua",
+	"test/TestSensorMetric.lua",
 
 	"test/TestSinkRateState.lua",
 

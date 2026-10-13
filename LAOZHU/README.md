@@ -42,9 +42,9 @@ LAOZHU/
 - `LDState.lua` - 升力阻力比状态管理
 
 #### 基础飞行数据监控
-- `Monitor.lua` - 飞行数据监控功能
+- `Monitor.lua` - 接收机电压极差、发射功率峰值、连接质量最低值
 - `readVar.lua` - 播报功能
-- `Sensor.lua` - 传感器数据规则监控
+- `SensorMetric.lua` - 滑动极差与极值（最大或最小）
 
 #### 下沉率相关基础和通用方法
 - `SinkRateLog.lua` - 下沉率日志记录(暂未使用)

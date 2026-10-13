@@ -1,0 +1,6 @@
+When generating a Git commit message for this repository, write the entire message in Simplified Chinese (简体中文).
+
+- One subject line that states why the change was made.
+- A type prefix is fine, with the description in Chinese, for example: fix: 修正接收机电压窗口刷新时机
+- Keep code identifiers in English.
+- Previous commits may be in English. Still write this message in Simplified Chinese.

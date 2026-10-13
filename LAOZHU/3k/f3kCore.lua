@@ -4,18 +4,20 @@ LZ_runModule(gSDCardDir .. "LAOZHU/SwitchTrigeDetector.lua")
 local flightState = nil
 local curAlt = 0
 local altID = 0
-local rxbtID = 0
+local tpwrTracking = false
 local readVar = nil
 local roundResetSwitchTrigeDetector = nil
 local f3kRound = nil
-
---local monitor = nil
+local monitor = nil
+local core
 
 local function landedCallBack(flightTime, launchAlt, launchTime)
 	f3kRound.getTask().addFlight(flightTime, launchAlt, launchTime)
 end
 
 local function resetRound()
+	tpwrTracking = false
+	monitor.resetTpwr()
 	f3kRound.stop()
 	local isRoundTimerMuted = false
 	if f3kCfg:getNumberField("MuteRndTimer", 0) == 1 then
@@ -35,16 +37,30 @@ local function init()
 	LZ_runModule(gSDCardDir .. "LAOZHU/F3k/F3kFlightRecord.lua")
 	f3kRound = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/F3kRoundWF.lua")
 	f3kRound.init()
+	monitor = LZ_runModule(gSDCardDir .. "LAOZHU/Monitor.lua")
+	monitor.init()
+	monitor.bind()
+	core.monitor = monitor
 	resetRound()
 	flightState.landedCallback = landedCallBack
 	altID = getTelemetryId("Alt")
-	rxbtID = getTelemetryId("RxBt")
 	readVar = LZ_runModule(gSDCardDir .. "LAOZHU/readVar.lua")
 	local f3kReadVarMap = LZ_runModule(gSDCardDir .. "LAOZHU/F3k/f3kReadVarMap.lua")
 
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
 	roundResetSwitchTrigeDetector = STD_new(getValue(f3kCfg:getNumberField('RdResetSw')))
+end
+
+local function workWindowOn()
+	if f3kRound.getState() ~= 4 then
+		return false
+	end
+	local st, flight = f3kRound.getTask().getState()
+	if flight ~= nil then
+		return st >= 2 or flight > 1
+	end
+	return st >= 2
 end
 
 local function run(event)
@@ -54,7 +70,6 @@ local function run(event)
 	curAlt = getValue(altID)
 
 	local rtcTime = getRtcTime()
-	--monitor.run(rtcTime, 0, getValue(rxbtID), 0)
 
 	flightState.curAlt = curAlt
 	flightState.doFlightState(curTime, flightModeName, rtcTime)
@@ -75,6 +90,10 @@ local function run(event)
 	local varReadSwitchValue = getValue(f3kCfg:getNumberField('ReadSw'))
 	
 	readVar.doReadVar(varSelectorSliderValue, varReadSwitchValue, curTime)
+	if not tpwrTracking and workWindowOn() then
+		tpwrTracking = true
+	end
+	monitor.sample(curTime, tpwrTracking)
 end
 
 local function getRound()
@@ -85,4 +104,5 @@ local function getFlightState()
 	return flightState
 end
 
-return {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
+core = {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
+return core
