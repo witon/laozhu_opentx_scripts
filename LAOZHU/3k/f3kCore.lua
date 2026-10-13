@@ -10,9 +10,31 @@ local roundResetSwitchTrigeDetector = nil
 local f3kRound = nil
 local monitor = nil
 local core
+local lastRoundState = nil
+local lastFlightState = nil
+
+local function logRoundState()
+	local st = f3kRound.getState()
+	if st == lastRoundState then
+		return
+	end
+	lastRoundState = st
+	DBG_dbg("round", st)
+end
+
+local function logFlightState()
+	local st = flightState.getFlightState()
+	if st == lastFlightState then
+		return
+	end
+	lastFlightState = st
+	DBG_dbg("fstate", flightState.getCurFlightStateName())
+end
 
 local function landedCallBack(flightTime, launchAlt, launchTime)
 	f3kRound.getTask().addFlight(flightTime, launchAlt, launchTime)
+	local records = F3KFRgetFlightArray(f3kRound.getTask().getFlightRecord())
+	DBG_dbg("flights", #records)
 end
 
 local function resetRound()
@@ -50,6 +72,8 @@ local function init()
 	f3kReadVarMap.setF3kState(flightState)
 	readVar.setVarMap(f3kReadVarMap)
 	roundResetSwitchTrigeDetector = STD_new(getValue(f3kCfg:getNumberField('RdResetSw')))
+	logRoundState()
+	logFlightState()
 end
 
 local function workWindowOn()
@@ -94,6 +118,8 @@ local function run(event)
 		tpwrTracking = true
 	end
 	monitor.sample(curTime, tpwrTracking)
+	logRoundState()
+	logFlightState()
 end
 
 local function getRound()

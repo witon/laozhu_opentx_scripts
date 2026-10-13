@@ -33,6 +33,7 @@ local function loadPage()
 	end
 	local pagePath = "LAOZHU/" .. state.pages[state.displayIndex]
 	state.curPage = LZ_runModule(gSDCardDir .. pagePath)
+	DBG_dbg("page", state.pages[state.displayIndex])
 end
 
 local function handleNavAfterPage(mappedEvent)
