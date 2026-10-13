@@ -24,6 +24,7 @@ local function drawFlightInfo()
 
 	lcd.drawText(sx(1), sy(18), "WT", LZ_ui.font)
 	local workTimeRemain = gFlightState.getWorktimeTimer():getRemainTime()
+	DBG_dbg("wt", workTimeRemain)
 
 	lcd.drawText(lx, sy(11), LZ_formatTime(workTimeRemain), RIGHT + LZ_ui.fontL1)
 
