@@ -16,8 +16,9 @@ local flightSwitch = 0
 
 dofile(gSDCardDir .. "LAOZHU/comm/Timer.lua")
 
+local workTime = 600
 local worktimeTimer = Timer:new()
-worktimeTimer:resetTimer(600)
+worktimeTimer:resetTimer(workTime)
 local stateTimer = Timer:new()
 
 
@@ -50,8 +51,18 @@ local function setAlt(alt)
     curAlt = alt
 end
 
+local function setWorkTime(seconds)
+	if seconds == workTime then
+		return
+	end
+	workTime = seconds
+	if worktimeTimer.startTime == 0 then
+		worktimeTimer:setDuration(workTime)
+	end
+end
+
 local function resetWorktimeTimer()
-	worktimeTimer:resetTimer(600)
+	worktimeTimer:resetTimer(workTime)
 	worktimeTimer:setForward(true)
 	worktimeTimer:setDowncount(20)
 end
@@ -84,7 +95,7 @@ local function resetFlight()
 	launchTime = 0
     powerOnAgain = false
     worktimeTimer:stop()
-    worktimeTimer:resetTimer(600)
+    worktimeTimer:resetTimer(workTime)
     stateTimer:stop()
 end
 
@@ -97,7 +108,7 @@ local function startPoweronTimer()
 end
 
 local function startWorktimeTimer()
-    worktimeTimer:resetTimer(600)
+    worktimeTimer:resetTimer(workTime)
     worktimeTimer:setForward(false)
     worktimeTimer:setDowncount(20)
     worktimeTimer:start(curTime)
@@ -226,6 +237,7 @@ end
 return {resetFlight = resetFlight,
         getFlightState = getFlightState,
         setThrottleThreshold = setThrottleThreshold,
+        setWorkTime = setWorkTime,
         doFlightState = doFlightState,
         setAlt = setAlt,
         getLaunchAlt = getLaunchAlt,
