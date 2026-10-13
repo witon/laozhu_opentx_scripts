@@ -14,6 +14,8 @@ ISsetFieldType(flightSwitchSelector, FIELDS_SWITCH)
 local throttleChannelSelector = ISnewInputSelector()
 ISsetFieldType(throttleChannelSelector, FIELDS_CHANNEL) 
 local throttleThresholdNumEdit = NEnewNumEdit()
+local workTimeNumEdit = NEnewNumEdit()
+NEsetRange(workTimeNumEdit, 1, 30)
 
 
 
@@ -23,7 +25,8 @@ local inputArray = {
     resetSwitchSelector,
     flightSwitchSelector,
     throttleChannelSelector,
-    throttleThresholdNumEdit
+    throttleThresholdNumEdit,
+    workTimeNumEdit
 }
 
 local curSelectorIndex = 1
@@ -36,6 +39,7 @@ local function setCfgValue()
     f5jCfg["FlSw"] = ISgetSelectedItemId(flightSwitchSelector)
     f5jCfg["ThCh"] = ISgetSelectedItemId(throttleChannelSelector)
     f5jCfg["ThThreshold"] = throttleThresholdNumEdit.num
+    f5jCfg["WorkTime"] = workTimeNumEdit.num
 end
 
 local function getCfgValue()
@@ -45,6 +49,7 @@ local function getCfgValue()
     ISsetSelectedItemById(flightSwitchSelector, f5jCfg["FlSw"])
     ISsetSelectedItemById(throttleChannelSelector, f5jCfg["ThCh"])
     throttleThresholdNumEdit.num = CFGgetNumberField(f5jCfg, "ThThreshold", 0)
+    workTimeNumEdit.num = CFGgetNumberField(f5jCfg, "WorkTime", 10)
 end
 
 local function init()
@@ -110,7 +115,9 @@ local function run(event, time)
     IVdraw(throttleChannelSelector, sx(100), 1 + 4 * rs, invers, LZ_ui.font + LEFT)
     lcd.drawText(sx(2), 1 + 5 * rs, "Throttle Threshold", LZ_ui.font + LEFT)
     IVdraw(throttleThresholdNumEdit, sx(117), 1 + 5 * rs, invers, LZ_ui.font + RIGHT)
- 
+    lcd.drawText(sx(2), 1 + 6 * rs, "Work Time", LZ_ui.font + LEFT)
+    IVdraw(workTimeNumEdit, sx(117), 1 + 6 * rs, invers, LZ_ui.font + RIGHT)
+
     return doKey(event)
 
 end

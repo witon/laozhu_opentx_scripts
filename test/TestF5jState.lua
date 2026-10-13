@@ -106,6 +106,32 @@ function testNormalProcess()
 end
 
 
+function testWorkTimeWindow()
+    _G.getDateTime = Mock()
+    _G.getDateTime:whenCalled {thenReturn = {100000}}
+
+    local f5jState = dofile(gSDCardDir .. "LAOZHU/F5jState.lua")
+    local timer = f5jState.getWorktimeTimer()
+    luaunit.assertEquals(timer:getRemainTime(), 600)
+
+    f5jState.setWorkTime(420)
+    luaunit.assertEquals(timer:getRemainTime(), 420)
+
+    f5jState.setThrottleThreshold(-80)
+    f5jState.doFlightState(10000, -1000, -700, 1000)
+    luaunit.assertEquals(timer:getRemainTime(), 420)
+
+    f5jState.doFlightState(10100, -1000, -700, 1000)
+    luaunit.assertEquals(timer:getRemainTime(), 419)
+
+    f5jState.setWorkTime(900)
+    luaunit.assertEquals(timer:getRemainTime(), 419)
+
+    f5jState.resetFlight()
+    luaunit.assertEquals(timer:getRemainTime(), 900)
+end
+
+
 if not LZ_TEST_HARNESS then
 HOME_DIR = os.getenv("HOME_DIR")
 if not HOME_DIR then
