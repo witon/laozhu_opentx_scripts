@@ -9,7 +9,7 @@ local readVar = nil
 local roundResetSwitchTrigeDetector = nil
 local f3kRound = nil
 local monitor = nil
-local api
+local core
 
 local function landedCallBack(flightTime, launchAlt, launchTime)
 	f3kRound.getTask().addFlight(flightTime, launchAlt, launchTime)
@@ -40,7 +40,7 @@ local function init()
 	monitor = LZ_runModule(gSDCardDir .. "LAOZHU/Monitor.lua")
 	monitor.init()
 	monitor.bind()
-	api.monitor = monitor
+	core.monitor = monitor
 	resetRound()
 	flightState.landedCallback = landedCallBack
 	altID = getTelemetryId("Alt")
@@ -104,5 +104,5 @@ local function getFlightState()
 	return flightState
 end
 
-api = {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
-return api
+core = {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
+return core
