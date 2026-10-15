@@ -7,7 +7,7 @@ local swEd = {}
 local lsEd = {}
 local gvEd = {}
 local lines = {}
-local statusText = "统一GV请设FM0"
+local statusText = "cmn: set FM0"
 local maxLines = 1
 
 local function loadModule()
@@ -133,7 +133,7 @@ local function onWrite()
         swDec = swIdx[swEd[4].num],
     })
     if ok then
-        statusText = "已写入 设FM0"
+        statusText = "wrote, set FM0"
     else
         statusText = err
     end
@@ -156,7 +156,7 @@ local function run(event, time)
     local rs = LZ_ui.rowStep
     local hh = LZ_ui.headerRowHeight
     lcd.drawFilledRectangle(0, 0, LCD_W, hh, FORCE)
-    lcd.drawText(0, 0, "油门微调", LZ_ui.font + LEFT + INVERS)
+    lcd.drawText(0, 0, "thr trim", LZ_ui.font + LEFT + INVERS)
     lcd.drawText(0, hh, statusText, LZ_ui.font + LEFT)
     local y = hh + rs
     local last = math.min(#lines, viewMatrix.scrollLine + maxLines)
@@ -197,20 +197,20 @@ swEd[1] = newNum(1, swMax, listPos(getSwitchIndex("SH" .. CHAR_UP)), drawSw)
 swEd[2] = newNum(1, swMax, listPos(getSwitchIndex("SH" .. CHAR_DOWN)), drawSw)
 swEd[3] = newNum(1, swMax, incPos, drawSw)
 swEd[4] = newNum(1, swMax, decPos, drawSw)
-pushRow("升降条件", swEd[1])
-pushRow("统一条件", swEd[2])
-pushRow("加", swEd[3])
-pushRow("减", swEd[4])
+pushRow("ele sw", swEd[1])
+pushRow("cmn sw", swEd[2])
+pushRow("inc", swEd[3])
+pushRow("dec", swEd[4])
 for i = 1, 4 do
     lsEd[i] = newNum(1, maxLs, clamp(7 + i, maxLs), drawLs)
-    pushRow("槽" .. i, lsEd[i])
+    pushRow("ls" .. i, lsEd[i])
 end
 gvEd[1] = newNum(1, maxGv, clamp(2, maxGv), drawGv)
 gvEd[2] = newNum(1, maxGv, clamp(8, maxGv), drawGv)
-pushRow("GV升降", gvEd[1])
-pushRow("GV统一", gvEd[2])
+pushRow("gv ele", gvEd[1])
+pushRow("gv cmn", gvEd[2])
 local btn = BTnewButton()
-btn.text = "写入"
+btn.text = "write"
 BTsetOnClick(btn, onWrite)
 pushRow("", btn)
 

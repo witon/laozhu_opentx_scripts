@@ -1,5 +1,5 @@
 local tools = {
-    { name = "油门微调", path = "LAOZHU/adjust/ThrTrim.lua" },
+    { name = "thr trim", path = "LAOZHU/adjust/ThrTrim.lua" },
 }
 local focusIndex = 1
 local sub = nil

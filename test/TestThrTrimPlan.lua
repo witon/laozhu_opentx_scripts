@@ -153,7 +153,7 @@ function testThrTrimApplyRejectsDuplicateLs()
     s.ls[2] = s.ls[1]
     local ok, err = plan.apply(api, s)
     luaunit.assertNil(ok)
-    luaunit.assertEquals(err, "LS重复")
+    luaunit.assertEquals(err, "ls dup")
     assertUntouched(st)
 end
 
@@ -164,7 +164,7 @@ function testThrTrimApplyRejectsDuplicateGv()
     s.gvAll = s.gvEle
     local ok, err = plan.apply(api, s)
     luaunit.assertNil(ok)
-    luaunit.assertEquals(err, "GV重复")
+    luaunit.assertEquals(err, "gv dup")
     assertUntouched(st)
 end
 
@@ -175,7 +175,7 @@ function testThrTrimApplyRejectsMissingSwitch()
     s.swInc = 0
     local ok, err = plan.apply(api, s)
     luaunit.assertNil(ok)
-    luaunit.assertEquals(err, "开关未选")
+    luaunit.assertEquals(err, "no switch")
     assertUntouched(st)
 end
 
@@ -186,7 +186,7 @@ function testThrTrimApplyRejectsInvalidLs()
     s.ls[4] = 80
     local ok, err = plan.apply(api, s)
     luaunit.assertNil(ok)
-    luaunit.assertEquals(err, "LS无效")
+    luaunit.assertEquals(err, "ls bad")
     assertUntouched(st)
 end
 
@@ -195,7 +195,7 @@ function testThrTrimApplyRejectsWhenCustomFunctionsShort()
     local api, st = makeApi({ cfnCount = 10, occupied = { 0, 1, 2 } })
     local ok, err = plan.apply(api, spec())
     luaunit.assertNil(ok)
-    luaunit.assertEquals(err, "SF不足")
+    luaunit.assertEquals(err, "sf full")
     luaunit.assertEquals(st.writes.ls, 0)
     luaunit.assertEquals(st.writes.cfn, 0)
     luaunit.assertEquals(st.writes.fm, 0)

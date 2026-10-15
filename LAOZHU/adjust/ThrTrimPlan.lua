@@ -18,25 +18,25 @@ end
 
 local function apply(api, spec)
     if not selected(spec.swEle) or not selected(spec.swAll) or not selected(spec.swInc) or not selected(spec.swDec) then
-        return nil, "开关未选"
+        return nil, "no switch"
     end
     local ls = spec.ls
     if not distinct(ls[1], ls[2], ls[3], ls[4]) then
-        return nil, "LS重复"
+        return nil, "ls dup"
     end
     for i = 1, 4 do
         if not api.getLogicalSwitch(ls[i]) then
-            return nil, "LS无效"
+            return nil, "ls bad"
         end
     end
     if spec.gvEle == spec.gvAll then
-        return nil, "GV重复"
+        return nil, "gv dup"
     end
     local src = {}
     for i = 1, 4 do
         src[i] = api.getSwitchIndex(string.format("L%02d", ls[i] + 1))
         if not selected(src[i]) then
-            return nil, "LS无效"
+            return nil, "ls bad"
         end
     end
     local empty = {}
@@ -52,7 +52,7 @@ local function apply(api, spec)
         idx = idx + 1
     end
     if #empty < 8 then
-        return nil, "SF不足"
+        return nil, "sf full"
     end
     local fmCount = 0
     while api.getFlightMode(fmCount) do
