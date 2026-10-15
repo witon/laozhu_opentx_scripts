@@ -24,7 +24,7 @@ end
 
 local function run(event, time)
 	local midX = math.floor(LCD_W / 2)
-	local rowH = math.floor(LCD_H / 3)
+	local rowH = math.floor(LCD_H / 4)
 	local valueH = fontBoxHeight(LZ_ui.fontL1, 16)
 	local labelH = fontBoxHeight(MIDSIZE or LZ_ui.font, 12)
 	local valueY0 = math.floor((rowH - valueH) / 2)
@@ -36,8 +36,9 @@ local function run(event, time)
 	local mon = gF3kCore.monitor
 
 	drawPair(0, rowH, valueY0, labelY0, midX, "RxV", voltHundredths(mon.rx()), PREC2, "dRx", voltHundredths(mon.rxSpan(time)), PREC2)
-	drawPair(1, rowH, valueY0, labelY0, midX, "TxV", math.floor(tx * 10 + 0.5), PREC1, "LQ", mon.lq(), 0)
+	drawCell(0, valueY0 + rowH, labelY0 + rowH, midX - 1, "TxV", math.floor(tx * 10 + 0.5), PREC1)
 	drawPair(2, rowH, valueY0, labelY0, midX, "Pwr", mon.tpwr(), 0, "Max", mon.tpwrMax(), 0)
+	drawPair(3, rowH, valueY0, labelY0, midX, "LQ", mon.lq(), 0, "Min", mon.lqMin() or 0, 0)
 	lcd.drawLine(midX, 0, midX, LCD_H - 1, SOLID, 0)
 end
 
