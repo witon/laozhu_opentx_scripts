@@ -104,5 +104,19 @@ local function getFlightState()
 	return flightState
 end
 
-core = {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound}
+local resetPending = false
+
+local function markResetPending()
+	resetPending = true
+end
+
+local function applyPendingReset()
+	if not resetPending then
+		return
+	end
+	resetPending = false
+	resetRound()
+end
+
+core = {run=run, init=init, getRound=getRound, getFlightState=getFlightState, resetRound=resetRound, markResetPending=markResetPending, applyPendingReset=applyPendingReset}
 return core

@@ -21,7 +21,7 @@ LZ_runModule(gSDCardDir .. "LAOZHU/uilib/CheckBoxO.lua")
 local function onTaskSelectorChange(taskSelector)
     f3kCfg.kvs["task"] = taskSelector:getText(taskSelector.selectedIndex)
     f3kCfg:writeToFile(gConfigFileName)
-    gF3kCore.resetRound()
+    gF3kCore.markResetPending()
 end
 
 local function setCfgValue()

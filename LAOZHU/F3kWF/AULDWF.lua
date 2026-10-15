@@ -132,6 +132,13 @@ local function setTaskParam(count, nTime, mute)
     flightCount = count
     noflyTime = nTime
     isTimerMuted = mute
+    state = 1
+    curFlight = 1
+    local arr = flightRecord.flightArray
+    for i = #arr, 1, -1 do
+        arr[i] = nil
+    end
+    flightRecord.flightIndex = 0
 end
 
 local function getWorkTime()

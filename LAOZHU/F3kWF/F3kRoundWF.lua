@@ -2,6 +2,7 @@ local preparationTime = 120
 local testTime = 40
 local startTime = 0
 local task = nil
+local loadedTaskPath = nil
 local timer = nil
 local roundState = 1 --1: begin; 2: preparationTime; 3: testTime; 4: taskTime; 5: end; 6: task nofly; 7: task flight; 8: task land;
 local isTimerMuted = false
@@ -11,31 +12,49 @@ local function setPreparationCallback(callback)
     preparationCallback = callback
 end
 
-local function setTask(taskName, noflyTime, p1, p2)
-    if task ~= nil then
-		LZ_clearTable(task)
-		task = nil
-		collectgarbage()
-    end
+local function applyTaskParam(taskName, noflyTime)
     if taskName == "LastFl" then
-        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("LastFl", 420, noflyTime, isTimerMuted)
     elseif taskName == "Train" or taskName == "-" then
-        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("Train", 600, noflyTime, isTimerMuted)
-    elseif taskName == "OtherTask" or taskName == "-" then
-        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
+    elseif taskName == "OtherTask" then
         task.setTaskParam("Train", 600, noflyTime, isTimerMuted)
     elseif taskName == "AULD" then
-        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/AULDWF.lua")
         task.setTaskParam(3, noflyTime, isTimerMuted)
     elseif taskName == "TEST" then
-        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("TEST", 5, noflyTime, isTimerMuted)
     elseif taskName == "Normal" then
-        task = LZ_runModule(gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua")
         task.setTaskParam("Normal", 5999, noflyTime, isTimerMuted)
     end
+end
+
+local function setTask(taskName, noflyTime, p1, p2)
+    local path
+    if taskName == "AULD" then
+        path = gSDCardDir .. "LAOZHU/F3kWF/AULDWF.lua"
+    elseif taskName == "LastFl" or taskName == "Train" or taskName == "-"
+        or taskName == "OtherTask" or taskName == "TEST" or taskName == "Normal" then
+        path = gSDCardDir .. "LAOZHU/F3kWF/CommonTaskWF.lua"
+    else
+        return
+    end
+    if task ~= nil and loadedTaskPath == path then
+        applyTaskParam(taskName, noflyTime)
+        return
+    end
+    local loaded = LZ_runModule(path)
+    if loaded == nil then
+        DBG_err("F3k task load failed", path)
+        return
+    end
+    if task ~= nil then
+        LZ_clearTable(task)
+        task = nil
+        collectgarbage()
+    end
+    task = loaded
+    loadedTaskPath = path
+    applyTaskParam(taskName, noflyTime)
 end
 
 local function  getTask()
