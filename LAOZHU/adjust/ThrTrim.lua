@@ -9,6 +9,8 @@ local gvEd = {}
 local lines = {}
 local statusText = "cmn: set FM0"
 local maxLines = 1
+local cfg = nil
+local CFG_FILE = "thrtrim.cfg"
 
 local function loadModule()
     LZ_runModule(gSDCardDir .. "LAOZHU/uilib/InputView.lua")
@@ -69,22 +71,10 @@ local function listPos(target)
     return 1
 end
 
-local function defaultIncDec()
-    local plus = {}
-    for i = 1, #swIdx do
-        local name = getSwitchName(swIdx[i])
-        if name and string.sub(name, -1) == "+" then
-            plus[#plus + 1] = swIdx[i]
-        end
-    end
-    local up = plus[3]
-    if not up then
-        return 1, 1
-    end
-    return listPos(up), listPos(up - 1)
-end
-
 local function clamp(n, maxN)
+    if n < 1 then
+        return 1
+    end
     if n > maxN then
         return maxN
     end
@@ -122,6 +112,20 @@ local function pushRow(label, widget)
     lines[#lines + 1] = { label, widget }
 end
 
+local function saveCfg()
+    cfg.kvs.ele = swIdx[swEd[1].num] or 0
+    cfg.kvs.cmn = swIdx[swEd[2].num] or 0
+    cfg.kvs.inc = swIdx[swEd[3].num] or 0
+    cfg.kvs.dec = swIdx[swEd[4].num] or 0
+    cfg.kvs.ls1 = lsEd[1].num
+    cfg.kvs.ls2 = lsEd[2].num
+    cfg.kvs.ls3 = lsEd[3].num
+    cfg.kvs.ls4 = lsEd[4].num
+    cfg.kvs.gve = gvEd[1].num
+    cfg.kvs.gvc = gvEd[2].num
+    cfg:writeToFile(CFG_FILE)
+end
+
 local function onWrite()
     local ok, err = plan.apply(api, {
         ls = { lsEd[1].num - 1, lsEd[2].num - 1, lsEd[3].num - 1, lsEd[4].num - 1 },
@@ -134,6 +138,7 @@ local function onWrite()
     })
     if ok then
         statusText = "wrote, set FM0"
+        saveCfg()
     else
         statusText = err
     end
@@ -142,6 +147,7 @@ end
 local function doKey(event)
     local ret = viewMatrix.doKey(viewMatrix, event)
     if not ret and event == EVT_EXIT_BREAK then
+        saveCfg()
         this.pageState = 1
         unloadModule()
     end
@@ -190,23 +196,59 @@ if swMax < 1 then
 end
 local maxLs = countIdx(model.getLogicalSwitch)
 local maxGv = countIdx(model.getGlobalVariableDetails)
-local incPos, decPos = defaultIncDec()
+local swList = {}
+for i = 1, #swIdx do
+    swList[i] = { idx = swIdx[i], name = getSwitchName(swIdx[i]) }
+end
+local thrUp, thrDown = plan.throttleTrim(swList)
+local incFallback = 1
+local decFallback = 1
+if thrUp then
+    incFallback = listPos(thrUp)
+    decFallback = listPos(thrDown)
+end
+local eleFallback = listPos(getSwitchIndex("SH" .. CHAR_UP))
+local cmnFallback = listPos(getSwitchIndex("SH" .. CHAR_DOWN))
+
+cfg = CFGC:new()
+cfg:readFromFile(CFG_FILE)
+
+local function savedSw(key, fallbackPos)
+    local id = cfg:getNumberField(key, swIdx[fallbackPos] or 0)
+    if id == 0 then
+        return fallbackPos
+    end
+    for i = 1, #swIdx do
+        if swIdx[i] == id then
+            return i
+        end
+    end
+    return fallbackPos
+end
+
+local function savedNum(key, fallback, maxN)
+    local n = cfg:getNumberField(key, fallback)
+    if n == 0 then
+        n = fallback
+    end
+    return clamp(n, maxN)
+end
 
 viewMatrix = VMnewViewMatrix()
-swEd[1] = newNum(1, swMax, listPos(getSwitchIndex("SH" .. CHAR_UP)), drawSw)
-swEd[2] = newNum(1, swMax, listPos(getSwitchIndex("SH" .. CHAR_DOWN)), drawSw)
-swEd[3] = newNum(1, swMax, incPos, drawSw)
-swEd[4] = newNum(1, swMax, decPos, drawSw)
+swEd[1] = newNum(1, swMax, savedSw("ele", eleFallback), drawSw)
+swEd[2] = newNum(1, swMax, savedSw("cmn", cmnFallback), drawSw)
+swEd[3] = newNum(1, swMax, savedSw("inc", incFallback), drawSw)
+swEd[4] = newNum(1, swMax, savedSw("dec", decFallback), drawSw)
 pushRow("ele sw", swEd[1])
 pushRow("cmn sw", swEd[2])
 pushRow("inc", swEd[3])
 pushRow("dec", swEd[4])
 for i = 1, 4 do
-    lsEd[i] = newNum(1, maxLs, clamp(7 + i, maxLs), drawLs)
+    lsEd[i] = newNum(1, maxLs, savedNum("ls" .. i, 7 + i, maxLs), drawLs)
     pushRow("ls" .. i, lsEd[i])
 end
-gvEd[1] = newNum(1, maxGv, clamp(2, maxGv), drawGv)
-gvEd[2] = newNum(1, maxGv, clamp(8, maxGv), drawGv)
+gvEd[1] = newNum(1, maxGv, savedNum("gve", 2, maxGv), drawGv)
+gvEd[2] = newNum(1, maxGv, savedNum("gvc", 8, maxGv), drawGv)
 pushRow("gv ele", gvEd[1])
 pushRow("gv cmn", gvEd[2])
 local btn = BTnewButton()

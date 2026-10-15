@@ -204,6 +204,23 @@ function testThrTrimApplyRejectsWhenCustomFunctionsShort()
     luaunit.assertEquals(st.fm[0].trimsModes[3], 4)
 end
 
+function testThrTrimThrottlePairIsThird()
+    local plan = planMod()
+    local up, down = plan.throttleTrim({
+        { idx = 10, name = "Rud-" },
+        { idx = 11, name = "Rud+" },
+        { idx = 12, name = "Ele-" },
+        { idx = 13, name = "Ele+" },
+        { idx = 15, name = "SH-" },
+        { idx = 16, name = "Thr-" },
+        { idx = 17, name = "Thr+" },
+        { idx = 18, name = "Ail-" },
+        { idx = 19, name = "Ail+" },
+    })
+    luaunit.assertEquals(up, 17)
+    luaunit.assertEquals(down, 16)
+end
+
 if not LZ_TEST_HARNESS then
     HOME_DIR = os.getenv("HOME_DIR")
     if not HOME_DIR then

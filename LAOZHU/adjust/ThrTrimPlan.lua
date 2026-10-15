@@ -16,6 +16,26 @@ local function distinct(a, b, c, d)
     return a ~= b and a ~= c and a ~= d and b ~= c and b ~= d and c ~= d
 end
 
+local function endsWith(name, ch)
+    return name and string.sub(name, -1) == ch
+end
+
+-- list 按 idx 升序。第 3 对相邻的「- / +」是油门微调，返回 upIdx, downIdx。
+local function throttleTrim(list)
+    local n = 0
+    for i = 2, #list do
+        local lo = list[i - 1]
+        local hi = list[i]
+        if lo.idx + 1 == hi.idx and endsWith(lo.name, "-") and endsWith(hi.name, "+") then
+            n = n + 1
+            if n == 3 then
+                return hi.idx, lo.idx
+            end
+        end
+    end
+    return nil, nil
+end
+
 local function apply(api, spec)
     if not selected(spec.swEle) or not selected(spec.swAll) or not selected(spec.swInc) or not selected(spec.swDec) then
         return nil, "no switch"
@@ -104,4 +124,4 @@ local function apply(api, spec)
     return true
 end
 
-return { apply = apply }
+return { apply = apply, throttleTrim = throttleTrim }
