@@ -41,6 +41,9 @@ local function handleNavAfterPage(mappedEvent)
 			state.pages = FLIGHT_PAGE_PATHS
 			state.displayIndex = 1
 			unloadCurPage()
+			if gF3kCore ~= nil then
+				gF3kCore.applyPendingReset()
+			end
 		end
 		if gF3kCore == nil then
 			unloadCurPage()

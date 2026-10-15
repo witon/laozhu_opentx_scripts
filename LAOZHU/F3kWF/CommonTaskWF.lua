@@ -127,6 +127,12 @@ local function setTaskParam(tName, wTime, nflyTime, mute)
     workTime = wTime
     noFlyTime = nflyTime
     isTimerMuted = mute
+    state = 1
+    local arr = flightRecord.flightArray
+    for i = #arr, 1, -1 do
+        arr[i] = nil
+    end
+    flightRecord.flightIndex = 0
 end
 
 local function getNoFlyTime()
