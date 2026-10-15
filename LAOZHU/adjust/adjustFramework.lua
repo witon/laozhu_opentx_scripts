@@ -3,7 +3,7 @@ local M = {}
 
 local state = {
 	focusIndex = 1,
-	pages = { "adjust/GlobalVar.lua", "adjust/output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua" },
+	pages = { "adjust/GlobalVar.lua", "adjust/output.lua", "adjust/SinkRate/SinkRate.lua", "adjust/LD/LD.lua", "adjust/Launch/Launch.lua", "adjust/ModelCfg.lua" },
 	curPage = nil,
 	bgFlag = false,
 	keyMap = nil,
